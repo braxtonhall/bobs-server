@@ -1,0 +1,26 @@
+{
+	"compilerOptions": {
+		"lib": ["esnext"],
+		"module": "CommonJS",
+		"target": "ESNext",
+		"moduleResolution": "node",
+		"strict": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"inlineSources": true,
+		"inlineSourceMap": true,
+		"composite": true,
+		"declaration": true,
+		"declarationMap": true,
+		"resolveJsonModule": true,
+		"types": ["node", "jest"],
+		"outDir": "dist",
+		"allowJs": true,
+		"noImplicitOverride": true
+	},
+	"include": ["src", "scripts", "test"],
+	"exclude": ["node_modules"],
+	"ts-node": {
+		"preferTsExts": true
+	}
+}

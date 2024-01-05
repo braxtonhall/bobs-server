@@ -1,0 +1,24 @@
+import { z } from "zod";
+import { parse } from "./parse";
+
+export const originSchema = z
+	.string()
+	.transform((address) => address.trim())
+	.transform((address, ctx): string => {
+		if (address === "*") {
+			return address;
+		}
+		try {
+			const { origin } = new URL(address);
+			if (origin !== "null") {
+				return origin;
+			}
+		} catch {}
+		ctx.addIssue({
+			code: z.ZodIssueCode.custom,
+			message: "Origin should be a website url",
+		});
+		return z.NEVER;
+	});
+
+console.log(parse(originSchema, "*"));
