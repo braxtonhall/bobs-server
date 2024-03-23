@@ -1,5 +1,5 @@
 {
-	"name": "cinema",
+	"name": "bobs-server",
 	"version": "1.0.0",
 	"main": "index.js",
 	"license": "MIT",
@@ -31,6 +31,7 @@
 		"db:migrate": "prisma migrate dev --name init",
 		"prepare": "husky install",
 		"test": "jest",
+		"build": "tsc",
 		"formatting": "prettier . --check && eslint ."
 	},
 	"prettier": {
