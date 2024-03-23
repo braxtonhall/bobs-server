@@ -30,6 +30,7 @@
 		"db:generate": "prisma generate",
 		"db:migrate": "prisma migrate dev --name init",
 		"prepare": "husky install",
+		"test": "jest",
 		"formatting": "prettier . --check && eslint ."
 	},
 	"prettier": {
