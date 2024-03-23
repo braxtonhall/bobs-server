@@ -1,0 +1,39 @@
+name: Run linter & tests
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node: [20.x]
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: install node ${{ matrix.node }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: install packages
+        run: yarn install
+
+      - name: compile
+        run: yarn build
+
+      - name: lint
+        run: yarn formatting
+
+      - name: test
+        run: yarn test
