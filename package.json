@@ -14,7 +14,6 @@
 		"@typescript-eslint/eslint-plugin": "^7.3.1",
 		"@typescript-eslint/parser": "^7.3.1",
 		"cheerio": "^1.0.0-rc.12",
-		"env-cmd": "^10.1.0",
 		"eslint": "^8.57.0",
 		"eslint-config-prettier": "^9.1.0",
 		"husky": ">=6",
@@ -32,7 +31,6 @@
 		"db:migrate": "prisma migrate dev --name init",
 		"prepare": "husky install",
 		"test": "jest",
-		"test:github": "env-cmd -f .env.sample yarn test",
 		"build": "tsc",
 		"formatting": "prettier . --check && eslint ."
 	},

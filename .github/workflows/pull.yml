@@ -26,8 +26,14 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
 
+      - name: create .env
+        run: cat .env.sample > .env
+
       - name: install packages
         run: yarn install
+
+      - name: setup prisma
+        run: yarn prisma generate && yarn prisma migrate dev
 
       - name: compile
         run: yarn build
@@ -36,4 +42,4 @@ jobs:
         run: yarn formatting
 
       - name: test
-        run: yarn test:github
+        run: yarn test
