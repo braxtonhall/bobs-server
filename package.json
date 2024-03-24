@@ -1,7 +1,8 @@
 {
 	"name": "bobs-server",
 	"version": "1.0.0",
-	"main": "index.js",
+	"main": "dist/src/index.js",
+	"repository": "git@github.com:braxtonhall/bobs-server.git",
 	"license": "MIT",
 	"devDependencies": {
 		"@types/express": "^4.17.21",
@@ -13,7 +14,6 @@
 		"@types/passport-local": "^1.0.38",
 		"@typescript-eslint/eslint-plugin": "^7.3.1",
 		"@typescript-eslint/parser": "^7.3.1",
-		"cheerio": "^1.0.0-rc.12",
 		"eslint": "^8.57.0",
 		"eslint-config-prettier": "^9.1.0",
 		"husky": ">=6",
@@ -26,10 +26,10 @@
 		"typescript": "^5.3.3"
 	},
 	"scripts": {
-		"run": "ts-node src/server.ts",
+		"start": "node dist/src/server.js",
 		"db:generate": "prisma generate",
-		"db:migrate": "prisma migrate dev --name init",
-		"prepare": "husky install",
+		"db:migrate": "prisma migrate dev",
+		"prepare": "husky",
 		"test": "jest",
 		"build": "tsc",
 		"formatting": "prettier . --check && eslint ."
@@ -43,45 +43,29 @@
 		"testEnvironment": "node",
 		"collectCoverage": true,
 		"testMatch": [
-			"**/test/**/*.(spec|test).ts"
+			"<rootDir>/test/**/*.spec.ts"
 		],
 		"collectCoverageFrom": [
-			"src/**/*.ts"
+			"<rootDir>/src/**/*.ts"
 		],
 		"setupFiles": [
 			"jest-date-mock"
 		],
-		"coveragePathIgnorePatterns": [
-			"coverage",
-			"node_modules",
-			"test/",
-			"dist/"
-		],
 		"coverageReporters": [
 			"json-summary",
 			"text"
-		],
-		"testPathIgnorePatterns": [
-			"(/?.)*.js",
-			"/node_modules/",
-			"/dist/"
 		]
 	},
 	"lint-staged": {
-		"*.{yml,json,ts,js,md,yaml,html}": "prettier --write"
+		"*.{ts,js,md,yaml,yml,json,html}": "prettier --write"
 	},
 	"dependencies": {
 		"@prisma/client": "^5.7.1",
-		"@trpc/client": "^10.45.0",
-		"@trpc/server": "^10.45.0",
 		"body-parser": "^1.20.2",
 		"dotenv": "^16.3.1",
 		"express": "^4.18.2",
 		"express-session": "^1.17.3",
 		"express-subdomain": "^1.0.6",
-		"moment": "^2.30.1",
-		"moment-timezone": "^0.5.44",
-		"node-fetch": "2",
 		"passport": "^0.7.0",
 		"passport-local": "^1.0.0",
 		"prisma": "^5.10.2",
