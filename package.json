@@ -32,7 +32,7 @@
 		"db:migrate": "prisma migrate dev --name init",
 		"prepare": "husky install",
 		"test": "jest",
-		"test:github": "yarn test",
+		"test:github": "env-cmd -f .env.sample yarn test",
 		"build": "tsc",
 		"formatting": "prettier . --check && eslint ."
 	},
