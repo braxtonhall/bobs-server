@@ -1,6 +1,4 @@
-import express, { Request, Response } from "express";
-import posts from "./storage/posts";
-import posters from "./storage/posters";
+import express from "express";
 import { publicRouter } from "./routers/publicRouter";
 import bodyParser from "body-parser";
 import { authenticatedRouter } from "./routers/authenticatedRouter";

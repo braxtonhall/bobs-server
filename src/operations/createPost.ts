@@ -9,7 +9,7 @@ import { Some } from "../types/option";
 import { match, P } from "ts-pattern";
 import { Post } from "../schema/post";
 
-const sendConfirmationEmail = (address: string) => {
+const sendConfirmationEmail = (_address: string) => {
 	// TODO!!!
 	// https://www.prisma.io/blog/backend-prisma-typescript-orm-with-postgresql-auth-mngp1ps7kip4
 	// https://sendgrid.com/en-us

@@ -13,7 +13,9 @@ export const originSchema = z
 			if (origin !== "null") {
 				return origin;
 			}
-		} catch {}
+		} catch {
+			// Do nothing :)
+		}
 		ctx.addIssue({
 			code: z.ZodIssueCode.custom,
 			message: "Origin should be a website url",

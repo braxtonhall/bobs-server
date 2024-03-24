@@ -7,7 +7,7 @@ import { Failure } from "../types/failure";
 
 export const authenticatedRouter = express.Router();
 
-const killProcedure = (dead: boolean) => async (req: Request<{ id: string }>, res: Response) =>
+const _killProcedure = (dead: boolean) => async (req: Request<{ id: string }>, res: Response) =>
 	// TODO even better would be to wrap those in a transaction...
 	match(await posts.setDeadAndGetPosterId(req.params.id, "TODO email address", dead))
 		.with(Ok(P.select()), async (posterId) => {
