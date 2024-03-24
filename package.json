@@ -43,32 +43,21 @@
 		"testEnvironment": "node",
 		"collectCoverage": true,
 		"testMatch": [
-			"**/test/**/*.(spec|test).ts"
+			"<rootDir>/test/**/*.spec.ts"
 		],
 		"collectCoverageFrom": [
-			"src/**/*.ts"
+			"<rootDir>/src/**/*.ts"
 		],
 		"setupFiles": [
 			"jest-date-mock"
 		],
-		"coveragePathIgnorePatterns": [
-			"coverage",
-			"node_modules",
-			"test/",
-			"dist/"
-		],
 		"coverageReporters": [
 			"json-summary",
 			"text"
-		],
-		"testPathIgnorePatterns": [
-			"(/?.)*.js",
-			"/node_modules/",
-			"/dist/"
 		]
 	},
 	"lint-staged": {
-		"*.{yml,json,ts,js,md,yaml,html}": "prettier --write"
+		"*.{ts,js,md,yaml,yml,json,html}": "prettier --write"
 	},
 	"dependencies": {
 		"@prisma/client": "^5.7.1",
