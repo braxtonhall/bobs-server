@@ -73,4 +73,5 @@ export const apiRouter = express
 		match(await counters.updateAndGet(req.params.counter))
 			.with(Some(P.select()), (count) => res.send(count))
 			.otherwise(() => res.sendStatus(404)),
-	);
+	)
+	.get("/", (req, res) => res.send("API"));
