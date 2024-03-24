@@ -26,10 +26,10 @@
 		"typescript": "^5.3.3"
 	},
 	"scripts": {
-		"run": "ts-node src/server.ts",
+		"start": "node dist/src/server.js",
 		"db:generate": "prisma generate",
-		"db:migrate": "prisma migrate dev --name init",
-		"prepare": "husky install",
+		"db:migrate": "prisma migrate dev",
+		"prepare": "husky",
 		"test": "jest",
 		"build": "tsc",
 		"formatting": "prettier . --check && eslint ."
