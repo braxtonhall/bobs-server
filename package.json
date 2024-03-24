@@ -46,8 +46,7 @@
 			"**/test/**/*.(spec|test).ts"
 		],
 		"collectCoverageFrom": [
-			"src/**/*.ts",
-			"!**/*.d.ts"
+			"src/**/*.ts"
 		],
 		"setupFiles": [
 			"jest-date-mock"
@@ -59,12 +58,7 @@
 			"dist/"
 		],
 		"coverageReporters": [
-			[
-				"lcov",
-				{
-					"projectRoot": "."
-				}
-			],
+			"json-summary",
 			"text"
 		],
 		"testPathIgnorePatterns": [

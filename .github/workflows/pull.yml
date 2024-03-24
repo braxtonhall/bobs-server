@@ -43,3 +43,6 @@ jobs:
 
       - name: test
         run: yarn test
+
+      - name: report coverage
+        uses: MishaKav/jest-coverage-comment@main
