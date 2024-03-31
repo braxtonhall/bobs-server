@@ -7,6 +7,10 @@ services:
       - "80:80"
       - "443:443"
     restart: always
+    environment:
+      DATABASE_URL: file://app/db/main.sqlite
+    volumes:
+      - "${HOST_DB_DIR}:/app/db"
   dev-server:
     build:
       context: ./
@@ -14,3 +18,7 @@ services:
       - "8080:80"
       - "8443:443"
     restart: always
+    environment:
+      DATABASE_URL: file://app/db/dev.sqlite
+    volumes:
+      - "${HOST_DB_DIR}:/app/db"
