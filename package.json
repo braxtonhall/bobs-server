@@ -26,9 +26,11 @@
 		"typescript": "^5.3.3"
 	},
 	"scripts": {
-		"start": "node dist/src/server.js",
+		"start": "node dist/src/index.js",
+		"start:prod": "yarn run db:deploy && yarn run start",
 		"db:generate": "prisma generate",
 		"db:migrate": "prisma migrate dev",
+		"db:deploy": "prisma migrate deploy",
 		"prepare": "husky",
 		"test": "jest",
 		"build": "tsc",

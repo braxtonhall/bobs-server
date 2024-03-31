@@ -1,3 +1,33 @@
-version: "3.5"
-
-services: {}
+services:
+  server:
+    build:
+      context: https://github.com/braxtonhall/bobs-server.git
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: always
+    environment:
+      DATABASE_URL: file://app/db/main.sqlite
+      SSL_CERT_PATH: /etc/ssl/fullchain.pem
+      SSL_KEY_PATH: /etc/ssl/privkey.pem
+    env_file: .env
+    volumes:
+      - "${HOST_DB_DIR}:/app/db"
+      - "${SSL_CERT_PATH}:/etc/ssl/fullchain.pem"
+      - "${SSL_KEY_PATH}:/etc/ssl/privkey.pem"
+  dev-server:
+    build:
+      context: ./
+    ports:
+      - "8080:80"
+      - "8443:443"
+    restart: no
+    environment:
+      DATABASE_URL: file://app/db/dev.sqlite
+      SSL_CERT_PATH: /etc/ssl/fullchain.pem
+      SSL_KEY_PATH: /etc/ssl/privkey.pem
+    env_file: .env
+    volumes:
+      - "${HOST_DB_DIR}:/app/db"
+      - "${SSL_CERT_PATH}:/etc/ssl/fullchain.pem"
+      - "${SSL_KEY_PATH}:/etc/ssl/privkey.pem"
