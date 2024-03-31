@@ -1,8 +1,6 @@
-version: "3.5"
-
 services:
   server:
-    image: git@github.com:braxtonhall/bobs-server.git:docker # TODO before merging this should be main
+    image: git@github.com:braxtonhall/bobs-server.git
     ports:
       - "80:80"
       - "443:443"
