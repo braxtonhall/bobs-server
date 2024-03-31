@@ -21,7 +21,7 @@ services:
     ports:
       - "8080:80"
       - "8443:443"
-    restart: always
+    restart: no
     environment:
       DATABASE_URL: file://app/db/dev.sqlite
       SSL_CERT_PATH: /etc/ssl/fullchain.pem
