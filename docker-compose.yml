@@ -1,7 +1,7 @@
 services:
   server:
     build:
-      context: git@github.com:braxtonhall/bobs-server.git#docker
+      context: https://github.com/braxtonhall/bobs-server.git
     ports:
       - "80:80"
       - "443:443"
