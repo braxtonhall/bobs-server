@@ -7,8 +7,13 @@ services:
     restart: always
     environment:
       DATABASE_URL: file://app/db/main.sqlite
+      SSL_CERT_PATH: /etc/ssl/fullchain.pem
+      SSL_KEY_PATH: /etc/ssl/privkey.pem
+    env_file: .env
     volumes:
       - "${HOST_DB_DIR}:/app/db"
+      - "${SSL_CERT_PATH}:/etc/ssl/fullchain.pem"
+      - "${SSL_KEY_PATH}:/etc/ssl/privkey.pem"
   dev-server:
     build:
       context: ./
@@ -18,5 +23,10 @@ services:
     restart: always
     environment:
       DATABASE_URL: file://app/db/dev.sqlite
+      SSL_CERT_PATH: /etc/ssl/fullchain.pem
+      SSL_KEY_PATH: /etc/ssl/privkey.pem
+    env_file: .env
     volumes:
       - "${HOST_DB_DIR}:/app/db"
+      - "${SSL_CERT_PATH}:/etc/ssl/fullchain.pem"
+      - "${SSL_KEY_PATH}:/etc/ssl/privkey.pem"
