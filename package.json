@@ -39,7 +39,10 @@
 	},
 	"prettier": {
 		"useTabs": true,
-		"printWidth": 120
+		"printWidth": 120,
+		"plugins": [
+			"prettier-plugin-ejs"
+		]
 	},
 	"jest": {
 		"preset": "ts-jest",
@@ -60,7 +63,7 @@
 		]
 	},
 	"lint-staged": {
-		"*.{ts,js,md,yaml,yml,json,html}": "prettier --write"
+		"*.{ts,js,md,yaml,yml,json,html,ejs}": "prettier --write"
 	},
 	"dependencies": {
 		"@prisma/client": "^5.7.1",

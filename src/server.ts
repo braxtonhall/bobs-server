@@ -1,7 +1,7 @@
 import express from "express";
-import { publicRouter } from "./routers/publicRouter";
+import { unauthenticated } from "./routers/unauthenticated";
 import bodyParser from "body-parser";
-import { authenticatedRouter } from "./routers/authenticatedRouter";
+import { authenticated } from "./routers/authenticated";
 import https from "https";
 import fs from "fs/promises";
 import Config from "./Config";
@@ -17,8 +17,8 @@ export const app = express();
 // TODO would be great to also serve a javascript client
 
 app.use("/*", bodyParser.json({ type: "application/json" }))
-	.use("/admin", authenticatedRouter)
-	.use("/", publicRouter);
+	.use("/admin", authenticated)
+	.use("/", unauthenticated);
 
 export const getServers = async () => ({
 	// TODO if request is not secure, you need to REDIRECT!!

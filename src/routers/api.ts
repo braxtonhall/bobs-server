@@ -27,8 +27,7 @@ const allowOrigin =
 			})
 			.otherwise(() => res.sendStatus(404));
 
-export const apiRouter = express
-	.Router()
+export const api = express()
 	.all(
 		"/counters/:counter",
 		allowOrigin<{ counter: string }>((params) => counters.getOrigin(params.counter)),
