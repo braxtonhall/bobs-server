@@ -26,9 +26,8 @@ type Query = {
 
 export type InternalPost = Awaited<ReturnType<typeof listInternal>>[number];
 
-const create = async ({ emailId, content, posterId, boxId, from, parentId }: CreatePost) =>
-	// TODO this should really tell you if parentId/emailId don't exist instead of it happening at the client
-	await db.post.create({
+const internalCreate = ({ emailId, content, posterId, boxId, from, parentId }: CreatePost) =>
+	db.post.create({
 		data: {
 			emailId,
 			content,
@@ -48,6 +47,16 @@ const create = async ({ emailId, content, posterId, boxId, from, parentId }: Cre
 			},
 		},
 	});
+
+const create = async (
+	createPost: CreatePost,
+): Promise<Result<Awaited<ReturnType<typeof internalCreate>>, Failure.MISSING_DEPENDENCY>> => {
+	try {
+		return Ok(await internalCreate(createPost));
+	} catch (error) {
+		return Err(Failure.MISSING_DEPENDENCY);
+	}
+};
 
 type DeletePostQuery = {
 	boxId: string;
