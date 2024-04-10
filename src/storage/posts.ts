@@ -5,6 +5,7 @@ import { None, Option, Some } from "../types/option";
 import { Ok, Err, Result } from "../types/result";
 import { match, P } from "ts-pattern";
 import { Failure } from "../types/failure";
+import boxes from "./boxes";
 
 type CreatePost = {
 	emailId?: string;
@@ -23,8 +24,10 @@ type Query = {
 	ip: HashedString;
 };
 
-const create = async ({ emailId, content, posterId, boxId, from, parentId }: CreatePost) =>
-	await db.post.create({
+export type InternalPost = Awaited<ReturnType<typeof listInternal>>[number];
+
+const internalCreate = ({ emailId, content, posterId, boxId, from, parentId }: CreatePost) =>
+	db.post.create({
 		data: {
 			emailId,
 			content,
@@ -44,6 +47,16 @@ const create = async ({ emailId, content, posterId, boxId, from, parentId }: Cre
 			},
 		},
 	});
+
+const create = async (
+	createPost: CreatePost,
+): Promise<Result<Awaited<ReturnType<typeof internalCreate>>, Failure.MISSING_DEPENDENCY>> => {
+	try {
+		return Ok(await internalCreate(createPost));
+	} catch (error) {
+		return Err(Failure.MISSING_DEPENDENCY);
+	}
+};
 
 type DeletePostQuery = {
 	boxId: string;
@@ -87,7 +100,12 @@ const toCursor = (cursor: unknown) => {
 		: undefined;
 };
 
-const list = ({ boxId, showDead, cursor, count, ip }: Query) => {
+const list = async (query: Query): Promise<Result<InternalPost[], Failure.MISSING_DEPENDENCY>> =>
+	boxes
+		.exists(query.boxId)
+		.then(async (exists) => (exists ? Ok(await listInternal(query)) : Err(Failure.MISSING_DEPENDENCY)));
+
+const listInternal = ({ boxId, showDead, cursor, count, ip }: Query) => {
 	const defaultQuery = {
 		OR: [
 			{

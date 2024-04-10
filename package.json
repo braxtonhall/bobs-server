@@ -20,14 +20,18 @@
 		"jest": "^29.7.0",
 		"jest-date-mock": "^1.0.8",
 		"lint-staged": ">=10",
+		"nodemon": "^3.1.0",
 		"prettier": "^3.1.1",
+		"prettier-plugin-ejs": "^1.0.3",
 		"ts-jest": "^29.1.2",
 		"ts-node": "^10.9.2",
 		"typescript": "^5.3.3"
 	},
 	"scripts": {
 		"start": "node dist/src/index.js",
+		"start:dev": "ts-node src/index.ts",
 		"start:prod": "yarn run db:deploy && yarn run start",
+		"watch": "nodemon",
 		"db:generate": "prisma generate",
 		"db:migrate": "prisma migrate dev",
 		"db:deploy": "prisma migrate deploy",
@@ -38,7 +42,10 @@
 	},
 	"prettier": {
 		"useTabs": true,
-		"printWidth": 120
+		"printWidth": 120,
+		"plugins": [
+			"prettier-plugin-ejs"
+		]
 	},
 	"jest": {
 		"preset": "ts-jest",
@@ -58,13 +65,21 @@
 			"text"
 		]
 	},
+	"nodemonConfig": {
+		"watch": [
+			"src"
+		],
+		"exec": "yarn start:dev",
+		"ext": ".ts"
+	},
 	"lint-staged": {
-		"*.{ts,js,md,yaml,yml,json,html}": "prettier --write"
+		"*.{ts,js,md,yaml,yml,json,html,ejs}": "prettier --write"
 	},
 	"dependencies": {
 		"@prisma/client": "^5.7.1",
 		"body-parser": "^1.20.2",
 		"dotenv": "^16.3.1",
+		"ejs": "^3.1.9",
 		"express": "^4.19.2",
 		"express-session": "^1.17.3",
 		"express-subdomain": "^1.0.6",

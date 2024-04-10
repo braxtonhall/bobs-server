@@ -11,6 +11,7 @@ import { createPost } from "../operations/createPost";
 import { deletePost } from "../operations/deletePost";
 import { Failure } from "../types/failure";
 import counters from "../storage/counters";
+import bodyParser from "body-parser";
 
 const allowOrigin =
 	<P>(getOrigin: (params: P) => Promise<Option<string>>) =>
@@ -27,8 +28,8 @@ const allowOrigin =
 			})
 			.otherwise(() => res.sendStatus(404));
 
-export const apiRouter = express
-	.Router()
+export const api = express()
+	.use(bodyParser.json({ type: "application/json" }))
 	.all(
 		"/counters/:counter",
 		allowOrigin<{ counter: string }>((params) => counters.getOrigin(params.counter)),
@@ -41,9 +42,9 @@ export const apiRouter = express
 	// TODO /boxes/:box/posts/:id (has a boolean on it for if it is dead. returns true only if NOT from ip)
 	// TODO /boxes/:box/posts/:id/children
 	.get("/boxes/:box/posts", async (req, res) =>
-		match(req.ip)
-			.with(P.string, async (ip) => res.send(await getPosts(req.params.box, hashString(ip), req.query)))
-			.otherwise(() => res.sendStatus(400)),
+		match(await getPosts(req.params.box, hashString(req.ip ?? ""), req.query))
+			.with(Ok(P.select()), (posts) => res.send(posts))
+			.otherwise(() => res.send(404)),
 	)
 	.post("/boxes/:box/posts", async (req, res) =>
 		match([parse(createPostSchema, req.body), req.ip])
@@ -68,7 +69,7 @@ export const apiRouter = express
 			)
 			.otherwise(() => res.sendStatus(400)),
 	)
-	// TODO counter should also have a rendered image version for people who do not hava javascript
+	// TODO counter should also have a rendered image version for people who do not have javascript
 	.get("/counters/:counter", async (req, res) =>
 		match(await counters.updateAndGet(req.params.counter))
 			.with(Some(P.select()), (count) => res.send(count))

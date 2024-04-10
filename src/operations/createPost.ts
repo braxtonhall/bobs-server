@@ -1,5 +1,5 @@
 import { CreatePost } from "../schema/createPost";
-import { Err, Ok, Result } from "../types/result";
+import { Err, map, Result } from "../types/result";
 import posts from "../storage/posts";
 import posters from "../storage/posters";
 import emails from "../storage/emails";
@@ -27,27 +27,34 @@ export const createPost = async (
 	const maybeParentId = parent ? await posts.getId(parent, boxId) : Some(undefined);
 	return match(maybeParentId)
 		.with(Some(P.select()), async (parentId) => {
-			const email = await emails.get(address ?? "");
-			// TODO if parent and parent has an email, email that there has been a response
-			if (email?.confirmed === false) {
-				sendConfirmationEmail(email.address);
-			}
-			const internalPost = await posts.create({
-				boxId,
-				content,
-				from,
-				parentId,
-				emailId: email?.id,
-				posterId: await posters.getId(ip),
-			});
-			return Ok({
-				id: internalPost.userId,
-				createdAt: internalPost.createdAt,
-				parent: internalPost.parent?.userId,
-				deletable: true,
-				content,
-				from,
-			} satisfies Post);
+			const emailId = match(await emails.get(address))
+				.with(Some(P.select()), (email) => {
+					// TODO if parent and parent has an email, email that there has been a response
+					if (email?.confirmed === false) {
+						sendConfirmationEmail(email.address);
+					}
+					return email.id;
+				})
+				.otherwise(() => undefined);
+			return map(
+				await posts.create({
+					boxId,
+					content,
+					from,
+					parentId,
+					emailId,
+					posterId: await posters.getId(ip),
+				}),
+				(internalPost) =>
+					({
+						id: internalPost.userId,
+						createdAt: internalPost.createdAt,
+						parent: internalPost.parent?.userId,
+						deletable: true,
+						content,
+						from,
+					}) satisfies Post,
+			);
 		})
 		.otherwise(() => Err(Failure.MISSING_DEPENDENCY as const));
 };

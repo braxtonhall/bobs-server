@@ -1,13 +1,16 @@
 import { HashedString } from "../types/hashed";
-import posts from "../storage/posts";
+import posts, { InternalPost } from "../storage/posts";
 import Config from "../Config";
 import { Post } from "../schema/post";
+import { Ok, Result } from "../types/result";
+import { Failure } from "../types/failure";
+import { match, P } from "ts-pattern";
 
 const getEarliestDeletableTime = () => Date.now() - Config.DELETION_TIME_MS;
 
 const toPostMember =
 	(requestor: HashedString, earliestDeletableTime: number) =>
-	(post: Awaited<ReturnType<typeof posts.list>>[number]): Post => ({
+	(post: InternalPost): Post => ({
 		id: post.userId,
 		createdAt: post.createdAt,
 		content: post.content,
@@ -23,20 +26,23 @@ export const getPosts = async (
 	boxId: string,
 	requestor: HashedString,
 	query: { cursor?: string; dead?: string; take?: string },
-): Promise<{ posts: Post[]; cursor?: string }> => {
+): Promise<Result<{ posts: Post[]; cursor?: string }, Failure.MISSING_DEPENDENCY>> => {
 	const userPageSize = Number(query.take) || Config.DEFAULT_PAGE_SIZE;
 	const pageSize = Math.max(0, Math.min(userPageSize, Config.MAXIMUM_PAGE_SIZE));
-	return posts
-		.list({
-			boxId,
-			ip: requestor,
-			showDead: query.dead === "true",
-			cursor: query.cursor,
-			count: pageSize + 1,
+	const result = await posts.list({
+		boxId,
+		ip: requestor,
+		showDead: query.dead === "true",
+		cursor: query.cursor,
+		count: pageSize + 1,
+	});
+	return match(result)
+		.with(Ok(P.select()), (posts) => {
+			const externalPosts = posts.map(toPostMember(requestor, getEarliestDeletableTime()));
+			return Ok({
+				posts: externalPosts.slice(0, pageSize),
+				cursor: externalPosts[pageSize]?.id,
+			});
 		})
-		.then((posts) => posts.map(toPostMember(requestor, getEarliestDeletableTime())))
-		.then((posts) => ({
-			posts: posts.slice(0, pageSize),
-			cursor: posts[pageSize]?.id,
-		}));
+		.otherwise((result) => result);
 };

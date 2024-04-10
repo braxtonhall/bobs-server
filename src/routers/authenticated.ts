@@ -5,7 +5,7 @@ import { match, P } from "ts-pattern";
 import { Err, Ok } from "../types/result";
 import { Failure } from "../types/failure";
 
-export const authenticatedRouter = express.Router();
+export const authenticated = express();
 
 const _killProcedure = (dead: boolean) => async (req: Request<{ id: string }>, res: Response) =>
 	// TODO even better would be to wrap those in a transaction...

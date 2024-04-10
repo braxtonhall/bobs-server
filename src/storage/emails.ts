@@ -1,10 +1,11 @@
 import { db } from "./db";
+import { None, Option, Some } from "../types/option";
+import { match, P } from "ts-pattern";
 
-const get = async (address: string) => {
-	if (!address) {
-		return null;
-	}
-	return db.email.upsert({
+export type Email = Awaited<ReturnType<typeof internalGet>>;
+
+const internalGet = (address: string) =>
+	db.email.upsert({
 		where: {
 			address,
 		},
@@ -18,6 +19,10 @@ const get = async (address: string) => {
 			address: true,
 		},
 	});
-};
+
+const get = async (maybeAddress: Option<string>): Promise<Option<Email>> =>
+	match(maybeAddress)
+		.with(Some(P.select()), (address) => internalGet(address).then(Some))
+		.otherwise(None);
 
 export default { get };
