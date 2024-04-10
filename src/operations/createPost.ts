@@ -30,6 +30,7 @@ export const createPost = async (
 	const maybeBoxId = await boxes.exists(boxId);
 	return match([maybeParentId, maybeBoxId])
 		.with([Some(P.select()), true], async (parentId) => {
+			// TODO this is stupid... our parser should transform empty email into null or something
 			const email = await emails.get(address ?? "");
 			// TODO if parent and parent has an email, email that there has been a response
 			if (email?.confirmed === false) {
