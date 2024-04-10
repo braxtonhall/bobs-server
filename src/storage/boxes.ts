@@ -42,6 +42,9 @@ const edit = async (id: string, address: string, data: { name?: string; origin?:
 		})
 		.then();
 
+const exists = (id: string): Promise<boolean> =>
+	db.box.findUnique({ where: { id }, select: { id: true } }).then((result) => !!result);
+
 // TODO list boxes
 
-export default { getOrigin, create, edit };
+export default { getOrigin, create, edit, exists };

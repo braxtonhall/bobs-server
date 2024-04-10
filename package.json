@@ -29,7 +29,9 @@
 	},
 	"scripts": {
 		"start": "node dist/src/index.js",
+		"start:dev": "ts-node src/index.ts",
 		"start:prod": "yarn run db:deploy && yarn run start",
+		"watch": "nodemon",
 		"db:generate": "prisma generate",
 		"db:migrate": "prisma migrate dev",
 		"db:deploy": "prisma migrate deploy",
@@ -62,6 +64,13 @@
 			"json-summary",
 			"text"
 		]
+	},
+	"nodemonConfig": {
+		"watch": [
+			"src"
+		],
+		"exec": "yarn start:dev",
+		"ext": ".ts"
 	},
 	"lint-staged": {
 		"*.{ts,js,md,yaml,yml,json,html,ejs}": "prettier --write"

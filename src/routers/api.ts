@@ -40,9 +40,9 @@ export const api = express()
 	// TODO /boxes/:box/posts/:id (has a boolean on it for if it is dead. returns true only if NOT from ip)
 	// TODO /boxes/:box/posts/:id/children
 	.get("/boxes/:box/posts", async (req, res) =>
-		match(req.ip)
-			.with(P.string, async (ip) => res.send(await getPosts(req.params.box, hashString(ip), req.query)))
-			.otherwise(() => res.sendStatus(400)),
+		match(await getPosts(req.params.box, hashString(req.ip ?? ""), req.query))
+			.with(Ok(P.select()), (posts) => res.send(posts))
+			.otherwise(() => res.send(404)),
 	)
 	.post("/boxes/:box/posts", async (req, res) =>
 		match([parse(createPostSchema, req.body), req.ip])

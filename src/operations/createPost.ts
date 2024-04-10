@@ -8,6 +8,7 @@ import { HashedString } from "../types/hashed";
 import { Some } from "../types/option";
 import { match, P } from "ts-pattern";
 import { Post } from "../schema/post";
+import boxes from "../storage/boxes";
 
 const sendConfirmationEmail = (_address: string) => {
 	// TODO!!!
@@ -24,9 +25,11 @@ export const createPost = async (
 	{ parent, email: address, content, from }: CreatePost,
 	ip: HashedString,
 ): Promise<Result<Post, Failure.MISSING_DEPENDENCY>> => {
+	// TODO the missing dependency logic should be moved into the `posts` package
 	const maybeParentId = parent ? await posts.getId(parent, boxId) : Some(undefined);
-	return match(maybeParentId)
-		.with(Some(P.select()), async (parentId) => {
+	const maybeBoxId = await boxes.exists(boxId);
+	return match([maybeParentId, maybeBoxId])
+		.with([Some(P.select()), true], async (parentId) => {
 			const email = await emails.get(address ?? "");
 			// TODO if parent and parent has an email, email that there has been a response
 			if (email?.confirmed === false) {

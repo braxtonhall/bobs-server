@@ -5,6 +5,7 @@ import { None, Option, Some } from "../types/option";
 import { Ok, Err, Result } from "../types/result";
 import { match, P } from "ts-pattern";
 import { Failure } from "../types/failure";
+import boxes from "./boxes";
 
 type CreatePost = {
 	emailId?: string;
@@ -23,7 +24,10 @@ type Query = {
 	ip: HashedString;
 };
 
+export type InternalPost = Awaited<ReturnType<typeof listInternal>>[number];
+
 const create = async ({ emailId, content, posterId, boxId, from, parentId }: CreatePost) =>
+	// TODO this should really tell you if parentId/emailId don't exist instead of it happening at the client
 	await db.post.create({
 		data: {
 			emailId,
@@ -87,7 +91,12 @@ const toCursor = (cursor: unknown) => {
 		: undefined;
 };
 
-const list = ({ boxId, showDead, cursor, count, ip }: Query) => {
+const list = async (query: Query): Promise<Result<InternalPost[], Failure.MISSING_DEPENDENCY>> =>
+	boxes
+		.exists(query.boxId)
+		.then(async (exists) => (exists ? Ok(await listInternal(query)) : Err(Failure.MISSING_DEPENDENCY)));
+
+const listInternal = ({ boxId, showDead, cursor, count, ip }: Query) => {
 	const defaultQuery = {
 		OR: [
 			{

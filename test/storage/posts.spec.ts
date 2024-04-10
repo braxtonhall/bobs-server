@@ -39,6 +39,15 @@ describe("posts", () => {
 				parent: null,
 			});
 		});
+
+		it("should fail to create a post if the box does not exist", async () => {
+			const post = await posts.create({
+				boxId: randomUUID(),
+				content: "This is a test",
+				from: "Nobody",
+				posterId: info.posterId,
+			});
+		});
 	});
 
 	describe("reading", () => {
