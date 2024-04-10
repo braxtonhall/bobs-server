@@ -1,6 +1,5 @@
 import express from "express";
 import { unauthenticated } from "./routers/unauthenticated";
-import bodyParser from "body-parser";
 import { authenticated } from "./routers/authenticated";
 import https from "https";
 import fs from "fs/promises";
@@ -16,9 +15,7 @@ export const app = express();
 //  on a site like embed.bobs-server.net/...
 // TODO would be great to also serve a javascript client
 
-app.use("/*", bodyParser.json({ type: "application/json" }))
-	.use("/admin", authenticated)
-	.use("/", unauthenticated);
+app.use("/admin", authenticated).use("/", unauthenticated);
 
 export const getServers = async () => ({
 	// TODO if request is not secure, you need to REDIRECT!!

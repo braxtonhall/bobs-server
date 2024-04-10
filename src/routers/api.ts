@@ -11,6 +11,7 @@ import { createPost } from "../operations/createPost";
 import { deletePost } from "../operations/deletePost";
 import { Failure } from "../types/failure";
 import counters from "../storage/counters";
+import bodyParser from "body-parser";
 
 const allowOrigin =
 	<P>(getOrigin: (params: P) => Promise<Option<string>>) =>
@@ -28,6 +29,7 @@ const allowOrigin =
 			.otherwise(() => res.sendStatus(404));
 
 export const api = express()
+	.use(bodyParser.json({ type: "application/json" }))
 	.all(
 		"/counters/:counter",
 		allowOrigin<{ counter: string }>((params) => counters.getOrigin(params.counter)),
@@ -67,7 +69,7 @@ export const api = express()
 			)
 			.otherwise(() => res.sendStatus(400)),
 	)
-	// TODO counter should also have a rendered image version for people who do not hava javascript
+	// TODO counter should also have a rendered image version for people who do not have javascript
 	.get("/counters/:counter", async (req, res) =>
 		match(await counters.updateAndGet(req.params.counter))
 			.with(Some(P.select()), (count) => res.send(count))
