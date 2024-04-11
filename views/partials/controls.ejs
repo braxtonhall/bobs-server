@@ -1,10 +1,13 @@
 <details>
 	<summary>More controls</summary>
 	<form>
-		<% if (query.dead)  { %>
+		<% if (query.dead === 'true')  { %>
 		<button name="dead" value="false">Hide Dead</button>
 		<% } else { %>
 		<button name="dead" value="true">Show Dead</button>
+		<% } %>
+		<% if (query.cursor) { %>
+		<input type="hidden" name="cursor" value="<%= query.cursor %>" readonly />
 		<% } %>
 	</form>
 </details>

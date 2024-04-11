@@ -2,7 +2,7 @@
 	<% for (const post of posts) { %>
 	<tr>
 		<td>
-			<% if (post.deletable) { %>
+			<% if (post.deletable) { /* TODO it would be nice to pass on query params */  %>
 			<form method="POST" action="posts/delete">
 				<button name="id" value="<%= post.id %>">Delete</button>
 			</form>
@@ -21,8 +21,9 @@
 	<% } %>
 </table>
 
-<% if (posts.cursor) { %>
+<% if (cursor) { %>
 <form>
-	<button name="cursor" value="<%= posts.cursor %>">Next Page</button>
+	<button name="cursor" value="<%= cursor %>">Next Page</button>
+	<input type="hidden" name="dead" value="<%= query.dead %>" readonly />
 </form>
 <% } %>
