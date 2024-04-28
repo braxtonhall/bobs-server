@@ -4,69 +4,104 @@ datasource db {
 }
 
 model Email {
-  id String @id @default(cuid())
-  address String @unique
-  confirmed Boolean @default(false)
-  subscribed Boolean @default(true)
-  admins Admin[]
-  posts Post[]
+  id          String       @id @default(cuid())
+  address     String       @unique
+  confirmed   Boolean      @default(false)
+  subscribed  Boolean      @default(true)
+  admin       Admin?
+  posts       Post[]
+  participant Participant? @relation("ParticipantEmail")
 }
 
 model Admin {
-  id Int @id @default(autoincrement())
-  email Email @relation(fields: [emailId], references: [id])
-  emailId String @unique
-  name String
-  boxes Box[]
+  id       Int       @id @default(autoincrement())
+  email    Email     @relation(fields: [emailId], references: [id])
+  emailId  String    @unique
+  name     String
+  boxes    Box[]
   counters Counter[]
 }
 
 model Box {
-  id String @id @default(cuid())
-  name String
-  origin String
-  owner Admin @relation(fields: [ownerId], references: [id])
+  id      String  @id @default(cuid())
+  name    String
+  origin  String
+  owner   Admin   @relation(fields: [ownerId], references: [id])
   ownerId Int
-  posts Post[]
+  posts   Post[]
   deleted Boolean @default(false)
 }
 
 model Counter {
-  id String @id @default(cuid())
-  name String
-  origin String
-  owner Admin @relation(fields: [ownerId], references: [id])
+  id      String @id @default(cuid())
+  name    String
+  origin  String
+  owner   Admin  @relation(fields: [ownerId], references: [id])
   ownerId Int
-  count Int @default(0)
+  count   Int    @default(0)
 }
 
 model Poster {
-  id Int @id @default(autoincrement())
-  ip String @unique
+  id    Int    @id @default(autoincrement())
+  ip    String @unique
   posts Post[]
-  karma Int @default(0)
+  karma Int    @default(0)
 }
 
 model Post {
-  id Int @id @default(autoincrement())
-  userId String @unique @default(cuid())
-  createdAt DateTime @default(now())
-  from String
-  dead Boolean @default(false)
-  content String
-  subscribed Boolean @default(true)
-  poster Poster @relation(fields: [posterId], references: [id])
-  posterId Int
-  email Email? @relation(fields: [emailId], references: [id])
-  emailId String?
-  box Box @relation(fields: [boxId], references: [id])
-  boxId String
-  children Post[] @relation("PostChildren")
-  parent Post? @relation("PostChildren", fields: [parentId], references: [id])
-  parentId Int?
+  id         Int      @id @default(autoincrement())
+  userId     String   @unique @default(cuid())
+  createdAt  DateTime @default(now())
+  from       String
+  dead       Boolean  @default(false)
+  content    String
+  subscribed Boolean  @default(true)
+  poster     Poster   @relation(fields: [posterId], references: [id])
+  posterId   Int
+  email      Email?   @relation(fields: [emailId], references: [id])
+  emailId    String?
+  box        Box      @relation(fields: [boxId], references: [id])
+  boxId      String
+  children   Post[]   @relation("PostChildren")
+  parent     Post?    @relation("PostChildren", fields: [parentId], references: [id])
+  parentId   Int?
+}
+
+model Season {
+  id         Int     @id @default(autoincrement())
+  name       String
+  entries    Entry[] @relation("SeasonEntries")
+  ruleCount  Int
+  signupOpen Boolean @default(true)
+}
+
+model Rule {
+  id              Int    @id @default(autoincrement())
+  text            String
+  entry           Entry  @relation("EntryRules", fields: [playlistEntryId], references: [id])
+  playlistEntryId Int
+}
+
+model Entry {
+  id            Int          @id @default(autoincrement())
+  season        Season       @relation("SeasonEntries", fields: [seasonId], references: [id])
+  seasonId      Int
+  recipient     Participant  @relation("RecipientEntries", fields: [recipientId], references: [id])
+  recipientId   Int
+  dj            Participant? @relation("DJEntries", fields: [djId], references: [id])
+  djId          Int?
+  rules         Rule[]       @relation("EntryRules")
+  submissionUrl String?
+}
+
+model Participant {
+  id               Int     @id @default(autoincrement())
+  recipientEntries Entry[] @relation("RecipientEntries")
+  djEntries        Entry[] @relation("DJEntries")
+  email            Email   @relation("ParticipantEmail", fields: [emailId], references: [id])
+  emailId          String  @unique
 }
 
 generator client {
   provider = "prisma-client-js"
 }
-
