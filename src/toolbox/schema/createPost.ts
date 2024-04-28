@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { emailSchema } from "./email";
-import { Option, None, Some } from "../types/option";
+import { Option, None, Some } from "../../types/option";
 
 export const createPostSchema = z.object({
 	from: z.string(),

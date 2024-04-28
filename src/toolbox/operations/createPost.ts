@@ -1,11 +1,11 @@
 import { CreatePost } from "../schema/createPost";
-import { Err, map, Result } from "../types/result";
+import { Err, map, Result } from "../../types/result";
 import posts from "../storage/posts";
 import posters from "../storage/posters";
 import emails from "../storage/emails";
-import { Failure } from "../types/failure";
-import { HashedString } from "../types/hashed";
-import { Some } from "../types/option";
+import { Failure } from "../../types/failure";
+import { HashedString } from "../../types/hashed";
+import { Some } from "../../types/option";
 import { match, P } from "ts-pattern";
 import { Post } from "../schema/post";
 

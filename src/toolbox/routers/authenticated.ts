@@ -2,8 +2,8 @@ import express, { Request, Response } from "express";
 import posts from "../storage/posts";
 import posters from "../storage/posters";
 import { match, P } from "ts-pattern";
-import { Err, Ok } from "../types/result";
-import { Failure } from "../types/failure";
+import { Err, Ok } from "../../types/result";
+import { Failure } from "../../types/failure";
 
 export const authenticated = express();
 

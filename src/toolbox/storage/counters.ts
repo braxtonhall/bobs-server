@@ -1,6 +1,6 @@
-import { db } from "./db";
+import { db } from "../../db";
 import { match, P } from "ts-pattern";
-import { None, Option, Some } from "../types/option";
+import { None, Option, Some } from "../../types/option";
 
 const updateAndGet = async (id: string): Promise<Option<number>> =>
 	match(

@@ -1,16 +1,16 @@
 import express from "express";
 import { getPosts } from "../operations/getPosts";
-import { hashString } from "../util";
+import { hashString } from "../../util";
 import { match, P } from "ts-pattern";
-import { Err, Ok } from "../types/result";
+import { Err, Ok } from "../../types/result";
 import bodyParser from "body-parser";
-import { parse } from "../schema/parse";
+import { parse } from "../../parse";
 import { createPostSchema } from "../schema/createPost";
 import { createPost } from "../operations/createPost";
 import { deletePost } from "../operations/deletePost";
-import { Failure } from "../types/failure";
+import { Failure } from "../../types/failure";
 import boxes from "../storage/boxes";
-import { Some } from "../types/option";
+import { Some } from "../../types/option";
 
 // TODO there is WAY too much repetition here... There must be a good way to get reuse a lot of code
 

@@ -1,15 +1,15 @@
 import express, { Request, Response, NextFunction } from "express";
 import { match, P } from "ts-pattern";
 import boxes from "../storage/boxes";
-import { Option, Some } from "../types/option";
+import { Option, Some } from "../../types/option";
 import { getPosts } from "../operations/getPosts";
-import { hashString } from "../util";
+import { hashString } from "../../util";
 import { createPostSchema } from "../schema/createPost";
-import { parse } from "../schema/parse";
-import { Err, Ok } from "../types/result";
+import { parse } from "../../parse";
+import { Err, Ok } from "../../types/result";
 import { createPost } from "../operations/createPost";
 import { deletePost } from "../operations/deletePost";
-import { Failure } from "../types/failure";
+import { Failure } from "../../types/failure";
 import counters from "../storage/counters";
 import bodyParser from "body-parser";
 

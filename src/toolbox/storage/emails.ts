@@ -1,5 +1,5 @@
-import { db } from "./db";
-import { None, Option, Some } from "../types/option";
+import { db } from "../../db";
+import { None, Option, Some } from "../../types/option";
 import { match, P } from "ts-pattern";
 
 export type Email = Awaited<ReturnType<typeof internalGet>>;

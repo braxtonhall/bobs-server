@@ -1,6 +1,6 @@
 import express from "express";
-import { unauthenticated } from "./routers/unauthenticated";
-import { authenticated } from "./routers/authenticated";
+import { unauthenticated as toolboxUnauthenticated } from "./toolbox/routers/unauthenticated";
+import { authenticated as toolboxAuthenticated } from "./toolbox/routers/authenticated";
 import https from "https";
 import fs from "fs/promises";
 import Config from "./Config";
@@ -15,7 +15,7 @@ export const app = express();
 //  on a site like embed.bobs-server.net/...
 // TODO would be great to also serve a javascript client
 
-app.use("/admin", authenticated).use("/", unauthenticated);
+app.use("/admin", toolboxAuthenticated).use("/", toolboxUnauthenticated);
 
 export const getServers = async () => ({
 	// TODO if request is not secure, you need to REDIRECT!!

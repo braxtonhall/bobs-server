@@ -1,9 +1,9 @@
-import { HashedString } from "../types/hashed";
+import { HashedString } from "../../types/hashed";
 import posts, { InternalPost } from "../storage/posts";
-import Config from "../Config";
+import Config from "../../Config";
 import { Post } from "../schema/post";
-import { Ok, Result } from "../types/result";
-import { Failure } from "../types/failure";
+import { Ok, Result } from "../../types/result";
+import { Failure } from "../../types/failure";
 import { match, P } from "ts-pattern";
 
 const getEarliestDeletableTime = () => Date.now() - Config.DELETION_TIME_MS;

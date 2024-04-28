@@ -1,5 +1,5 @@
-import { db } from "./db";
-import { HashedString } from "../types/hashed";
+import { db } from "../../db";
+import { HashedString } from "../../types/hashed";
 
 const getId = async (ip: HashedString): Promise<number> =>
 	db.poster

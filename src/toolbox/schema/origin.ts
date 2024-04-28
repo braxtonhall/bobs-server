@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { parse } from "./parse";
+import { parse } from "../../parse";
 
 export const originSchema = z
 	.string()

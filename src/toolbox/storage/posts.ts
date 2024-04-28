@@ -1,10 +1,10 @@
-import { db } from "./db";
-import { HashedString } from "../types/hashed";
-import Config from "../Config";
-import { None, Option, Some } from "../types/option";
-import { Ok, Err, Result } from "../types/result";
+import { db } from "../../db";
+import { HashedString } from "../../types/hashed";
+import Config from "../../Config";
+import { None, Option, Some } from "../../types/option";
+import { Ok, Err, Result } from "../../types/result";
 import { match, P } from "ts-pattern";
-import { Failure } from "../types/failure";
+import { Failure } from "../../types/failure";
 import boxes from "./boxes";
 
 type CreatePost = {

@@ -1,4 +1,4 @@
-import { HashedString } from "../types/hashed";
+import { HashedString } from "../../types/hashed";
 import posts from "../storage/posts";
 import posters from "../storage/posters";
 
