@@ -25,8 +25,8 @@ const pairEntries = (users: Entry[]): Pair[] => {
 	return pairs;
 };
 
-export const startGame = async (seasonId: number) => {
-	const result = await db.season.findUnique({ where: { id: seasonId }, select: { entries: true } });
+export const startGame = async (ownerId: number, seasonId: number) => {
+	const result = await db.season.findUnique({ where: { id: seasonId, ownerId }, select: { entries: true } });
 	if (result) {
 		const pairs = pairEntries(result.entries);
 		await db.$transaction(async (tx) => {
@@ -45,6 +45,6 @@ export const startGame = async (seasonId: number) => {
 		});
 		// TODO for each person, send a notification
 	} else {
-		throw new Error(`Season for id ${seasonId} does not exist`);
+		throw new Error(`Season for id ${seasonId} and owner ${ownerId} does not exist`);
 	}
 };

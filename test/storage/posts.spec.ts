@@ -1,5 +1,5 @@
-import { db } from "../../src/storage/db";
-import posts from "../../src/storage/posts";
+import { db } from "../../src/db";
+import posts from "../../src/toolbox/storage/posts";
 import { createTestData } from "../createTestData";
 import * as time from "jest-date-mock";
 import { randomUUID } from "crypto";
