@@ -25,26 +25,24 @@ const pairEntries = (users: Entry[]): Pair[] => {
 	return pairs;
 };
 
-export const startGame = async (ownerId: number, seasonId: number) => {
-	const result = await db.season.findUnique({ where: { id: seasonId, ownerId }, select: { entries: true } });
-	if (result) {
+export const startGame = async (ownerId: number, seasonId: number) =>
+	db.$transaction(async (tx) => {
+		const result = await db.season.findUnique({ where: { id: seasonId, ownerId }, select: { entries: true } });
+		if (!result) {
+			throw new Error(`Season for id ${seasonId} and owner ${ownerId} does not exist`);
+		}
 		const pairs = pairEntries(result.entries);
-		await db.$transaction(async (tx) => {
-			const season = await tx.season.update({
-				where: { id: seasonId, state: SeasonState.SIGN_UP },
-				data: { state: SeasonState.IN_PROGRESS },
-			});
-			if (season) {
-				const updates = pairs.map((pair) =>
-					tx.entry.update({ where: { id: pair.recipient.id }, data: { djId: pair.dj.djId } }),
-				);
-				return Promise.all(updates);
-			} else {
-				throw new Error(`Season ${seasonId} is not in progress`);
-			}
+		const season = await tx.season.update({
+			where: { id: seasonId, state: SeasonState.SIGN_UP },
+			data: { state: SeasonState.IN_PROGRESS },
 		});
-		// TODO for each person, send a notification
-	} else {
-		throw new Error(`Season for id ${seasonId} and owner ${ownerId} does not exist`);
-	}
-};
+		if (season) {
+			const updates = pairs.map((pair) =>
+				tx.entry.update({ where: { id: pair.recipient.id }, data: { djId: pair.dj.recipientId } }),
+			);
+			// TODO for each person, send a notification
+			return await Promise.all(updates);
+		} else {
+			throw new Error(`Season ${seasonId} is not in progress`);
+		}
+	});

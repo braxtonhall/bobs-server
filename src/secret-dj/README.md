@@ -11,3 +11,4 @@
 7. ~~Submit your playlist~~
 8. View your old games
 9. Get entries for some game
+10. End/Lock/Archive the game!
