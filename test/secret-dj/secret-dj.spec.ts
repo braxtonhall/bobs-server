@@ -6,18 +6,14 @@ import { updateRules } from "../../src/secret-dj/operations/updateRules";
 import { startGame } from "../../src/secret-dj/operations/startGame";
 import { getGamesForParticipant } from "../../src/secret-dj/operations/getGamesForParticipant";
 import { SeasonState } from "../../src/secret-dj/SeasonState";
+import { dropTables } from "../util";
 
 describe("Basic flow", () => {
 	let email: Awaited<ReturnType<typeof db.email.create>>;
 	let participant: Awaited<ReturnType<typeof db.participant.create>>;
 	let gameId: number;
 	beforeAll(async () => {
-		await db.rule.deleteMany();
-		await db.entry.deleteMany();
-		await db.season.deleteMany();
-		await db.participant.deleteMany();
-		await db.email.deleteMany();
-
+		await dropTables();
 		email = await db.email.create({
 			data: {
 				address: "secretdj@mailer.cool",

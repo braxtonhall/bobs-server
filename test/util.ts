@@ -1,7 +1,19 @@
-import { db } from "../src/storage/db";
-import boxes from "../src/storage/boxes";
-import posters from "../src/storage/posters";
+import { db } from "../src/db";
+import boxes from "../src/toolbox/storage/boxes";
+import posters from "../src/toolbox/storage/posters";
 import { hashString } from "../src/util";
+
+export const dropTables = async () => {
+	await db.post.deleteMany();
+	await db.poster.deleteMany();
+	await db.box.deleteMany();
+	await db.admin.deleteMany();
+	await db.rule.deleteMany();
+	await db.entry.deleteMany();
+	await db.season.deleteMany();
+	await db.participant.deleteMany();
+	await db.email.deleteMany();
+};
 
 export function createTestData(address: string): Promise<{ boxId: string }>;
 export function createTestData(address: string, poster: string): Promise<{ boxId: string; posterId: number }>;

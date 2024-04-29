@@ -1,4 +1,15 @@
 -- CreateTable
+CREATE TABLE "Token" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "type" TEXT NOT NULL,
+    "emailId" TEXT NOT NULL,
+    "temporaryToken" TEXT,
+    "valid" BOOLEAN NOT NULL DEFAULT true,
+    "expiration" DATETIME NOT NULL,
+    CONSTRAINT "Token_emailId_fkey" FOREIGN KEY ("emailId") REFERENCES "Email" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
 CREATE TABLE "Season" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "ownerId" INTEGER NOT NULL,
@@ -34,6 +45,9 @@ CREATE TABLE "Participant" (
     "emailId" TEXT NOT NULL,
     CONSTRAINT "Participant_emailId_fkey" FOREIGN KEY ("emailId") REFERENCES "Email" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Token_temporaryToken_key" ON "Token"("temporaryToken");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Participant_emailId_key" ON "Participant"("emailId");

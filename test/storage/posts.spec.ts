@@ -1,6 +1,6 @@
 import { db } from "../../src/db";
 import posts from "../../src/toolbox/storage/posts";
-import { createTestData } from "../createTestData";
+import { createTestData, dropTables } from "../util";
 import * as time from "jest-date-mock";
 import { randomUUID } from "crypto";
 import { Err, Ok, unsafeUnwrap } from "../../src/types/result";
@@ -15,10 +15,7 @@ describe("posts", () => {
 	let info: { boxId: string; posterId: number };
 
 	beforeAll(async () => {
-		await db.post.deleteMany();
-		await db.poster.deleteMany();
-		await db.box.deleteMany();
-		await db.admin.deleteMany();
+		await dropTables();
 		info = await createTestData(ownerEmail, posterIp);
 	});
 	beforeEach(time.clear);

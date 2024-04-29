@@ -16,6 +16,10 @@ const numberWithDefault = (defaultValue: number) => (key: string) =>
 const environmentSchema = {
 	SSL_CERT_PATH: requiredString,
 	SSL_KEY_PATH: requiredString,
+	SENDGRID_API_KEY: requiredString,
+	JWT_SECRET: requiredString,
+	TEMP_TOKEN_EXPIRATION_MIN: numberWithDefault(10),
+	API_TOKEN_EXPIRATION_HOURS: numberWithDefault(12),
 	HTTP_PORT: numberWithDefault(80),
 	HTTPS_PORT: numberWithDefault(443),
 	DEFAULT_PAGE_SIZE: numberWithDefault(20),

@@ -11,6 +11,17 @@ model Email {
   admin       Admin?
   posts       Post[]
   participant Participant? @relation("ParticipantEmail")
+  tokens      Token[]
+}
+
+model Token {
+  id             Int      @id @default(autoincrement())
+  email          Email    @relation(fields: [emailId], references: [id])
+  type           String
+  emailId        String
+  temporaryToken String?  @unique
+  valid          Boolean  @default(true)
+  expiration     DateTime
 }
 
 model Admin {
@@ -68,13 +79,13 @@ model Post {
 }
 
 model Season {
-  id            Int         @id @default(autoincrement())
-  owner         Participant @relation("SeasonOwner", fields: [ownerId], references: [id])
-  ownerId       Int
-  name          String
-  entries       Entry[]     @relation("SeasonEntries")
-  ruleCount     Int
-  state         String      @default("sign-up")
+  id        Int         @id @default(autoincrement())
+  owner     Participant @relation("SeasonOwner", fields: [ownerId], references: [id])
+  ownerId   Int
+  name      String
+  entries   Entry[]     @relation("SeasonEntries")
+  ruleCount Int
+  state     String      @default("sign-up")
 }
 
 model Rule {
