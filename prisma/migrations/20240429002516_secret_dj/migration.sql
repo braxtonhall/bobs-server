@@ -1,9 +1,11 @@
 -- CreateTable
 CREATE TABLE "Season" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "ownerId" INTEGER NOT NULL,
     "name" TEXT NOT NULL,
     "ruleCount" INTEGER NOT NULL,
-    "signupOpen" BOOLEAN NOT NULL DEFAULT true
+    "state" TEXT NOT NULL DEFAULT 'sign-up',
+    CONSTRAINT "Season_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "Participant" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable

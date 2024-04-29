@@ -68,11 +68,13 @@ model Post {
 }
 
 model Season {
-  id         Int     @id @default(autoincrement())
-  name       String
-  entries    Entry[] @relation("SeasonEntries")
-  ruleCount  Int
-  state String @default("sign-up")
+  id            Int         @id @default(autoincrement())
+  owner         Participant @relation("SeasonOwner", fields: [ownerId], references: [id])
+  ownerId       Int
+  name          String
+  entries       Entry[]     @relation("SeasonEntries")
+  ruleCount     Int
+  state         String      @default("sign-up")
 }
 
 model Rule {
@@ -95,11 +97,12 @@ model Entry {
 }
 
 model Participant {
-  id               Int     @id @default(autoincrement())
-  recipientEntries Entry[] @relation("RecipientEntries")
-  djEntries        Entry[] @relation("DJEntries")
-  email            Email   @relation("ParticipantEmail", fields: [emailId], references: [id])
-  emailId          String  @unique
+  id               Int      @id @default(autoincrement())
+  ownedSeasons     Season[] @relation("SeasonOwner")
+  recipientEntries Entry[]  @relation("RecipientEntries")
+  djEntries        Entry[]  @relation("DJEntries")
+  email            Email    @relation("ParticipantEmail", fields: [emailId], references: [id])
+  emailId          String   @unique
 }
 
 generator client {

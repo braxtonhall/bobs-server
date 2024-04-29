@@ -1,6 +1,6 @@
 import { db } from "../../db";
 
-export const enrolInGame = async (seasonId: number, recipientId: number, rules: string[]) => {
+export const enrolInGame = async (seasonId: number, recipientId: number, rules: string[]) =>
 	db.$transaction(async (tx) => {
 		const gameResult = await tx.season.findUnique({
 			where: {
@@ -42,12 +42,9 @@ export const enrolInGame = async (seasonId: number, recipientId: number, rules: 
 					text: rule,
 					playlistEntryId: entryId,
 				},
-				select: {
-					id: true,
-				},
+				select: {},
 			}),
 		);
 
 		await Promise.all(rulePromises);
 	});
-};
