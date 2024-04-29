@@ -7,7 +7,7 @@ type Environment = {
 	playlist: string;
 };
 
-const submitPlaylist = async ({ season, dj, playlist }: Environment) => {
+export const submitPlaylist = async ({ season, dj, playlist }: Environment) => {
 	const entry = await db.entry.findFirst({
 		where: {
 			seasonId: season,
@@ -23,14 +23,14 @@ const submitPlaylist = async ({ season, dj, playlist }: Environment) => {
 		},
 	});
 	if (entry === null) {
-		// TODO
-	} else if (entry.season.state !== SeasonState.IN_PROGRESS)
-		if (entry) {
-			await db.entry.update({
-				where: { id: entry.id },
-				data: { submissionUrl: playlist },
-			});
-		} else {
-			// TODO
-		}
+		throw new Error(`Entry for season id ${season} does not exist`);
+	}
+	const result = await db.entry.update({
+		where: { id: entry.id, season: { state: SeasonState.IN_PROGRESS } },
+		data: { submissionUrl: playlist },
+		select: {},
+	});
+	if (result === null) {
+		throw new Error(`Season ${season} is not in progress and cannot be updated`);
+	}
 };
