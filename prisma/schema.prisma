@@ -72,7 +72,7 @@ model Season {
   name       String
   entries    Entry[] @relation("SeasonEntries")
   ruleCount  Int
-  signupOpen Boolean @default(true)
+  state String @default("sign-up")
 }
 
 model Rule {
