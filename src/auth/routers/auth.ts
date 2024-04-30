@@ -85,6 +85,9 @@ authRouter.post("/authenticate", async (req, res) =>
 				},
 			}));
 
+		// TODO... should we just delete this?
+		//  It might be nice to keep it around a while so we
+		//  can have a nicer error message
 		await tx.token.update({
 			where: { id: token.id },
 			data: { valid: false },
