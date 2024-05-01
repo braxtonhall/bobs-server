@@ -15,7 +15,7 @@ export const enrolInGame = async (seasonId: number, recipientId: number, rules: 
 
 		if (!gameResult) {
 			throw new Error(`Season ${seasonId} does not exist`);
-		} else if (rules.length != gameResult.ruleCount) {
+		} else if (rules.length !== gameResult.ruleCount) {
 			throw new Error(`Sign up requires rules list to have length ${gameResult.ruleCount}`);
 		}
 
@@ -25,6 +25,7 @@ export const enrolInGame = async (seasonId: number, recipientId: number, rules: 
 				recipientId,
 			},
 		});
+
 		if (existingEntry) {
 			throw new Error("Entry already exists for this user and season");
 		}
@@ -40,7 +41,7 @@ export const enrolInGame = async (seasonId: number, recipientId: number, rules: 
 		});
 
 		if (!entryResult) {
-			throw new Error("bad");
+			throw new Error(`Error creating entry for participant ${recipientId} and season ${seasonId}`);
 		}
 
 		const entryId = entryResult.id;
