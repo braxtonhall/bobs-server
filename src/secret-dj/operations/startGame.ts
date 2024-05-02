@@ -25,9 +25,14 @@ const pairEntries = (users: Entry[]): Pair[] => {
 	return pairs;
 };
 
-export const startGame = async (ownerId: number, seasonId: number) =>
+type Environment = {
+	ownerId: number;
+	seasonId: number;
+};
+
+export const startGame = async ({ ownerId, seasonId }: Environment): Promise<Entry[]> =>
 	db.$transaction(async (tx) => {
-		const result = await db.season.findUnique({ where: { id: seasonId, ownerId }, select: { entries: true } });
+		const result = await tx.season.findUnique({ where: { id: seasonId, ownerId }, select: { entries: true } });
 		if (!result) {
 			throw new Error(`Season for id ${seasonId} and owner ${ownerId} does not exist`);
 		}

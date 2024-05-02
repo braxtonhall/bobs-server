@@ -8,6 +8,7 @@ export const getActiveGames = () =>
 			entries: {
 				select: {
 					id: true,
+					recipient: { select: { name: true } },
 					rules: {
 						select: {
 							text: true,

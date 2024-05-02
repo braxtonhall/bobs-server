@@ -7,7 +7,7 @@ type Environment = {
 	playlist: string;
 };
 
-export const submitPlaylist = async ({ season, dj, playlist }: Environment) => {
+export const submitPlaylist = async ({ season, dj, playlist }: Environment): Promise<void> => {
 	const entry = await db.entry.findFirst({
 		where: {
 			seasonId: season,

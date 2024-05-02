@@ -43,6 +43,7 @@ CREATE TABLE "Entry" (
 CREATE TABLE "Participant" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "emailId" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
     CONSTRAINT "Participant_emailId_fkey" FOREIGN KEY ("emailId") REFERENCES "Email" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 

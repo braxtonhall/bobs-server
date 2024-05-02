@@ -1,6 +1,11 @@
+import { Entry } from "@prisma/client";
 import { db } from "../../db";
 
-export const getAllEntriesForGame = async (seasonId: number) => {
+type Environment = {
+	seasonId: number;
+};
+
+export const getAllEntriesForGame = async ({ seasonId }: Environment): Promise<Entry[]> => {
 	const entries = await db.entry.findMany({
 		where: {
 			seasonId,

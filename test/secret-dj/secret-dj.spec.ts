@@ -7,6 +7,7 @@ import { startGame } from "../../src/secret-dj/operations/startGame";
 import { getGamesForParticipant } from "../../src/secret-dj/operations/getGamesForParticipant";
 import { SeasonState } from "../../src/secret-dj/SeasonState";
 import { dropTables } from "../util";
+import { createParticipant } from "../../src/secret-dj/operations/createParticipant";
 
 describe("Basic flow", () => {
 	let email: Awaited<ReturnType<typeof db.email.create>>;
@@ -19,24 +20,21 @@ describe("Basic flow", () => {
 				address: "secretdj@mailer.cool",
 			},
 		});
-		participant = await db.participant.create({
-			data: {
-				emailId: email.id,
-			},
-		});
+		participant = await createParticipant({ emailId: email.id, name: "bob" });
 	});
 
 	it("participant games should reject if does not exist", () =>
-		expect(getGamesForParticipant(participant.id + 1)).rejects.toThrow());
+		expect(getGamesForParticipant({ participantId: participant.id + 1 })).rejects.toThrow());
 
 	it("participant games should begin empty", async () =>
-		expect(await getGamesForParticipant(participant.id)).toEqual({
+		expect(await getGamesForParticipant({ participantId: participant.id })).toEqual({
 			recipientEntries: [],
 			djEntries: [],
 			ownedSeasons: [],
 		}));
 
-	it("should not yet be possible to start a game", () => expect(startGame(participant.id, 0)).rejects.toThrow());
+	it("should not yet be possible to start a game", () =>
+		expect(startGame({ ownerId: participant.id, seasonId: 0 })).rejects.toThrow());
 
 	it("should be able to create a game", async () => {
 		gameId = await createGame("sdj 2024", 2, participant.id);
@@ -49,26 +47,34 @@ describe("Basic flow", () => {
 	});
 
 	it("participant games should include created game", async () =>
-		expect(await getGamesForParticipant(participant.id)).toEqual({
+		expect(await getGamesForParticipant({ participantId: participant.id })).toEqual({
 			recipientEntries: [],
 			djEntries: [],
 			ownedSeasons: [{ id: expect.any(Number), name: "sdj 2024", state: SeasonState.SIGN_UP, ruleCount: 2 }],
 		}));
 
 	it("should not allow you to update rules if you have not signed up yet", () =>
-		expect(updateRules(gameId, participant.id, ["foo", "bar"])).rejects.toThrow());
+		expect(
+			updateRules({ seasonId: gameId, recipientId: participant.id, rules: ["foo", "bar"] }),
+		).rejects.toThrow());
 
 	it("should require that a game exists", () =>
-		expect(enrolInGame(gameId + 1, participant.id, ["foo", "bar"])).rejects.toThrow());
+		expect(
+			enrolInGame({ seasonId: gameId + 1, recipientId: participant.id, rules: ["foo", "bar"] }),
+		).rejects.toThrow());
 
 	it("should require that a participant exists", () =>
-		expect(enrolInGame(gameId, participant.id + 1, ["foo", "bar"])).rejects.toThrow());
+		expect(
+			enrolInGame({ seasonId: gameId, recipientId: participant.id + 1, rules: ["foo", "bar"] }),
+		).rejects.toThrow());
 
 	it("should enforce rule count", () =>
-		expect(enrolInGame(gameId, participant.id, ["foo", "bar", "baz"])).rejects.toThrow());
+		expect(
+			enrolInGame({ seasonId: gameId, recipientId: participant.id, rules: ["foo", "bar", "baz"] }),
+		).rejects.toThrow());
 
 	it("should be able to sign up for a game", async () => {
-		await enrolInGame(gameId, participant.id, ["foo", "bar"]);
+		await enrolInGame({ seasonId: gameId, recipientId: participant.id, rules: ["foo", "bar"] });
 	});
 
 	it("should now show up in the list of games", async () => {
@@ -79,7 +85,9 @@ describe("Basic flow", () => {
 				entries: [
 					{
 						id: expect.any(Number),
-						// TODO there should be... a name?
+						recipient: {
+							name: "bob",
+						},
 						rules: [{ text: "foo" }, { text: "bar" }],
 					},
 				],
@@ -89,7 +97,7 @@ describe("Basic flow", () => {
 	});
 
 	it("participant games should include signed up for entry", async () =>
-		expect(await getGamesForParticipant(participant.id)).toEqual({
+		expect(await getGamesForParticipant({ participantId: participant.id })).toEqual({
 			recipientEntries: [
 				{
 					id: expect.any(Number),
@@ -103,10 +111,12 @@ describe("Basic flow", () => {
 		}));
 
 	it("should not allow signing up for the game again", () =>
-		expect(enrolInGame(gameId, participant.id, ["foo", "bar"])).rejects.toThrow());
+		expect(
+			enrolInGame({ seasonId: gameId, recipientId: participant.id, rules: ["foo", "bar"] }),
+		).rejects.toThrow());
 
 	it("should allow one to edit their rules", async () => {
-		await updateRules(gameId, participant.id, ["baz", "qux"]);
+		await updateRules({ seasonId: gameId, recipientId: participant.id, rules: ["baz", "qux"] });
 		const games = await getActiveGames();
 		expect(games).toEqual([
 			{
@@ -114,7 +124,9 @@ describe("Basic flow", () => {
 				entries: [
 					{
 						id: expect.any(Number),
-						// TODO there should be... a name?
+						recipient: {
+							name: "bob",
+						},
 						rules: [{ text: "baz" }, { text: "qux" }],
 					},
 				],
@@ -124,20 +136,23 @@ describe("Basic flow", () => {
 	});
 
 	it("should not be able to start the game if not the correct owner", () =>
-		expect(startGame(participant.id + 1, gameId)).rejects.toThrow());
+		expect(startGame({ ownerId: participant.id + 1, seasonId: gameId })).rejects.toThrow());
 
 	it("should be able to start the game", async () => {
-		await startGame(participant.id, gameId);
+		await startGame({ ownerId: participant.id, seasonId: gameId });
 		expect(await getActiveGames()).toEqual([]);
 	});
 
-	it("should not be able to start the game again", () => expect(startGame(participant.id, gameId)).rejects.toThrow());
+	it("should not be able to start the game again", () =>
+		expect(startGame({ ownerId: participant.id, seasonId: gameId })).rejects.toThrow());
 
 	it("should no longer be possible to edit rules", () =>
-		expect(updateRules(gameId, participant.id, ["foo", "bar"])).rejects.toThrow());
+		expect(
+			updateRules({ seasonId: gameId, recipientId: participant.id, rules: ["foo", "bar"] }),
+		).rejects.toThrow());
 
 	it("participant games should include signed up for entry", async () =>
-		expect(await getGamesForParticipant(participant.id)).toEqual({
+		expect(await getGamesForParticipant({ participantId: participant.id })).toEqual({
 			recipientEntries: [
 				{
 					id: expect.any(Number),
@@ -157,3 +172,5 @@ describe("Basic flow", () => {
 			ownedSeasons: [{ id: expect.any(Number), name: "sdj 2024", state: SeasonState.IN_PROGRESS, ruleCount: 2 }],
 		}));
 });
+
+describe("multiple users flow", () => {});

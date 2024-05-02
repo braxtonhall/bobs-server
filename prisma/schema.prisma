@@ -114,6 +114,7 @@ model Participant {
   djEntries        Entry[]  @relation("DJEntries")
   email            Email    @relation("ParticipantEmail", fields: [emailId], references: [id])
   emailId          String   @unique
+  name             String
 }
 
 generator client {

@@ -1,6 +1,10 @@
 import { db } from "../../db";
 
-export const getGamesForParticipant = async (participantId: number) => {
+type Environment = {
+	participantId: number;
+};
+
+export const getGamesForParticipant = async ({ participantId }: Environment) => {
 	const entries = await db.participant.findFirst({
 		where: {
 			id: participantId,

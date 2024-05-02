@@ -1,7 +1,13 @@
 import { db } from "../../db";
 import { SeasonState } from "../SeasonState";
 
-export const updateRules = (seasonId: number, recipientId: number, rules: string[]) =>
+type Environment = {
+	seasonId: number;
+	recipientId: number;
+	rules: string[];
+};
+
+export const updateRules = ({ seasonId, recipientId, rules }: Environment) =>
 	db.$transaction(async (tx) => {
 		const result = await tx.season.findUnique({
 			where: {

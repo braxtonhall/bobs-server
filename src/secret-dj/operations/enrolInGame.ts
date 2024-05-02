@@ -1,7 +1,13 @@
 import { db } from "../../db";
 import { SeasonState } from "../SeasonState";
 
-export const enrolInGame = async (seasonId: number, recipientId: number, rules: string[]): Promise<void> =>
+type Environment = {
+	seasonId: number;
+	recipientId: number;
+	rules: string[];
+};
+
+export const enrolInGame = async ({ seasonId, recipientId, rules }: Environment): Promise<void> =>
 	db.$transaction(async (tx) => {
 		const gameResult = await tx.season.findUnique({
 			where: {
