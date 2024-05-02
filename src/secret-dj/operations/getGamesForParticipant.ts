@@ -1,4 +1,5 @@
 import { db } from "../../db";
+import { SeasonState } from "../SeasonState";
 
 type Environment = {
 	participantId: number;
@@ -14,6 +15,11 @@ export const getGamesForParticipant = async ({ participantId }: Environment) => 
 				select: {
 					id: true,
 					seasonId: true,
+					season: {
+						select: {
+							state: true,
+						},
+					},
 					submissionUrl: true, // TODO we don't want this if the game is IN_PROGRESS
 					rules: {
 						select: {
@@ -49,5 +55,20 @@ export const getGamesForParticipant = async ({ participantId }: Environment) => 
 		throw new Error("Participant does not exist");
 	}
 
-	return entries;
+	const filteredRecipientEntries = entries.recipientEntries.map((entry) => {
+		if (entry.season.state !== SeasonState.ENDED) {
+			return {
+				...entry,
+				// rm submission URL from response if game is in progress
+				submissionUrl: null,
+			};
+		}
+
+		return entry;
+	});
+
+	return {
+		...entries,
+		recipientEntries: filteredRecipientEntries,
+	};
 };

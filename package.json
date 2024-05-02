@@ -38,7 +38,7 @@
 		"db:migrate": "prisma migrate dev",
 		"db:deploy": "prisma migrate deploy",
 		"prepare": "husky",
-		"test": "jest -i",
+		"test": "jest --coverage=false -i",
 		"build": "tsc",
 		"formatting": "prettier . --check && eslint ."
 	},

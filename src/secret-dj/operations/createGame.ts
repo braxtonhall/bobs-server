@@ -1,6 +1,12 @@
 import { db } from "../../db";
 
-export const createGame = async (name: string, ruleCount: number, ownerId: number): Promise<number> => {
+type Environment = {
+	name: string;
+	ruleCount: number;
+	ownerId: number;
+};
+
+export const createGame = async ({ name, ruleCount, ownerId }: Environment): Promise<number> => {
 	if (ruleCount < 1) {
 		throw new Error("Rule count must be equal to or greater than 1");
 	}

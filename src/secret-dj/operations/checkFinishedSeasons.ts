@@ -1,7 +1,7 @@
 import { Entry } from "@prisma/client";
-import { db } from "../../../db";
-import { SeasonState } from "../../SeasonState";
-import { getAllEntriesForGame } from "../getAllEntriesForGame";
+import { db } from "../../db";
+import { getAllEntriesForGame } from "./getAllEntriesForGame";
+import { SeasonState } from "../SeasonState";
 
 export const checkFinishedSeasons = async () => {
 	const inProgressGames = await db.season.findMany({
@@ -47,10 +47,3 @@ const endSeason = async (seasonId: number) => {
 	});
 	return updatedSeason;
 };
-
-const FOUR_HOURS = 4 * 60 * 60 * 1000;
-
-// assumes the server will be up for at least 4 hours
-setInterval(() => {
-	checkFinishedSeasons();
-}, FOUR_HOURS);
