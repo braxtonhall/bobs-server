@@ -89,7 +89,6 @@
 		"express-subdomain": "^1.0.6",
 		"jsonwebtoken": "^9.0.2",
 		"luxon": "^3.4.4",
-		"node-cron": "^3.0.3",
 		"passport": "^0.7.0",
 		"passport-magic-link": "^2.1.0",
 		"prisma": "^5.10.2",
