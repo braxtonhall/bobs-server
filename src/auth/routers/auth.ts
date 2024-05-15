@@ -7,42 +7,33 @@ import { Token } from "@prisma/client";
 import { TokenType } from "../TokenType";
 import { DateTime } from "luxon";
 
-const authRouter = express.Router();
-
-authRouter.post("/login", async (req, res) =>
-	db
-		.$transaction(async (tx) => {
-			const { email: address } = req.body as { email: string }; // TODO use a schema/parser
-			const temporaryToken = randomUUID();
-			await tx.token.create({
-				data: {
-					type: TokenType.TEMP,
-					temporaryToken,
-					expiration: DateTime.now().plus({ minute: Config.TEMP_TOKEN_EXPIRATION_MIN }).toJSDate(),
-					email: {
-						connectOrCreate: {
-							where: { address },
-							create: { address },
-						},
-					},
-				},
-			});
-			// TODO send temporaryToken to user's email address
-		})
-		.then(() => res.sendStatus(200))
-		.catch(() => res.sendStatus(400)),
-);
-
 const isValid = (
 	token: (Token & { email: { address: string } }) | null,
 	address: string,
 ): token is NonNullable<typeof token> =>
 	token !== null && token.valid && token.expiration >= new Date() && token.email.address === address;
 
-authRouter.post("/authenticate", async (req, res) =>
+const login = ({ email: address }: { email: string }) =>
 	db.$transaction(async (tx) => {
-		const { email: address, temporaryToken } = req.body as { email: string; temporaryToken: string }; // TODO use a schema/parser
+		const temporaryToken = randomUUID();
+		await tx.token.create({
+			data: {
+				type: TokenType.TEMP,
+				temporaryToken,
+				expiration: DateTime.now().plus({ minute: Config.TEMP_TOKEN_EXPIRATION_MIN }).toJSDate(),
+				email: {
+					connectOrCreate: {
+						where: { address },
+						create: { address },
+					},
+				},
+			},
+		});
+		// TODO send temporaryToken to user's email address
+	});
 
+const authenticate = ({ email: address, temporaryToken }: { email: string; temporaryToken: string }): Promise<string> =>
+	db.$transaction(async (tx) => {
 		const token = await tx.token.findUnique({
 			where: {
 				type: TokenType.TEMP,
@@ -60,7 +51,7 @@ authRouter.post("/authenticate", async (req, res) =>
 
 		if (!isValid(token, address)) {
 			// TODO if invalid (and exists), just delete the token
-			return res.sendStatus(401);
+			throw new Error("Token is not valid");
 		}
 
 		const apiToken = await tx.token.create({
@@ -93,8 +84,26 @@ authRouter.post("/authenticate", async (req, res) =>
 			data: { valid: false },
 		});
 
-		return res.json({ token: encode(apiToken.id) });
-	}),
+		return encode(apiToken.id);
+	});
+
+const authRouter = express.Router();
+
+authRouter.post("/authenticate", async (req, res) => {
+	try {
+		// TODO this should only apply to api.bobs-server.net
+		//  and instead should use a COOKIE if part of the website view
+		const token = await authenticate(req.body as { email: string; temporaryToken: string }); // TODO use a schema/parser
+		return res.json({ token });
+	} catch {
+		return res.sendStatus(401);
+	}
+});
+
+authRouter.post("/login", async (req, res) =>
+	login(req.body as { email: string })
+		.then(() => res.sendStatus(200))
+		.catch(() => res.sendStatus(400)),
 );
 
 export { authRouter };
