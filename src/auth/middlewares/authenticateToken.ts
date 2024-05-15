@@ -15,3 +15,9 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
 		return res.sendStatus(401);
 	}
 };
+
+const authenticateCookie = async (req: Request, res: Response, next: NextFunction) => {
+	// TODO add cookie parser
+	// const req.cookies['']
+	// res.cookie('cookieName', 'cookieValue', { sameSite: 'none', secure: true})
+};
