@@ -1,11 +1,10 @@
-import express from "express";
+import { Email, Token } from "@prisma/client";
+import { decode, encode } from "./token";
+import { db } from "../db";
+import { TokenType } from "./TokenType";
 import { randomUUID } from "crypto";
-import Config from "../../Config";
-import { encode } from "../token";
-import { db } from "../../db";
-import { Token } from "@prisma/client";
-import { TokenType } from "../TokenType";
 import { DateTime } from "luxon";
+import Config from "../Config";
 
 const isValid = (
 	token: (Token & { email: { address: string } }) | null,
@@ -13,7 +12,7 @@ const isValid = (
 ): token is NonNullable<typeof token> =>
 	token !== null && token.valid && token.expiration >= new Date() && token.email.address === address;
 
-const login = ({ email: address }: { email: string }) =>
+export const login = ({ email: address }: { email: string }) =>
 	db.$transaction(async (tx) => {
 		const temporaryToken = randomUUID();
 		await tx.token.create({
@@ -32,7 +31,13 @@ const login = ({ email: address }: { email: string }) =>
 		// TODO send temporaryToken to user's email address
 	});
 
-const authenticate = ({ email: address, temporaryToken }: { email: string; temporaryToken: string }): Promise<string> =>
+export const authorize = ({
+	email: address,
+	temporaryToken,
+}: {
+	email: string;
+	temporaryToken: string;
+}): Promise<string> =>
 	db.$transaction(async (tx) => {
 		const token = await tx.token.findUnique({
 			where: {
@@ -87,23 +92,17 @@ const authenticate = ({ email: address, temporaryToken }: { email: string; tempo
 		return encode(apiToken.id);
 	});
 
-const authRouter = express.Router();
+export const authenticate = async (token: string): Promise<Email> => {
+	const tokenId = decode(token);
+	const dbToken = await db.token.findUnique({
+		where: { id: tokenId, type: TokenType.JWT },
+		include: { email: true },
+	});
 
-authRouter.post("/authenticate", async (req, res) => {
-	try {
-		// TODO this should only apply to api.bobs-server.net
-		//  and instead should use a COOKIE if part of the website view
-		const token = await authenticate(req.body as { email: string; temporaryToken: string }); // TODO use a schema/parser
-		return res.json({ token });
-	} catch {
-		return res.sendStatus(401);
+	if (dbToken === null || !dbToken.valid || dbToken.expiration < new Date()) {
+		// TODO if invalid, just delete the token
+		throw new Error("Token is not valid");
+	} else {
+		return dbToken.email;
 	}
-});
-
-authRouter.post("/login", async (req, res) =>
-	login(req.body as { email: string })
-		.then(() => res.sendStatus(200))
-		.catch(() => res.sendStatus(400)),
-);
-
-export { authRouter };
+};
