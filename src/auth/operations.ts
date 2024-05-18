@@ -28,6 +28,7 @@ export const login = ({ email: address }: { email: string }) =>
 				},
 			},
 		});
+		console.log({ address, temporaryToken });
 		// TODO send temporaryToken to user's email address
 	});
 
@@ -105,4 +106,13 @@ export const authenticate = async (token: string): Promise<Email> => {
 	} else {
 		return dbToken.email;
 	}
+};
+
+export const deauthenticate = async (token: string): Promise<void> => {
+	const tokenId = decode(token);
+	await db.token.update({
+		where: { id: tokenId, type: TokenType.JWT },
+		include: { email: true },
+		data: { valid: false },
+	});
 };

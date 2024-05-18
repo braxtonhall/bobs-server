@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<%- include('../partials/head'); %>
+	</head>
+	<body>
+		<header>
+			<%- include('../partials/header'); %>
+		</header>
+
+		<main>
+			<div>
+				<h1>Authorize</h1>
+				<form class="authorize-form" action="/authorize">
+					<label for="email" class="email-label">Email</label>
+					<input class="email-input" id="email" name="email" required value="<%= email ?? '' %>" />
+
+					<label for="token" class="token-label">Token</label>
+					<input class="token-input" id="token" name="token" required />
+
+					<button class="login-submit">Submit</button>
+				</form>
+			</div>
+		</main>
+	</body>
+</html>

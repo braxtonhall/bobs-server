@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<%- include('../partials/head'); %>
+	</head>
+	<body>
+		<header>
+			<%- include('../partials/header'); %>
+		</header>
+
+		<main>
+			<div>
+				<h1>Login</h1>
+				<form class="login-form" method="POST" action="/login">
+					<label for="email" class="email-label">Email</label>
+					<input class="email-input" id="email" name="email" required />
+
+					<button class="login-submit">Submit</button>
+				</form>
+			</div>
+		</main>
+	</body>
+</html>
