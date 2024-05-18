@@ -16,7 +16,7 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
 	}
 };
 
-const authenticateCookie = async (req: Request, res: Response, next: NextFunction) => {
+export const authenticateCookie = async (_req: Request, _res: Response, _next: NextFunction) => {
 	// TODO add cookie parser
 	// const req.cookies['']
 	// res.cookie('cookieName', 'cookieValue', { sameSite: 'none', secure: true})

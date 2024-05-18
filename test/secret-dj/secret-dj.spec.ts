@@ -220,9 +220,8 @@ describe("multiple users flow", () => {
 			djEntries: [],
 		});
 	});
-	it("non-existent participants can't create games", async () => {
-		expect(createGame({ name: "awesomesauce", ruleCount: 1, ownerId: 9999 })).rejects.toThrow();
-	});
+	it("non-existent participants can't create games", async () =>
+		expect(createGame({ name: "awesomesauce", ruleCount: 1, ownerId: 9999 })).rejects.toThrow());
 	it("owner can delete game after creating", async () => {
 		const mistakenlyCreatedSeasonId = await createGame({
 			name: "asdf",
@@ -333,9 +332,8 @@ describe("multiple users flow", () => {
 			djEntries: [],
 		});
 	});
-	it("edited rules must still adhere to rule count", async () => {
-		expect(updateRules({ seasonId, recipientId: participantA.id, rules: ["a", "b", "c"] })).rejects.toThrow();
-	});
+	it("edited rules must still adhere to rule count", async () =>
+		expect(updateRules({ seasonId, recipientId: participantA.id, rules: ["a", "b", "c"] })).rejects.toThrow());
 	it("participants can edit their rule sets arbitrarily", async () => {
 		await updateRules({ seasonId, recipientId: participantA.id, rules: ["new updated rule"] });
 		const gamesForA = await getGamesForParticipant({ participantId: participantA.id });
@@ -456,9 +454,8 @@ describe("multiple users flow", () => {
 			],
 		});
 	});
-	it("owner can NO LONGER delete game after starting", () => {
-		expect(deleteGame({ seasonId, ownerId: ownerParticipant.id })).rejects.toThrow();
-	});
+	it("owner can NO LONGER delete game after starting", () =>
+		expect(deleteGame({ seasonId, ownerId: ownerParticipant.id })).rejects.toThrow());
 	it("participants can submit their playlist submissions", async () => {
 		await submitPlaylist({
 			seasonId,
@@ -687,12 +684,10 @@ describe("multiple users flow", () => {
 			],
 		});
 	});
-	it("participants can no longer edit their playlist submissions", async () => {
+	it("participants can no longer edit their playlist submissions", async () =>
 		expect(
 			submitPlaylist({ seasonId, djId: participantA.id, playlistUrl: "https://puginarug.com/" }),
-		).rejects.toThrow();
-	});
-	it("owner can still not delete the game", () => {
-		expect(deleteGame({ seasonId, ownerId: ownerParticipant.id })).rejects.toThrow();
-	});
+		).rejects.toThrow());
+	it("owner can still not delete the game", () =>
+		expect(deleteGame({ seasonId, ownerId: ownerParticipant.id })).rejects.toThrow());
 });
