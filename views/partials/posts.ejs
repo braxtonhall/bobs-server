@@ -1,28 +1,26 @@
 <table>
 	<% for (const post of posts) { %>
-	<tr>
-		<td>
-			<% if (post.deletable) { %>
-			<form method="POST" action="posts/delete">
-				<button name="id" value="<%= post.id %>">Delete</button>
+	<tr class="post-row">
+		<td class="post-delete">
+			<% if (post.deletable) { /* TODO it would be nice to pass on query params */ %>
+			<form class="delete-form" method="POST" action="posts/delete">
+				<button class="delete-form-submit" name="id" value="<%= post.id %>">Delete</button>
 			</form>
 			<% } %>
 		</td>
-		<td>
-			<%= post.createdAt %>
-		</td>
-		<td>
-			<%= post.from %>
-		</td>
-		<td>
-			<%= post.content %>
-		</td>
+		<td class="post-date" data-ms="<%=post.createdAt.valueOf()%>"><%= post.createdAt.toDateString() %></td>
+		<td class="post-poster"><%= post.from %></td>
+		<td class="post-message"><%= post.content %></td>
 	</tr>
 	<% } %>
 </table>
 
-<% if (posts.cursor) { %>
-<form>
-	<button name="cursor" value="<%= posts.cursor %>">Next Page</button>
+<form class="main-controls-form">
+	<% if (query.cursor) { %>
+	<button class="main-controls-btt">Back to top</button>
+	<% } %>
+	<% if (cursor) { %>
+	<button class="main-controls-next" name="cursor" value="<%= cursor %>">Next Page</button>
+	<% } %>
+	<input type="hidden" name="dead" value="<%= query.dead %>" readonly />
 </form>
-<% } %>
