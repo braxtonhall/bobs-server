@@ -5,6 +5,7 @@ import { TokenType } from "./TokenType";
 import { randomUUID } from "crypto";
 import { DateTime } from "luxon";
 import Config from "../Config";
+import { sendConfirmationEmail } from "./services/email";
 
 const isValid = (
 	token: (Token & { email: { address: string } }) | null,
@@ -12,7 +13,7 @@ const isValid = (
 ): token is NonNullable<typeof token> =>
 	token !== null && token.valid && token.expiration >= new Date() && token.email.address === address;
 
-export const login = ({ email: address }: { email: string }) =>
+export const login = ({ email: address, protocol }: { email: string; protocol: string }) =>
 	db.$transaction(async (tx) => {
 		const temporaryToken = randomUUID();
 		await tx.token.create({
@@ -28,8 +29,7 @@ export const login = ({ email: address }: { email: string }) =>
 				},
 			},
 		});
-		console.log({ address, temporaryToken });
-		// TODO send temporaryToken to user's email address
+		void sendConfirmationEmail({ address, temporaryToken, protocol }).catch(() => {});
 	});
 
 export const authorize = ({

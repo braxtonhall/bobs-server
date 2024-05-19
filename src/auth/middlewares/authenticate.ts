@@ -16,8 +16,13 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
 	}
 };
 
-export const authenticateCookie = async (_req: Request, _res: Response, _next: NextFunction) => {
-	// TODO add cookie parser
-	// const req.cookies['']
-	// res.cookie('cookieName', 'cookieValue', { sameSite: 'none', secure: true})
+export const authenticateCookie = async (req: Request, res: Response, next: NextFunction) => {
+	try {
+		const token = String(req.cookies.token);
+		res.locals.email = await authenticate(token);
+		res.locals.token = token;
+		return next();
+	} catch {
+		return res.redirect("/login");
+	}
 };

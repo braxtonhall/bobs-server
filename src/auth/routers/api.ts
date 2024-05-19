@@ -15,7 +15,7 @@ apiAuthRouter.post("/authorize", async (req, res) => {
 });
 
 apiAuthRouter.post("/login", async (req, res) =>
-	login(req.body as { email: string }) // TODO use a schema/parser
+	login({ email: req.body.email, protocol: req.protocol }) // TODO use a schema/parser
 		.then(() => res.sendStatus(200))
 		.catch(() => res.sendStatus(400)),
 );

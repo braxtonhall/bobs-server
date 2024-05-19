@@ -3,7 +3,6 @@ import { getPosts } from "../operations/getPosts";
 import { hashString } from "../../util";
 import { match, P } from "ts-pattern";
 import { Err, Ok } from "../../types/result";
-import bodyParser from "body-parser";
 import { parse } from "../../parse";
 import { createPostSchema } from "../schema/createPost";
 import { createPost } from "../operations/createPost";
@@ -14,9 +13,10 @@ import { Some } from "../../types/option";
 
 // TODO there is WAY too much repetition here... There must be a good way to get reuse a lot of code
 
+// TODO these will probably all be embeds
+
 export const views = express()
 	.set("view engine", "ejs")
-	.post("/*", bodyParser.urlencoded({ extended: true }))
 	.get("/boxes/:box/posts", async (req, res) =>
 		match([await getPosts(req.params.box, hashString(req.ip ?? ""), req.query), await boxes.get(req.params.box)])
 			.with([Ok(P.select("post")), Some(P.select("box"))], ({ post, box }) =>
@@ -46,5 +46,4 @@ export const views = express()
 					.exhaustive(),
 			)
 			.otherwise(() => res.sendStatus(400)),
-	)
-	.get("/", (req, res) => res.render("pages/index"));
+	);

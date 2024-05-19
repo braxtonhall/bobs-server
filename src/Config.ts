@@ -18,6 +18,7 @@ const environmentSchema = {
 	SSL_KEY_PATH: requiredString,
 	SENDGRID_API_KEY: requiredString,
 	JWT_SECRET: requiredString,
+	HOST: requiredString,
 	TEMP_TOKEN_EXPIRATION_MIN: numberWithDefault(10),
 	API_TOKEN_EXPIRATION_HOURS: numberWithDefault(12),
 	HTTP_PORT: numberWithDefault(80),
