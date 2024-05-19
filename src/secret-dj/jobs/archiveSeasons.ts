@@ -1,4 +1,4 @@
-import { checkFinishedSeasons } from "../checkFinishedSeasons";
+import { checkFinishedSeasons } from "../operations/checkFinishedSeasons";
 
 const FOUR_HOURS = 4 * 60 * 60 * 1000;
 

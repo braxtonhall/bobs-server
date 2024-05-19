@@ -7,8 +7,9 @@ import cookieParser from "cookie-parser";
 import { views as authViews } from "./auth/routers/views";
 import bodyParser from "body-parser";
 import { authenticateCookie } from "./auth/middlewares/authenticate";
-import { unauthenticated } from "./toolbox/routers/unauthenticated";
-import { authenticated } from "./toolbox/routers/authenticated";
+import { api as unauthenticatedApi, views as unauthenticatedViews } from "./toolbox/routers/unauthenticated";
+import { views as secretDjViews } from "./secret-dj/routers/views";
+import subdomain from "express-subdomain";
 
 // TODO would be nice to also have a basic iframe for people who do not want to implement on their own
 //  iframe should be able to inherit either style tags or links to style
@@ -18,15 +19,19 @@ import { authenticated } from "./toolbox/routers/authenticated";
 // TODO would be great to also serve a javascript client
 
 // TODO this whole system is a mess...
-export const app = express()
+
+const views = express()
+	.set("view engine", "ejs")
 	.post("/*", bodyParser.urlencoded({ extended: true }))
 	.use(cookieParser())
 	.use(authViews)
-	.use(unauthenticated)
-	.use(authenticateCookie)
-	.use(authenticated) // TODO authenticateCookie shouldn't apply to the api routes :/
-	.set("view engine", "ejs")
-	.get("/", (req, res) => res.render("pages/index"));
+	.use("/secret-dj", authenticateCookie, secretDjViews)
+	.use(unauthenticatedViews)
+	.get("/", authenticateCookie, (req, res) => res.render("pages/index"));
+
+const api = express().use(unauthenticatedApi);
+
+export const app = express().use(subdomain("api", api)).use(views);
 
 export const getServers = async () => ({
 	// TODO if request is not secure, you need to REDIRECT!!

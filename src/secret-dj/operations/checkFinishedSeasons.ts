@@ -32,12 +32,11 @@ export const checkFinishedSeasons = async () => {
 		}
 	}
 
-	const updatedSeasons = await Promise.all(finishedSeasons.map((seasonId) => endSeason(seasonId)));
-	return updatedSeasons;
+	return await Promise.all(finishedSeasons.map((seasonId) => endSeason(seasonId)));
 };
 
-const endSeason = async (seasonId: number) => {
-	const updatedSeason = await db.season.update({
+const endSeason = async (seasonId: number) =>
+	await db.season.update({
 		where: {
 			id: seasonId,
 		},
@@ -45,5 +44,3 @@ const endSeason = async (seasonId: number) => {
 			state: SeasonState.ENDED,
 		},
 	});
-	return updatedSeason;
-};

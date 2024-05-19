@@ -5,7 +5,6 @@ import Config from "../../Config";
 const tokenMaxAge = Config.API_TOKEN_EXPIRATION_HOURS * 60 * 60 * 1000;
 
 export const views = express()
-	.set("view engine", "ejs")
 	.get("/login", (req, res) => res.render("pages/login"))
 	.post("/login", (req, res) => {
 		// TODO if already logged in, redirect to index

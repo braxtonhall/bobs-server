@@ -21,8 +21,8 @@ export const authenticateCookie = async (req: Request, res: Response, next: Next
 		const token = String(req.cookies.token);
 		res.locals.email = await authenticate(token);
 		res.locals.token = token;
-		return next();
 	} catch {
 		return res.redirect("/login");
 	}
+	return next();
 };

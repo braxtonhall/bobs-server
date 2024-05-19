@@ -16,7 +16,6 @@ import { Some } from "../../types/option";
 // TODO these will probably all be embeds
 
 export const views = express()
-	.set("view engine", "ejs")
 	.get("/boxes/:box/posts", async (req, res) =>
 		match([await getPosts(req.params.box, hashString(req.ip ?? ""), req.query), await boxes.get(req.params.box)])
 			.with([Ok(P.select("post")), Some(P.select("box"))], ({ post, box }) =>

@@ -1,11 +1,11 @@
-import express, { Request, Response } from "express";
+import { Request, Response } from "express";
 import posts from "../storage/posts";
 import posters from "../storage/posters";
 import { match, P } from "ts-pattern";
 import { Err, Ok } from "../../types/result";
 import { Failure } from "../../types/failure";
 
-export const authenticated = express();
+// export const authenticated = express();
 
 const _killProcedure = (dead: boolean) => async (req: Request<{ id: string }>, res: Response) =>
 	// TODO even better would be to wrap those in a transaction...

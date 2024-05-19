@@ -2,7 +2,6 @@
 
 ## Operations
 
-1. Sign up for Secret DJ the website
 2. ~~Create a game~~
 3. ~~Get active games~~
 4. ~~Enrol in one of the games~~
@@ -11,7 +10,8 @@
 7. ~~Submit your playlist~~
 8. View your old games
 9. Get entries for some game
-10. End/Lock/Archive the game!
+
+ALSO when you make a game it should always get a new BOX associated with it :)
 
 ## vomit
 
