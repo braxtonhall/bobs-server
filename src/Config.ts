@@ -17,6 +17,10 @@ const environmentSchema = z.object({
 	MAXIMUM_PAGE_SIZE: numberWithDefault(100),
 	DELETION_TIME_MS: numberWithDefault(1000 * 60 * 10),
 	KARMA_KILL_THRESHOLD: numberWithDefault(5),
+	EMAIL_DISABLED: z
+		.string()
+		.default("false")
+		.transform((string) => string === "true"),
 });
 
 const Config = environmentSchema.parse(process.env);

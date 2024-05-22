@@ -15,13 +15,17 @@ export const sendConfirmationEmail = async ({
 	// TODO Tie this to the type of the parser used in /authenticate
 	const searchParams = new URLSearchParams({ email: address, token: temporaryToken });
 	const url = new URL(`${protocol}://${Config.HOST}/authorize?${searchParams}`);
-	await sendgrid
-		.send({
-			to: address,
-			from: "donotreply@mail.bobs-server.net", // Change to your verified sender
-			subject: "One Time Password",
-			text: "Testing out sendgrid",
-			html: `<a href="${url.toString()}">Click this link to log in</a>`,
-		})
-		.catch(console.error);
+	if (Config.EMAIL_DISABLED) {
+		console.log(url.toString());
+	} else {
+		await sendgrid
+			.send({
+				to: address,
+				from: "donotreply@mail.bobs-server.net", // Change to your verified sender
+				subject: "One Time Password",
+				text: "Testing out sendgrid",
+				html: `<a href="${url.toString()}">Click this link to log in</a>`,
+			})
+			.catch(console.error);
+	}
 };
