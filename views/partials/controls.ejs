@@ -1,10 +1,10 @@
 <details class="more-controls-details">
-	<summary class="more-controls-summary">More controls</summary>
+	<summary class="more-controls-summary">more controls</summary>
 	<form name="more-controls-form">
 		<% if (query.dead === 'true') { %>
-		<button class="more-controls-hide-dead more-controls-dead">Hide Dead</button>
+		<button class="more-controls-hide-dead more-controls-dead">hide dead</button>
 		<% } else { %>
-		<button class="more-controls-show-dead more-controls-dead" name="dead" value="true">Show Dead</button>
+		<button class="more-controls-show-dead more-controls-dead" name="dead" value="true">show dead</button>
 		<% } %>
 		<% if (query.cursor) { %>
 		<input type="hidden" name="cursor" value="<%= query.cursor %>" readonly />
