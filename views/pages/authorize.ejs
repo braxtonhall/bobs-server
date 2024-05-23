@@ -13,13 +13,17 @@
 				<h1>authorize</h1>
 				<form class="authorize-form" action="/authorize">
 					<label for="email" class="email-label">email</label>
-					<input class="email-input" id="email" name="email" required value="<%= email ?? '' %>" />
+					<input class="email-input" id="email" name="email" required value="<%= query.email ?? '' %>" />
 
 					<label for="token" class="token-label">token</label>
 					<input class="token-input" id="token" name="token" required autocomplete="off" />
 
+					<input type="hidden" name="redirect" value="<%= query.redirect ?? '' %>" readonly />
 					<button class="login-submit">submit</button>
 				</form>
+				<% if (error) { %>
+				<span><%= error %></span>
+				<% } %>
 			</div>
 		</main>
 	</body>

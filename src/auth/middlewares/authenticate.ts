@@ -21,8 +21,24 @@ export const authenticateCookie = async (req: Request, res: Response, next: Next
 		const token = String(req.cookies.token);
 		res.locals.email = await authenticate(token);
 		res.locals.token = token;
+		res.locals.logged = true;
 	} catch {
-		return res.redirect("/login");
+		res.locals.logged = false;
 	}
 	return next();
 };
+
+export const checkLoggedIn = async (req: Request, res: Response, next: NextFunction) => {
+	if (res.locals.logged) {
+		if (req.query.redirect && typeof req.query.redirect === "string") {
+			return res.redirect(req.query.redirect);
+		} else {
+			return res.redirect("/");
+		}
+	} else {
+		return next();
+	}
+};
+
+export const enforceLoggedIn = async (req: Request, res: Response, next: NextFunction) =>
+	res.locals.logged ? next() : res.redirect(`/login?${new URLSearchParams({ redirect: req.originalUrl })}`);

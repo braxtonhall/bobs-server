@@ -6,7 +6,7 @@ import http from "http";
 import cookieParser from "cookie-parser";
 import { views as authViews } from "./auth/routers/views";
 import bodyParser from "body-parser";
-import { authenticateCookie } from "./auth/middlewares/authenticate";
+import { authenticateCookie, enforceLoggedIn } from "./auth/middlewares/authenticate";
 import { api as unauthenticatedApi, views as unauthenticatedViews } from "./toolbox/routers/unauthenticated";
 import { views as secretDjViews } from "./secret-dj/routers/views";
 import subdomain from "express-subdomain";
@@ -24,10 +24,11 @@ const views = express()
 	.set("view engine", "ejs")
 	.post("/*", bodyParser.urlencoded({ extended: true }))
 	.use(cookieParser())
+	.use(authenticateCookie)
 	.use(authViews)
-	.use("/secret-dj", authenticateCookie, secretDjViews)
+	.use("/secret-dj", enforceLoggedIn, secretDjViews)
 	.use(unauthenticatedViews)
-	.get("/", authenticateCookie, (req, res) => res.render("pages/index"));
+	.get("/", enforceLoggedIn, (req, res) => res.render("pages/index"));
 
 const api = express().use(unauthenticatedApi);
 
