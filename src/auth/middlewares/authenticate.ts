@@ -40,5 +40,12 @@ export const checkLoggedIn = async (req: Request, res: Response, next: NextFunct
 	}
 };
 
-export const enforceLoggedIn = async (req: Request, res: Response, next: NextFunction) =>
-	res.locals.logged ? next() : res.redirect(`/login?${new URLSearchParams({ redirect: req.originalUrl })}`);
+export const enforceLoggedIn = (req: Request, res: Response, next: NextFunction) => {
+	if (res.locals.logged) {
+		return next();
+	} else if (req.originalUrl === "/") {
+		return res.redirect("/login");
+	} else {
+		return res.redirect(`/login?${new URLSearchParams({ redirect: req.originalUrl })}`);
+	}
+};

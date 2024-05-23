@@ -2,6 +2,7 @@ import express from "express";
 import { authorize, deauthenticate, login } from "../operations";
 import Config from "../../Config";
 import { checkLoggedIn } from "../middlewares/authenticate";
+import { authorizePayloadSchema } from "../schemas";
 
 const tokenMaxAge = Config.API_TOKEN_EXPIRATION_HOURS * 60 * 60 * 1000;
 
@@ -15,26 +16,24 @@ export const views = express()
 		);
 	})
 	.get("/authorize", checkLoggedIn, async (req, res) => {
-		if (typeof req.query.email === "string" && typeof req.query.token === "string") {
-			const { email, token: temporaryToken } = req.query as Record<string, string>; // TODO use a zod parser
-			try {
-				const token = await authorize({ email, temporaryToken });
-				res.cookie("token", token, { sameSite: "none", secure: true, maxAge: tokenMaxAge });
-				return res.redirect("back");
-			} catch {
-				return res.render("pages/authorize", {
-					query: req.query,
-					error: "that token was not correct or was expired",
-				});
-			}
-		} else {
+		const result = authorizePayloadSchema.safeParse(req.query);
+		if (!result.success) {
 			return res.render("pages/authorize", { query: req.query, error: "" });
+		}
+		try {
+			const { email, token: temporaryToken } = result.data;
+			const token = await authorize({ email, temporaryToken });
+			res.cookie("token", token, { sameSite: "none", secure: true, maxAge: tokenMaxAge });
+			return res.redirect("back");
+		} catch {
+			return res.render("pages/authorize", {
+				query: req.query,
+				error: "that token was not correct or was expired",
+			});
 		}
 	})
 	.get("/logout", async (req, res) => {
-		if (typeof req.cookies.token === "string") {
-			await deauthenticate(req.cookies.token).catch(() => {});
-		}
+		res.locals.logged && (await deauthenticate(res.locals.token).catch(() => {}));
 		res.clearCookie("token");
 		return res.redirect("/login");
 	});
