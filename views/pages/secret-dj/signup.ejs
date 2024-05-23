@@ -19,6 +19,9 @@
 
 					<button class="signup-submit">submit</button>
 				</form>
+				<% if (error) { %>
+				<span><%= error %></span>
+				<% } %>
 			</div>
 		</main>
 	</body>
