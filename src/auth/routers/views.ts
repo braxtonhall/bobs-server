@@ -8,7 +8,7 @@ const tokenMaxAge = Config.API_TOKEN_EXPIRATION_HOURS * 60 * 60 * 1000;
 
 export const views = express()
 	.get("/login", checkLoggedIn, (req, res) => res.render("pages/login", { query: req.query }))
-	.post("/login", (req, res) => {
+	.post("/login", checkLoggedIn, (req, res) => {
 		const email: string = req.body.email;
 		void login({ email, protocol: req.protocol }).catch(() => {});
 		return res.redirect(
