@@ -10,9 +10,9 @@ import { dropTables } from "../util";
 import { createParticipant } from "../../src/secret-dj/operations/createParticipant";
 import { Participant } from "@prisma/client";
 import { deleteGame } from "../../src/secret-dj/operations/deleteGame";
-import { getAllEntriesForGame } from "../../src/secret-dj/operations/getAllEntriesForGame";
+import { getAllEntriesForSeason } from "../../src/secret-dj/operations/getAllEntriesForSeason";
 import { submitPlaylist } from "../../src/secret-dj/operations/submitPlaylist";
-import { checkFinishedSeasons } from "../../src/secret-dj/operations/checkFinishedSeasons";
+import { endFinishedSeasons } from "../../src/secret-dj/operations/endFinishedSeasons";
 
 describe("Basic flow", () => {
 	let email: Awaited<ReturnType<typeof db.email.create>>;
@@ -362,7 +362,7 @@ describe("multiple users flow", () => {
 		expect(activeGames.length).toEqual(0);
 
 		const djIdToEntryMap: { [key: string]: { entryId: number; recipientId: number } } = {};
-		const allEntries = await getAllEntriesForGame({ seasonId });
+		const allEntries = await getAllEntriesForSeason({ seasonId });
 		for (const entry of allEntries) {
 			djIdToEntryMap[entry.djId!] = {
 				entryId: entry.id,
@@ -465,7 +465,7 @@ describe("multiple users flow", () => {
 		await submitPlaylist({ seasonId, djId: participantA.id, playlistUrl: "https://open.spotify.com/playlist/bbb" });
 		await submitPlaylist({ seasonId, djId: participantB.id, playlistUrl: "https://open.spotify.com/playlist/ccc" });
 
-		const allEntries = await getAllEntriesForGame({ seasonId });
+		const allEntries = await getAllEntriesForSeason({ seasonId });
 		for (const entry of allEntries) {
 			expect(entry).toEqual({
 				id: expect.any(Number),
@@ -474,6 +474,7 @@ describe("multiple users flow", () => {
 				djId: expect.any(Number),
 				// this is populated in the DB, but won't be displayed to users until the game ends
 				submissionUrl: expect.any(String),
+				userId: expect.any(String),
 			});
 		}
 	});
@@ -596,12 +597,12 @@ describe("multiple users flow", () => {
 	});
 
 	it("game becomes archived", async () => {
-		const finishedSeasons = await checkFinishedSeasons();
-		expect(finishedSeasons.length).toEqual(1);
+		const finishedSeasons = await endFinishedSeasons();
+		expect(finishedSeasons).toEqual(1);
 	});
 	it("participants can NOW see recipient playlists", async () => {
 		const recipientIdToSubmissionUrlMap: { [key: string]: string } = {};
-		const allEntries = await getAllEntriesForGame({ seasonId });
+		const allEntries = await getAllEntriesForSeason({ seasonId });
 		for (const entry of allEntries) {
 			recipientIdToSubmissionUrlMap[entry.recipientId] = entry.submissionUrl!;
 		}

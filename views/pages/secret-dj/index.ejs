@@ -22,7 +22,7 @@
 			</ul>
 
 			<pre>
-locals: <%= JSON.stringify(locals, null, '  ') %>
+data: <%= JSON.stringify({ seasons, locals, cursor }, null, '  ') %>
 </pre>
 		</main>
 	</body>

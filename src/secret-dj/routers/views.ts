@@ -3,6 +3,9 @@ import { checkParticipation, enforceParticipation } from "../middlewares/checkPa
 import { createParticipant } from "../operations/createParticipant";
 import { Email } from "@prisma/client";
 import { signupPayloadSchema } from "../schemas";
+import { getJoinableGames } from "../operations/getJoinableGames";
+import { getSeasonsForParticipant } from "../operations/getSeasonsForParticipant";
+import { getArchivedSeasons } from "../operations/getArchivedSeasons";
 
 export const views = express()
 	.use(checkParticipation)
@@ -18,11 +21,19 @@ export const views = express()
 			return res.render("pages/secret-dj/signup", { error: "that didn't quite work" });
 		}
 	})
-	.get("/browse", (req, res) => {
-		// TODO this is where we see all games that we haven't signed up for yet
-		return res.redirect("/secret-dj"); // TODO
+	.get("/browse", async (req, res) => {
+		// TODO get the cursor from the query
+		// const cursor = req.query.cursor;
+		return res.render(
+			"pages/secret-dj/browse",
+			await getJoinableGames({ participantId: res.locals.participant.id }),
+		);
 	})
-	.get("/games/:id", (req, res) => {
+	.get("/archive", async (req, res) => {
+		// TODO get the cursor from the query
+		return res.render("pages/secret-dj/browse", await getArchivedSeasons({}));
+	})
+	.get("/games/:id", async (req, res) => {
 		// TODO
 		// 1. if the game is not started,
 		//     you should see a form for your rules
@@ -56,7 +67,7 @@ export const views = express()
 		// STRETCH GOAL??? add a description field
 		return res.redirect("/secret-dj");
 	})
-	.get("/games/:id/entries/:entry", (req, res) => {
+	.get("/games/:gameId/entries/:entryId", (req, res) => {
 		// TODO
 		// we see the rules, the recipient name, the playlist embedded, and a comment box
 		// if the game has not yet ended, the playlist is not embedded
@@ -67,6 +78,8 @@ export const views = express()
 	.use("/*", enforceParticipation)
 	.get("/", async (req, res) => {
 		return res.render("pages/secret-dj/index", {
+			// TODO use the cursor
+			...(await getSeasonsForParticipant({ participantId: res.locals.participant.id })),
 			locals: res.locals,
 		});
 	});

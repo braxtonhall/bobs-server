@@ -5,19 +5,18 @@ import { SeasonState } from "../SeasonState";
 
 type Environment = {
 	participantId: number;
-	cursor?: number;
+	cursor?: string;
 };
 
-// TODO we might want to split this into ended/not ended
 /**
- * this is used for the main landing page of secret-dj
+ * this is used for the browse page
  * @param participantId
  * @param cursor
  */
 export const getJoinableGames = async ({
 	participantId,
 	cursor,
-}: Environment): Promise<{ seasons: Pick<Season, "state" | "id" | "name">[]; cursor?: number }> => {
+}: Environment): Promise<{ seasons: Pick<Season, "state" | "name">[]; cursor?: string }> => {
 	const seasons = await db.season.findMany({
 		where: {
 			AND: [
@@ -37,14 +36,14 @@ export const getJoinableGames = async ({
 		},
 		select: {
 			state: true,
-			id: true,
+			userId: true,
 			name: true,
 		},
-		...(cursor !== undefined && { cursor: { id: cursor } }),
+		...(cursor !== undefined && { cursor: { userId: cursor } }),
 		orderBy: {
 			id: "desc",
 		},
 		take: Config.DEFAULT_PAGE_SIZE + 1,
 	});
-	return { cursor: seasons[Config.DEFAULT_PAGE_SIZE]?.id, seasons: seasons.slice(0, Config.DEFAULT_PAGE_SIZE) };
+	return { cursor: seasons[Config.DEFAULT_PAGE_SIZE]?.userId, seasons: seasons.slice(0, Config.DEFAULT_PAGE_SIZE) };
 };

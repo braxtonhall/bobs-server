@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<%- include('../../partials/head'); %>
+	</head>
+	<body>
+		<header>
+			<%- include('../../partials/header'); %>
+		</header>
+
+		<main>
+			<div>
+				<h1>browse</h1>
+				this is where we see all the games that we can join
+			</div>
+
+			<pre>
+data: <%= JSON.stringify({ seasons, cursor }, null, '  ') %>
+</pre>
+		</main>
+	</body>
+</html>

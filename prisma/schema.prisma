@@ -80,6 +80,7 @@ model Post {
 
 model Season {
   id        Int         @id @default(autoincrement())
+  userId    String      @unique @default(cuid())
   owner     Participant @relation("SeasonOwner", fields: [ownerId], references: [id])
   ownerId   Int
   name      String
@@ -97,6 +98,7 @@ model Rule {
 
 model Entry {
   id            Int          @id @default(autoincrement())
+  userId        String       @unique @default(cuid())
   season        Season       @relation("SeasonEntries", fields: [seasonId], references: [id])
   seasonId      Int
   recipient     Participant  @relation("RecipientEntries", fields: [recipientId], references: [id])

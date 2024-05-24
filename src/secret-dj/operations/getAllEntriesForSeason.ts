@@ -5,7 +5,7 @@ type Environment = {
 	seasonId: number;
 };
 
-export const getAllEntriesForGame = async ({ seasonId }: Environment): Promise<Entry[]> => {
+export const getAllEntriesForSeason = async ({ seasonId }: Environment): Promise<Entry[]> => {
 	const entries = await db.entry.findMany({
 		where: {
 			seasonId,
