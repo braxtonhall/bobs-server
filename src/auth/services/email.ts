@@ -1,8 +1,7 @@
 import Config from "../../Config";
 
-import sendgrid from "@sendgrid/mail";
 import { AuthorizePayload } from "../schemas";
-sendgrid.setApiKey(Config.SENDGRID_API_KEY);
+import { enqueue } from "../../email";
 
 export const sendConfirmationEmail = async ({
 	address,
@@ -15,17 +14,10 @@ export const sendConfirmationEmail = async ({
 }): Promise<void> => {
 	const searchParams = new URLSearchParams({ email: address, token: temporaryToken } satisfies AuthorizePayload);
 	const url = new URL(`${protocol}://${Config.HOST}/authorize?${searchParams}`);
-	if (Config.EMAIL_DISABLED) {
-		console.log(url.toString());
-	} else {
-		await sendgrid
-			.send({
-				to: address,
-				from: "donotreply@mail.bobs-server.net", // Change to your verified sender
-				subject: "One Time Password",
-				text: "Testing out sendgrid",
-				html: `<a href="${url.toString()}">Click this link to log in</a>`,
-			})
-			.catch(console.error);
-	}
+	await enqueue({
+		address,
+		subject: "One Time Password",
+		text: "Click this link to log in",
+		html: `<a href="${url.toString()}">Click this link to log in</a>`,
+	});
 };

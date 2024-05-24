@@ -1,5 +1,7 @@
 import { db } from "../../db";
 import { SeasonState } from "../SeasonState";
+import { enqueue } from "../../email";
+import Config from "../../Config";
 
 type Entry = Awaited<ReturnType<typeof db.entry.findMany>>[number];
 
@@ -30,24 +32,57 @@ type Environment = {
 	seasonId: number;
 };
 
+type UpdatedEntry = {
+	recipient: {
+		name: string;
+		email: {
+			address: string;
+		};
+	};
+};
+
+const sendMessages = async (seasonUserId: string, entries: UpdatedEntry[]) => {
+	const link = `https://${Config.HOST}/secret-dj/games/${seasonUserId}`;
+	const messages = entries.map(({ recipient }) => ({
+		address: recipient.email.address,
+		html: `${recipient.name}, time to start making playlist`,
+		text: `${recipient.name}, time to start making playlist. <a href="${link}">click here to see your rules</a>`,
+		subject: "a new season of secret dj has started",
+	}));
+	await enqueue(...messages);
+};
+
 export const startGame = async ({ ownerId, seasonId }: Environment): Promise<Entry[]> =>
 	db.$transaction(async (tx) => {
-		const result = await tx.season.findUnique({ where: { id: seasonId, ownerId }, select: { entries: true } });
-		if (!result) {
-			throw new Error(`Season for id ${seasonId} and owner ${ownerId} does not exist`);
-		}
-		const pairs = pairEntries(result.entries);
 		const season = await tx.season.update({
-			where: { id: seasonId, state: SeasonState.SIGN_UP },
+			where: { id: seasonId, ownerId, state: SeasonState.SIGN_UP },
+			select: { entries: true, userId: true },
 			data: { state: SeasonState.IN_PROGRESS },
 		});
 		if (season) {
-			const updates = pairs.map((pair) =>
-				tx.entry.update({ where: { id: pair.recipient.id }, data: { djId: pair.dj.recipientId } }),
+			const pairs = pairEntries(season.entries);
+			const futureUpdates = pairs.map((pair) =>
+				tx.entry.update({
+					where: { id: pair.recipient.id },
+					data: { djId: pair.dj.recipientId },
+					include: {
+						recipient: {
+							select: {
+								email: {
+									select: {
+										address: true,
+									},
+								},
+								name: true,
+							},
+						},
+					},
+				}),
 			);
-			// TODO for each person, send a notification
-			return await Promise.all(updates);
+			const updates = (await Promise.all(futureUpdates)) satisfies UpdatedEntry[];
+			await sendMessages(season.userId, updates);
+			return updates;
 		} else {
-			throw new Error(`Season ${seasonId} is not in progress`);
+			throw new Error(`Could not find eligible season ${seasonId}`);
 		}
 	});

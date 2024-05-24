@@ -14,6 +14,14 @@ model Email {
   tokens      Token[]
 }
 
+model Message {
+  id      Int    @id @default(autoincrement())
+  address String
+  subject String
+  text    String
+  html    String
+}
+
 model Token {
   id             Int      @id @default(autoincrement())
   email          Email    @relation(fields: [emailId], references: [id])

@@ -45,6 +45,7 @@ export const views = express()
 		//     you should see your recipient's rules, as well as a form for the playlist
 		//     there's a link that says "comments" that goes to /games/id/entries/id
 		//    beneath is a table with everyone else's rules and also links to /games/id/entries/id
+		//   ALSO, if your playlist is done, it should say it's ready, but we're waiting on max(N, 1) playlists
 		// 3. if the game is DONE, you should see the playlist you received at the top
 		//    beneath is a table with everyone else's rules and playlist links!
 		return res.redirect("/secret-dj"); // TODO
