@@ -19,7 +19,7 @@ const environmentSchema = z.object({
 	KARMA_KILL_THRESHOLD: numberWithDefault(5),
 	EMAIL_DISABLED: z
 		.string()
-		.default("false")
+		.optional()
 		.transform((string) => string === "true"),
 });
 
