@@ -1,5 +1,5 @@
 import express from "express";
-import { checkParticipation, enforceParticipation } from "../middlewares/checkParticipation";
+import { getParticipation, enforceParticipation, checkParticipation } from "../middlewares/checkParticipation";
 import { createParticipant } from "../operations/createParticipant";
 import { Email } from "@prisma/client";
 import { signupPayloadSchema } from "../schemas";
@@ -8,19 +8,19 @@ import { getSeasonsForParticipant } from "../operations/getSeasonsForParticipant
 import { getArchivedSeasons } from "../operations/getArchivedSeasons";
 
 export const views = express()
-	.use(checkParticipation)
-	// TODO if participating, just redirect
-	.get("/signup", (req, res) => res.render("pages/secret-dj/signup", { error: "" }))
-	.post("/signup", async (req, res) => {
+	.use(getParticipation)
+	.get("/signup", checkParticipation, (req, res) => res.render("pages/secret-dj/signup", { error: "" }))
+	.post("/signup", checkParticipation, async (req, res) => {
 		try {
 			const email: Email = res.locals.email;
 			const { name } = signupPayloadSchema.parse(req.body);
 			await createParticipant({ emailId: email.id, name });
-			return res.redirect("/secret-dj");
+			return res.redirect("back");
 		} catch (error) {
 			return res.render("pages/secret-dj/signup", { error: "that didn't quite work" });
 		}
 	})
+	.use(enforceParticipation)
 	.get("/browse", async (req, res) => {
 		// TODO get the cursor from the query
 		// const cursor = req.query.cursor;
@@ -61,10 +61,11 @@ export const views = express()
 	})
 	.post("/games/:id/start", (req, res) => res.redirect("/secret-dj"))
 	.post("/games/:id/delete", (req, res) => res.redirect("/secret-dj"))
-	.get("/create", (req, res) => res.redirect("/secret-dj"))
+	.get("/create", (req, res) => res.render("pages/secret-dj/create"))
 	.post("/create", (req, res) => {
 		// game count, name
 		// STRETCH GOAL??? add a description field
+		// at the end, redirect to the game page
 		return res.redirect("/secret-dj");
 	})
 	.get("/games/:gameId/entries/:entryId", (req, res) => {
@@ -75,11 +76,10 @@ export const views = express()
 		// STRETCH GOAL??? is the playlist information saved in the database?
 		return res.redirect("/secret-dj"); // TODO
 	})
-	.use("/*", enforceParticipation)
 	.get("/", async (req, res) => {
-		return res.render("pages/secret-dj/index", {
+		return res.render(
+			"pages/secret-dj/index",
 			// TODO use the cursor
-			...(await getSeasonsForParticipant({ participantId: res.locals.participant.id })),
-			locals: res.locals,
-		});
+			await getSeasonsForParticipant({ participantId: res.locals.participant.id }),
+		);
 	});
