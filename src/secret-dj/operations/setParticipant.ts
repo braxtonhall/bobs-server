@@ -7,9 +7,16 @@ type Environment = {
 };
 
 // at the time of creating a participant, user is already authed (has an email the database knows about)
-export const createParticipant = async ({ emailId, name }: Environment): Promise<Participant> =>
-	await db.participant.create({
-		data: {
+export const setParticipant = async ({ emailId, name }: Environment): Promise<Participant> =>
+	await db.participant.upsert({
+		where: {
+			emailId,
+		},
+		create: {
+			emailId,
+			name,
+		},
+		update: {
 			emailId,
 			name,
 		},

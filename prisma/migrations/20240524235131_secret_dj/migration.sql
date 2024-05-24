@@ -1,4 +1,13 @@
 -- CreateTable
+CREATE TABLE "Message" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "address" TEXT NOT NULL,
+    "subject" TEXT NOT NULL,
+    "text" TEXT NOT NULL,
+    "html" TEXT NOT NULL
+);
+
+-- CreateTable
 CREATE TABLE "Token" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "type" TEXT NOT NULL,
@@ -12,8 +21,10 @@ CREATE TABLE "Token" (
 -- CreateTable
 CREATE TABLE "Season" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "userId" TEXT NOT NULL,
     "ownerId" INTEGER NOT NULL,
     "name" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
     "ruleCount" INTEGER NOT NULL,
     "state" TEXT NOT NULL DEFAULT 'sign-up',
     CONSTRAINT "Season_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "Participant" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
@@ -30,6 +41,7 @@ CREATE TABLE "Rule" (
 -- CreateTable
 CREATE TABLE "Entry" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "userId" TEXT NOT NULL,
     "seasonId" INTEGER NOT NULL,
     "recipientId" INTEGER NOT NULL,
     "djId" INTEGER,
@@ -49,6 +61,12 @@ CREATE TABLE "Participant" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Token_temporaryToken_key" ON "Token"("temporaryToken");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Season_userId_key" ON "Season"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Entry_userId_key" ON "Entry"("userId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Participant_emailId_key" ON "Participant"("emailId");

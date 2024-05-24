@@ -87,14 +87,15 @@ model Post {
 }
 
 model Season {
-  id        Int         @id @default(autoincrement())
-  userId    String      @unique @default(cuid())
-  owner     Participant @relation("SeasonOwner", fields: [ownerId], references: [id])
-  ownerId   Int
-  name      String
-  entries   Entry[]     @relation("SeasonEntries")
-  ruleCount Int
-  state     String      @default("sign-up")
+  id          Int         @id @default(autoincrement())
+  userId      String      @unique @default(cuid())
+  owner       Participant @relation("SeasonOwner", fields: [ownerId], references: [id])
+  ownerId     Int
+  name        String
+  description String
+  entries     Entry[]     @relation("SeasonEntries")
+  ruleCount   Int
+  state       String      @default("sign-up")
 }
 
 model Rule {

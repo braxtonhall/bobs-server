@@ -80,7 +80,7 @@ export const startGame = async ({ ownerId, seasonId }: Environment): Promise<Ent
 				}),
 			);
 			const updates = (await Promise.all(futureUpdates)) satisfies UpdatedEntry[];
-			await sendMessages(season.userId, updates);
+			// TODO await sendMessages(season.userId, updates);
 			return updates;
 		} else {
 			throw new Error(`Could not find eligible season ${seasonId}`);

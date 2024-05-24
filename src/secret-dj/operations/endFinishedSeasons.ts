@@ -55,7 +55,7 @@ export const endFinishedSeasons = async () => {
 					state: SeasonState.ENDED,
 				},
 			});
-			await sendMessages(userId, entries);
+			// await sendMessages(userId, entries); // TODO
 		}),
 	);
 	const updates = await Promise.all(futureUpdates);

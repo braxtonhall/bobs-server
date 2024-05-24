@@ -18,5 +18,6 @@ export const getActiveGames = () =>
 			},
 			name: true,
 			id: true,
+			description: true,
 		},
 	});

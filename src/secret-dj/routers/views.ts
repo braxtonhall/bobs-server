@@ -1,8 +1,8 @@
 import express from "express";
 import { getParticipation, enforceParticipation, checkParticipation } from "../middlewares/checkParticipation";
-import { createParticipant } from "../operations/createParticipant";
+import { setParticipant } from "../operations/setParticipant";
 import { Email } from "@prisma/client";
-import { signupPayloadSchema } from "../schemas";
+import { settingsPayloadSchema, signupPayloadSchema } from "../schemas";
 import { getJoinableGames } from "../operations/getJoinableGames";
 import { getSeasonsForParticipant } from "../operations/getSeasonsForParticipant";
 import { getArchivedSeasons } from "../operations/getArchivedSeasons";
@@ -14,25 +14,20 @@ export const views = express()
 		try {
 			const email: Email = res.locals.email;
 			const { name } = signupPayloadSchema.parse(req.body);
-			await createParticipant({ emailId: email.id, name });
+			await setParticipant({ emailId: email.id, name });
 			return res.redirect("back");
 		} catch (error) {
 			return res.render("pages/secret-dj/signup", { error: "that didn't quite work" });
 		}
 	})
 	.use(enforceParticipation)
-	.get("/browse", async (req, res) => {
-		// TODO get the cursor from the query
-		// const cursor = req.query.cursor;
-		return res.render(
+	.get("/browse", async (req, res) =>
+		res.render(
 			"pages/secret-dj/browse",
-			await getJoinableGames({ participantId: res.locals.participant.id }),
-		);
-	})
-	.get("/archive", async (req, res) => {
-		// TODO get the cursor from the query
-		return res.render("pages/secret-dj/browse", await getArchivedSeasons({}));
-	})
+			await getJoinableGames({ participantId: res.locals.participant.id, cursor: String(req.query.cursor) }),
+		),
+	)
+	.get("/archive", async (req, res) => res.render("pages/secret-dj/browse", await getArchivedSeasons(req.query)))
 	.get("/games/:id", async (req, res) => {
 		// TODO
 		// 1. if the game is not started,
@@ -77,10 +72,28 @@ export const views = express()
 		// STRETCH GOAL??? is the playlist information saved in the database?
 		return res.redirect("/secret-dj"); // TODO
 	})
-	.get("/", async (req, res) => {
-		return res.render(
+	.get("/settings", (req, res) =>
+		res.render("pages/secret-dj/settings", { name: res.locals.participant.name, message: "" }),
+	)
+	.post("/settings", async (req, res) => {
+		try {
+			const { name } = settingsPayloadSchema.parse(req.body);
+			const email: Email = res.locals.email;
+			await setParticipant({ emailId: email.id, name });
+			return res.render("pages/secret-dj/settings", { name, message: "saved" });
+		} catch {
+			return res.render("pages/secret-dj/settings", {
+				name: res.locals.participant.name,
+				message: "that didn't work",
+			});
+		}
+	})
+	.get("/", async (req, res) =>
+		res.render(
 			"pages/secret-dj/index",
-			// TODO use the cursor
-			await getSeasonsForParticipant({ participantId: res.locals.participant.id }),
-		);
-	});
+			await getSeasonsForParticipant({
+				participantId: res.locals.participant.id,
+				cursor: String(req.query.cursor),
+			}),
+		),
+	);
