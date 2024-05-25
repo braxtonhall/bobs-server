@@ -228,7 +228,7 @@ describe("multiple users flow", () => {
 		});
 	});
 	it("non-existent participants can't create games", async () =>
-		expect(createGame({ name: "awesomesauce", ruleCount: 1, ownerId: 9999, description: "" })).rejects.toThrow());
+		expect(createGame({ name: "awesomesauce", ruleCount: 1, ownerId: "9999", description: "" })).rejects.toThrow());
 	it("owner can delete game after creating", async () => {
 		const mistakenlyCreatedSeasonId = await createGame({
 			name: "asdf",
@@ -369,7 +369,7 @@ describe("multiple users flow", () => {
 		const activeGames = await getActiveGames();
 		expect(activeGames.length).toEqual(0);
 
-		const djIdToEntryMap: { [key: string]: { entryId: string; recipientId: number } } = {};
+		const djIdToEntryMap: { [key: string]: { entryId: string; recipientId: string } } = {};
 		const { entries: allEntries } = await getSeason(seasonId);
 		for (const entry of allEntries) {
 			djIdToEntryMap[entry.djId!] = {
@@ -484,8 +484,8 @@ describe("multiple users flow", () => {
 		for (const entry of allEntries) {
 			expect(entry).toEqual({
 				id: expect.any(String),
-				recipientId: expect.any(Number),
-				djId: expect.any(Number),
+				recipientId: expect.any(String),
+				djId: expect.any(String),
 				// this is populated in the DB, but won't be displayed to users until the game ends
 				submissionUrl: expect.any(String),
 			});

@@ -2,7 +2,7 @@ import { db } from "../../db";
 
 type Environment = {
 	seasonId: string;
-	userId: number;
+	userId: string;
 };
 
 export const getParticipantEntriesForSeason = async ({ seasonId, userId }: Environment) => {

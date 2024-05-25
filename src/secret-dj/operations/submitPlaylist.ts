@@ -3,7 +3,7 @@ import { SeasonState } from "../SeasonState";
 
 type Environment = {
 	seasonId: string;
-	djId: number;
+	djId: string;
 	playlistUrl: string;
 };
 

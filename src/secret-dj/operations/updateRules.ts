@@ -3,7 +3,7 @@ import { SeasonState } from "../SeasonState";
 
 type Environment = {
 	seasonId: string;
-	recipientId: number;
+	recipientId: string;
 	rules: string[];
 };
 

@@ -91,7 +91,7 @@ model Season {
   sort        Int         @id @default(autoincrement())
   id          String      @unique @default(cuid())
   owner       Participant @relation("SeasonOwner", fields: [ownerId], references: [id])
-  ownerId     Int
+  ownerId     String
   name        String
   description String
   entries     Entry[]     @relation("SeasonEntries")
@@ -112,15 +112,15 @@ model Entry {
   season        Season       @relation("SeasonEntries", fields: [seasonId], references: [id])
   seasonId      String
   recipient     Participant  @relation("RecipientEntries", fields: [recipientId], references: [id])
-  recipientId   Int
+  recipientId   String
   dj            Participant? @relation("DJEntries", fields: [djId], references: [id])
-  djId          Int?
+  djId          String?
   rules         Rule[]       @relation("EntryRules")
   submissionUrl String?
 }
 
 model Participant {
-  id               Int      @id @default(autoincrement())
+  id               String   @id @default(cuid())
   ownedSeasons     Season[] @relation("SeasonOwner")
   recipientEntries Entry[]  @relation("RecipientEntries")
   djEntries        Entry[]  @relation("DJEntries")

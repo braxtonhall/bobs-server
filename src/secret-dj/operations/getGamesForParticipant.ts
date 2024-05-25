@@ -2,7 +2,7 @@ import { db } from "../../db";
 import { SeasonState } from "../SeasonState";
 
 type Environment = {
-	participantId: number;
+	participantId: string;
 };
 
 export const getGamesForParticipant = async ({ participantId }: Environment) => {

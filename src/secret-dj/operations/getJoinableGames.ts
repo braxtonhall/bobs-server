@@ -4,7 +4,7 @@ import Config from "../../Config";
 import { SeasonState } from "../SeasonState";
 
 type Environment = {
-	participantId: number;
+	participantId: string;
 	cursor?: string;
 };
 

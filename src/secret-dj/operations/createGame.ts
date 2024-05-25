@@ -3,7 +3,7 @@ import { db } from "../../db";
 type Environment = {
 	name: string;
 	ruleCount: number;
-	ownerId: number;
+	ownerId: string;
 	description: string;
 };
 

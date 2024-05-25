@@ -28,7 +28,7 @@ const pairEntries = (users: Entry[]): Pair[] => {
 };
 
 type Environment = {
-	ownerId: number;
+	ownerId: string;
 	seasonId: string;
 };
 

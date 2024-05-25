@@ -2,7 +2,7 @@ import { db } from "../../db";
 
 type Environment = {
 	seasonId: string;
-	ownerId: number;
+	ownerId: string;
 };
 
 export const deleteGame = async ({ seasonId, ownerId }: Environment): Promise<void> => {
