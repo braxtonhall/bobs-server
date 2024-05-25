@@ -1,0 +1,23 @@
+import { db } from "../../db";
+
+type Environment = { seasonId: string; entryId: string };
+
+export const getEntry = async ({ seasonId, entryId }: Environment) => {
+	const entry = await db.entry.findUnique({
+		where: {
+			season: {
+				userId: seasonId,
+			},
+			userId: entryId,
+		},
+		include: {
+			season: true,
+		},
+	});
+
+	if (!entry) {
+		throw new Error("Could not find entry");
+	}
+
+	return entry;
+};

@@ -15,6 +15,12 @@
 				<p>the name of this game is '<%=season.name%>'</p>
 				<p>the description of this game is '<%=season.description%>'</p>
 
+				<%if (season.ownerId === participant.id) {%>
+				<p>here go the owner controls</p>
+				if game is in signup and entries.length is 0, add a delete button. if the game is in signup and there is
+				at least one person signed up, add a start button. that's about it.
+				<%}%>
+
 				<% if (season.state === 'sign-up') { %>
 				<p>rules form goes here (use recipient values here)</p>
 				<% } else if (season.state === 'in-progress') { %>
@@ -26,6 +32,23 @@
 				<pre>
 <%=JSON.stringify({season, participant, recipient, dj, error}, null, '\t')%>
 </pre>
+				<pre>
+// TODO
+// 1. if the game is not started,
+//     you should see a form for your rules
+//     even if you have already signed up (it's essentially a put)
+//     if you already signed up, there's a link that says "comments" that goes to /games/id/entries/id
+//   beneath is a table with everyone else's rules and also links to /games/id/entries/id
+//  ALSO if you are the admin of the game, there should be a start button and a delete button
+// 2. if the game IS started,
+//     you should see your recipient's rules, as well as a form for the playlist
+//     there's a link that says "comments" that goes to /games/id/entries/id
+//    beneath is a table with everyone else's rules and also links to /games/id/entries/id
+//   ALSO, if your playlist is done, it should say it's ready, but we're waiting on max(N, 1) playlists
+// 3. if the game is DONE, you should see the playlist you received at the top
+//    beneath is a table with everyone else's rules and playlist links!
+</pre
+				>
 			</div>
 		</main>
 	</body>

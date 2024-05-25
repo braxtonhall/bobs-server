@@ -468,14 +468,22 @@ describe("multiple users flow", () => {
 	it("owner can NO LONGER delete game after starting", () =>
 		expect(deleteGame({ seasonId, ownerId: ownerParticipant.id })).rejects.toThrow());
 	it("participants can submit their playlist submissions", async () => {
+		const { userId } = await db.season.findUniqueOrThrow({ where: { id: seasonId } });
 		await submitPlaylist({
-			seasonId,
+			seasonId: userId,
 			djId: ownerParticipant.id,
 			playlistUrl: "https://open.spotify.com/playlist/aaa",
 		});
-		await submitPlaylist({ seasonId, djId: participantA.id, playlistUrl: "https://open.spotify.com/playlist/bbb" });
-		await submitPlaylist({ seasonId, djId: participantB.id, playlistUrl: "https://open.spotify.com/playlist/ccc" });
-		const { userId } = await db.season.findUniqueOrThrow({ where: { id: seasonId } });
+		await submitPlaylist({
+			seasonId: userId,
+			djId: participantA.id,
+			playlistUrl: "https://open.spotify.com/playlist/bbb",
+		});
+		await submitPlaylist({
+			seasonId: userId,
+			djId: participantB.id,
+			playlistUrl: "https://open.spotify.com/playlist/ccc",
+		});
 		const { entries: allEntries } = await getSeason(userId);
 		for (const entry of allEntries) {
 			expect(entry).toEqual({
@@ -569,8 +577,9 @@ describe("multiple users flow", () => {
 		});
 	});
 	it("participants can edit their playlist submissions", async () => {
+		const { userId } = await db.season.findUniqueOrThrow({ where: { id: seasonId } });
 		await submitPlaylist({
-			seasonId,
+			seasonId: userId,
 			djId: ownerParticipant.id,
 			playlistUrl: "https://open.spotify.com/playlist/zzz",
 		});
@@ -697,10 +706,12 @@ describe("multiple users flow", () => {
 			],
 		});
 	});
-	it("participants can no longer edit their playlist submissions", async () =>
-		expect(
-			submitPlaylist({ seasonId, djId: participantA.id, playlistUrl: "https://puginarug.com/" }),
-		).rejects.toThrow());
+	it("participants can no longer edit their playlist submissions", async () => {
+		const { userId } = await db.season.findUniqueOrThrow({ where: { id: seasonId } });
+		return expect(
+			submitPlaylist({ seasonId: userId, djId: participantA.id, playlistUrl: "https://puginarug.com/" }),
+		).rejects.toThrow();
+	});
 	it("owner can still not delete the game", () =>
 		expect(deleteGame({ seasonId, ownerId: ownerParticipant.id })).rejects.toThrow());
 });

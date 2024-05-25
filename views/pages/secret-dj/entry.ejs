@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<%- include('../../partials/head'); %>
+	</head>
+	<body>
+		<header>
+			<%- include('../../partials/header'); %>
+		</header>
+
+		<main>
+			<div>
+				<h1>entry</h1>
+				this is for a specific entry
+
+				<pre>
+<%=JSON.stringify({entry, participant}, null, '\t')%>
+</pre>
+				<pre>
+// TODO
+// we see the rules, the recipient name, the playlist embedded, and a comment box
+// if the game has not yet ended, the playlist is not embedded
+// the comment box does NOT show the form entry for name (anon only)
+// If this is YOUR entry before the game has started, you can edit rules here too
+// If this is your recipient's entry before the game has ended, you can submit playlist here too
+</pre
+				>
+			</div>
+		</main>
+	</body>
+</html>
