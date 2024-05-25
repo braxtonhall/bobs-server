@@ -69,8 +69,8 @@ model Poster {
 }
 
 model Post {
-  id         Int      @id @default(autoincrement())
-  userId     String   @unique @default(cuid())
+  sort       Int      @id @default(autoincrement())
+  id         String   @unique @default(cuid())
   createdAt  DateTime @default(now())
   from       String
   dead       Boolean  @default(false)
@@ -84,7 +84,7 @@ model Post {
   boxId      String
   children   Post[]   @relation("PostChildren")
   parent     Post?    @relation("PostChildren", fields: [parentId], references: [id])
-  parentId   Int?
+  parentId   String?
 }
 
 model Season {

@@ -5,6 +5,6 @@ import posters from "../storage/posters";
 export const deletePost = async (requestor: HashedString, boxId: string, postId: string) =>
 	posts.delete({
 		boxId,
-		userId: postId,
+		postId: postId,
 		posterId: await posters.getId(requestor),
 	});

@@ -13,7 +13,7 @@ type CreatePost = {
 	posterId: number;
 	boxId: string;
 	from: string;
-	parentId?: number;
+	parentId?: string;
 };
 
 type Query = {
@@ -39,10 +39,9 @@ const internalCreate = ({ emailId, content, posterId, boxId, from, parentId }: C
 		select: {
 			id: true,
 			createdAt: true,
-			userId: true,
 			parent: {
 				select: {
-					userId: true,
+					id: true,
 				},
 			},
 		},
@@ -60,7 +59,7 @@ const create = async (
 
 type DeletePostQuery = {
 	boxId: string;
-	userId: string;
+	postId: string;
 	posterId: number;
 };
 type DeletePostFailure = Failure.MISSING_DEPENDENCY | Failure.PRECONDITION_FAILED | Failure.UNAUTHORIZED;
@@ -69,7 +68,9 @@ export const deletePost = async (query: DeletePostQuery): Promise<Result<undefin
 		.$transaction([
 			db.post.deleteMany({
 				where: {
-					...query,
+					boxId: query.boxId,
+					id: query.postId,
+					posterId: query.posterId,
 					createdAt: {
 						gt: new Date(Date.now() - Config.DELETION_TIME_MS),
 					},
@@ -79,7 +80,7 @@ export const deletePost = async (query: DeletePostQuery): Promise<Result<undefin
 				},
 			}),
 			db.post.findUnique({
-				where: { userId: query.userId, boxId: query.boxId },
+				where: { id: query.postId, boxId: query.boxId },
 				select: { id: true, posterId: true },
 			}),
 		])
@@ -95,7 +96,7 @@ export const deletePost = async (query: DeletePostQuery): Promise<Result<undefin
 const toCursor = (cursor: unknown) => {
 	return cursor && typeof cursor === "string"
 		? {
-				userId: cursor,
+				id: cursor,
 			}
 		: undefined;
 };
@@ -135,7 +136,6 @@ const listInternal = ({ boxId, showDead, cursor, count, ip }: Query) => {
 			createdAt: true,
 			content: true,
 			from: true,
-			userId: true,
 			poster: {
 				select: {
 					ip: true,
@@ -143,7 +143,7 @@ const listInternal = ({ boxId, showDead, cursor, count, ip }: Query) => {
 			},
 			parent: {
 				select: {
-					userId: true,
+					id: true,
 				},
 			},
 			_count: {
@@ -158,17 +158,17 @@ const listInternal = ({ boxId, showDead, cursor, count, ip }: Query) => {
 		},
 		cursor: toCursor(cursor),
 		orderBy: {
-			id: "desc",
+			sort: "desc",
 		},
 		take: count,
 	});
 };
 
-const getId = async (userId: string, boxId: string): Promise<Option<number>> =>
+const exists = async (postId: string, boxId: string): Promise<boolean> =>
 	match(
 		await db.post.findUnique({
 			where: {
-				userId,
+				id: postId,
 				boxId,
 			},
 			select: {
@@ -176,8 +176,8 @@ const getId = async (userId: string, boxId: string): Promise<Option<number>> =>
 			},
 		}),
 	)
-		.with({ id: P.select() }, Some)
-		.otherwise(None);
+		.with({ id: P.select() }, () => true)
+		.otherwise(() => false);
 
 const setDeadAndGetPosterId = async (
 	id: string,
@@ -187,12 +187,12 @@ const setDeadAndGetPosterId = async (
 	db
 		.$transaction([
 			db.post.findUnique({
-				where: { userId: id },
+				where: { id },
 				select: { posterId: true },
 			}),
 			db.post.updateMany({
 				where: {
-					userId: id,
+					id,
 					box: {
 						owner: {
 							email: {
@@ -218,7 +218,7 @@ const setDeadAndGetPosterId = async (
 
 export default {
 	create,
-	getId,
+	exists,
 	list,
 	delete: deletePost,
 	setDeadAndGetPosterId,

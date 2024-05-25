@@ -5,7 +5,7 @@ import posters from "../storage/posters";
 import emails from "../storage/emails";
 import { Failure } from "../../types/failure";
 import { HashedString } from "../../types/hashed";
-import { Some } from "../../types/option";
+import { None, Some } from "../../types/option";
 import { match, P } from "ts-pattern";
 import { Post } from "../schema/post";
 
@@ -24,37 +24,36 @@ export const createPost = async (
 	{ parent, email: address, content, from }: CreatePost,
 	ip: HashedString,
 ): Promise<Result<Post, Failure.MISSING_DEPENDENCY>> => {
-	const maybeParentId = parent ? await posts.getId(parent, boxId) : Some(undefined);
-	return match(maybeParentId)
-		.with(Some(P.select()), async (parentId) => {
-			const emailId = match(await emails.get(address))
-				.with(Some(P.select()), (email) => {
-					// TODO if parent and parent has an email, email that there has been a response
-					if (email?.confirmed === false) {
-						sendConfirmationEmail(email.address);
-					}
-					return email.id;
-				})
-				.otherwise(() => undefined);
-			return map(
-				await posts.create({
-					boxId,
+	if (parent !== undefined && !(await posts.exists(parent, boxId))) {
+		return Err(Failure.MISSING_DEPENDENCY as const);
+	} else {
+		const emailId = match(await emails.get(address))
+			.with(Some(P.select()), (email) => {
+				// TODO if parent and parent has an email, email that there has been a response
+				if (email?.confirmed === false) {
+					sendConfirmationEmail(email.address);
+				}
+				return email.id;
+			})
+			.otherwise(() => undefined);
+		return map(
+			await posts.create({
+				boxId,
+				content,
+				from,
+				parentId: parent,
+				emailId,
+				posterId: await posters.getId(ip),
+			}),
+			(internalPost) =>
+				({
+					id: internalPost.id,
+					createdAt: internalPost.createdAt,
+					parent: internalPost.parent?.id,
+					deletable: true,
 					content,
 					from,
-					parentId,
-					emailId,
-					posterId: await posters.getId(ip),
-				}),
-				(internalPost) =>
-					({
-						id: internalPost.userId,
-						createdAt: internalPost.createdAt,
-						parent: internalPost.parent?.userId,
-						deletable: true,
-						content,
-						from,
-					}) satisfies Post,
-			);
-		})
-		.otherwise(() => Err(Failure.MISSING_DEPENDENCY as const));
+				}) satisfies Post,
+		);
+	}
 };

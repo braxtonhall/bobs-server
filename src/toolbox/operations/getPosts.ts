@@ -11,11 +11,11 @@ const getEarliestDeletableTime = () => Date.now() - Config.DELETION_TIME_MS;
 const toPostMember =
 	(requestor: HashedString, earliestDeletableTime: number) =>
 	(post: InternalPost): Post => ({
-		id: post.userId,
+		id: post.id,
 		createdAt: post.createdAt,
 		content: post.content,
 		from: post.from,
-		parent: post.parent?.userId,
+		parent: post.parent?.id,
 		deletable:
 			post.poster.ip === requestor &&
 			post.createdAt.valueOf() > earliestDeletableTime &&
