@@ -1,7 +1,7 @@
 import { db } from "../../db";
 
 type Environment = {
-	seasonId: number;
+	seasonId: string;
 	userId: number;
 };
 

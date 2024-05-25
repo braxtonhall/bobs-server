@@ -43,10 +43,9 @@ export const endFinishedSeasons = async () => {
 				},
 			},
 			id: true,
-			userId: true,
 		},
 	});
-	const futureUpdates = finishedSeasons.map(({ id, userId, entries }) =>
+	const futureUpdates = finishedSeasons.map(({ id, entries }) =>
 		db.$transaction(async (tx): Promise<void> => {
 			await tx.season.update({
 				where: { id },
@@ -54,7 +53,7 @@ export const endFinishedSeasons = async () => {
 					state: SeasonState.ENDED,
 				},
 			});
-			await enqueue(tx, ...toMessages(userId, entries));
+			await enqueue(tx, ...toMessages(id, entries));
 		}),
 	);
 	const updates = await Promise.all(futureUpdates);

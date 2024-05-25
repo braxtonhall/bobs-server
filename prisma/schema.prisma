@@ -87,8 +87,8 @@ model Post {
 }
 
 model Season {
-  id          Int         @id @default(autoincrement())
-  userId      String      @unique @default(cuid())
+  sort        Int         @id @default(autoincrement())
+  id          String      @unique @default(cuid())
   owner       Participant @relation("SeasonOwner", fields: [ownerId], references: [id])
   ownerId     Int
   name        String
@@ -109,7 +109,7 @@ model Entry {
   id            Int          @id @default(autoincrement())
   userId        String       @unique @default(cuid())
   season        Season       @relation("SeasonEntries", fields: [seasonId], references: [id])
-  seasonId      Int
+  seasonId      String
   recipient     Participant  @relation("RecipientEntries", fields: [recipientId], references: [id])
   recipientId   Int
   dj            Participant? @relation("DJEntries", fields: [djId], references: [id])

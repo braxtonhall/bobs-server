@@ -2,7 +2,7 @@ import { db } from "../../db";
 import { SeasonState } from "../SeasonState";
 
 type Environment = {
-	seasonId: number;
+	seasonId: string;
 	recipientId: number;
 	rules: string[];
 };

@@ -36,15 +36,15 @@ export const getJoinableGames = async ({
 		},
 		select: {
 			state: true,
-			userId: true,
+			id: true,
 			name: true,
 			description: true,
 		},
-		...(cursor !== undefined && { cursor: { userId: cursor } }),
+		...(cursor !== undefined && { cursor: { id: cursor } }),
 		orderBy: {
-			id: "desc",
+			sort: "desc",
 		},
 		take: Config.DEFAULT_PAGE_SIZE + 1,
 	});
-	return { cursor: seasons[Config.DEFAULT_PAGE_SIZE]?.userId, seasons: seasons.slice(0, Config.DEFAULT_PAGE_SIZE) };
+	return { cursor: seasons[Config.DEFAULT_PAGE_SIZE]?.id, seasons: seasons.slice(0, Config.DEFAULT_PAGE_SIZE) };
 };

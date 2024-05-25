@@ -29,7 +29,7 @@ const pairEntries = (users: Entry[]): Pair[] => {
 
 type Environment = {
 	ownerId: number;
-	seasonId: number;
+	seasonId: string;
 };
 
 type UpdatedEntry = {
@@ -55,7 +55,7 @@ export const startGame = async ({ ownerId, seasonId }: Environment): Promise<Ent
 	db.$transaction(async (tx) => {
 		const season = await tx.season.update({
 			where: { id: seasonId, ownerId, state: SeasonState.SIGN_UP },
-			select: { entries: true, userId: true },
+			select: { entries: true, id: true },
 			data: { state: SeasonState.IN_PROGRESS },
 		});
 		if (season) {
@@ -75,7 +75,7 @@ export const startGame = async ({ ownerId, seasonId }: Environment): Promise<Ent
 				}),
 			);
 			const updates = (await Promise.all(futureUpdates)) satisfies UpdatedEntry[];
-			await enqueue(tx, ...toMessages(season.userId, updates));
+			await enqueue(tx, ...toMessages(season.id, updates));
 			return updates;
 		} else {
 			throw new Error(`Could not find eligible season ${seasonId}`);

@@ -17,7 +17,7 @@ import { endFinishedSeasons } from "../../src/secret-dj/operations/endFinishedSe
 describe("Basic flow", () => {
 	let email: Awaited<ReturnType<typeof db.email.create>>;
 	let participant: Awaited<ReturnType<typeof db.participant.create>>;
-	let gameId: number;
+	let gameId: string;
 	beforeAll(async () => {
 		await dropTables();
 		email = await db.email.create({
@@ -39,23 +39,23 @@ describe("Basic flow", () => {
 		}));
 
 	it("should not yet be possible to start a game", () =>
-		expect(startGame({ ownerId: participant.id, seasonId: 0 })).rejects.toThrow());
+		expect(startGame({ ownerId: participant.id, seasonId: "0" })).rejects.toThrow());
 
 	it("should be able to create a game", async () => {
-		gameId = (await createGame({ name: "sdj 2024", ruleCount: 2, ownerId: participant.id, description: "foo" })).id;
-		expect(gameId).toEqual(expect.any(Number));
+		gameId = await createGame({ name: "sdj 2024", ruleCount: 2, ownerId: participant.id, description: "foo" });
+		expect(gameId).toEqual(expect.any(String));
 	});
 
 	it("should be in the active games", async () => {
 		const games = await getActiveGames();
-		expect(games).toEqual([{ name: "sdj 2024", entries: [], id: expect.any(Number), description: "foo" }]);
+		expect(games).toEqual([{ name: "sdj 2024", entries: [], id: expect.any(String), description: "foo" }]);
 	});
 
 	it("participant games should include created game", async () =>
 		expect(await getGamesForParticipant({ participantId: participant.id })).toEqual({
 			recipientEntries: [],
 			djEntries: [],
-			ownedSeasons: [{ id: expect.any(Number), name: "sdj 2024", state: SeasonState.SIGN_UP, ruleCount: 2 }],
+			ownedSeasons: [{ id: expect.any(String), name: "sdj 2024", state: SeasonState.SIGN_UP, ruleCount: 2 }],
 		}));
 
 	it("should not allow you to update rules if you have not signed up yet", () =>
@@ -97,7 +97,7 @@ describe("Basic flow", () => {
 					},
 				],
 				description: "foo",
-				id: expect.any(Number),
+				id: expect.any(String),
 			},
 		]);
 	});
@@ -116,7 +116,7 @@ describe("Basic flow", () => {
 				},
 			],
 			djEntries: [],
-			ownedSeasons: [{ id: expect.any(Number), name: "sdj 2024", state: SeasonState.SIGN_UP, ruleCount: 2 }],
+			ownedSeasons: [{ id: expect.any(String), name: "sdj 2024", state: SeasonState.SIGN_UP, ruleCount: 2 }],
 		}));
 
 	it("should not allow signing up for the game again", () =>
@@ -140,7 +140,7 @@ describe("Basic flow", () => {
 					},
 				],
 				description: "foo",
-				id: expect.any(Number),
+				id: expect.any(String),
 			},
 		]);
 	});
@@ -182,7 +182,7 @@ describe("Basic flow", () => {
 					rules: [{ text: "baz" }, { text: "qux" }],
 				},
 			],
-			ownedSeasons: [{ id: expect.any(Number), name: "sdj 2024", state: SeasonState.IN_PROGRESS, ruleCount: 2 }],
+			ownedSeasons: [{ id: expect.any(String), name: "sdj 2024", state: SeasonState.IN_PROGRESS, ruleCount: 2 }],
 		}));
 });
 
@@ -191,7 +191,7 @@ describe("multiple users flow", () => {
 	let participantA: Participant;
 	let participantB: Participant;
 
-	let seasonId: number;
+	let seasonId: string;
 
 	beforeAll(async () => {
 		await dropTables();
@@ -206,15 +206,13 @@ describe("multiple users flow", () => {
 	});
 
 	it("owner creates a game", async () => {
-		seasonId = (
-			await createGame({
-				name: "awesomesauce",
-				ruleCount: 1,
-				ownerId: ownerParticipant.id,
-				description: "bar",
-			})
-		).id;
-		expect(seasonId).toEqual(expect.any(Number));
+		seasonId = await createGame({
+			name: "awesomesauce",
+			ruleCount: 1,
+			ownerId: ownerParticipant.id,
+			description: "bar",
+		});
+		expect(seasonId).toEqual(expect.any(String));
 		const gamesForOwner = await getGamesForParticipant({ participantId: ownerParticipant.id });
 		expect(gamesForOwner).toEqual({
 			ownedSeasons: [
@@ -232,7 +230,7 @@ describe("multiple users flow", () => {
 	it("non-existent participants can't create games", async () =>
 		expect(createGame({ name: "awesomesauce", ruleCount: 1, ownerId: 9999, description: "" })).rejects.toThrow());
 	it("owner can delete game after creating", async () => {
-		const { id: mistakenlyCreatedSeasonId } = await createGame({
+		const mistakenlyCreatedSeasonId = await createGame({
 			name: "asdf",
 			ruleCount: 9,
 			ownerId: ownerParticipant.id,
@@ -372,8 +370,7 @@ describe("multiple users flow", () => {
 		expect(activeGames.length).toEqual(0);
 
 		const djIdToEntryMap: { [key: string]: { entryId: number; recipientId: number } } = {};
-		const { userId } = await db.season.findUniqueOrThrow({ where: { id: seasonId } });
-		const { entries: allEntries } = await getSeason(userId);
+		const { entries: allEntries } = await getSeason(seasonId);
 		for (const entry of allEntries) {
 			djIdToEntryMap[entry.djId!] = {
 				entryId: entry.id,
@@ -468,23 +465,22 @@ describe("multiple users flow", () => {
 	it("owner can NO LONGER delete game after starting", () =>
 		expect(deleteGame({ seasonId, ownerId: ownerParticipant.id })).rejects.toThrow());
 	it("participants can submit their playlist submissions", async () => {
-		const { userId } = await db.season.findUniqueOrThrow({ where: { id: seasonId } });
 		await submitPlaylist({
-			seasonId: userId,
+			seasonId,
 			djId: ownerParticipant.id,
 			playlistUrl: "https://open.spotify.com/playlist/aaa",
 		});
 		await submitPlaylist({
-			seasonId: userId,
+			seasonId,
 			djId: participantA.id,
 			playlistUrl: "https://open.spotify.com/playlist/bbb",
 		});
 		await submitPlaylist({
-			seasonId: userId,
+			seasonId,
 			djId: participantB.id,
 			playlistUrl: "https://open.spotify.com/playlist/ccc",
 		});
-		const { entries: allEntries } = await getSeason(userId);
+		const { entries: allEntries } = await getSeason(seasonId);
 		for (const entry of allEntries) {
 			expect(entry).toEqual({
 				id: expect.any(Number),
@@ -577,9 +573,8 @@ describe("multiple users flow", () => {
 		});
 	});
 	it("participants can edit their playlist submissions", async () => {
-		const { userId } = await db.season.findUniqueOrThrow({ where: { id: seasonId } });
 		await submitPlaylist({
-			seasonId: userId,
+			seasonId,
 			djId: ownerParticipant.id,
 			playlistUrl: "https://open.spotify.com/playlist/zzz",
 		});
@@ -622,8 +617,7 @@ describe("multiple users flow", () => {
 	});
 	it("participants can NOW see recipient playlists", async () => {
 		const recipientIdToSubmissionUrlMap: { [key: string]: string } = {};
-		const { userId } = await db.season.findUniqueOrThrow({ where: { id: seasonId } });
-		const { entries: allEntries } = await getSeason(userId);
+		const { entries: allEntries } = await getSeason(seasonId);
 		for (const entry of allEntries) {
 			recipientIdToSubmissionUrlMap[entry.recipientId] = entry.submissionUrl!;
 		}
@@ -707,9 +701,8 @@ describe("multiple users flow", () => {
 		});
 	});
 	it("participants can no longer edit their playlist submissions", async () => {
-		const { userId } = await db.season.findUniqueOrThrow({ where: { id: seasonId } });
 		return expect(
-			submitPlaylist({ seasonId: userId, djId: participantA.id, playlistUrl: "https://puginarug.com/" }),
+			submitPlaylist({ seasonId, djId: participantA.id, playlistUrl: "https://puginarug.com/" }),
 		).rejects.toThrow();
 	});
 	it("owner can still not delete the game", () =>

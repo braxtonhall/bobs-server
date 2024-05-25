@@ -5,9 +5,7 @@ type Environment = { seasonId: string; entryId: string };
 export const getEntry = async ({ seasonId, entryId }: Environment) => {
 	const entry = await db.entry.findUnique({
 		where: {
-			season: {
-				userId: seasonId,
-			},
+			seasonId,
 			userId: entryId,
 		},
 		include: {
