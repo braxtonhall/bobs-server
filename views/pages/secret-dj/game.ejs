@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<%- include('../../partials/head'); %>
+	</head>
+	<body>
+		<header>
+			<%- include('../../partials/header'); %>
+		</header>
+
+		<main>
+			<div>
+				<h1>game</h1>
+				this is for a specific game
+				<p>the name of this game is '<%=season.name%>'</p>
+				<p>the description of this game is '<%=season.description%>'</p>
+				<pre>
+<%=JSON.stringify({season, participant, recipient, dj}, null, '\t')%>
+</pre>
+			</div>
+		</main>
+	</body>
+</html>

@@ -41,8 +41,8 @@ type UpdatedEntry = {
 	};
 };
 
-const toMessages = (seasonUserId: string, entries: UpdatedEntry[]): Message[] => {
-	const link = `https://${Config.HOST}/secret-dj/games/${seasonUserId}`;
+const toMessages = (seasonId: string, entries: UpdatedEntry[]): Message[] => {
+	const link = `https://${Config.HOST}/secret-dj/games/${seasonId}`;
 	return entries.map(({ recipient }) => ({
 		address: recipient.email.address,
 		html: `${recipient.name}, time to start making playlist`,

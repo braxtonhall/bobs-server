@@ -10,7 +10,7 @@ import { dropTables } from "../util";
 import { setParticipant } from "../../src/secret-dj/operations/setParticipant";
 import { Participant } from "@prisma/client";
 import { deleteGame } from "../../src/secret-dj/operations/deleteGame";
-import { getAllEntriesForSeason } from "../../src/secret-dj/operations/getAllEntriesForSeason";
+import { getSeason } from "../../src/secret-dj/operations/getSeason";
 import { submitPlaylist } from "../../src/secret-dj/operations/submitPlaylist";
 import { endFinishedSeasons } from "../../src/secret-dj/operations/endFinishedSeasons";
 
@@ -42,8 +42,8 @@ describe("Basic flow", () => {
 		expect(startGame({ ownerId: participant.id, seasonId: 0 })).rejects.toThrow());
 
 	it("should be able to create a game", async () => {
-		gameId = await createGame({ name: "sdj 2024", ruleCount: 2, ownerId: participant.id, description: "foo" });
-		expect(typeof gameId).toEqual("number");
+		gameId = (await createGame({ name: "sdj 2024", ruleCount: 2, ownerId: participant.id, description: "foo" })).id;
+		expect(gameId).toEqual(expect.any(Number));
 	});
 
 	it("should be in the active games", async () => {
@@ -206,13 +206,15 @@ describe("multiple users flow", () => {
 	});
 
 	it("owner creates a game", async () => {
-		seasonId = await createGame({
-			name: "awesomesauce",
-			ruleCount: 1,
-			ownerId: ownerParticipant.id,
-			description: "bar",
-		});
-		expect(typeof seasonId).toEqual("number");
+		seasonId = (
+			await createGame({
+				name: "awesomesauce",
+				ruleCount: 1,
+				ownerId: ownerParticipant.id,
+				description: "bar",
+			})
+		).id;
+		expect(seasonId).toEqual(expect.any(Number));
 		const gamesForOwner = await getGamesForParticipant({ participantId: ownerParticipant.id });
 		expect(gamesForOwner).toEqual({
 			ownedSeasons: [
@@ -230,7 +232,7 @@ describe("multiple users flow", () => {
 	it("non-existent participants can't create games", async () =>
 		expect(createGame({ name: "awesomesauce", ruleCount: 1, ownerId: 9999, description: "" })).rejects.toThrow());
 	it("owner can delete game after creating", async () => {
-		const mistakenlyCreatedSeasonId = await createGame({
+		const { id: mistakenlyCreatedSeasonId } = await createGame({
 			name: "asdf",
 			ruleCount: 9,
 			ownerId: ownerParticipant.id,
@@ -370,7 +372,8 @@ describe("multiple users flow", () => {
 		expect(activeGames.length).toEqual(0);
 
 		const djIdToEntryMap: { [key: string]: { entryId: number; recipientId: number } } = {};
-		const allEntries = await getAllEntriesForSeason({ seasonId });
+		const { userId } = await db.season.findUniqueOrThrow({ where: { id: seasonId } });
+		const { entries: allEntries } = await getSeason(userId);
 		for (const entry of allEntries) {
 			djIdToEntryMap[entry.djId!] = {
 				entryId: entry.id,
@@ -472,8 +475,8 @@ describe("multiple users flow", () => {
 		});
 		await submitPlaylist({ seasonId, djId: participantA.id, playlistUrl: "https://open.spotify.com/playlist/bbb" });
 		await submitPlaylist({ seasonId, djId: participantB.id, playlistUrl: "https://open.spotify.com/playlist/ccc" });
-
-		const allEntries = await getAllEntriesForSeason({ seasonId });
+		const { userId } = await db.season.findUniqueOrThrow({ where: { id: seasonId } });
+		const { entries: allEntries } = await getSeason(userId);
 		for (const entry of allEntries) {
 			expect(entry).toEqual({
 				id: expect.any(Number),
@@ -610,7 +613,8 @@ describe("multiple users flow", () => {
 	});
 	it("participants can NOW see recipient playlists", async () => {
 		const recipientIdToSubmissionUrlMap: { [key: string]: string } = {};
-		const allEntries = await getAllEntriesForSeason({ seasonId });
+		const { userId } = await db.season.findUniqueOrThrow({ where: { id: seasonId } });
+		const { entries: allEntries } = await getSeason(userId);
 		for (const entry of allEntries) {
 			recipientIdToSubmissionUrlMap[entry.recipientId] = entry.submissionUrl!;
 		}

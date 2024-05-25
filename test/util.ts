@@ -4,6 +4,9 @@ import posters from "../src/toolbox/storage/posters";
 import { hashString } from "../src/util";
 
 export const dropTables = async () => {
+	await db.message.deleteMany();
+	await db.counter.deleteMany();
+	await db.token.deleteMany();
 	await db.post.deleteMany();
 	await db.poster.deleteMany();
 	await db.box.deleteMany();

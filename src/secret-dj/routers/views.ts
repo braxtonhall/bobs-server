@@ -1,11 +1,14 @@
 import express from "express";
 import { getParticipation, enforceParticipation, checkParticipation } from "../middlewares/checkParticipation";
 import { setParticipant } from "../operations/setParticipant";
-import { Email } from "@prisma/client";
-import { settingsPayloadSchema, signupPayloadSchema } from "../schemas";
+import { Email, Participant } from "@prisma/client";
+import { createSeasonPayloadSchema, settingsPayloadSchema, signupPayloadSchema } from "../schemas";
 import { getJoinableGames } from "../operations/getJoinableGames";
 import { getSeasonsForParticipant } from "../operations/getSeasonsForParticipant";
 import { getArchivedSeasons } from "../operations/getArchivedSeasons";
+import { createGame } from "../operations/createGame";
+import { getSeason } from "../operations/getSeason";
+import { getParticipantEntriesForSeason } from "../operations/getParticipantEntriesForSeason";
 
 export const views = express()
 	.use(getParticipation)
@@ -24,10 +27,13 @@ export const views = express()
 	.get("/browse", async (req, res) =>
 		res.render(
 			"pages/secret-dj/browse",
-			await getJoinableGames({ participantId: res.locals.participant.id, cursor: String(req.query.cursor) }),
+			await getJoinableGames({
+				participantId: res.locals.participant.id,
+				cursor: req.query.cursor as string | undefined,
+			}),
 		),
 	)
-	.get("/archive", async (req, res) => res.render("pages/secret-dj/browse", await getArchivedSeasons(req.query)))
+	.get("/archive", async (req, res) => res.render("pages/secret-dj/archive", await getArchivedSeasons(req.query)))
 	.get("/games/:id", async (req, res) => {
 		// TODO
 		// 1. if the game is not started,
@@ -43,7 +49,16 @@ export const views = express()
 		//   ALSO, if your playlist is done, it should say it's ready, but we're waiting on max(N, 1) playlists
 		// 3. if the game is DONE, you should see the playlist you received at the top
 		//    beneath is a table with everyone else's rules and playlist links!
-		return res.redirect("/secret-dj"); // TODO
+		try {
+			const season = await getSeason(req.params.id);
+			return res.render("pages/secret-dj/game", {
+				season,
+				participant: res.locals.participant,
+				...(await getParticipantEntriesForSeason({ seasonId: season.id, userId: res.locals.participant.id })),
+			});
+		} catch {
+			return res.sendStatus(404);
+		}
 	})
 	.post("/games/:id/rules", (req, res) => {
 		// This is for signing up or editing your rules
@@ -57,12 +72,16 @@ export const views = express()
 	})
 	.post("/games/:id/start", (req, res) => res.redirect("/secret-dj"))
 	.post("/games/:id/delete", (req, res) => res.redirect("/secret-dj"))
-	.get("/create", (req, res) => res.render("pages/secret-dj/create"))
-	.post("/create", (req, res) => {
-		// game count, name
-		// STRETCH GOAL??? add a description field
-		// at the end, redirect to the game page
-		return res.redirect("/secret-dj");
+	.get("/create", (req, res) => res.render("pages/secret-dj/create", { error: "" }))
+	.post("/create", async (req, res) => {
+		try {
+			const { name, description, rules: ruleCount } = createSeasonPayloadSchema.parse(req.body);
+			const participant: Participant = res.locals.participant;
+			const { userId } = await createGame({ name, description, ruleCount, ownerId: participant.id });
+			return res.redirect(`games/${userId}`);
+		} catch {
+			return res.render("pages/secret-dj/create", { error: "That didn't quite work" });
+		}
 	})
 	.get("/games/:gameId/entries/:entryId", (req, res) => {
 		// TODO
@@ -93,7 +112,7 @@ export const views = express()
 			"pages/secret-dj/index",
 			await getSeasonsForParticipant({
 				participantId: res.locals.participant.id,
-				cursor: String(req.query.cursor),
+				cursor: req.query.cursor as string | undefined,
 			}),
 		),
 	);

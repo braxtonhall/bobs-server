@@ -7,7 +7,12 @@ type Environment = {
 	description: string;
 };
 
-export const createGame = async ({ name, description, ruleCount, ownerId }: Environment): Promise<number> => {
+export const createGame = async ({
+	name,
+	description,
+	ruleCount,
+	ownerId,
+}: Environment): Promise<{ id: number; userId: string }> => {
 	if (ruleCount < 1) {
 		throw new Error("Rule count must be equal to or greater than 1");
 	}
@@ -20,8 +25,13 @@ export const createGame = async ({ name, description, ruleCount, ownerId }: Envi
 		},
 		select: {
 			id: true,
+			userId: true,
 		},
 	});
 
-	return result?.id ?? null;
+	if (result) {
+		return result;
+	} else {
+		throw new Error("Could not create");
+	}
 };

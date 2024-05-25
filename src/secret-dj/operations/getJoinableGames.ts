@@ -38,6 +38,7 @@ export const getJoinableGames = async ({
 			state: true,
 			userId: true,
 			name: true,
+			description: true,
 		},
 		...(cursor !== undefined && { cursor: { userId: cursor } }),
 		orderBy: {

@@ -5,8 +5,8 @@ import { enqueue, Message } from "../../email";
 
 type RecipientEntry = { recipient: { email: { address: string }; name: string } };
 
-const toMessages = (seasonUserId: string, entries: RecipientEntry[]): Message[] => {
-	const link = `https://${Config.HOST}/secret-dj/games/${seasonUserId}`;
+const toMessages = (seasonId: string, entries: RecipientEntry[]): Message[] => {
+	const link = `https://${Config.HOST}/secret-dj/games/${seasonId}`;
 	return entries.map(({ recipient }) => ({
 		address: recipient.email.address,
 		html: `${recipient.name}, your playlist is ready`,
@@ -42,8 +42,8 @@ export const endFinishedSeasons = async () => {
 					},
 				},
 			},
-			userId: true,
 			id: true,
+			userId: true,
 		},
 	});
 	const futureUpdates = finishedSeasons.map(({ id, userId, entries }) =>
