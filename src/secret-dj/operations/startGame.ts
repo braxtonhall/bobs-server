@@ -41,7 +41,7 @@ type UpdatedEntry = {
 	};
 };
 
-const sendMessages = async (seasonUserId: string, entries: UpdatedEntry[]) => {
+const sendMessages = async (tx: Pick<typeof db, "message">, seasonUserId: string, entries: UpdatedEntry[]) => {
 	const link = `https://${Config.HOST}/secret-dj/games/${seasonUserId}`;
 	const messages = entries.map(({ recipient }) => ({
 		address: recipient.email.address,
@@ -49,7 +49,7 @@ const sendMessages = async (seasonUserId: string, entries: UpdatedEntry[]) => {
 		text: `${recipient.name}, time to start making playlist. <a href="${link}">click here to see your rules</a>`,
 		subject: "a new season of secret dj has started",
 	}));
-	await enqueue(...messages);
+	await enqueue(tx, ...messages);
 };
 
 export const startGame = async ({ ownerId, seasonId }: Environment): Promise<Entry[]> =>
@@ -80,7 +80,7 @@ export const startGame = async ({ ownerId, seasonId }: Environment): Promise<Ent
 				}),
 			);
 			const updates = (await Promise.all(futureUpdates)) satisfies UpdatedEntry[];
-			// TODO await sendMessages(season.userId, updates);
+			await sendMessages(tx, season.userId, updates);
 			return updates;
 		} else {
 			throw new Error(`Could not find eligible season ${seasonId}`);

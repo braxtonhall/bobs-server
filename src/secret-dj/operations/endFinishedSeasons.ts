@@ -5,7 +5,7 @@ import { enqueue } from "../../email";
 
 type RecipientEntry = { recipient: { email: { address: string }; name: string } };
 
-const sendMessages = async (seasonUserId: string, entries: RecipientEntry[]) => {
+const sendMessages = async (tx: Pick<typeof db, "message">, seasonUserId: string, entries: RecipientEntry[]) => {
 	const link = `https://${Config.HOST}/secret-dj/games/${seasonUserId}`;
 	const messages = entries.map(({ recipient }) => ({
 		address: recipient.email.address,
@@ -13,7 +13,7 @@ const sendMessages = async (seasonUserId: string, entries: RecipientEntry[]) => 
 		text: `${recipient.name}, your playlist is ready. <a href="${link}">click here to see your playlist</a>`,
 		subject: "a season of secret dj has ended",
 	}));
-	await enqueue(...messages);
+	await enqueue(tx, ...messages);
 };
 
 export const endFinishedSeasons = async () => {
@@ -55,7 +55,7 @@ export const endFinishedSeasons = async () => {
 					state: SeasonState.ENDED,
 				},
 			});
-			// await sendMessages(userId, entries); // TODO
+			await sendMessages(tx, userId, entries); // TODO
 		}),
 	);
 	const updates = await Promise.all(futureUpdates);

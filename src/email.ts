@@ -5,8 +5,11 @@ import { db } from "./db";
 
 sendgrid.setApiKey(Config.SENDGRID_API_KEY);
 
-export const enqueue = async (...messages: Omit<Message, "id">[]): Promise<void> => {
-	await db.message.createMany({ data: messages });
+export const enqueue = async (
+	client: Pick<typeof db, "message">,
+	...messages: Omit<Message, "id">[]
+): Promise<void> => {
+	await client.message.createMany({ data: messages });
 	void sendQueuedMessages();
 };
 
