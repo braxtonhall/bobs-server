@@ -1,6 +1,6 @@
 import { db } from "../../db";
 import { SeasonState } from "../SeasonState";
-import { enqueue } from "../../email";
+import { enqueue, Message } from "../../email";
 import Config from "../../Config";
 
 type Entry = Awaited<ReturnType<typeof db.entry.findMany>>[number];
@@ -41,15 +41,14 @@ type UpdatedEntry = {
 	};
 };
 
-const sendMessages = async (tx: Pick<typeof db, "message">, seasonUserId: string, entries: UpdatedEntry[]) => {
+const toMessages = (seasonUserId: string, entries: UpdatedEntry[]): Message[] => {
 	const link = `https://${Config.HOST}/secret-dj/games/${seasonUserId}`;
-	const messages = entries.map(({ recipient }) => ({
+	return entries.map(({ recipient }) => ({
 		address: recipient.email.address,
 		html: `${recipient.name}, time to start making playlist`,
 		text: `${recipient.name}, time to start making playlist. <a href="${link}">click here to see your rules</a>`,
 		subject: "a new season of secret dj has started",
 	}));
-	await enqueue(tx, ...messages);
 };
 
 export const startGame = async ({ ownerId, seasonId }: Environment): Promise<Entry[]> =>
@@ -68,11 +67,7 @@ export const startGame = async ({ ownerId, seasonId }: Environment): Promise<Ent
 					include: {
 						recipient: {
 							select: {
-								email: {
-									select: {
-										address: true,
-									},
-								},
+								email: { select: { address: true } },
 								name: true,
 							},
 						},
@@ -80,7 +75,7 @@ export const startGame = async ({ ownerId, seasonId }: Environment): Promise<Ent
 				}),
 			);
 			const updates = (await Promise.all(futureUpdates)) satisfies UpdatedEntry[];
-			await sendMessages(tx, season.userId, updates);
+			await enqueue(tx, ...toMessages(season.userId, updates));
 			return updates;
 		} else {
 			throw new Error(`Could not find eligible season ${seasonId}`);

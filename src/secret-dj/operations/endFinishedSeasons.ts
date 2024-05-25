@@ -1,19 +1,18 @@
 import { db } from "../../db";
 import { SeasonState } from "../SeasonState";
 import Config from "../../Config";
-import { enqueue } from "../../email";
+import { enqueue, Message } from "../../email";
 
 type RecipientEntry = { recipient: { email: { address: string }; name: string } };
 
-const sendMessages = async (tx: Pick<typeof db, "message">, seasonUserId: string, entries: RecipientEntry[]) => {
+const toMessages = (seasonUserId: string, entries: RecipientEntry[]): Message[] => {
 	const link = `https://${Config.HOST}/secret-dj/games/${seasonUserId}`;
-	const messages = entries.map(({ recipient }) => ({
+	return entries.map(({ recipient }) => ({
 		address: recipient.email.address,
 		html: `${recipient.name}, your playlist is ready`,
 		text: `${recipient.name}, your playlist is ready. <a href="${link}">click here to see your playlist</a>`,
 		subject: "a season of secret dj has ended",
 	}));
-	await enqueue(tx, ...messages);
 };
 
 export const endFinishedSeasons = async () => {
@@ -55,7 +54,7 @@ export const endFinishedSeasons = async () => {
 					state: SeasonState.ENDED,
 				},
 			});
-			await sendMessages(tx, userId, entries); // TODO
+			await enqueue(tx, ...toMessages(userId, entries));
 		}),
 	);
 	const updates = await Promise.all(futureUpdates);

@@ -1,14 +1,13 @@
 import sendgrid from "@sendgrid/mail";
 import Config from "./Config";
-import { Message } from "@prisma/client";
+import { Message as PrismaMessage } from "@prisma/client";
 import { db } from "./db";
 
 sendgrid.setApiKey(Config.SENDGRID_API_KEY);
 
-export const enqueue = async (
-	client: Pick<typeof db, "message">,
-	...messages: Omit<Message, "id">[]
-): Promise<void> => {
+export type Message = Omit<PrismaMessage, "id">;
+
+export const enqueue = async (client: Pick<typeof db, "message">, ...messages: Message[]): Promise<void> => {
 	await client.message.createMany({ data: messages });
 	void sendQueuedMessages();
 };
