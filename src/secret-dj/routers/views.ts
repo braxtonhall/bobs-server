@@ -36,7 +36,7 @@ export const views = express()
 			"pages/secret-dj/browse",
 			await getJoinableGames({
 				participantId: res.locals.participant.id,
-				cursor: req.query.cursor as string | undefined,
+				cursor: typeof req.query.cursor === "string" ? req.query.cursor : undefined,
 			}),
 		),
 	)
@@ -115,7 +115,7 @@ export const views = express()
 			"pages/secret-dj/index",
 			await getSeasonsForParticipant({
 				participantId: res.locals.participant.id,
-				cursor: req.query.cursor as string | undefined,
+				cursor: typeof req.query.cursor === "string" ? req.query.cursor : undefined,
 			}),
 		),
 	);
