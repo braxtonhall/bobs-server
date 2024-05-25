@@ -52,6 +52,8 @@ export const views = express()
 		try {
 			const season = await getSeason(req.params.id);
 			return res.render("pages/secret-dj/game", {
+				error: "",
+				...req.query,
 				season,
 				participant: res.locals.participant,
 				...(await getParticipantEntriesForSeason({ seasonId: season.id, userId: res.locals.participant.id })),
@@ -89,6 +91,8 @@ export const views = express()
 		// if the game has not yet ended, the playlist is not embedded
 		// the comment box does NOT show the form entry for name (anon only)
 		// STRETCH GOAL??? is the playlist information saved in the database?
+		// If this is YOUR entry before the game has started, you can edit rules here too
+		// If this is your recipient's entry before the game has ended, you can submit playlist here too
 		return res.redirect("/secret-dj"); // TODO
 	})
 	.get("/settings", (req, res) =>

@@ -14,8 +14,17 @@
 				this is for a specific game
 				<p>the name of this game is '<%=season.name%>'</p>
 				<p>the description of this game is '<%=season.description%>'</p>
+
+				<% if (season.state === 'sign-up') { %>
+				<p>rules form goes here (use recipient values here)</p>
+				<% } else if (season.state === 'in-progress') { %>
+				<p>playlist form goes here (use dj values here)</p>
+				<% } else { %>
+				<p>playlist result here! (use recipient values here)</p>
+				<% } %>
+
 				<pre>
-<%=JSON.stringify({season, participant, recipient, dj}, null, '\t')%>
+<%=JSON.stringify({season, participant, recipient, dj, error}, null, '\t')%>
 </pre>
 			</div>
 		</main>
