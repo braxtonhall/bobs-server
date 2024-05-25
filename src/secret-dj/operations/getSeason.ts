@@ -6,7 +6,14 @@ export const getSeason = async (seasonId: string) => {
 			id: seasonId,
 		},
 		include: {
-			entries: true,
+			entries: {
+				select: {
+					id: true,
+					recipientId: true,
+					djId: true,
+					submissionUrl: true,
+				},
+			},
 		},
 	});
 

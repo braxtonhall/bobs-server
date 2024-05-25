@@ -89,7 +89,7 @@ describe("Basic flow", () => {
 				name: "sdj 2024",
 				entries: [
 					{
-						id: expect.any(Number),
+						id: expect.any(String),
 						recipient: {
 							name: "bob",
 						},
@@ -106,7 +106,7 @@ describe("Basic flow", () => {
 		expect(await getGamesForParticipant({ participantId: participant.id })).toEqual({
 			recipientEntries: [
 				{
-					id: expect.any(Number),
+					id: expect.any(String),
 					seasonId: gameId,
 					season: {
 						state: SeasonState.SIGN_UP,
@@ -132,7 +132,7 @@ describe("Basic flow", () => {
 				name: "sdj 2024",
 				entries: [
 					{
-						id: expect.any(Number),
+						id: expect.any(String),
 						recipient: {
 							name: "bob",
 						},
@@ -165,7 +165,7 @@ describe("Basic flow", () => {
 		expect(await getGamesForParticipant({ participantId: participant.id })).toEqual({
 			recipientEntries: [
 				{
-					id: expect.any(Number),
+					id: expect.any(String),
 					seasonId: gameId,
 					season: {
 						state: SeasonState.IN_PROGRESS,
@@ -176,7 +176,7 @@ describe("Basic flow", () => {
 			],
 			djEntries: [
 				{
-					id: expect.any(Number),
+					id: expect.any(String),
 					seasonId: gameId,
 					submissionUrl: null,
 					rules: [{ text: "baz" }, { text: "qux" }],
@@ -293,7 +293,7 @@ describe("multiple users flow", () => {
 			],
 			recipientEntries: [
 				{
-					id: expect.any(Number),
+					id: expect.any(String),
 					seasonId,
 					season: {
 						state: SeasonState.SIGN_UP,
@@ -311,7 +311,7 @@ describe("multiple users flow", () => {
 			ownedSeasons: [],
 			recipientEntries: [
 				{
-					id: expect.any(Number),
+					id: expect.any(String),
 					seasonId,
 					season: {
 						state: SeasonState.SIGN_UP,
@@ -328,7 +328,7 @@ describe("multiple users flow", () => {
 			ownedSeasons: [],
 			recipientEntries: [
 				{
-					id: expect.any(Number),
+					id: expect.any(String),
 					seasonId,
 					season: {
 						state: SeasonState.SIGN_UP,
@@ -349,7 +349,7 @@ describe("multiple users flow", () => {
 			ownedSeasons: [],
 			recipientEntries: [
 				{
-					id: expect.any(Number),
+					id: expect.any(String),
 					seasonId,
 					season: {
 						state: SeasonState.SIGN_UP,
@@ -369,7 +369,7 @@ describe("multiple users flow", () => {
 		const activeGames = await getActiveGames();
 		expect(activeGames.length).toEqual(0);
 
-		const djIdToEntryMap: { [key: string]: { entryId: number; recipientId: number } } = {};
+		const djIdToEntryMap: { [key: string]: { entryId: string; recipientId: number } } = {};
 		const { entries: allEntries } = await getSeason(seasonId);
 		for (const entry of allEntries) {
 			djIdToEntryMap[entry.djId!] = {
@@ -399,7 +399,7 @@ describe("multiple users flow", () => {
 			],
 			recipientEntries: [
 				{
-					id: expect.any(Number),
+					id: expect.any(String),
 					seasonId,
 					season: {
 						state: SeasonState.IN_PROGRESS,
@@ -421,7 +421,7 @@ describe("multiple users flow", () => {
 			ownedSeasons: [],
 			recipientEntries: [
 				{
-					id: expect.any(Number),
+					id: expect.any(String),
 					seasonId,
 					season: {
 						state: SeasonState.IN_PROGRESS,
@@ -443,7 +443,7 @@ describe("multiple users flow", () => {
 			ownedSeasons: [],
 			recipientEntries: [
 				{
-					id: expect.any(Number),
+					id: expect.any(String),
 					seasonId,
 					season: {
 						state: SeasonState.IN_PROGRESS,
@@ -483,13 +483,11 @@ describe("multiple users flow", () => {
 		const { entries: allEntries } = await getSeason(seasonId);
 		for (const entry of allEntries) {
 			expect(entry).toEqual({
-				id: expect.any(Number),
-				seasonId,
+				id: expect.any(String),
 				recipientId: expect.any(Number),
 				djId: expect.any(Number),
 				// this is populated in the DB, but won't be displayed to users until the game ends
 				submissionUrl: expect.any(String),
-				userId: expect.any(String),
 			});
 		}
 	});
@@ -509,7 +507,7 @@ describe("multiple users flow", () => {
 			],
 			recipientEntries: [
 				{
-					id: expect.any(Number),
+					id: expect.any(String),
 					seasonId,
 					season: {
 						state: SeasonState.IN_PROGRESS,
@@ -520,7 +518,7 @@ describe("multiple users flow", () => {
 			],
 			djEntries: [
 				{
-					id: expect.any(Number),
+					id: expect.any(String),
 					seasonId,
 					submissionUrl: "https://open.spotify.com/playlist/aaa",
 					rules: [{ text: expect.any(String) }],
@@ -531,7 +529,7 @@ describe("multiple users flow", () => {
 			ownedSeasons: [],
 			recipientEntries: [
 				{
-					id: expect.any(Number),
+					id: expect.any(String),
 					seasonId,
 					season: {
 						state: SeasonState.IN_PROGRESS,
@@ -542,7 +540,7 @@ describe("multiple users flow", () => {
 			],
 			djEntries: [
 				{
-					id: expect.any(Number),
+					id: expect.any(String),
 					seasonId,
 					submissionUrl: "https://open.spotify.com/playlist/bbb",
 					rules: [{ text: expect.any(String) }],
@@ -553,7 +551,7 @@ describe("multiple users flow", () => {
 			ownedSeasons: [],
 			recipientEntries: [
 				{
-					id: expect.any(Number),
+					id: expect.any(String),
 					seasonId,
 					season: {
 						state: SeasonState.IN_PROGRESS,
@@ -564,7 +562,7 @@ describe("multiple users flow", () => {
 			],
 			djEntries: [
 				{
-					id: expect.any(Number),
+					id: expect.any(String),
 					seasonId,
 					submissionUrl: "https://open.spotify.com/playlist/ccc",
 					rules: [{ text: expect.any(String) }],
@@ -591,7 +589,7 @@ describe("multiple users flow", () => {
 			],
 			recipientEntries: [
 				{
-					id: expect.any(Number),
+					id: expect.any(String),
 					seasonId,
 					season: {
 						state: SeasonState.IN_PROGRESS,
@@ -602,7 +600,7 @@ describe("multiple users flow", () => {
 			],
 			djEntries: [
 				{
-					id: expect.any(Number),
+					id: expect.any(String),
 					seasonId,
 					submissionUrl: "https://open.spotify.com/playlist/zzz",
 					rules: [{ text: expect.any(String) }],
@@ -637,7 +635,7 @@ describe("multiple users flow", () => {
 			],
 			recipientEntries: [
 				{
-					id: expect.any(Number),
+					id: expect.any(String),
 					seasonId,
 					season: {
 						state: SeasonState.ENDED,
@@ -648,7 +646,7 @@ describe("multiple users flow", () => {
 			],
 			djEntries: [
 				{
-					id: expect.any(Number),
+					id: expect.any(String),
 					seasonId,
 					submissionUrl: "https://open.spotify.com/playlist/zzz",
 					rules: [{ text: expect.any(String) }],
@@ -659,7 +657,7 @@ describe("multiple users flow", () => {
 			ownedSeasons: [],
 			recipientEntries: [
 				{
-					id: expect.any(Number),
+					id: expect.any(String),
 					seasonId,
 					season: {
 						state: SeasonState.ENDED,
@@ -670,7 +668,7 @@ describe("multiple users flow", () => {
 			],
 			djEntries: [
 				{
-					id: expect.any(Number),
+					id: expect.any(String),
 					seasonId,
 					submissionUrl: "https://open.spotify.com/playlist/bbb",
 					rules: [{ text: expect.any(String) }],
@@ -681,7 +679,7 @@ describe("multiple users flow", () => {
 			ownedSeasons: [],
 			recipientEntries: [
 				{
-					id: expect.any(Number),
+					id: expect.any(String),
 					seasonId,
 					season: {
 						state: SeasonState.ENDED,
@@ -692,7 +690,7 @@ describe("multiple users flow", () => {
 			],
 			djEntries: [
 				{
-					id: expect.any(Number),
+					id: expect.any(String),
 					seasonId,
 					submissionUrl: "https://open.spotify.com/playlist/ccc",
 					rules: [{ text: expect.any(String) }],

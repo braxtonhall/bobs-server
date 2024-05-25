@@ -4,7 +4,8 @@ CREATE TABLE "Message" (
     "address" TEXT NOT NULL,
     "subject" TEXT NOT NULL,
     "text" TEXT NOT NULL,
-    "html" TEXT NOT NULL
+    "html" TEXT NOT NULL,
+    "expiration" DATETIME
 );
 
 -- CreateTable
@@ -20,8 +21,8 @@ CREATE TABLE "Token" (
 
 -- CreateTable
 CREATE TABLE "Season" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "userId" TEXT NOT NULL,
+    "sort" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id" TEXT NOT NULL,
     "ownerId" INTEGER NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
@@ -34,15 +35,15 @@ CREATE TABLE "Season" (
 CREATE TABLE "Rule" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "text" TEXT NOT NULL,
-    "playlistEntryId" INTEGER NOT NULL,
+    "playlistEntryId" TEXT NOT NULL,
     CONSTRAINT "Rule_playlistEntryId_fkey" FOREIGN KEY ("playlistEntryId") REFERENCES "Entry" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
 CREATE TABLE "Entry" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "userId" TEXT NOT NULL,
-    "seasonId" INTEGER NOT NULL,
+    "sort" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id" TEXT NOT NULL,
+    "seasonId" TEXT NOT NULL,
     "recipientId" INTEGER NOT NULL,
     "djId" INTEGER,
     "submissionUrl" TEXT,
@@ -63,10 +64,10 @@ CREATE TABLE "Participant" (
 CREATE UNIQUE INDEX "Token_temporaryToken_key" ON "Token"("temporaryToken");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Season_userId_key" ON "Season"("userId");
+CREATE UNIQUE INDEX "Season_id_key" ON "Season"("id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Entry_userId_key" ON "Entry"("userId");
+CREATE UNIQUE INDEX "Entry_id_key" ON "Entry"("id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Participant_emailId_key" ON "Participant"("emailId");

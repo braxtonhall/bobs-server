@@ -103,12 +103,12 @@ model Rule {
   id              Int    @id @default(autoincrement())
   text            String
   entry           Entry  @relation("EntryRules", fields: [playlistEntryId], references: [id])
-  playlistEntryId Int
+  playlistEntryId String
 }
 
 model Entry {
-  id            Int          @id @default(autoincrement())
-  userId        String       @unique @default(cuid())
+  sort          Int          @id @default(autoincrement())
+  id            String       @unique @default(cuid())
   season        Season       @relation("SeasonEntries", fields: [seasonId], references: [id])
   seasonId      String
   recipient     Participant  @relation("RecipientEntries", fields: [recipientId], references: [id])
