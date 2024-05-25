@@ -16,11 +16,12 @@ const isValid = (
 export const login = ({ email: address, protocol }: { email: string; protocol: string }) =>
 	db.$transaction(async (tx) => {
 		const temporaryToken = randomUUID();
+		const expiration = DateTime.now().plus({ minute: Config.TEMP_TOKEN_EXPIRATION_MIN }).toJSDate();
 		await tx.token.create({
 			data: {
 				type: TokenType.TEMP,
 				temporaryToken,
-				expiration: DateTime.now().plus({ minute: Config.TEMP_TOKEN_EXPIRATION_MIN }).toJSDate(),
+				expiration,
 				email: {
 					connectOrCreate: {
 						where: { address },
@@ -29,7 +30,7 @@ export const login = ({ email: address, protocol }: { email: string; protocol: s
 				},
 			},
 		});
-		void sendConfirmationEmail({ address, temporaryToken, protocol }).catch(() => {});
+		void sendConfirmationEmail({ address, temporaryToken, protocol, expiration }).catch(() => {});
 	});
 
 export const authorize = ({

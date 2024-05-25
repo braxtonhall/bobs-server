@@ -5,7 +5,7 @@ import { db } from "./db";
 
 sendgrid.setApiKey(Config.SENDGRID_API_KEY);
 
-export type Message = Omit<PrismaMessage, "id">;
+export type Message = Omit<PrismaMessage, "id" | "expiration"> & Partial<Pick<PrismaMessage, "expiration">>;
 
 export const enqueue = async (client: Pick<typeof db, "message">, ...messages: Message[]): Promise<void> => {
 	await client.message.createMany({ data: messages });
@@ -21,7 +21,9 @@ export const sendQueuedMessages = async () => {
 			if (!locks.has(message.id)) {
 				try {
 					locks.add(message.id);
-					await sendMessage(message);
+					if (message.expiration === null || message.expiration >= new Date()) {
+						await sendMessage(message);
+					}
 					await db.message.delete({ where: { id: message.id } });
 				} finally {
 					locks.delete(message.id);
