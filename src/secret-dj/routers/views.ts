@@ -4,9 +4,11 @@ import { setParticipant } from "../operations/setParticipant";
 import { Email, Participant } from "@prisma/client";
 import {
 	createSeasonPayloadSchema,
+	deleteOrStartSeasonPayloadSchema,
 	settingsPayloadSchema,
 	signupPayloadSchema,
 	submitPlaylistPayloadSchema,
+	submitRulesSchema,
 } from "../schemas";
 import { getJoinableGames } from "../operations/getJoinableGames";
 import { getSeasonsForParticipant } from "../operations/getSeasonsForParticipant";
@@ -16,6 +18,11 @@ import { getSeason } from "../operations/getSeason";
 import { getParticipantEntriesForSeason } from "../operations/getParticipantEntriesForSeason";
 import { getEntry } from "../operations/getEntry";
 import { submitPlaylist } from "../operations/submitPlaylist";
+import { deleteGame } from "../operations/deleteGame";
+import { startGame } from "../operations/startGame";
+import { enrolInGame } from "../operations/enrolInGame";
+import { isParticipantRegisteredInGame } from "../operations/isParticipantRegisteredInGame";
+import { updateRules } from "../operations/updateRules";
 
 export const views = express()
 	.use(getParticipation)
@@ -31,35 +38,57 @@ export const views = express()
 		}
 	})
 	.use(enforceParticipation)
-	.get("/browse", async (req, res) =>
-		res.render(
-			"pages/secret-dj/browse",
-			await getJoinableGames({
-				participantId: res.locals.participant.id,
-				cursor: typeof req.query.cursor === "string" ? req.query.cursor : undefined,
-			}),
-		),
-	)
-	.get("/archive", async (req, res) => res.render("pages/secret-dj/archive", await getArchivedSeasons(req.query)))
+	.get("/browse", async (req, res) => {
+		const participantId = res.locals.participant.id;
+		const { seasons, cursor } = await getJoinableGames({
+			participantId,
+			cursor: typeof req.query.cursor === "string" ? req.query.cursor : undefined,
+		});
+		console.log({ seasons });
+		res.render("pages/secret-dj/browse", { seasons, cursor, participantId });
+	})
+	.get("/", async (req, res) => {
+		const participantId = res.locals.participant.id;
+		const { seasons, cursor } = await getSeasonsForParticipant({
+			participantId,
+			cursor: typeof req.query.cursor === "string" ? req.query.cursor : undefined,
+		});
+		console.log({ seasons });
+		return res.render("pages/secret-dj/index", { seasons, cursor, participantId });
+	})
+	.get("/archive", async (req, res) => {
+		const participantId = res.locals.participant.id;
+		const { seasons, cursor } = await getArchivedSeasons(req.query);
+		res.render("pages/secret-dj/archive", { seasons, cursor, participantId });
+	})
 	.get("/games/:id", async (req, res) => {
+		const participantId = res.locals.participant.id;
 		try {
 			const season = await getSeason(req.params.id);
+			const { recipient, dj } = await getParticipantEntriesForSeason({
+				seasonId: season.id,
+				userId: participantId,
+			});
 			return res.render("pages/secret-dj/game", {
 				error: "",
-				...req.query,
 				season,
 				participant: res.locals.participant,
-				...(await getParticipantEntriesForSeason({ seasonId: season.id, userId: res.locals.participant.id })),
+				recipient,
+				dj,
 			});
 		} catch {
 			return res.sendStatus(404);
 		}
 	})
-	.post("/games/:id/rules", (req, res) => {
-		// TODO This is for signing up or editing your rules
-		// Fails if the game is started or ended
-		// TODO can we combine createEntry with updateEntry?
-		return res.redirect("/secret-dj");
+	.post("/games/:id/rules", async (req, res) => {
+		// TODO Fails if the game is started or ended
+		const { seasonId, recipientId, rules } = submitRulesSchema.parse(req.body);
+		if (await isParticipantRegisteredInGame({ seasonId, participantId: recipientId })) {
+			updateRules({ seasonId, recipientId, rules });
+		} else {
+			enrolInGame({ seasonId, recipientId, rules });
+		}
+		return res.redirect(`/secret-dj/games/${seasonId}`);
 	})
 	.post("/games/:id/playlist", async (req, res) => {
 		try {
@@ -73,8 +102,16 @@ export const views = express()
 			return res.redirect(`games/${req.params.id}?error=${encodeURIComponent("that did not work")}`);
 		}
 	})
-	.post("/games/:id/start", (req, res) => res.redirect("/secret-dj"))
-	.post("/games/:id/delete", (req, res) => res.redirect("/secret-dj"))
+	.post("/games/:id/start", (req, res) => {
+		const { seasonId, ownerId } = deleteOrStartSeasonPayloadSchema.parse(req.body);
+		startGame({ seasonId, ownerId });
+		res.redirect(`/secret-dj/games/${seasonId}`);
+	})
+	.post("/games/:id/delete", (req, res) => {
+		const { seasonId, ownerId } = deleteOrStartSeasonPayloadSchema.parse(req.body);
+		deleteGame({ seasonId, ownerId });
+		res.redirect("/secret-dj");
+	})
 	.get("/create", (req, res) => res.render("pages/secret-dj/create", { error: "" }))
 	.post("/create", async (req, res) => {
 		try {
@@ -109,13 +146,4 @@ export const views = express()
 				message: "that didn't work",
 			});
 		}
-	})
-	.get("/", async (req, res) =>
-		res.render(
-			"pages/secret-dj/index",
-			await getSeasonsForParticipant({
-				participantId: res.locals.participant.id,
-				cursor: typeof req.query.cursor === "string" ? req.query.cursor : undefined,
-			}),
-		),
-	);
+	});

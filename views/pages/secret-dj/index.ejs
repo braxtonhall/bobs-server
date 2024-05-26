@@ -9,22 +9,15 @@
 		</header>
 
 		<main>
-			<div>
-				<h1>secret dj</h1>
-				hello! this is the entrypoint for secret dj
-			</div>
-			// TODO this is where we should see all the games we are currently in OR own. and also the games we own have
-			a crown on them!!!
+			<%- include('../../partials/secret-dj-title'); %>
+			<div>hello! this is the entrypoint for secret dj</div>
 			<ul>
 				<li><a href="/secret-dj/browse">browse</a></li>
 				<li><a href="/secret-dj/create">create</a></li>
 				<li><a href="/secret-dj/archive">archive</a></li>
 				<li><a href="/secret-dj/settings">settings</a></li>
 			</ul>
-
-			<pre>
-data: <%= JSON.stringify({ seasons, cursor }, null, '  ') %>
-</pre>
+			<%- include('../../partials/game-table'); %>
 		</main>
 	</body>
 </html>

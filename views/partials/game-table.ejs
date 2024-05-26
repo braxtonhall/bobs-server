@@ -1,0 +1,24 @@
+<!-- requires: season array -->
+
+<table>
+	<tr>
+		<th>game name</th>
+		<th>game description</th>
+		<th>game state</th>
+		<th>game owner</th>
+	</tr>
+	<% for (const season of seasons) { %>
+	<% const link = `/secret-dj/games/${season.id}`%>
+	<tr>
+		<td>
+			<% if (season.owner.ownerId === participantId) { %>
+			👑
+			<% } %>
+			<a href="<%=link%>"><%= season.name %></a>
+		</td>
+		<td><%= season.description %></td>
+		<td><%= season.state %></td>
+		<td><%= season.owner.name %></td>
+	</tr>
+	<% } %>
+</table>

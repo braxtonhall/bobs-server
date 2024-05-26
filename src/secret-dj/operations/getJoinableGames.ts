@@ -35,6 +35,7 @@ export const getJoinableGames = async ({
 			],
 		},
 		select: {
+			owner: true,
 			state: true,
 			id: true,
 			name: true,

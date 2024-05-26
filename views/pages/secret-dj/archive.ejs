@@ -9,14 +9,11 @@
 		</header>
 
 		<main>
+			<%- include('../../partials/secret-dj-title'); %>
 			<div>
-				<h1>archive</h1>
-				this is where all old seasons go
+				<h2>archive</h2>
 			</div>
-
-			<pre>
-data: <%= JSON.stringify({ seasons, cursor }, null, '  ') %>
-</pre>
+			<%- include('../../partials/game-table'); %>
 		</main>
 	</body>
 </html>

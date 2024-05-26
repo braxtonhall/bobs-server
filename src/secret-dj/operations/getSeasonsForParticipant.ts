@@ -16,7 +16,7 @@ type Environment = {
 export const getSeasonsForParticipant = async ({
 	participantId,
 	cursor,
-}: Environment): Promise<{ seasons: Pick<Season, "state" | "name">[]; cursor?: string }> => {
+}: Environment): Promise<{ seasons: Pick<Season, "state" | "id" | "name" | "description">[]; cursor?: string }> => {
 	const seasons = await db.season.findMany({
 		where: {
 			AND: [
@@ -42,6 +42,12 @@ export const getSeasonsForParticipant = async ({
 			],
 		},
 		select: {
+			owner: {
+				select: {
+					name: true,
+					id: true,
+				},
+			},
 			state: true,
 			id: true,
 			name: true,

@@ -9,24 +9,17 @@
 		</header>
 
 		<main>
+			<%- include('../../partials/secret-dj-title'); %>
 			<div>
-				<h1>game</h1>
-				this is for a specific game
-				<p>the name of this game is '<%=season.name%>'</p>
-				<p>the description of this game is '<%=season.description%>'</p>
-
-				<%if (season.ownerId === participant.id) {%>
-				<p>here go the owner controls</p>
-				if game is in signup and entries.length is 0, add a delete button. if the game is in signup and there is
-				at least one person signed up, add a start button. that's about it.
-				<%}%>
-
+				<h2>game</h2>
+				<p>game name: '<%=season.name%>'</p>
+				<p>game description: '<%=season.description%>'</p>
 				<% if (season.state === 'sign-up') { %>
-				<p>rules form goes here (use recipient values here)</p>
+				<%- include('../../partials/game/sign-up'); %>
 				<% } else if (season.state === 'in-progress') { %>
-				<p>playlist form goes here (use dj values here)</p>
+				<%- include('../../partials/game/in-progress'); %>
 				<% } else { %>
-				<p>playlist result here! (use recipient values here)</p>
+				<%- include('../../partials/game/ended'); %>
 				<% } %>
 
 				<pre>
