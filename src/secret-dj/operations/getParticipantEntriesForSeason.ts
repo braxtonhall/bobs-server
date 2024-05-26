@@ -13,7 +13,12 @@ export const getParticipantEntriesForSeason = async ({ seasonId, userId }: Envir
 		},
 		select: {
 			id: true,
-			djId: true,
+			dj: {
+				select: {
+					id: true,
+					name: true,
+				},
+			},
 			submissionUrl: true,
 			rules: true,
 		},
@@ -25,7 +30,12 @@ export const getParticipantEntriesForSeason = async ({ seasonId, userId }: Envir
 		},
 		select: {
 			id: true,
-			recipientId: true,
+			recipient: {
+				select: {
+					id: true,
+					name: true,
+				},
+			},
 			submissionUrl: true,
 			rules: true,
 		},

@@ -23,6 +23,8 @@ import { startGame } from "../operations/startGame";
 import { enrolInGame } from "../operations/enrolInGame";
 import { isParticipantRegisteredInGame } from "../operations/isParticipantRegisteredInGame";
 import { updateRules } from "../operations/updateRules";
+import { SeasonState } from "../SeasonState";
+import { endFinishedSeasons } from "../operations/endFinishedSeasons";
 
 export const views = express()
 	.use(getParticipation)
@@ -44,7 +46,6 @@ export const views = express()
 			participantId,
 			cursor: typeof req.query.cursor === "string" ? req.query.cursor : undefined,
 		});
-		console.log({ seasons });
 		res.render("pages/secret-dj/browse", { seasons, cursor, participantId });
 	})
 	.get("/", async (req, res) => {
@@ -53,7 +54,6 @@ export const views = express()
 			participantId,
 			cursor: typeof req.query.cursor === "string" ? req.query.cursor : undefined,
 		});
-		console.log({ seasons });
 		return res.render("pages/secret-dj/index", { seasons, cursor, participantId });
 	})
 	.get("/archive", async (req, res) => {
@@ -81,8 +81,14 @@ export const views = express()
 		}
 	})
 	.post("/games/:id/rules", async (req, res) => {
-		// TODO Fails if the game is started or ended
-		const { seasonId, recipientId, rules } = submitRulesSchema.parse(req.body);
+		const { recipientId, rules } = submitRulesSchema.parse(req.body);
+		const seasonId = req.params.id;
+		const season = await getSeason(req.params.id);
+		if (!(season.state === SeasonState.SIGN_UP)) {
+			// TODO Fails if the game is started or ended
+			// how to signal failure lol
+			return res.redirect(`/secret-dj/games/${seasonId}`);
+		}
 		if (await isParticipantRegisteredInGame({ seasonId, participantId: recipientId })) {
 			updateRules({ seasonId, recipientId, rules });
 		} else {
@@ -92,24 +98,36 @@ export const views = express()
 	})
 	.post("/games/:id/playlist", async (req, res) => {
 		try {
+			const seasonId = req.params.id;
 			const { link } = submitPlaylistPayloadSchema.parse(req.body);
 			await submitPlaylist({
-				seasonId: req.params.id,
+				seasonId,
 				playlistUrl: link,
 				djId: res.locals.participant.id,
 			});
+			// TODO remove
+			endFinishedSeasons();
+
+			return res.redirect(`/secret-dj/games/${seasonId}`);
 		} catch {
 			return res.redirect(`games/${req.params.id}?error=${encodeURIComponent("that did not work")}`);
 		}
 	})
-	.post("/games/:id/start", (req, res) => {
-		const { seasonId, ownerId } = deleteOrStartSeasonPayloadSchema.parse(req.body);
-		startGame({ seasonId, ownerId });
+	.post("/games/:id/start", async (req, res) => {
+		const { ownerId } = deleteOrStartSeasonPayloadSchema.parse(req.body);
+		const seasonId = req.params.id;
+		await startGame({ seasonId, ownerId });
 		res.redirect(`/secret-dj/games/${seasonId}`);
 	})
-	.post("/games/:id/delete", (req, res) => {
-		const { seasonId, ownerId } = deleteOrStartSeasonPayloadSchema.parse(req.body);
-		deleteGame({ seasonId, ownerId });
+	.post("/games/:id/delete", async (req, res) => {
+		const { ownerId } = deleteOrStartSeasonPayloadSchema.parse(req.body);
+		const seasonId = req.params.id;
+		const season = await getSeason(seasonId);
+		if (season.entries.length) {
+			// TODO signal error somehow
+			return res.redirect(`/secret-dj/games/${seasonId}`);
+		}
+		await deleteGame({ seasonId, ownerId });
 		res.redirect("/secret-dj");
 	})
 	.get("/create", (req, res) => res.render("pages/secret-dj/create", { error: "" }))

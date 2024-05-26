@@ -1,5 +1,3 @@
-<!-- requires: season array -->
-
 <table>
 	<tr>
 		<th>game name</th>
@@ -11,9 +9,10 @@
 	<% const link = `/secret-dj/games/${season.id}`%>
 	<tr>
 		<td>
-			<% if (season.owner.ownerId === participantId) { %>
+			<% if (season.owner.id === participantId) { %>
 			👑
 			<% } %>
+
 			<a href="<%=link%>"><%= season.name %></a>
 		</td>
 		<td><%= season.description %></td>

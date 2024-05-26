@@ -1,0 +1,15 @@
+<% const submitPlaylistEndpoint = `/secret-dj/games/${season.id}/playlist` %>
+<% const oldPlaylistUrl = dj === null ? "" : dj.submissionUrl %>
+<hr />
+<h3>playlist for "<%= dj.recipient.name %>"</h3>
+<h4>rules:</h4>
+<ol>
+	<% for (const rule of dj.rules) { %>
+	<li><%=rule.text%></li>
+	<% } %>
+</ol>
+<form class="submit-playlist-form" method="POST" action="<%= submitPlaylistEndpoint %>">
+	<label for="playlist-url">playlist url</label>
+	<input name="link" id="playlist-url" type="text" value="<%= oldPlaylistUrl %>" />
+	<button type="submit">submit playlist!</button>
+</form>

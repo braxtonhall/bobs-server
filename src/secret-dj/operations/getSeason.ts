@@ -10,8 +10,18 @@ export const getSeason = async (seasonId: string) => {
 			entries: {
 				select: {
 					id: true,
-					recipientId: true,
-					djId: true,
+					recipient: {
+						select: {
+							id: true,
+							name: true,
+						},
+					},
+					dj: {
+						select: {
+							id: true,
+							name: true,
+						},
+					},
 					submissionUrl: true,
 				},
 			},

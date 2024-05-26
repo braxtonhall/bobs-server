@@ -20,6 +20,7 @@ export const getArchivedSeasons = async ({
 			state: SeasonState.ENDED,
 		},
 		select: {
+			owner: true,
 			state: true,
 			id: true,
 			name: true,

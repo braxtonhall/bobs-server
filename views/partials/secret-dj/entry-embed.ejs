@@ -1,0 +1,34 @@
+<h3>
+	curated by:
+	<%= recipient.dj.name %>
+	<h3 />
+	<% if (recipient.submissionUrl.startsWith("https://open.spotify.com")) { %>
+	<% const spotifyPlaylistId = new URL(recipient.submissionUrl).pathname.match(/[^\/]+/g).slice(-1) %>
+	<% const spotifyEmbedUrl = `https://open.spotify.com/embed/playlist/${spotifyPlaylistId}`%>
+	<iframe
+		style="border-radius: 12px"
+		src="<%= spotifyEmbedUrl %>"
+		width="600"
+		height="400"
+		frameborder="0"
+		allowfullscreen=""
+		allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+		loading="lazy"
+	></iframe>
+	<% } else if (recipient.submissionUrl.startsWith("https://www.youtube.com/playlist")) { %>
+	<% const youtubePlaylistId = new URL(recipient.submissionUrl).searchParams.get("list") %>
+	<% const youtubeEmbedUrl = `https://www.youtube.com/embed/videoseries?list=${youtubePlaylistId}`%>
+	<iframe
+		width="600"
+		height="400"
+		src="<%= youtubeEmbedUrl %>"
+		title="YouTube video player"
+		frameborder="0"
+		allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+		referrerpolicy="strict-origin-when-cross-origin"
+		allowfullscreen
+	></iframe>
+	<% } else { %>
+	<p><%= recipient.submissionUrl %></p>
+	<% } %>
+</h3>

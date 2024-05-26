@@ -5,14 +5,12 @@
 	<% if (season.entries.length) { %>
 	<% const startGameEndpoint = `/secret-dj/games/${season.id}/start`%>
 	<form class="start-game-form" method="POST" action="<%=startGameEndpoint%>">
-		<input type="hidden" name="seasonId" value="<%= season.id %>" readonly />
 		<input type="hidden" name="ownerId" value="<%= season.owner.id %>" readonly />
 		<button type="submit">start game!</button>
 	</form>
 	<% } else { %>
 	<% const deleteEndpoint = `/secret-dj/games/${season.id}/delete`%>
 	<form class="delete-game-form" method="POST" action="<%=deleteEndpoint%>">
-		<input type="hidden" name="seasonId" value="<%= season.id %>" readonly />
 		<input type="hidden" name="ownerId" value="<%= season.owner.id %>" readonly />
 		<button type="submit">delete game</button>
 	</form>
@@ -22,7 +20,6 @@
 	<h3>submit/edit your rules</h3>
 	<% const submitRulesEndpoint = `/secret-dj/games/${season.id}/rules`%>
 	<form class="enroll-game-form" method="POST" action="<%=submitRulesEndpoint%>">
-		<input type="hidden" name="seasonId" value="<%= season.id %>" readonly />
 		<input type="hidden" name="recipientId" value="<%= participant.id %>" readonly />
 		<% for (let i = 0; i < season.ruleCount; i++) { %>
 		<% const currentRule = recipient === null ? "" : recipient.rules[i].text %>

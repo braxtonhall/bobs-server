@@ -10,6 +10,8 @@ export const getEntry = async ({ seasonId, entryId }: Environment) => {
 		},
 		include: {
 			season: true,
+			dj: true,
+			recipient: true,
 		},
 	});
 
