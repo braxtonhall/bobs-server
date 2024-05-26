@@ -5,13 +5,11 @@
 	<% if (season.entries.length) { %>
 	<% const startGameEndpoint = `/secret-dj/games/${season.id}/start`%>
 	<form class="start-game-form" method="POST" action="<%=startGameEndpoint%>">
-		<input type="hidden" name="ownerId" value="<%= season.owner.id %>" readonly />
 		<button type="submit">start game!</button>
 	</form>
 	<% } else { %>
 	<% const deleteEndpoint = `/secret-dj/games/${season.id}/delete`%>
 	<form class="delete-game-form" method="POST" action="<%=deleteEndpoint%>">
-		<input type="hidden" name="ownerId" value="<%= season.owner.id %>" readonly />
 		<button type="submit">delete game</button>
 	</form>
 	<% } %>

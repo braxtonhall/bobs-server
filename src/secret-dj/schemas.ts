@@ -18,11 +18,6 @@ export type CreateSeasonPayload = z.infer<typeof createSeasonPayloadSchema>;
 export const submitPlaylistPayloadSchema = z.object({ link: z.string().min(1) });
 export type SubmitPlaylistPayload = z.infer<typeof submitPlaylistPayloadSchema>;
 
-export const deleteOrStartSeasonPayloadSchema = z.object({
-	ownerId: z.string().min(1),
-});
-export type DeleteOrStartSeasonPayloadSchema = z.infer<typeof deleteOrStartSeasonPayloadSchema>;
-
 export const submitRulesSchema = z.object({
 	recipientId: z.string().min(1),
 	rules: z.array(z.string()).min(1),

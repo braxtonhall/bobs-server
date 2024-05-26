@@ -4,7 +4,6 @@ import { setParticipant } from "../operations/setParticipant";
 import { Email, Participant } from "@prisma/client";
 import {
 	createSeasonPayloadSchema,
-	deleteOrStartSeasonPayloadSchema,
 	settingsPayloadSchema,
 	signupPayloadSchema,
 	submitPlaylistPayloadSchema,
@@ -83,18 +82,24 @@ export const views = express()
 	.post("/games/:id/rules", async (req, res) => {
 		const { recipientId, rules } = submitRulesSchema.parse(req.body);
 		const seasonId = req.params.id;
-		const season = await getSeason(req.params.id);
-		if (!(season.state === SeasonState.SIGN_UP)) {
-			// TODO Fails if the game is started or ended
-			// how to signal failure lol
+		try {
+			const season = await getSeason(req.params.id);
+			if (!(season.state === SeasonState.SIGN_UP)) {
+				// TODO Fails if the game is started or ended
+				// how to signal failure lol
+				return res.redirect(`/secret-dj/games/${seasonId}`);
+			}
+			if (await isParticipantRegisteredInGame({ seasonId, participantId: recipientId })) {
+				await updateRules({ seasonId, recipientId, rules });
+			} else {
+				await enrolInGame({ seasonId, recipientId, rules });
+			}
 			return res.redirect(`/secret-dj/games/${seasonId}`);
+		} catch {
+			// season doesn't exist anymore
+			// error somehow
+			return res.redirect(`/secret-dj`);
 		}
-		if (await isParticipantRegisteredInGame({ seasonId, participantId: recipientId })) {
-			await updateRules({ seasonId, recipientId, rules });
-		} else {
-			await enrolInGame({ seasonId, recipientId, rules });
-		}
-		return res.redirect(`/secret-dj/games/${seasonId}`);
 	})
 	.post("/games/:id/playlist", async (req, res) => {
 		try {
@@ -114,13 +119,13 @@ export const views = express()
 		}
 	})
 	.post("/games/:id/start", async (req, res) => {
-		const { ownerId } = deleteOrStartSeasonPayloadSchema.parse(req.body);
+		const ownerId = res.locals.participant.id;
 		const seasonId = req.params.id;
 		await startGame({ seasonId, ownerId });
 		res.redirect(`/secret-dj/games/${seasonId}`);
 	})
 	.post("/games/:id/delete", async (req, res) => {
-		const { ownerId } = deleteOrStartSeasonPayloadSchema.parse(req.body);
+		const ownerId = res.locals.participant.id;
 		const seasonId = req.params.id;
 		const season = await getSeason(seasonId);
 		if (season.entries.length) {
