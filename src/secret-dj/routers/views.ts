@@ -90,9 +90,9 @@ export const views = express()
 			return res.redirect(`/secret-dj/games/${seasonId}`);
 		}
 		if (await isParticipantRegisteredInGame({ seasonId, participantId: recipientId })) {
-			updateRules({ seasonId, recipientId, rules });
+			await updateRules({ seasonId, recipientId, rules });
 		} else {
-			enrolInGame({ seasonId, recipientId, rules });
+			await enrolInGame({ seasonId, recipientId, rules });
 		}
 		return res.redirect(`/secret-dj/games/${seasonId}`);
 	})
@@ -106,7 +106,7 @@ export const views = express()
 				djId: res.locals.participant.id,
 			});
 			// TODO remove
-			endFinishedSeasons();
+			await endFinishedSeasons();
 
 			return res.redirect(`/secret-dj/games/${seasonId}`);
 		} catch {
