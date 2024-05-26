@@ -372,16 +372,16 @@ describe("multiple users flow", () => {
 		const djIdToEntryMap: { [key: string]: { entryId: string; recipientId: string } } = {};
 		const { entries: allEntries } = await getSeason(seasonId);
 		for (const entry of allEntries) {
-			djIdToEntryMap[entry.djId!] = {
+			djIdToEntryMap[entry.dj!.id] = {
 				entryId: entry.id,
-				recipientId: entry.recipientId,
+				recipientId: entry.recipient.id,
 			};
 		}
 
-		const allRecipients = new Set(allEntries.map((entry) => entry.recipientId));
+		const allRecipients = new Set(allEntries.map((entry) => entry.recipient.id));
 		expect(allRecipients.size).toEqual(3);
 
-		const allDJs = new Set(allEntries.map((entry) => entry.djId));
+		const allDJs = new Set(allEntries.map((entry) => entry.dj!.id));
 		expect(allDJs.size).toEqual(3);
 
 		const gamesForOwner = await getGamesForParticipant({ participantId: ownerParticipant.id });
@@ -484,8 +484,8 @@ describe("multiple users flow", () => {
 		for (const entry of allEntries) {
 			expect(entry).toEqual({
 				id: expect.any(String),
-				recipientId: expect.any(String),
-				djId: expect.any(String),
+				recipient: expect.any(Object),
+				dj: expect.any(Object),
 				// this is populated in the DB, but won't be displayed to users until the game ends
 				submissionUrl: expect.any(String),
 			});
@@ -617,7 +617,7 @@ describe("multiple users flow", () => {
 		const recipientIdToSubmissionUrlMap: { [key: string]: string } = {};
 		const { entries: allEntries } = await getSeason(seasonId);
 		for (const entry of allEntries) {
-			recipientIdToSubmissionUrlMap[entry.recipientId] = entry.submissionUrl!;
+			recipientIdToSubmissionUrlMap[entry.recipient.id] = entry.submissionUrl!;
 		}
 
 		const gamesForOwner = await getGamesForParticipant({ participantId: ownerParticipant.id });
