@@ -10,7 +10,11 @@ export const views = express()
 	.get("/login", checkLoggedIn, (req, res) => res.render("pages/login", { query: req.query }))
 	.post("/login", checkLoggedIn, (req, res) => {
 		const email: string = req.body.email;
-		void login({ email, protocol: req.protocol }).catch(() => {});
+		void login({
+			email,
+			protocol: req.protocol,
+			redirect: typeof req.body.redirect === "string" ? req.body.redirect : undefined,
+		}).catch(() => {});
 		return res.redirect(
 			`/authorize?${new URLSearchParams({ email, ...(req.body.redirect && { redirect: req.body.redirect }) })}`,
 		);
@@ -24,7 +28,7 @@ export const views = express()
 			const { email, token: temporaryToken } = result.data;
 			const token = await authorize({ email, temporaryToken });
 			res.cookie("token", token, { sameSite: "none", secure: true, maxAge: tokenMaxAge });
-			return res.redirect("back");
+			return res.redirect(req.originalUrl);
 		} catch {
 			return res.render("pages/authorize", {
 				query: req.query,

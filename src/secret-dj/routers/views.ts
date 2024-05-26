@@ -25,7 +25,7 @@ export const views = express()
 			const email: Email = res.locals.email;
 			const { name } = signupPayloadSchema.parse(req.body);
 			await setParticipant({ emailId: email.id, name });
-			return res.redirect("back");
+			return res.redirect(req.originalUrl);
 		} catch (error) {
 			return res.render("pages/secret-dj/signup", { error: "that didn't quite work" });
 		}

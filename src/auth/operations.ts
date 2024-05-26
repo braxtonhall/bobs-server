@@ -5,7 +5,32 @@ import { TokenType } from "./TokenType";
 import { randomUUID } from "crypto";
 import { DateTime } from "luxon";
 import Config from "../Config";
-import { sendConfirmationEmail } from "./services/email";
+import { AuthorizePayload } from "./schemas";
+import { enqueue } from "../email";
+
+type Confirmation = {
+	address: string;
+	temporaryToken: string;
+	protocol: string;
+	expiration: Date;
+	redirect?: string;
+};
+
+export const sendConfirmationEmail = async (confirmation: Confirmation): Promise<void> => {
+	const searchParams = new URLSearchParams({
+		email: confirmation.address,
+		token: confirmation.temporaryToken,
+		...(typeof confirmation.redirect === "string" && { redirect: confirmation.redirect }),
+	} satisfies AuthorizePayload);
+	const url = new URL(`${confirmation.protocol}://${Config.HOST}/authorize?${searchParams}`);
+	await enqueue(db, {
+		address: confirmation.address,
+		subject: "One Time Password",
+		text: "Click this link to log in",
+		html: `<a href="${url.toString()}">Click this link to log in</a>`,
+		expiration: confirmation.expiration,
+	});
+};
 
 const isValid = (
 	token: (Token & { email: { address: string } }) | null,
@@ -13,7 +38,7 @@ const isValid = (
 ): token is NonNullable<typeof token> =>
 	token !== null && token.valid && token.expiration >= new Date() && token.email.address === address;
 
-export const login = ({ email: address, protocol }: { email: string; protocol: string }) =>
+export const login = ({ email: address, protocol, redirect }: { email: string; protocol: string; redirect?: string }) =>
 	db.$transaction(async (tx) => {
 		const temporaryToken = randomUUID();
 		const expiration = DateTime.now().plus({ minute: Config.TEMP_TOKEN_EXPIRATION_MIN }).toJSDate();
@@ -30,7 +55,7 @@ export const login = ({ email: address, protocol }: { email: string; protocol: s
 				},
 			},
 		});
-		void sendConfirmationEmail({ address, temporaryToken, protocol, expiration }).catch(() => {});
+		void sendConfirmationEmail({ address, temporaryToken, protocol, expiration, redirect }).catch(() => {});
 	});
 
 export const authorize = ({
