@@ -1,0 +1,9 @@
+<form class="main-controls-form">
+	<% if (query.cursor) { %>
+	<button class="main-controls-btt">back to top</button>
+	<% } %>
+	<% if (cursor) { %>
+	<button class="main-controls-next" name="cursor" value="<%= cursor %>">next page</button>
+	<% } %>
+	<%- include('../util/query-passthrough', {query, params}); %>
+</form>

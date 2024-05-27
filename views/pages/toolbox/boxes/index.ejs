@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<%- include('../../../partials/head'); %>
+	</head>
+	<body>
+		<header>
+			<%- include('../../../partials/header'); %>
+		</header>
+
+		<main>
+			<div>hello! this is the entrypoint for boxes</div>
+			<ul>
+				<li><a href="/toolbox/boxes/create">create a new box</a></li>
+				<li><a href="/toolbox/boxes/archive">view archive</a></li>
+			</ul>
+			<%- include('../../../partials/boxes/boxes-table'); %>
+		</main>
+	</body>
+</html>

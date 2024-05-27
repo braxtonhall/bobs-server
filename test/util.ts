@@ -10,7 +10,6 @@ export const dropTables = async () => {
 	await db.post.deleteMany();
 	await db.poster.deleteMany();
 	await db.box.deleteMany();
-	await db.admin.deleteMany();
 	await db.rule.deleteMany();
 	await db.entry.deleteMany();
 	await db.season.deleteMany();
@@ -18,8 +17,11 @@ export const dropTables = async () => {
 	await db.email.deleteMany();
 };
 
-export function createTestData(address: string): Promise<{ boxId: string }>;
-export function createTestData(address: string, poster: string): Promise<{ boxId: string; posterId: number }>;
+export function createTestData(address: string): Promise<{ boxId: string; emailId: string }>;
+export function createTestData(
+	address: string,
+	poster: string,
+): Promise<{ boxId: string; posterId: number; emailId: string }>;
 export async function createTestData(address: string, poster?: string) {
 	const email = await db.email.upsert({
 		where: {
@@ -31,29 +33,15 @@ export async function createTestData(address: string, poster?: string) {
 		},
 		update: {},
 	});
-	const admin = await db.admin.upsert({
-		where: {
-			emailId: email.id,
-		},
-		create: {
-			emailId: email.id,
-			name: "bob's son",
-		},
-		update: {},
-		select: {
-			boxes: true,
-			id: true,
-		},
-	});
 	const boxId = await boxes.create({
-		ownerId: admin.id,
+		ownerId: email.id,
 		name: "bob's box",
 		origin: "https://braxtonhall.ca",
 	});
 	if (poster) {
 		const posterId = await posters.getId(hashString(poster));
-		return { posterId, boxId };
+		return { posterId, boxId, emailId: email.id };
 	} else {
-		return { boxId };
+		return { boxId, emailId: email.id };
 	}
 }

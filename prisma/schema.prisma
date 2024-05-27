@@ -8,10 +8,11 @@ model Email {
   address     String       @unique
   confirmed   Boolean      @default(false)
   subscribed  Boolean      @default(true)
-  admin       Admin?
   posts       Post[]
   participant Participant? @relation("ParticipantEmail")
   tokens      Token[]
+  boxes       Box[]
+  counters    Counter[]
 }
 
 model Message {
@@ -33,21 +34,13 @@ model Token {
   expiration     DateTime
 }
 
-model Admin {
-  id       Int       @id @default(autoincrement())
-  email    Email     @relation(fields: [emailId], references: [id])
-  emailId  String    @unique
-  name     String
-  boxes    Box[]
-  counters Counter[]
-}
-
 model Box {
-  id      String  @id @default(cuid())
+  sort    Int     @id @default(autoincrement())
+  id      String  @unique @default(cuid())
   name    String
   origin  String
-  owner   Admin   @relation(fields: [ownerId], references: [id])
-  ownerId Int
+  owner   Email   @relation(fields: [ownerId], references: [id])
+  ownerId String
   posts   Post[]
   deleted Boolean @default(false)
 }
@@ -56,8 +49,8 @@ model Counter {
   id      String @id @default(cuid())
   name    String
   origin  String
-  owner   Admin  @relation(fields: [ownerId], references: [id])
-  ownerId Int
+  owner   Email  @relation(fields: [ownerId], references: [id])
+  ownerId String
   count   Int    @default(0)
 }
 

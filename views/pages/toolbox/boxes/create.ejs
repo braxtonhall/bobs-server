@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<%- include('../../../partials/head'); %>
+	</head>
+	<body>
+		<header>
+			<%- include('../../../partials/header'); %>
+		</header>
+
+		<main>
+			<div>
+				<h2>create a new box</h2>
+				<form name="create-form" method="post">
+					<label for="name" class="name-label">name</label>
+					<input class="name-input" id="name" name="name" required />
+
+					<label for="origin" class="origin-label">origin</label>
+					<input class="origin-input" id="origin" name="origin" required />
+
+					<button class="create-save">submit</button>
+				</form>
+			</div>
+		</main>
+	</body>
+</html>

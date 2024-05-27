@@ -26,31 +26,38 @@ type Query = {
 export type InternalPost = Awaited<ReturnType<typeof listInternal>>[number];
 
 const internalCreate = ({ emailId, content, posterId, boxId, from, parentId }: CreatePost) =>
-	db.post.create({
-		data: {
-			emailId,
-			content,
-			posterId,
-			boxId,
-			from,
-			parentId,
-		},
-		select: {
-			id: true,
-			createdAt: true,
-			parent: {
-				select: {
-					id: true,
+	db.$transaction(async (tx) => {
+		const result = await tx.box.findUnique({ where: { id: boxId }, select: { deleted: true } });
+		if (result === null) {
+			return Err(Failure.MISSING_DEPENDENCY);
+		} else if (result.deleted === true) {
+			return Err(Failure.PRECONDITION_FAILED);
+		}
+		const post = await tx.post.create({
+			data: {
+				emailId,
+				content,
+				posterId,
+				boxId,
+				from,
+				parentId,
+			},
+			select: {
+				id: true,
+				createdAt: true,
+				parent: {
+					select: {
+						id: true,
+					},
 				},
 			},
-		},
+		});
+		return Ok(post);
 	});
 
-const create = async (
-	createPost: CreatePost,
-): Promise<Result<Awaited<ReturnType<typeof internalCreate>>, Failure.MISSING_DEPENDENCY>> => {
+const create = async (createPost: CreatePost) => {
 	try {
-		return Ok(await internalCreate(createPost));
+		return await internalCreate(createPost);
 	} catch (error) {
 		return Err(Failure.MISSING_DEPENDENCY);
 	}
@@ -147,7 +154,9 @@ const listInternal = ({ boxId, showDead, cursor, count, ip }: Query) => {
 			},
 			_count: {
 				select: {
-					children: {},
+					children: {
+						where: showDead ? {} : defaultQuery,
+					},
 				},
 			},
 		},
@@ -180,7 +189,7 @@ const exists = async (postId: string, boxId: string): Promise<boolean> =>
 
 const setDeadAndGetPosterId = async (
 	id: string,
-	address: string,
+	ownerId: string,
 	dead: boolean,
 ): Promise<Result<number, Failure.MISSING_DEPENDENCY | Failure.UNAUTHORIZED>> =>
 	db
@@ -193,11 +202,7 @@ const setDeadAndGetPosterId = async (
 				where: {
 					id,
 					box: {
-						owner: {
-							email: {
-								address,
-							},
-						},
+						ownerId,
 					},
 				},
 				data: {
