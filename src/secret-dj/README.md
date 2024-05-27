@@ -15,3 +15,4 @@
 13. Maybe remove playlist state and game owner???
 14. Maybe remove "Your playlist is ready!"
 15. Find out what sendgrid does if you give it a terribly formatted email
+16. Maybe remove the endFinishedSeasons job and conditionally end the season of the playlist submitted

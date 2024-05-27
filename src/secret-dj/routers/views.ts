@@ -129,8 +129,8 @@ export const views = express()
 		}
 	})
 	.post("/games/:id/playlist", async (req, res) => {
+		const seasonId = req.params.id;
 		try {
-			const seasonId = req.params.id;
 			const { link } = submitPlaylistPayloadSchema.parse(req.body);
 			await submitPlaylist({
 				seasonId,
@@ -142,7 +142,7 @@ export const views = express()
 
 			return res.redirect(`/secret-dj/games/${seasonId}?success=${encodeURIComponent("playlist submitted!")}`);
 		} catch {
-			return res.redirect(`/secret-dj/games/${req.params.id}?error=${encodeURIComponent("that did not work")}`);
+			return res.redirect(`/secret-dj/games/${seasonId}?error=${encodeURIComponent("that did not work")}`);
 		}
 	})
 	.get("/create", (req, res) => res.render("pages/secret-dj/create", { error: "" }))
