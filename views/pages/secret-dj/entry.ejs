@@ -13,7 +13,9 @@
 			<div>
 				<h2>entry</h2>
 				<h3>playlist for: "<%= entry.recipient.name %>"</h3>
+				<% if (entry.season.state === 'ended') { %>
 				<%- include('../../partials/secret-dj/entry-embed', {recipient: entry }); %>
+				<% } %>
 			</div>
 		</main>
 	</body>

@@ -2,6 +2,7 @@
 	curated by:
 	<%= recipient.dj.name %>
 	<h3 />
+	<% if (recipient.submissionUrl) { %>
 	<% if (recipient.submissionUrl.startsWith("https://open.spotify.com")) { %>
 	<% const spotifyPlaylistId = new URL(recipient.submissionUrl).pathname.match(/[^\/]+/g).slice(-1) %>
 	<% const spotifyEmbedUrl = `https://open.spotify.com/embed/playlist/${spotifyPlaylistId}`%>
@@ -30,5 +31,6 @@
 	></iframe>
 	<% } else { %>
 	<p><%= recipient.submissionUrl %></p>
+	<% } %>
 	<% } %>
 </h3>

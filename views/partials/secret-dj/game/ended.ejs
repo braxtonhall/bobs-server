@@ -1,6 +1,10 @@
 <h3>
 	your playlist is ready!
 	<h3 />
+	<% if (recipient)  { %>
+	here maybe we list the rules
+	<% if (recipient.dj) { %>
 	<%- include('../entry-embed'); %>
-	<%- include('../entry-table'); %>
+	<% } %>
+	<% } %>
 </h3>

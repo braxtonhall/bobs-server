@@ -10,6 +10,9 @@ export const deleteGame = async ({ seasonId, ownerId }: Environment): Promise<vo
 		where: {
 			id: seasonId,
 			ownerId,
+			entries: {
+				none: {},
+			},
 		},
 	});
 

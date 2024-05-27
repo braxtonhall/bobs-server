@@ -58,7 +58,7 @@ export const startGame = async ({ ownerId, seasonId }: Environment): Promise<Ent
 			select: { entries: true, id: true },
 			data: { state: SeasonState.IN_PROGRESS },
 		});
-		if (season) {
+		if (season && season.entries.length > 0) {
 			const pairs = pairEntries(season.entries);
 			const futureUpdates = pairs.map((pair) =>
 				tx.entry.update({

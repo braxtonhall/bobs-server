@@ -10,6 +10,9 @@
 
 		<main>
 			<%- include('../../partials/secret-dj/secret-dj-title'); %>
+			<% if  (error) { %>
+			<span><%=error%></span>
+			<% } %>
 			<div>
 				<h2>game</h2>
 				<p>game name: '<%=season.name%>'</p>
@@ -21,6 +24,7 @@
 				<% } else { %>
 				<%- include('../../partials/secret-dj/game/ended'); %>
 				<% } %>
+				<%- include('../../partials/secret-dj/entry-table'); %>
 			</div>
 
 			<!-- 				<pre> -->

@@ -340,6 +340,8 @@ describe("multiple users flow", () => {
 			djEntries: [],
 		});
 	});
+	it("should no longer be able to delete a game", () =>
+		expect(deleteGame({ seasonId, ownerId: ownerParticipant.id })).rejects.toThrow());
 	it("edited rules must still adhere to rule count", async () =>
 		expect(updateRules({ seasonId, recipientId: participantA.id, rules: ["a", "b", "c"] })).rejects.toThrow());
 	it("participants can edit their rule sets arbitrarily", async () => {
