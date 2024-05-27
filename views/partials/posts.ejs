@@ -3,7 +3,7 @@
 	<tr class="post-row">
 		<td class="post-delete">
 			<% if (post.deletable) { /* TODO it would be nice to pass on query params */ %>
-			<form class="delete-form" method="POST" action="boxes/delete">
+			<form class="delete-form" method="POST" action="posts/delete">
 				<button class="delete-form-submit" name="id" value="<%= post.id %>">delete</button>
 			</form>
 			<% } %>
