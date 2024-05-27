@@ -8,3 +8,6 @@
 6. Style inheritance
 7. Migrate success/error messages to session express-express
 8. Combine update and create rules into one function (and also is participating in)
+9. Add more instructions
+10. Replace empty table with something more descriptive
+11. Description field should not be required on create

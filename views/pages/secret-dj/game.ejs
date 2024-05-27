@@ -17,7 +17,7 @@
 			<p class="success"><%=success%></p>
 			<% } %>
 			<div>
-				<h2><%=season.name%>game</h2>
+				<h2><%=season.name%></h2>
 				<p><%=season.description%></p>
 				<% if (season.state === 'sign-up') { %>
 				<%- include('../../partials/secret-dj/game/sign-up'); %>
@@ -29,7 +29,7 @@
 			</div>
 
 			<div>
-				<h3>participant table</h3>
+				<h3>participants</h3>
 				<%- include('../../partials/secret-dj/entry-table'); %>
 			</div>
 		</main>
