@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 	<head>
-		<%- include('../../partials/head'); %>
+		<%- include('../../partials/secret-dj/head'); %>
 	</head>
 	<body>
 		<header>
@@ -13,6 +13,12 @@
 			<div>
 				<h2>entry</h2>
 				<h3>playlist for: "<%= entry.recipient.name %>"</h3>
+				<h4>rules:</h4>
+				<ol>
+					<% for (const rule of entry.rules) { %>
+					<li><%=rule.text%></li>
+					<% } %>
+				</ol>
 				<% if (entry.season.state === 'ended') { %>
 				<%- include('../../partials/secret-dj/entry-embed', {recipient: entry }); %>
 				<% } %>

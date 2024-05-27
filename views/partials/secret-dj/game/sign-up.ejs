@@ -2,7 +2,21 @@
 <div>
 	<hr />
 	<h3>owner controls 👑</h3>
-	Here we will also have the ability to update the name and description
+	<% const editGameDetailsEndpoint = `/secret-dj/games/${season.id}/edit`%>
+	<form class="edit-game-form" method="POST" action="<%=editGameDetailsEndpoint%>">
+		<label for="name" class="name-label">name</label>
+		<br />
+		<input class="name-input" id="name" name="name" required value="<%=season.name%>" />
+		<br />
+
+		<label for="description" class="description-label">description</label>
+		<br />
+		<textarea class="description-input" id="description" name="description" required>
+<%=season.description%></textarea
+		>
+		<br />
+		<button type="submit">submit</button>
+	</form>
 	<% if (season.entries.length) { %>
 	<% const startGameEndpoint = `/secret-dj/games/${season.id}/start`%>
 	<form class="start-game-form" method="POST" action="<%=startGameEndpoint%>">
@@ -27,7 +41,9 @@
 				>rule
 				<%=i + 1%></label
 			>
+			<br />
 			<input name="rules[]" type="text" id="rule-<%=i+1%>" value="<%= currentRule %>" />
+			<br />
 		</div>
 		<% } %>
 		<button type="submit">submit rules!</button>

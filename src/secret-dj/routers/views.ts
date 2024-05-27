@@ -4,6 +4,7 @@ import { setParticipant } from "../operations/setParticipant";
 import { Email, Participant } from "@prisma/client";
 import {
 	createSeasonPayloadSchema,
+	editSeasonPayloadSchema,
 	settingsPayloadSchema,
 	signupPayloadSchema,
 	submitPlaylistPayloadSchema,
@@ -23,6 +24,7 @@ import { enrolInGame } from "../operations/enrolInGame";
 import { isParticipantRegisteredInGame } from "../operations/isParticipantRegisteredInGame";
 import { updateRules } from "../operations/updateRules";
 import { endFinishedSeasons } from "../operations/endFinishedSeasons";
+import { editGame } from "../operations/editGame";
 
 export const views = express()
 	.use(getParticipation)
@@ -71,6 +73,7 @@ export const views = express()
 			});
 			return res.render("pages/secret-dj/game", {
 				error: typeof req.query.error === "string" ? req.query.error : "",
+				success: typeof req.query.success === "string" ? req.query.success : "",
 				season,
 				participant: res.locals.participant,
 				recipient,
@@ -85,7 +88,7 @@ export const views = express()
 		try {
 			const ownerId = res.locals.participant.id;
 			await startGame({ seasonId, ownerId });
-			res.redirect(`/secret-dj/games/${seasonId}`);
+			res.redirect(`/secret-dj/games/${seasonId}?success=${encodeURIComponent("new game started!")}`);
 		} catch {
 			return res.redirect(`/secret-dj/games/${seasonId}?error=${encodeURIComponent("that did not work")}`);
 		}
@@ -100,6 +103,17 @@ export const views = express()
 			return res.redirect(`/secret-dj/games/${seasonId}?error=${encodeURIComponent("that did not work")}`);
 		}
 	})
+	.post("/games/:id/edit", async (req, res) => {
+		const seasonId = req.params.id;
+		try {
+			const { name, description } = editSeasonPayloadSchema.parse(req.body);
+			const participant: Participant = res.locals.participant;
+			await editGame({ name, description, seasonId, ownerId: participant.id });
+			return res.redirect(`/secret-dj/games/${seasonId}?success=${encodeURIComponent("game data updated!")}`);
+		} catch {
+			return res.redirect(`/secret-dj/games/${seasonId}?error=${"that didn't quite work"}`);
+		}
+	})
 	.post("/games/:id/rules", async (req, res) => {
 		const seasonId = req.params.id;
 		try {
@@ -109,7 +123,7 @@ export const views = express()
 			} else {
 				await enrolInGame({ seasonId, recipientId, rules });
 			}
-			return res.redirect(`/secret-dj/games/${seasonId}`);
+			return res.redirect(`/secret-dj/games/${seasonId}?success=${encodeURIComponent("game rules updated!")}`);
 		} catch {
 			return res.redirect(`/secret-dj/games/${seasonId}?error=${encodeURIComponent("that did not work")}`);
 		}
@@ -123,10 +137,10 @@ export const views = express()
 				playlistUrl: link,
 				djId: res.locals.participant.id,
 			});
-			// TODO remove
+			// TODO remove or not lol
 			await endFinishedSeasons();
 
-			return res.redirect(`/secret-dj/games/${seasonId}`);
+			return res.redirect(`/secret-dj/games/${seasonId}?success=${encodeURIComponent("playlist submitted!")}`);
 		} catch {
 			return res.redirect(`/secret-dj/games/${req.params.id}?error=${encodeURIComponent("that did not work")}`);
 		}
@@ -137,7 +151,7 @@ export const views = express()
 			const { name, description, rules: ruleCount } = createSeasonPayloadSchema.parse(req.body);
 			const participant: Participant = res.locals.participant;
 			const id = await createGame({ name, description, ruleCount, ownerId: participant.id });
-			return res.redirect(`games/${id}`);
+			return res.redirect(`games/${id}?success=${encodeURIComponent("new game created!")}`);
 		} catch {
 			return res.render("pages/secret-dj/create", { error: "That didn't quite work" });
 		}
@@ -151,18 +165,23 @@ export const views = express()
 		}
 	})
 	.get("/settings", (req, res) =>
-		res.render("pages/secret-dj/settings", { name: res.locals.participant.name, message: "" }),
+		res.render("pages/secret-dj/settings", {
+			name: res.locals.participant.name,
+			error: "",
+			success: "",
+		}),
 	)
 	.post("/settings", async (req, res) => {
 		try {
 			const { name } = settingsPayloadSchema.parse(req.body);
 			const email: Email = res.locals.email;
 			await setParticipant({ emailId: email.id, name });
-			return res.render("pages/secret-dj/settings", { name, message: "saved" });
+			return res.render("pages/secret-dj/settings", { name, error: "", success: "saved" });
 		} catch {
 			return res.render("pages/secret-dj/settings", {
 				name: res.locals.participant.name,
-				message: "that didn't work",
+				error: "that didn't work",
+				success: "",
 			});
 		}
 	});

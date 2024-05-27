@@ -15,6 +15,12 @@ export const createSeasonPayloadSchema = z.object({
 });
 export type CreateSeasonPayload = z.infer<typeof createSeasonPayloadSchema>;
 
+export const editSeasonPayloadSchema = z.object({
+	name: z.string().min(1),
+	description: z.string().min(1),
+});
+export type EditSeasonPayload = z.infer<typeof editSeasonPayloadSchema>;
+
 export const submitPlaylistPayloadSchema = z.object({ link: z.string().min(1) });
 export type SubmitPlaylistPayload = z.infer<typeof submitPlaylistPayloadSchema>;
 

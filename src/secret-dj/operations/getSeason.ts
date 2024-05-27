@@ -23,6 +23,7 @@ export const getSeason = async (seasonId: string) => {
 						},
 					},
 					submissionUrl: true,
+					rules: true,
 				},
 			},
 		},

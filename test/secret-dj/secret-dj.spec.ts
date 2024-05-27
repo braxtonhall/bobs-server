@@ -490,6 +490,7 @@ describe("multiple users flow", () => {
 				dj: expect.any(Object),
 				// this is populated in the DB, but won't be displayed to users until the game ends
 				submissionUrl: expect.any(String),
+				rules: expect.any(Object),
 			});
 		}
 	});

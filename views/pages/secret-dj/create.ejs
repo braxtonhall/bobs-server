@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 	<head>
-		<%- include('../../partials/head'); %>
+		<%- include('../../partials/secret-dj/head'); %>
 	</head>
 	<body>
 		<header>
@@ -12,15 +12,22 @@
 			<%- include('../../partials/secret-dj/secret-dj-title'); %>
 			<div>
 				<h2>create</h2>
+				<p>create a new secret dj game!</p>
 				<form name="create-form" method="post">
 					<label for="name" class="name-label">name</label>
+					<br />
 					<input class="name-input" id="name" name="name" required />
+					<br />
 
 					<label for="description" class="description-label">description</label>
+					<br />
 					<textarea class="description-input" id="description" name="description" required></textarea>
+					<br />
 
 					<label for="rules" class="rules-label">rule count</label>
+					<br />
 					<input type="number" id="rules" name="rules" min="1" value="2" required />
+					<br />
 
 					<button class="create-save">submit</button>
 				</form>

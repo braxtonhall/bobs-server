@@ -1,8 +1,13 @@
+<% if (recipient)  { %>
 <h3>
 	your playlist is ready!
 	<h3 />
-	<% if (recipient)  { %>
-	here maybe we list the rules
+	<h4>your rules</h4>
+	<ol>
+		<% for (const rule of recipient.rules) { %>
+		<li><%=rule.text%></li>
+		<% } %>
+	</ol>
 	<% if (recipient.dj) { %>
 	<%- include('../entry-embed'); %>
 	<% } %>

@@ -1,13 +1,24 @@
 <table>
 	<tr>
 		<th>recipient</th>
-		<th>playlist</th>
+		<% for (let i = 0; i < season.ruleCount; i++) { %>
+		<th>
+			rule
+			<%=i + 1%>
+		</th>
+		<% } %>
+		<th>entry page</th>
 	</tr>
 	<% for (const entry of season.entries) { %>
 	<% const link = `/secret-dj/games/${season.id}/entries/${entry.id}`%>
-	<tr>
-		<td><a href="<%=link%>"><%= entry.recipient.name %></a></td>
-		<td><a href="<%= entry.submissionUrl %>" target="_blank">link</a></td>
-	</tr>
+	<a href="<%=link%>">
+		<tr>
+			<td><%= entry.recipient.name %></td>
+			<% for (const rule of entry.rules) { %>
+			<td><%=rule.text%></td>
+			<% } %>
+			<td><a href="<%=link%>">view</a></td>
+		</tr>
+	</a>
 	<% } %>
 </table>

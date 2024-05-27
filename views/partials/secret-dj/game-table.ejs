@@ -9,9 +9,7 @@
 	<% const link = `/secret-dj/games/${season.id}`%>
 	<tr>
 		<td>
-			<% if (season.owner.id === participantId) { %>
-			👑
-			<% } %>
+			<% if (season.owner.id === participantId) { %>👑<% } %>
 
 			<a href="<%=link%>"><%= season.name %></a>
 		</td>

@@ -28,7 +28,8 @@ const views = express()
 	.use(authViews)
 	.use("/secret-dj", enforceLoggedIn, secretDjViews)
 	.use(unauthenticatedViews)
-	.get("/", enforceLoggedIn, (req, res) => res.render("pages/index"));
+	.get("/", enforceLoggedIn, (req, res) => res.render("pages/index"))
+	.use("/public", express.static("public"));
 
 const api = express().use(unauthenticatedApi);
 

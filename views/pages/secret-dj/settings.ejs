@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 	<head>
-		<%- include('../../partials/head'); %>
+		<%- include('../../partials/secret-dj/head'); %>
 	</head>
 	<body>
 		<header>
@@ -14,15 +14,20 @@
 				<h2>settings</h2>
 			</div>
 
+			<% if (error) { %>
+			<p class="error"><%= error %></p>
+			<% } %>
+			<% if (success) { %>
+			<p class="success"><%= success %></p>
+			<% } %>
+
 			<form name="settings-form" method="post">
 				<label for="name" class="name-label">name</label>
+				<br />
 				<input class="name-input" id="name" name="name" value="<%=name%>" required />
-
+				<br />
 				<button class="settings-save">save</button>
 			</form>
-			<% if (message) { %>
-			<p><%= message %></p>
-			<% } %>
 		</main>
 	</body>
 </html>

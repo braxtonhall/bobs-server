@@ -1,0 +1,68 @@
+html {
+	background-color: #e0cfe6;
+	font-size: 16px;
+	font-weight: normal;
+	text-shadow: 0 0 0.1px rgba(0, 0, 0, 0.5);
+	text-rendering: optimizeLegibility;
+	font-family: Georgia, serif;
+	-webkit-font-smoothing: subpixel-antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+h1 > a {
+	color: #f0f8ff;
+}
+
+a {
+	text-decoration: none;
+	color: #6900ff;
+}
+
+.error {
+	color: red;
+}
+
+.success {
+	color: green;
+}
+
+.embed {
+	width: 50%;
+}
+
+@media only screen and (max-width: 700px) {
+	.embed {
+		width: 100%;
+	}
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+table, th, td {
+	border: 1px solid;
+	text-align: center;
+	vertical-align: middle;
+}
+
+th, td {
+	padding: 4px;
+}
+
+form {
+	margin: 8px 0px;;
+	padding: 8px;
+	width: 300px;
+	border: 1px dashed;
+}
+
+form > * {
+	margin: 4px 0px;
+}
+
+hr {
+	height: 2px;
+    width: 90%;
+	background: #000;
+}

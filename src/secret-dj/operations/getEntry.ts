@@ -12,6 +12,7 @@ export const getEntry = async ({ seasonId, entryId }: Environment) => {
 			season: true,
 			dj: true,
 			recipient: true,
+			rules: true,
 		},
 	});
 
