@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<%- include('../../../partials/head'); %>
+	</head>
+	<body>
+		<header>
+			<%- include('../../../partials/header'); %>
+		</header>
+
+		<main>
+			<div>hello! this is the admin page for a box</div>
+			<% if (message) {%>
+			<%=message%>
+			<%}%>
+
+			<% const action = deleted ? 'restore':'archive';%>
+			<form method="post" class="<%=action%>" action="/toolbox/boxes/admin/<%= id %>/<%= action %>">
+				<button class="<%=action%>-save"><%=action%></button>
+			</form>
+
+			<form method="post" class="edit-form" action="/toolbox/boxes/admin/<%= id %>/edit">
+				<label for="name" class="name-label">name</label>
+				<input class="name-input" id="name" name="name" value="<%= name %>" required />
+
+				<label for="origin" class="origin-label">origin</label>
+				<input class="origin-input" id="origin" name="origin" value="<%= origin %>" required />
+
+				<button class="edit-save">submit</button>
+			</form>
+
+			<table>
+				<tr>
+					<th>dead</th>
+					<th>date</th>
+					<th>poster</th>
+					<th>message</th>
+				</tr>
+
+				<% for (const post of posts) { %>
+				<tr data-id="<%=post.id%>" class="<%= post.dead ? 'dead' : ''%>">
+					<td>
+						<% if (post.dead) { %>
+						<form
+							class="hide-form"
+							method="POST"
+							action="/toolbox/boxes/admin/<%= id %>/posts/<%=post.id%>/unhide"
+						>
+							<button class="hide-submit" name="id" value="<%= post.id %>">unhide</button>
+						</form>
+						<% } else {%>
+						<form
+							class="hide-form"
+							method="POST"
+							action="/toolbox/boxes/admin/<%= id %>/posts/<%=post.id%>/hide"
+						>
+							<button class="hide-submit" name="id" value="<%= post.id %>">hide</button>
+						</form>
+						<% } %>
+					</td>
+					<td><%= post.createdAt %></td>
+					<td><%= post.from %></td>
+					<td><%= post.content %></td>
+				</tr>
+				<% } %>
+			</table>
+			<%- include('../../../partials/boxes/page-controls', {query, params: ['take']}); %>
+		</main>
+	</body>
+</html>

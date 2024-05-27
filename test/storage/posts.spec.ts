@@ -7,12 +7,11 @@ import { Err, Ok, unsafeUnwrap } from "../../src/types/result";
 import { Failure } from "../../src/types/failure";
 import Config from "../../src/Config";
 import { hashString } from "../../src/util";
-import { None, Some } from "../../src/types/option";
 
 describe("posts", () => {
 	const posterIp = "foo";
 	const ownerEmail = "braxtonjhall@gmail.com";
-	let info: { boxId: string; posterId: number };
+	let info: { boxId: string; posterId: number; emailId: string };
 
 	beforeAll(async () => {
 		await dropTables();
@@ -226,7 +225,7 @@ describe("posts", () => {
 					posterId: info.posterId,
 				}),
 			);
-			const poster = await posts.setDeadAndGetPosterId(dead.id, ownerEmail, true);
+			const poster = await posts.setDeadAndGetPosterId(dead.id, info.emailId, true);
 			expect(poster).toEqual(Ok(info.posterId));
 			const list = unsafeUnwrap(
 				await posts.list({
@@ -292,7 +291,7 @@ describe("posts", () => {
 					posterId: info.posterId,
 				}),
 			);
-			const poster = await posts.setDeadAndGetPosterId(dead.id, ownerEmail, true);
+			const poster = await posts.setDeadAndGetPosterId(dead.id, info.emailId, true);
 			expect(poster).toEqual(Ok(info.posterId));
 			const list = unsafeUnwrap(
 				await posts.list({
@@ -349,7 +348,7 @@ describe("posts", () => {
 					posterId: info.posterId,
 				}),
 			);
-			const poster = await posts.setDeadAndGetPosterId(dead.id, ownerEmail, true);
+			const poster = await posts.setDeadAndGetPosterId(dead.id, info.emailId, true);
 			expect(poster).toEqual(Ok(info.posterId));
 			const list = unsafeUnwrap(
 				await posts.list({
@@ -514,7 +513,7 @@ describe("posts", () => {
 					},
 				]),
 			);
-			const poster = await posts.setDeadAndGetPosterId(post.id, ownerEmail, true);
+			const poster = await posts.setDeadAndGetPosterId(post.id, info.emailId, true);
 			expect(poster).toEqual(Ok(info.posterId));
 			expect(
 				await posts.list({
@@ -555,8 +554,8 @@ describe("posts", () => {
 					},
 				]),
 			);
-			const before = await posts.setDeadAndGetPosterId(post.id, ownerEmail, true);
-			const poster = await posts.setDeadAndGetPosterId(post.id, ownerEmail, true);
+			const before = await posts.setDeadAndGetPosterId(post.id, info.emailId, true);
+			const poster = await posts.setDeadAndGetPosterId(post.id, info.emailId, true);
 			expect(before).toEqual(Ok(info.posterId));
 			expect(poster).toEqual(Ok(info.posterId));
 			expect(
@@ -578,8 +577,8 @@ describe("posts", () => {
 					posterId: info.posterId,
 				}),
 			);
-			await posts.setDeadAndGetPosterId(post.id, ownerEmail, true);
-			const poster = await posts.setDeadAndGetPosterId(post.id, ownerEmail, false);
+			await posts.setDeadAndGetPosterId(post.id, info.emailId, true);
+			const poster = await posts.setDeadAndGetPosterId(post.id, info.emailId, false);
 			expect(poster).toEqual(Ok(info.posterId));
 			expect(
 				await posts.list({
@@ -612,10 +611,10 @@ describe("posts", () => {
 					posterId: info.posterId,
 				}),
 			);
-			const before = await posts.setDeadAndGetPosterId(post.id, ownerEmail, false);
+			const before = await posts.setDeadAndGetPosterId(post.id, info.emailId, false);
 			expect(before).toEqual(Ok(info.posterId));
-			await posts.setDeadAndGetPosterId(post.id, ownerEmail, true);
-			const poster = await posts.setDeadAndGetPosterId(post.id, ownerEmail, false);
+			await posts.setDeadAndGetPosterId(post.id, info.emailId, true);
+			const poster = await posts.setDeadAndGetPosterId(post.id, info.emailId, false);
 			expect(poster).toEqual(Ok(info.posterId));
 			expect(
 				await posts.list({
@@ -637,17 +636,17 @@ describe("posts", () => {
 					},
 				]),
 			);
-			const after = await posts.setDeadAndGetPosterId(post.id, ownerEmail, false);
+			const after = await posts.setDeadAndGetPosterId(post.id, info.emailId, false);
 			expect(after).toEqual(Ok(info.posterId));
 		});
 
 		it("should fail to set a post to dead if the id does not exist", async () =>
-			expect(await posts.setDeadAndGetPosterId(randomUUID(), ownerEmail, true)).toEqual(
+			expect(await posts.setDeadAndGetPosterId(randomUUID(), info.emailId, true)).toEqual(
 				Err(Failure.MISSING_DEPENDENCY),
 			));
 
 		it("should fail to set a post to undead if the id does not exist", async () =>
-			expect(await posts.setDeadAndGetPosterId(randomUUID(), ownerEmail, false)).toEqual(
+			expect(await posts.setDeadAndGetPosterId(randomUUID(), info.emailId, false)).toEqual(
 				Err(Failure.MISSING_DEPENDENCY),
 			));
 

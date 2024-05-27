@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { parse } from "../../parse";
 
 export const originSchema = z
 	.string()
@@ -22,5 +21,3 @@ export const originSchema = z
 		});
 		return z.NEVER;
 	});
-
-console.log(parse(originSchema, "*"));

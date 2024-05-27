@@ -1,4 +1,6 @@
 <h1 class="box-name"><%= box.name%></h1>
-<%- include('../partials/form'); %>
+<% if (!box.deleted) { %>
+<%- include('../partials/submit-post'); %>
+<% } %>
 <%- include('../partials/posts'); %>
 <%- include('../partials/controls') %>

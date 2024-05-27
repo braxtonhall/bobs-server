@@ -10,6 +10,7 @@ import { authenticateCookie, enforceLoggedIn } from "./auth/middlewares/authenti
 import { api as unauthenticatedApi, views as unauthenticatedViews } from "./toolbox/routers/unauthenticated";
 import { views as secretDjViews } from "./secret-dj/routers/views";
 import subdomain from "express-subdomain";
+import { adminViews } from "./toolbox/routers/views";
 
 // TODO would be nice to also have a basic iframe for people who do not want to implement on their own
 //  iframe should be able to inherit either style tags or links to style
@@ -28,6 +29,7 @@ const views = express()
 	.use(authViews)
 	.use("/secret-dj", enforceLoggedIn, secretDjViews)
 	.use(unauthenticatedViews)
+	.use("/toolbox", enforceLoggedIn, adminViews)
 	.get("/", enforceLoggedIn, (req, res) => res.render("pages/index"));
 
 const api = express().use(unauthenticatedApi);

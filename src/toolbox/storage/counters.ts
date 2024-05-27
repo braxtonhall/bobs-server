@@ -27,9 +27,7 @@ const get = async (id: string, address: string) => {
 			where: {
 				id,
 				owner: {
-					email: {
-						address,
-					},
+					address,
 				},
 			},
 			select: {
@@ -55,7 +53,7 @@ const getOrigin = async (id: string): Promise<Option<string>> =>
 		.with(null, None)
 		.otherwise(({ origin }) => Some(origin));
 
-const create = async (data: { name: string; origin: string; ownerId: number }): Promise<string> =>
+const create = async (data: { name: string; origin: string; ownerId: string }): Promise<string> =>
 	db.counter
 		.create({
 			data: data,
@@ -72,9 +70,7 @@ const edit = async (id: string, address: string, data: { name?: string; origin?:
 			where: {
 				id,
 				owner: {
-					email: {
-						address,
-					},
+					address,
 				},
 			},
 			data,

@@ -1,6 +1,8 @@
 import { db } from "../../db";
 import { match } from "ts-pattern";
 import { None, Option, Some } from "../../types/option";
+import { Err, Ok, Result } from "../../types/result";
+import { Failure } from "../../types/failure";
 
 const getOrigin = async (id: string): Promise<Option<string>> =>
 	match(
@@ -16,7 +18,7 @@ const getOrigin = async (id: string): Promise<Option<string>> =>
 		.with(null, None)
 		.otherwise(({ origin }) => Some(origin));
 
-const create = async (data: { name: string; origin: string; ownerId: number }): Promise<string> =>
+const create = async (data: { name: string; origin: string; ownerId: string }): Promise<string> =>
 	db.box
 		.create({
 			data: data,
@@ -26,27 +28,35 @@ const create = async (data: { name: string; origin: string; ownerId: number }): 
 		})
 		.then(({ id }) => id);
 
-const edit = async (id: string, address: string, data: { name?: string; origin?: string }): Promise<void> =>
-	// TODO should let the user know if the box did not exist or if they are not authorized
-	db.box
-		.update({
+const edit = async (
+	id: string,
+	ownerId: string,
+	data: { name?: string; origin?: string },
+): Promise<Result<undefined, Failure.MISSING_DEPENDENCY | Failure.UNAUTHORIZED>> => {
+	if (await exists(id)) {
+		const result = await db.box.update({
 			where: {
 				id,
-				owner: {
-					email: {
-						address,
-					},
-				},
+				ownerId,
 			},
 			data,
-		})
-		.then();
+			select: { id: true },
+		});
+		if (result) {
+			return Ok();
+		} else {
+			return Err(Failure.UNAUTHORIZED);
+		}
+	} else {
+		return Err(Failure.MISSING_DEPENDENCY);
+	}
+};
 
 const exists = (id: string): Promise<boolean> =>
 	db.box.findUnique({ where: { id }, select: { id: true } }).then((result) => !!result);
 
-const get = (id: string) =>
-	db.box.findUnique({ where: { id }, select: { name: true } }).then((result) => {
+const getStatus = (id: string) =>
+	db.box.findUnique({ where: { id }, select: { name: true, deleted: true } }).then((result) => {
 		if (result) {
 			return Some(result);
 		} else {
@@ -54,6 +64,71 @@ const get = (id: string) =>
 		}
 	});
 
-// TODO list boxes
+const getDetails = (id: string, ownerId: string, postCount: number, cursor?: string) =>
+	db.box
+		.findUnique({
+			where: { id, ownerId },
+			select: {
+				id: true,
+				name: true,
+				origin: true,
+				deleted: true,
+				posts: {
+					cursor: cursor ? { id: cursor } : undefined,
+					orderBy: { sort: "desc" },
+					take: postCount + 1,
+					select: {
+						id: true,
+						createdAt: true,
+						content: true,
+						from: true,
+						parent: {
+							select: {
+								id: true,
+							},
+						},
+						dead: true,
+					},
+				},
+			},
+		})
+		.then((result) => {
+			if (result) {
+				return Some({
+					...result,
+					posts: result.posts.slice(0, postCount),
+					cursor: result.posts[postCount]?.id,
+				});
+			} else {
+				return None();
+			}
+		});
 
-export default { getOrigin, create, edit, exists, get };
+const list = async (ownerId: string, deleted: boolean, count: number, cursor?: string) => {
+	const boxes = await db.box.findMany({
+		where: {
+			ownerId,
+			deleted,
+		},
+		cursor: typeof cursor === "string" ? { id: cursor } : undefined,
+		orderBy: {
+			sort: "desc",
+		},
+		take: count + 1,
+	});
+	return { boxes: boxes.slice(0, count), cursor: boxes[count]?.id };
+};
+
+const setBoxDeletion = async (id: string, ownerId: string, deleted: boolean) =>
+	db.$transaction(async (tx) => {
+		const box = await tx.box.findUnique({ where: { id }, select: { deleted: true, ownerId: true } });
+		if (box === null) {
+			return Err(Failure.MISSING_DEPENDENCY);
+		} else if (box.ownerId !== ownerId) {
+			return Err(Failure.UNAUTHORIZED);
+		} else {
+			return Ok(await tx.box.update({ where: { id, ownerId }, data: { deleted }, select: { deleted: true } }));
+		}
+	});
+
+export default { getOrigin, create, edit, exists, getStatus, list, getDetails, setBoxDeletion };

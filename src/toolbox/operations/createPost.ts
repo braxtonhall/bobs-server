@@ -23,7 +23,7 @@ export const createPost = async (
 	boxId: string,
 	{ parent, email: address, content, from }: CreatePost,
 	ip: HashedString,
-): Promise<Result<Post, Failure.MISSING_DEPENDENCY>> => {
+): Promise<Result<Post, Failure.MISSING_DEPENDENCY | Failure.PRECONDITION_FAILED>> => {
 	if (parent !== undefined && !(await posts.exists(parent, boxId))) {
 		return Err(Failure.MISSING_DEPENDENCY as const);
 	} else {

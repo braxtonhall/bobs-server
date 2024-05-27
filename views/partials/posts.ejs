@@ -3,7 +3,7 @@
 	<tr class="post-row">
 		<td class="post-delete">
 			<% if (post.deletable) { /* TODO it would be nice to pass on query params */ %>
-			<form class="delete-form" method="POST" action="posts/delete">
+			<form class="delete-form" method="POST" action="boxes/delete">
 				<button class="delete-form-submit" name="id" value="<%= post.id %>">delete</button>
 			</form>
 			<% } %>
@@ -15,12 +15,4 @@
 	<% } %>
 </table>
 
-<form class="main-controls-form">
-	<% if (query.cursor) { %>
-	<button class="main-controls-btt">back to top</button>
-	<% } %>
-	<% if (cursor) { %>
-	<button class="main-controls-next" name="cursor" value="<%= cursor %>">next page</button>
-	<% } %>
-	<input type="hidden" name="dead" value="<%= query.dead %>" readonly />
-</form>
+<%- include('boxes/page-controls', {query, params: ['take', 'dead'], cursor}); %>

@@ -51,6 +51,7 @@ export const api = express()
 			.with([Ok(P.select("post")), P.string.select("ip")], async ({ ip, post }) =>
 				match(await createPost(req.params.box, post, hashString(ip)))
 					.with(Ok(P.select()), (post) => res.send(post))
+					.with(Err(Failure.PRECONDITION_FAILED), () => res.sendStatus(412))
 					.with(Err(P._), () => res.sendStatus(404))
 					.exhaustive(),
 			)
