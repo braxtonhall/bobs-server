@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from "express";
+import express, { Request, Response } from "express";
 import { getPosts } from "../operations/getPosts";
 import { hashString } from "../../util";
 import { match, P } from "ts-pattern";

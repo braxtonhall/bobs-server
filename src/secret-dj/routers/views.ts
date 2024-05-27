@@ -88,7 +88,7 @@ export const views = express()
 		try {
 			const ownerId = res.locals.participant.id;
 			await startGame({ seasonId, ownerId });
-			res.redirect(`/secret-dj/games/${seasonId}?success=${encodeURIComponent("new game started!")}`);
+			return res.redirect(`/secret-dj/games/${seasonId}?success=${encodeURIComponent("new game started!")}`);
 		} catch {
 			return res.redirect(`/secret-dj/games/${seasonId}?error=${encodeURIComponent("that did not work")}`);
 		}
