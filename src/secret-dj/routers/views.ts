@@ -152,7 +152,8 @@ export const views = express()
 			const participant: Participant = res.locals.participant;
 			const id = await createGame({ name, description, ruleCount, ownerId: participant.id });
 			return res.redirect(`games/${id}?success=${encodeURIComponent("new game created!")}`);
-		} catch {
+		} catch (err) {
+			console.log(err);
 			return res.render("pages/secret-dj/create", { error: "That didn't quite work" });
 		}
 	})

@@ -14,8 +14,8 @@ import counters from "../storage/counters";
 import bodyParser from "body-parser";
 
 const allowOrigin =
-	<P>(getOrigin: (params: P) => Promise<Option<string>>) =>
-	async (req: Request<P>, res: Response, next: NextFunction): Promise<unknown> =>
+	<Params>(getOrigin: (params: Params) => Promise<Option<string>>) =>
+	async (req: Request<Params>, res: Response, next: NextFunction): Promise<unknown> =>
 		match(await getOrigin(req.params))
 			.with(Some(P.select()), (origin) => {
 				res.header("Access-Control-Allow-Origin", origin);

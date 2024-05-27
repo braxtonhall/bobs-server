@@ -10,4 +10,4 @@
 8. Combine update and create rules into one function (and also is participating in)
 9. Add more instructions
 10. Replace empty table with something more descriptive
-11. Description field should not be required on create
+11. Delete should take you to an "Are you SURE?" page
