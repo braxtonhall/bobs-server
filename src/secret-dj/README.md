@@ -11,3 +11,7 @@
 9. Add more instructions
 10. Replace empty table with something more descriptive
 11. Delete should take you to an "Are you SURE?" page
+12. Should render your playlist on IN PROGRESS if it exists
+13. Maybe remove playlist state and game owner???
+14. Maybe remove "Your playlist is ready!"
+15. Find out what sendgrid does if you give it a terribly formatted email

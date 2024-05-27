@@ -9,7 +9,6 @@ const toMessages = (seasonId: string, entries: RecipientEntry[]): Message[] => {
 	const link = `https://${Config.HOST}/secret-dj/games/${seasonId}`;
 	return entries.map(({ recipient }) => ({
 		address: recipient.email.address,
-		text: `${recipient.name}, your playlist is ready`,
 		html: `${recipient.name}, your playlist is ready. <a href="${link}">click here to see your playlist</a>`,
 		subject: "a season of secret dj has ended",
 	}));

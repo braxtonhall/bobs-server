@@ -11,7 +11,6 @@ CREATE TABLE "Message" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "address" TEXT NOT NULL,
     "subject" TEXT NOT NULL,
-    "text" TEXT NOT NULL,
     "html" TEXT NOT NULL,
     "expiration" DATETIME
 );
@@ -28,21 +27,14 @@ CREATE TABLE "Token" (
 );
 
 -- CreateTable
-CREATE TABLE "Admin" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "emailId" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    CONSTRAINT "Admin_emailId_fkey" FOREIGN KEY ("emailId") REFERENCES "Email" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
-);
-
--- CreateTable
 CREATE TABLE "Box" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "sort" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "origin" TEXT NOT NULL,
-    "ownerId" INTEGER NOT NULL,
+    "ownerId" TEXT NOT NULL,
     "deleted" BOOLEAN NOT NULL DEFAULT false,
-    CONSTRAINT "Box_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "Admin" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "Box_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "Email" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -50,9 +42,9 @@ CREATE TABLE "Counter" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "name" TEXT NOT NULL,
     "origin" TEXT NOT NULL,
-    "ownerId" INTEGER NOT NULL,
+    "ownerId" TEXT NOT NULL,
     "count" INTEGER NOT NULL DEFAULT 0,
-    CONSTRAINT "Counter_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "Admin" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "Counter_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "Email" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -129,7 +121,7 @@ CREATE UNIQUE INDEX "Email_address_key" ON "Email"("address");
 CREATE UNIQUE INDEX "Token_temporaryToken_key" ON "Token"("temporaryToken");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Admin_emailId_key" ON "Admin"("emailId");
+CREATE UNIQUE INDEX "Box_id_key" ON "Box"("id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Poster_ip_key" ON "Poster"("ip");

@@ -19,7 +19,6 @@ model Message {
   id         Int       @id @default(autoincrement())
   address    String
   subject    String
-  text       String
   html       String
   expiration DateTime?
 }

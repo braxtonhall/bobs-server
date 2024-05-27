@@ -44,7 +44,6 @@ const sendMessage = async (message: Message): Promise<void> => {
 			from: Config.EMAIL_FROM,
 			to: message.address,
 			subject: message.subject,
-			text: message.text,
 			html: message.html,
 		});
 	}

@@ -26,7 +26,6 @@ export const sendConfirmationEmail = async (confirmation: Confirmation): Promise
 	await enqueue(db, {
 		address: confirmation.address,
 		subject: "One Time Password",
-		text: "Click this link to log in",
 		html: `<a href="${url.toString()}">Click this link to log in</a>`,
 		expiration: confirmation.expiration,
 	});
