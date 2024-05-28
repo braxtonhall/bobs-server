@@ -1,24 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { authenticate } from "../operations";
 
-export const authenticateToken = async (req: Request, res: Response, next: NextFunction) => {
-	const { authorization } = req.headers;
-	if (authorization === undefined || !authorization.startsWith("Bearer ")) {
-		return res.sendStatus(401);
-	}
-	const token = authorization.replace("Bearer ", "");
-
+const authenticateToken = async (token: string, res: Response, next: NextFunction) => {
 	try {
-		res.locals.email = await authenticate(token);
-		return next();
-	} catch (e) {
-		return res.sendStatus(401);
-	}
-};
-
-export const authenticateCookie = async (req: Request, res: Response, next: NextFunction) => {
-	try {
-		const token = String(req.cookies.token);
 		res.locals.email = await authenticate(token);
 		res.locals.token = token;
 		res.locals.logged = true;
@@ -27,6 +11,18 @@ export const authenticateCookie = async (req: Request, res: Response, next: Next
 	}
 	return next();
 };
+
+export const authenticateHeader = async (req: Request, res: Response, next: NextFunction) => {
+	const { authorization } = req.headers;
+	if (authorization === undefined || !authorization.startsWith("Bearer ")) {
+		return res.sendStatus(400);
+	}
+	const token = authorization.replace("Bearer ", "");
+	return authenticateToken(token, res, next);
+};
+
+export const authenticateCookie = async (req: Request, res: Response, next: NextFunction) =>
+	authenticateToken(req.cookies.token, res, next);
 
 export const checkLoggedIn = async (req: Request, res: Response, next: NextFunction) => {
 	if (res.locals.logged) {

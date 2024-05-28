@@ -43,7 +43,7 @@ export const login = ({ email: address, protocol, redirect }: { email: string; p
 		const expiration = DateTime.now().plus({ minute: Config.TEMP_TOKEN_EXPIRATION_MIN }).toJSDate();
 		await tx.token.create({
 			data: {
-				type: TokenType.TEMP,
+				type: TokenType.LOGIN,
 				temporaryToken,
 				expiration,
 				email: {
@@ -67,7 +67,7 @@ export const authorize = ({
 	db.$transaction(async (tx) => {
 		const token = await tx.token.findUnique({
 			where: {
-				type: TokenType.TEMP,
+				type: TokenType.LOGIN,
 				temporaryToken,
 			},
 			include: {

@@ -1,4 +1,4 @@
 export enum TokenType {
 	JWT = "jwt",
-	TEMP = "temporary",
+	LOGIN = "login",
 }
