@@ -1,9 +1,6 @@
 <hr />
 <% if (dj) { %>
-<h3>
-	playlist curated by <a href="/secret-dj/djs/<%= dj.dj.id %>"><%= dj.dj.name %></a> for
-	<a href="/secret-dj/djs/<%= dj.recipient.id %>"><%= dj.recipient.name %></a>
-</h3>
+<h3>a playlist for <a href="/secret-dj/djs/<%= dj.recipient.id %>"><%= dj.recipient.name %></a></h3>
 <h4>rules:</h4>
 <ol>
 	<% for (const rule of dj.rules) { %>
