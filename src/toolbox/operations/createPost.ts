@@ -22,6 +22,7 @@ const sendConfirmationEmail = (env: { address: string; boxId: string; postId: st
 	// TODO we should override what the actual message is here
 	// TODO this is also probably the wrong url
 	const url = new URL(`https://${Config.HOST}/boxes/${env.boxId}/posts/${env.postId}`).toString();
+	// TODO maybe we want add a  /confirm instead of using /login? That way we can JUST confirm emails?
 	login({ email: env.address, protocol: "https", redirect: url }).catch(() => {});
 };
 

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<%- include('../../partials/secret-dj/head'); %>
+	</head>
+	<body>
+		<header>
+			<%- include('../../partials/header'); %>
+		</header>
+
+		<main>
+			<%- include('../../partials/secret-dj/secret-dj-title'); %>
+			<div>
+				<h2><%=name%></h2>
+			</div>
+			<p>here are all the playlists made by <%=name%></p>
+			<table>
+				<tr>
+					<th>game name</th>
+					<th>recipient</th>
+					<th>view</th>
+				</tr>
+				<% for (const entry of entries) { %>
+				<% const recipientLink = `/secret-dj/djs/${entry.recipient.id}`%>
+				<% const gameLink = `/secret-dj/games/${entry.season.id}`%>
+				<% const entryLink = `/secret-dj/games/${entry.season.id}/entries/${entry.id}`%>
+				<tr>
+					<td>
+						<a href="<%=gameLink%>"><%= entry.season.name %></a>
+					</td>
+					<td>
+						<a href="<%=recipientLink%>"><%= entry.recipient.name %></a>
+					</td>
+					<td>
+						<a href="<%=entryLink%>">view</a>
+					</td>
+				</tr>
+				<% } %>
+			</table>
+		</main>
+	</body>
+</html>

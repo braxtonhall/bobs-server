@@ -1,4 +1,4 @@
-<h3>curated by: "<%= recipient.dj.name %>"</h3>
+<h3>curated by <a href="/secret-dj/djs/<%= recipient.dj.id %>"><%= recipient.dj.name %></a></h3>
 <% if (recipient.submissionUrl) { %>
 <% if (recipient.submissionUrl.startsWith("https://open.spotify.com")) { %>
 <% const spotifyPlaylistId = new URL(recipient.submissionUrl).pathname.match(/[^\/]+/g).slice(-1) %>

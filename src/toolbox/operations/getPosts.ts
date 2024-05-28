@@ -28,7 +28,7 @@ export const getPosts = async (
 	query: { cursor?: string; dead?: string; take?: string },
 ): Promise<Result<{ posts: Post[]; cursor?: string }, Failure.MISSING_DEPENDENCY>> => {
 	const userPageSize = Number(query.take) || Config.DEFAULT_PAGE_SIZE;
-	const pageSize = Math.max(0, Math.min(userPageSize, Config.MAXIMUM_PAGE_SIZE));
+	const pageSize = Math.max(1, Math.min(userPageSize, Config.MAXIMUM_PAGE_SIZE));
 	const result = await posts.list({
 		boxId,
 		ip: requestor,

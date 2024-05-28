@@ -1,18 +1,17 @@
 # secret-dj TODOs
 
-1. Comments need to work
-2. The game page needs to be public with a join button
-3. Pagination on all pages
-4. Clean up the emails
-5. View counter admin page
-6. Style inheritance
-7. Migrate success/error messages to session express-express
-8. Combine update and create rules into one function (and also is participating in)
-9. Add more instructions
-10. Replace empty table with something more descriptive
-11. Delete should take you to an "Are you SURE?" page
-12. Should render your playlist on IN PROGRESS if it exists
-13. Maybe remove playlist state and game owner???
-14. Maybe remove "Your playlist is ready!"
-15. Find out what sendgrid does if you give it a terribly formatted email
-16. Maybe remove the endFinishedSeasons job and conditionally end the season of the playlist submitted
+- Comments need to work
+- Viewing a user or an entry or a game needs to be public (with a join button)
+- Pagination on all pages
+- Clean up the emails
+- View counter admin page
+- Style inheritance
+- Migrate success/error messages to session express-express
+- Combine update and create rules into one function (and also is participating in)
+- Add more instructions
+- Replace empty table with something more descriptive
+- Delete should take you to an "Are you SURE?" page
+- Should render your playlist on IN PROGRESS if it exists
+- Maybe remove playlist state and game owner???
+- Find out what sendgrid does if you give it a terribly formatted email
+- Maybe remove the endFinishedSeasons job and conditionally end the season of the playlist submitted

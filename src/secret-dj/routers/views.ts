@@ -25,6 +25,8 @@ import { isParticipantRegisteredInGame } from "../operations/isParticipantRegist
 import { updateRules } from "../operations/updateRules";
 import { endFinishedSeasons } from "../operations/endFinishedSeasons";
 import { editGame } from "../operations/editGame";
+import Config from "../../Config";
+import { getDjEntries } from "../operations/getDjEntries";
 
 export const views = express()
 	.use(getParticipation)
@@ -45,6 +47,7 @@ export const views = express()
 		const { seasons, cursor } = await getJoinableGames({
 			participantId,
 			cursor: typeof req.query.cursor === "string" ? req.query.cursor : undefined,
+			// TODO support take
 		});
 		res.render("pages/secret-dj/browse", { seasons, cursor, participantId });
 	})
@@ -53,6 +56,7 @@ export const views = express()
 		const { seasons, cursor } = await getSeasonsForParticipant({
 			participantId,
 			cursor: typeof req.query.cursor === "string" ? req.query.cursor : undefined,
+			// TODO support take
 		});
 		return res.render("pages/secret-dj/index", { seasons, cursor, participantId });
 	})
@@ -60,8 +64,24 @@ export const views = express()
 		const participantId = res.locals.participant.id;
 		const { seasons, cursor } = await getArchivedSeasons({
 			cursor: typeof req.query.cursor === "string" ? req.query.cursor : undefined,
+			// TODO support take
 		});
 		return res.render("pages/secret-dj/archive", { seasons, cursor, participantId });
+	})
+	.get("/djs/:id", async (req, res) => {
+		try {
+			const { entries, cursor, name } = await getDjEntries({
+				participantId: req.params.id,
+				cursor: typeof req.query.cursor === "string" ? req.query.cursor : undefined,
+				take: Math.max(
+					1,
+					Math.min(Number(req.query.take) || Config.DEFAULT_PAGE_SIZE, Config.MAXIMUM_PAGE_SIZE),
+				),
+			});
+			return res.render("pages/secret-dj/dj", { name, entries, cursor });
+		} catch {
+			return res.sendStatus(404);
+		}
 	})
 	.get("/games/:id", async (req, res) => {
 		try {

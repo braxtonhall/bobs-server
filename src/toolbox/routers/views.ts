@@ -93,7 +93,7 @@ const boxAdminViews = express()
 			await boxesClient.getDetails(
 				req.params.id,
 				res.locals.email.id,
-				Math.max(0, Math.min(Number(req.query.take) || Config.DEFAULT_PAGE_SIZE, Config.MAXIMUM_PAGE_SIZE)),
+				Math.max(1, Math.min(Number(req.query.take) || Config.DEFAULT_PAGE_SIZE, Config.MAXIMUM_PAGE_SIZE)),
 				typeof req.query.cursor === "string" ? req.query.cursor : undefined,
 			),
 		)
@@ -125,7 +125,7 @@ const boxAdminViews = express()
 		const { boxes, cursor } = await boxesClient.list(
 			res.locals.email.id,
 			true,
-			Math.max(0, Math.min(Number(req.query.take) || Config.DEFAULT_PAGE_SIZE, Config.MAXIMUM_PAGE_SIZE)),
+			Math.max(1, Math.min(Number(req.query.take) || Config.DEFAULT_PAGE_SIZE, Config.MAXIMUM_PAGE_SIZE)),
 			typeof req.query.cursor === "string" ? req.query.cursor : undefined,
 		);
 		return res.render("pages/toolbox/boxes/archive", { boxes, cursor, query: req.query });
@@ -134,7 +134,7 @@ const boxAdminViews = express()
 		const { boxes, cursor } = await boxesClient.list(
 			res.locals.email.id,
 			false,
-			Math.max(0, Math.min(Number(req.query.take) || Config.DEFAULT_PAGE_SIZE, Config.MAXIMUM_PAGE_SIZE)),
+			Math.max(1, Math.min(Number(req.query.take) || Config.DEFAULT_PAGE_SIZE, Config.MAXIMUM_PAGE_SIZE)),
 			typeof req.query.cursor === "string" ? req.query.cursor : undefined,
 		);
 		return res.render("pages/toolbox/boxes/index", { boxes, cursor, query: req.query });
