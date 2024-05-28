@@ -64,7 +64,7 @@
 				</tr>
 				<% } %>
 			</table>
-			<%- include('../../../partials/boxes/page-controls', {query, params: ['take']}); %>
+			<%- include('../../../partials/boxes/page-controls', {query, params: ['take'], cursor, cursorName: 'cursor'}); %>
 		</main>
 	</body>
 </html>

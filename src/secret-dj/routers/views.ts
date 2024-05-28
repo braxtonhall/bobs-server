@@ -47,30 +47,29 @@ export const views = express()
 		const { seasons, cursor } = await getJoinableGames({
 			participantId,
 			cursor: typeof req.query.cursor === "string" ? req.query.cursor : undefined,
-			// TODO support take
+			take: Math.max(1, Math.min(Number(req.query.take) || Config.DEFAULT_PAGE_SIZE, Config.MAXIMUM_PAGE_SIZE)),
 		});
-		res.render("pages/secret-dj/browse", { seasons, cursor, participantId });
+		res.render("pages/secret-dj/browse", { query: req.query, seasons, cursor, participantId });
 	})
 	.get("/", async (req, res) => {
 		const participantId = res.locals.participant.id;
 		const { seasons, cursor } = await getSeasonsForParticipant({
 			participantId,
 			cursor: typeof req.query.cursor === "string" ? req.query.cursor : undefined,
-			// TODO support take
+			take: Math.max(1, Math.min(Number(req.query.take) || Config.DEFAULT_PAGE_SIZE, Config.MAXIMUM_PAGE_SIZE)),
 		});
-		return res.render("pages/secret-dj/index", { seasons, cursor, participantId });
+		return res.render("pages/secret-dj/index", { query: req.query, seasons, cursor, participantId });
 	})
 	.get("/archive", async (req, res) => {
 		const participantId = res.locals.participant.id;
 		const { seasons, cursor } = await getArchivedSeasons({
 			cursor: typeof req.query.cursor === "string" ? req.query.cursor : undefined,
-			// TODO support take
+			take: Math.max(1, Math.min(Number(req.query.take) || Config.DEFAULT_PAGE_SIZE, Config.MAXIMUM_PAGE_SIZE)),
 		});
-		return res.render("pages/secret-dj/archive", { seasons, cursor, participantId });
+		return res.render("pages/secret-dj/archive", { query: req.query, seasons, cursor, participantId });
 	})
 	.get("/djs/:id", async (req, res) => {
 		try {
-			// TODO might be nice to also show seasons hosted
 			const { entries, entryCursor, name, seasonCursor, seasons } = await getDjEntries({
 				participantId: req.params.id,
 				entryCursor: typeof req.query.entryCursor === "string" ? req.query.entryCursor : undefined,
@@ -84,7 +83,14 @@ export const views = express()
 					Math.min(Number(req.query.seasonTake) || Config.DEFAULT_PAGE_SIZE, Config.MAXIMUM_PAGE_SIZE),
 				),
 			});
-			return res.render("pages/secret-dj/dj", { name, entries, entryCursor, seasons, seasonCursor });
+			return res.render("pages/secret-dj/dj", {
+				query: req.query,
+				name,
+				entries,
+				entryCursor,
+				seasons,
+				seasonCursor,
+			});
 		} catch {
 			return res.sendStatus(404);
 		}

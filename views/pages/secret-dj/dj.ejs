@@ -13,6 +13,7 @@
 			<div>
 				<h2><%=name%></h2>
 			</div>
+			<% if (entries.length) { %>
 			<p>here are all the playlists made by <%=name%></p>
 			<table>
 				<tr>
@@ -37,8 +38,17 @@
 				</tr>
 				<% } %>
 			</table>
+			<%- include('../../partials/boxes/page-controls', {query, params: ['entryTake', 'seasonCursor', 'seasonTake'], cursor: entryCursor, cursorName: 'entryCursor'}); %>
+			<% } else { %>
+			<p><%=name%> has made any playlists for secret dj</p>
+			<% } %>
+			<% if (seasons.length) { %>
 			<p>here are all the seasons hosted by <%=name%></p>
-			<%- include('../../partials/secret-dj/game-table', {showOwnership: false, seasons}); %>
+			<%- include('../../partials/secret-dj/game-table', {showOwnership: false, seasons, defaultControls: false}); %>
+			<%- include('../../partials/boxes/page-controls', {query, params: ['entryTake', 'entryCursor', 'seasonTake'], cursor: seasonCursor, cursorName: 'seasonCursor'}); %>
+			<% } else { %>
+			<p><%=name%> has not hosted any seasons of secret dj</p>
+			<% } %>
 		</main>
 	</body>
 </html>

@@ -13,8 +13,15 @@
 			<div>
 				<h2>browse</h2>
 			</div>
+			<% if (seasons.length) { %>
 			<p>these games are still accepting new participants</p>
-			<%- include('../../partials/secret-dj/game-table', {showOwnership: true, seasons, participantId}); %>
+			<%- include('../../partials/secret-dj/game-table', {query, showOwnership: true, seasons, participantId, defaultControls: true}); %>
+			<% } else { %>
+			<p>
+				there currently no open games of secret dj.
+				<a href="/secret-dj/create">click here to create one yourself</a>
+			</p>
+			<% } %>
 		</main>
 	</body>
 </html>

@@ -1,10 +1,10 @@
 import { db } from "../../db";
 import { Season } from "@prisma/client";
-import Config from "../../Config";
 import { SeasonState } from "../SeasonState";
 
 type Environment = {
 	cursor?: string;
+	take: number;
 };
 
 /**
@@ -14,6 +14,7 @@ type Environment = {
  */
 export const getArchivedSeasons = async ({
 	cursor,
+	take,
 }: Environment): Promise<{ seasons: Pick<Season, "state" | "name">[]; cursor?: string }> => {
 	const seasons = await db.season.findMany({
 		where: {
@@ -30,7 +31,7 @@ export const getArchivedSeasons = async ({
 		orderBy: {
 			sort: "desc",
 		},
-		take: Config.DEFAULT_PAGE_SIZE + 1,
+		take: take + 1,
 	});
-	return { cursor: seasons[Config.DEFAULT_PAGE_SIZE]?.id, seasons: seasons.slice(0, Config.DEFAULT_PAGE_SIZE) };
+	return { cursor: seasons[take]?.id, seasons: seasons.slice(0, take) };
 };

@@ -21,3 +21,6 @@
 	</tr>
 	<% } %>
 </table>
+<% if (defaultControls) { %>
+<%- include('../boxes/page-controls', {query, params: ['take'], cursor, cursorName: 'cursor'}); %>
+<% } %>

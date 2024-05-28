@@ -13,8 +13,12 @@
 			<div>
 				<h2>archive</h2>
 			</div>
+			<% if (seasons.length) { %>
 			<p>these games have now ended and are now available to view</p>
-			<%- include('../../partials/secret-dj/game-table', {showOwnership: true, seasons, participantId}); %>
+			<%- include('../../partials/secret-dj/game-table', {query, showOwnership: true, seasons, participantId, defaultControls: true}); %>
+			<% } else { %>
+			<p>there are no historical games of secret dj</p>
+			<% } %>
 		</main>
 	</body>
 </html>

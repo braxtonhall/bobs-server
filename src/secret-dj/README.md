@@ -2,7 +2,6 @@
 
 - Comments need to work
 - Viewing a user or an entry or a game needs to be public (with a join button)
-- Pagination on all pages
 - Clean up the emails
 - View counter admin page
 - Style inheritance
@@ -11,7 +10,5 @@
 - Add more instructions
 - Replace empty table with something more descriptive
 - Delete should take you to an "Are you SURE?" page
-- Should render your playlist on IN PROGRESS if it exists
-- Maybe remove playlist state and game owner???
 - Find out what sendgrid does if you give it a terribly formatted email
 - Maybe remove the endFinishedSeasons job and conditionally end the season of the playlist submitted

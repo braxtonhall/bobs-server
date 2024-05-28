@@ -11,4 +11,4 @@
 	</tr>
 	<% } %>
 </table>
-<%- include('page-controls', {query, params: ['take']}); %>
+<%- include('page-controls', {query, params: ['take'], cursor, cursorName: 'cursor'}); %>

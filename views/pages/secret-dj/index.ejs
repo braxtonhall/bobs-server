@@ -18,7 +18,12 @@
 				<li><a href="/secret-dj/settings">settings</a></li>
 				<li><a href="/secret-dj/djs/<%=participantId%>">me</a></li>
 			</ul>
-			<%- include('../../partials/secret-dj/game-table', {showOwnership: true, seasons, participantId}); %>
+			<% if (seasons.length) { %>
+			<%- include('../../partials/secret-dj/game-table', {query, showOwnership: true, seasons, participantId, defaultControls: true}); %>
+			<% } else { %>
+			you are currently not participating in any secret dj games. click <a href="/secret-dj/games">browse</a> to
+			find a game to join
+			<% } %>
 		</main>
 	</body>
 </html>
