@@ -169,9 +169,7 @@ export const views = express()
 				playlistUrl: link,
 				djId: res.locals.participant.id,
 			});
-			// TODO remove or not lol
 			await endFinishedSeasons();
-
 			return res.redirect(`/secret-dj/games/${seasonId}?success=${encodeURIComponent("playlist submitted!")}`);
 		} catch {
 			return res.redirect(`/secret-dj/games/${seasonId}?error=${encodeURIComponent("that did not work")}`);
