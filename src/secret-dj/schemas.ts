@@ -21,7 +21,20 @@ export const editSeasonPayloadSchema = z.object({
 });
 export type EditSeasonPayload = z.infer<typeof editSeasonPayloadSchema>;
 
-export const submitPlaylistPayloadSchema = z.object({ link: z.string().min(1) });
+export const submitPlaylistPayloadSchema = z.object({
+	link: z.string().transform((address, ctx): string => {
+		try {
+			return new URL(address).toString();
+		} catch {
+			// Do nothing :)
+		}
+		ctx.addIssue({
+			code: z.ZodIssueCode.custom,
+			message: "Link should be a website url",
+		});
+		return z.NEVER;
+	}),
+});
 export type SubmitPlaylistPayload = z.infer<typeof submitPlaylistPayloadSchema>;
 
 export const submitRulesSchema = z.object({
