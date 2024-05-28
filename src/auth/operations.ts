@@ -66,7 +66,7 @@ export const getVerificationToken = async (
 	tx: Pick<typeof db, "token">,
 	address: string,
 ): Promise<{ expiration: Date; temporaryToken: string }> => {
-	const expiration = DateTime.now().plus({ minute: Config.VERIFY_TOKEN_EXPIRATION_DAYS }).toJSDate();
+	const expiration = DateTime.now().plus({ day: Config.VERIFY_TOKEN_EXPIRATION_DAYS }).toJSDate();
 	const existingToken = await tx.token.findFirst({
 		where: {
 			type: TokenType.VERIFY,

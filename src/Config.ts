@@ -11,6 +11,8 @@ const environmentSchema = z.object({
 	LOGIN_TOKEN_EXPIRATION_MIN: z.coerce.number().default(10),
 	API_TOKEN_EXPIRATION_HOURS: z.coerce.number().default(12),
 	VERIFY_TOKEN_EXPIRATION_DAYS: z.coerce.number().default(90),
+	TOKEN_CLEANUP_INTERVAL_HOURS: z.coerce.number().default(4),
+	EXPIRED_TOKEN_STORAGE_HOURS: z.coerce.number().default(12),
 	HTTP_PORT: z.coerce.number().default(80),
 	HTTPS_PORT: z.coerce.number().default(443),
 	DEFAULT_PAGE_SIZE: z.coerce.number().default(20),
