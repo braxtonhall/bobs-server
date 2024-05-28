@@ -52,6 +52,7 @@ export const endFinishedSeasons = async () => {
 					state: SeasonState.ENDED,
 				},
 			});
+			// TODO should be some way to opt out of these emails
 			await enqueue(tx, ...toMessages(id, entries));
 		}),
 	);

@@ -22,7 +22,7 @@ const sendConfirmationEmail = (env: { address: string; boxId: string; postId: st
 	// TODO we should override what the actual message is here
 	// TODO this is also probably the wrong url
 	const url = new URL(`https://${Config.HOST}/boxes/${env.boxId}/posts/${env.postId}`).toString();
-	// TODO maybe we want add a  /confirm instead of using /login? That way we can JUST confirm emails?
+	// TODO we want add a  /verify/:id and also a /unsubscribe/:id. That way we can JUST confirm emails!
 	login({ email: env.address, protocol: "https", redirect: url }).catch(() => {});
 };
 
@@ -55,6 +55,7 @@ export const createPost = async (
 			});
 
 			return map(creationResult, (post): Post => {
+				// TODO these messages should really be in a transaction with posts.create(..)
 				if (email?.confirmed === false) {
 					sendConfirmationEmail({ address: email.address, boxId, postId: post.id });
 				}

@@ -74,6 +74,7 @@ export const startGame = async ({ ownerId, seasonId }: Environment): Promise<Ent
 				}),
 			);
 			const updates = (await Promise.all(futureUpdates)) satisfies UpdatedEntry[];
+			// TODO should be a way to opt out of these emails
 			await enqueue(tx, ...toMessages(season.id, updates));
 			return updates;
 		} else {
