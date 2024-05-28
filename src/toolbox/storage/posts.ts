@@ -5,6 +5,7 @@ import { Ok, Err, Result } from "../../types/result";
 import { match, P } from "ts-pattern";
 import { Failure } from "../../types/failure";
 import boxes from "./boxes";
+import { None, Option, Some } from "../../types/option";
 
 type CreatePost = {
 	emailId?: string;
@@ -172,7 +173,16 @@ const listInternal = ({ boxId, showDead, cursor, count, ip }: Query) => {
 	});
 };
 
-const exists = async (postId: string, boxId: string): Promise<boolean> =>
+const get = async (
+	postId: string,
+	boxId: string,
+): Promise<
+	Option<{
+		id: string;
+		subscribed: boolean;
+		email: { address: string; subscribed: boolean; confirmed: boolean } | null;
+	}>
+> =>
 	match(
 		await db.post.findUnique({
 			where: {
@@ -181,11 +191,19 @@ const exists = async (postId: string, boxId: string): Promise<boolean> =>
 			},
 			select: {
 				id: true,
+				email: {
+					select: {
+						address: true,
+						subscribed: true,
+						confirmed: true,
+					},
+				},
+				subscribed: true,
 			},
 		}),
 	)
-		.with({ id: P.select() }, () => true)
-		.otherwise(() => false);
+		.with(P.not(null), Some)
+		.otherwise(None);
 
 const setDeadAndGetPosterId = async (
 	id: string,
@@ -222,7 +240,7 @@ const setDeadAndGetPosterId = async (
 
 export default {
 	create,
-	exists,
+	get,
 	list,
 	delete: deletePost,
 	setDeadAndGetPosterId,

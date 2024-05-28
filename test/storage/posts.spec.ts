@@ -7,6 +7,7 @@ import { Err, Ok, unsafeUnwrap } from "../../src/types/result";
 import { Failure } from "../../src/types/failure";
 import Config from "../../src/Config";
 import { hashString } from "../../src/util";
+import { None, Some } from "../../src/types/option";
 
 describe("posts", () => {
 	const posterIp = "foo";
@@ -69,7 +70,13 @@ describe("posts", () => {
 					posterId: info.posterId,
 				}),
 			);
-			expect(await posts.exists(post.id, info.boxId)).toEqual(true);
+			expect(await posts.get(post.id, info.boxId)).toEqual(
+				Some({
+					id: expect.any(String),
+					subscribed: true,
+					email: null,
+				}),
+			);
 		});
 
 		it("should fail to find if the box id is incorrect", async () => {
@@ -81,11 +88,11 @@ describe("posts", () => {
 					posterId: info.posterId,
 				}),
 			);
-			expect(await posts.exists(post.id, randomUUID())).toEqual(false);
+			expect(await posts.get(post.id, randomUUID())).toEqual(None());
 		});
 
 		it("should fail to find from a user id that does not exist", async () =>
-			expect(await posts.exists(randomUUID(), randomUUID())).toEqual(false));
+			expect(await posts.get(randomUUID(), randomUUID())).toEqual(None()));
 
 		it("should list a post", async () => {
 			const post = unsafeUnwrap(

@@ -5,55 +5,70 @@ import posters from "../storage/posters";
 import emails from "../storage/emails";
 import { Failure } from "../../types/failure";
 import { HashedString } from "../../types/hashed";
-import { None, Some } from "../../types/option";
+import { Some, unwrapOr } from "../../types/option";
 import { match, P } from "ts-pattern";
 import { Post } from "../schema/post";
+import { login } from "../../auth/operations";
+import { enqueue } from "../../email";
+import { db } from "../../db";
+import Config from "../../Config";
 
-const sendConfirmationEmail = (_address: string) => {
-	// TODO!!!
-	// https://www.prisma.io/blog/backend-prisma-typescript-orm-with-postgresql-auth-mngp1ps7kip4
-	// https://sendgrid.com/en-us
-	// TODO you NEED to be able to unsubscribe/manage prefs
-	//  and you should also be able to unsub per-comment
-	// TODO to unsub ALL is /emails/ID/unsubscribe
-	// TODO to ubsub ONE is /emails/ID/posts/ID/unsubscribe
+// TODO you NEED to be able to unsubscribe/manage prefs
+//  and you should also be able to unsub per-comment
+// TODO to unsub ALL is /emails/ID/unsubscribe
+// TODO to ubsub ONE is /emails/ID/posts/ID/unsubscribe
+
+const sendConfirmationEmail = (env: { address: string; boxId: string; postId: string }) => {
+	// TODO we should override what the actual message is here
+	// TODO this is also probably the wrong url
+	const url = new URL(`https://${Config.HOST}/boxes/${env.boxId}/posts/${env.postId}`).toString();
+	login({ email: env.address, protocol: "https", redirect: url }).catch(() => {});
+};
+
+const sendNotificationEmail = (env: { address: string; boxId: string; childId: string }) => {
+	// TODO is this where it's going to live?
+	const url = new URL(`https://${Config.HOST}/boxes/${env.boxId}/posts/${env.childId}`);
+	enqueue(db, {
+		address: env.address,
+		subject: "You received a new reply",
+		html: `<a href="${url.toString()}">Click here to see your reply</a>`,
+	}).catch(() => {});
 };
 
 export const createPost = async (
 	boxId: string,
-	{ parent, email: address, content, from }: CreatePost,
+	{ parent: parentId, email: address, content, from }: CreatePost,
 	ip: HashedString,
 ): Promise<Result<Post, Failure.MISSING_DEPENDENCY | Failure.PRECONDITION_FAILED>> => {
-	if (parent !== undefined && !(await posts.exists(parent, boxId))) {
-		return Err(Failure.MISSING_DEPENDENCY as const);
-	} else {
-		const emailId = match(await emails.get(address))
-			.with(Some(P.select()), (email) => {
-				// TODO if parent and parent has an email, email that there has been a response
-				if (email?.confirmed === false) {
-					sendConfirmationEmail(email.address);
-				}
-				return email.id;
-			})
-			.otherwise(() => undefined);
-		return map(
-			await posts.create({
+	const optionParent = parentId === undefined ? Some(undefined) : await posts.get(parentId, boxId);
+	return match(optionParent)
+		.with(Some(P.select()), async (parent) => {
+			const email = unwrapOr(await emails.get(address), null);
+			const creationResult = await posts.create({
 				boxId,
 				content,
 				from,
-				parentId: parent,
-				emailId,
+				parentId: parent?.id,
+				emailId: email?.id,
 				posterId: await posters.getId(ip),
-			}),
-			(internalPost) =>
-				({
-					id: internalPost.id,
-					createdAt: internalPost.createdAt,
-					parent: internalPost.parent?.id,
+			});
+
+			return map(creationResult, (post): Post => {
+				if (email?.confirmed === false) {
+					sendConfirmationEmail({ address: email.address, boxId, postId: post.id });
+				}
+				if (parent && parent.subscribed && parent.email?.confirmed && parent.email.subscribed) {
+					sendNotificationEmail({ address: parent.email.address, boxId, childId: post.id });
+				}
+				return {
+					id: post.id,
+					createdAt: post.createdAt,
+					parent: post.parent?.id,
 					deletable: true,
 					content,
 					from,
-				}) satisfies Post,
-		);
-	}
+				};
+			});
+		})
+		.otherwise(() => Err(Failure.MISSING_DEPENDENCY));
 };
