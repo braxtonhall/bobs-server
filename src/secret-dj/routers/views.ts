@@ -23,7 +23,7 @@ import { startGame } from "../operations/startGame";
 import { enrolInGame } from "../operations/enrolInGame";
 import { isParticipantRegisteredInGame } from "../operations/isParticipantRegisteredInGame";
 import { updateRules } from "../operations/updateRules";
-import { endSeasonIfFinished } from "../operations/endSeasonIfFinished";
+import { endFinishedSeasons } from "../operations/endFinishedSeasons";
 import { editGame } from "../operations/editGame";
 import Config from "../../Config";
 import { getDjEntries } from "../operations/getDjEntries";
@@ -169,7 +169,9 @@ export const views = express()
 				playlistUrl: link,
 				djId: res.locals.participant.id,
 			});
-			await endSeasonIfFinished(seasonId);
+			// TODO remove or not lol
+			await endFinishedSeasons();
+
 			return res.redirect(`/secret-dj/games/${seasonId}?success=${encodeURIComponent("playlist submitted!")}`);
 		} catch {
 			return res.redirect(`/secret-dj/games/${seasonId}?error=${encodeURIComponent("that did not work")}`);

@@ -1,6 +1,8 @@
+import { archiveSeasons } from "./secret-dj/jobs/archiveSeasons";
+
 export type Job = { callback: () => unknown; interval: number };
 
-const jobs: Job[] = [];
+const jobs: Job[] = [archiveSeasons];
 const runningJobs = new Set<NodeJS.Timeout>();
 
 const stop = () => runningJobs.forEach((interval) => clearInterval(interval));
