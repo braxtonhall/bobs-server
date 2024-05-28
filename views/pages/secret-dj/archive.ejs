@@ -14,7 +14,7 @@
 				<h2>archive</h2>
 			</div>
 			<p>these games have now ended and are now available to view</p>
-			<%- include('../../partials/secret-dj/game-table'); %>
+			<%- include('../../partials/secret-dj/game-table', {showOwnership: true, seasons, participantId}); %>
 		</main>
 	</body>
 </html>

@@ -37,6 +37,8 @@
 				</tr>
 				<% } %>
 			</table>
+			<p>here are all the seasons hosted by <%=name%></p>
+			<%- include('../../partials/secret-dj/game-table', {showOwnership: false, seasons}); %>
 		</main>
 	</body>
 </html>

@@ -14,7 +14,6 @@ h1 > a {
 }
 
 a {
-	text-decoration: none;
 	color: #6900ff;
 }
 
@@ -36,10 +35,6 @@ a {
 	}
 }
 
-a:hover {
-	text-decoration: underline;
-}
-
 table,
 th,
 td {
@@ -54,14 +49,14 @@ td {
 }
 
 form {
-	margin: 8px 0px;
+	margin: 8px 0;
 	padding: 8px;
 	width: 300px;
 	border: 1px dashed;
 }
 
 form > * {
-	margin: 4px 0px;
+	margin: 4px 0;
 }
 
 hr {

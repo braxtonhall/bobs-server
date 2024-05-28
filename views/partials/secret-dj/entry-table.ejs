@@ -13,7 +13,7 @@
 	<% const link = `/secret-dj/games/${season.id}/entries/${entry.id}`%>
 	<a href="<%=link%>">
 		<tr>
-			<td><%= entry.recipient.name %></td>
+			<td><a href="/secret-dj/djs/<%= entry.recipient.id %>"><%= entry.recipient.name %></a></td>
 			<% for (const rule of entry.rules) { %>
 			<td><%=rule.text%></td>
 			<% } %>

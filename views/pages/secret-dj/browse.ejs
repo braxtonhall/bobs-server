@@ -14,7 +14,7 @@
 				<h2>browse</h2>
 			</div>
 			<p>these games are still accepting new participants</p>
-			<%- include('../../partials/secret-dj/game-table'); %>
+			<%- include('../../partials/secret-dj/game-table', {showOwnership: true, seasons, participantId}); %>
 		</main>
 	</body>
 </html>
