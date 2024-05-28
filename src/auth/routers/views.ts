@@ -1,5 +1,5 @@
 import express from "express";
-import { authorize, deauthenticate, login } from "../operations";
+import { authorize, completeVerification, deauthenticate, login } from "../operations";
 import Config from "../../Config";
 import { checkLoggedIn } from "../middlewares/authenticate";
 import { authorizePayloadSchema } from "../schemas";
@@ -7,6 +7,24 @@ import { authorizePayloadSchema } from "../schemas";
 const tokenMaxAge = Config.API_TOKEN_EXPIRATION_HOURS * 60 * 60 * 1000;
 
 export const views = express()
+	.get("/verify", async (req, res) => {
+		try {
+			const { email, token: temporaryToken } = authorizePayloadSchema.parse(req.query);
+			await completeVerification({ email, temporaryToken, subscribed: true });
+			return res.render("pages/verified");
+		} catch {
+			return res.sendStatus(404);
+		}
+	})
+	.get("/unsubscribe", async (req, res) => {
+		try {
+			const { email, token: temporaryToken } = authorizePayloadSchema.parse(req.query);
+			await completeVerification({ email, temporaryToken, subscribed: false });
+			return res.render("pages/unsubscribed");
+		} catch {
+			return res.sendStatus(404);
+		}
+	})
 	.get("/login", checkLoggedIn, (req, res) => res.render("pages/login", { query: req.query }))
 	.post("/login", checkLoggedIn, (req, res) => {
 		const email: string = req.body.email;

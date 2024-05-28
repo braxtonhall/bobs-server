@@ -16,18 +16,43 @@ type Confirmation = {
 	redirect?: string;
 };
 
-export const sendConfirmationEmail = async (confirmation: Confirmation): Promise<void> => {
+const sendConfirmationEmail = async (tx: Pick<typeof db, "message">, confirmation: Confirmation): Promise<void> => {
 	const searchParams = new URLSearchParams({
 		email: confirmation.address,
 		token: confirmation.temporaryToken,
 		...(typeof confirmation.redirect === "string" && { redirect: confirmation.redirect }),
 	} satisfies AuthorizePayload);
 	const url = new URL(`${confirmation.protocol}://${Config.HOST}/authorize?${searchParams}`);
-	await enqueue(db, {
+	await enqueue(tx, {
 		address: confirmation.address,
 		subject: "One Time Password",
 		html: `<a href="${url.toString()}">Click this link to log in</a>`,
 		expiration: confirmation.expiration,
+	});
+};
+
+const unsubLink = ({ email, token }: { email: string; token: string }) => {
+	const searchParams = new URLSearchParams({
+		email,
+		token,
+	} satisfies AuthorizePayload);
+	return new URL(`https://${Config.HOST}/unsubscribe?${searchParams}`);
+};
+
+export const getUnsubLink = async (tx: Pick<typeof db, "token">, address: string) => {
+	const { temporaryToken, expiration } = await getVerificationToken(tx, address);
+	const link = unsubLink({ email: address, token: temporaryToken });
+	return { link, expiration };
+};
+
+const sendVerificationEmail = async (tx: Pick<typeof db, "message" | "token">, address: string): Promise<void> => {
+	const { link: unsubscribeLink, expiration } = await getUnsubLink(tx, address);
+	const verifyLink = new URL(`https://${Config.HOST}/verify?${unsubscribeLink.searchParams.toString()}`);
+	await enqueue(tx, {
+		address,
+		subject: "Confirm your email address",
+		html: `<a href="${verifyLink.toString()}">Click this link to verify</a> or <a href="${unsubscribeLink.toString()}">Click this link to unsubscribe</a>`,
+		expiration,
 	});
 };
 
@@ -37,10 +62,107 @@ const isValid = (
 ): token is NonNullable<typeof token> =>
 	token !== null && token.valid && token.expiration >= new Date() && token.email.address === address;
 
+export const getVerificationToken = async (
+	tx: Pick<typeof db, "token">,
+	address: string,
+): Promise<{ expiration: Date; temporaryToken: string }> => {
+	const expiration = DateTime.now().plus({ minute: Config.VERIFY_TOKEN_EXPIRATION_DAYS }).toJSDate();
+	const existingToken = await tx.token.findFirst({
+		where: {
+			type: TokenType.VERIFY,
+			email: {
+				address,
+			},
+			temporaryToken: { notIn: null },
+			valid: true,
+			expiration: {
+				gt: new Date(),
+			},
+		},
+		select: {
+			id: true,
+			temporaryToken: true,
+		},
+	});
+	if (existingToken && existingToken.temporaryToken) {
+		await tx.token.update({
+			where: {
+				id: existingToken.id,
+			},
+			data: {
+				expiration,
+			},
+		});
+		return { temporaryToken: existingToken.temporaryToken, expiration };
+	} else {
+		const temporaryToken = randomUUID();
+		await tx.token.create({
+			data: {
+				type: TokenType.VERIFY,
+				temporaryToken,
+				expiration,
+				email: {
+					connectOrCreate: {
+						where: { address },
+						create: { address },
+					},
+				},
+			},
+		});
+		return { temporaryToken, expiration };
+	}
+};
+
+export const startVerification = async (tx: Pick<typeof db, "token" | "message">, address: string) => {
+	await sendVerificationEmail(tx, address);
+};
+
+export const completeVerification = async ({
+	email: address,
+	temporaryToken,
+	subscribed,
+}: {
+	email: string;
+	temporaryToken: string;
+	subscribed: boolean;
+}) =>
+	db.$transaction(async (tx) => {
+		const token = await tx.token.findUnique({
+			where: {
+				type: TokenType.VERIFY,
+				temporaryToken,
+			},
+			include: {
+				email: {
+					select: {
+						address: true,
+						confirmed: true,
+					},
+				},
+			},
+		});
+
+		if (!isValid(token, address)) {
+			throw new Error("Token is not valid");
+		}
+
+		if (token.email.confirmed === false || !subscribed) {
+			await tx.email.update({
+				where: {
+					address,
+				},
+				data: {
+					confirmed: true,
+					subscribed,
+				},
+			});
+		}
+	});
+
 export const login = ({ email: address, protocol, redirect }: { email: string; protocol: string; redirect?: string }) =>
 	db.$transaction(async (tx) => {
 		const temporaryToken = randomUUID();
-		const expiration = DateTime.now().plus({ minute: Config.TEMP_TOKEN_EXPIRATION_MIN }).toJSDate();
+		const expiration = DateTime.now().plus({ minute: Config.LOGIN_TOKEN_EXPIRATION_MIN }).toJSDate();
 		await tx.token.create({
 			data: {
 				type: TokenType.LOGIN,
@@ -54,7 +176,7 @@ export const login = ({ email: address, protocol, redirect }: { email: string; p
 				},
 			},
 		});
-		void sendConfirmationEmail({ address, temporaryToken, protocol, expiration, redirect }).catch(() => {});
+		await sendConfirmationEmail(tx, { address, temporaryToken, protocol, expiration, redirect }).catch(() => {});
 	});
 
 export const authorize = ({
@@ -81,7 +203,6 @@ export const authorize = ({
 		});
 
 		if (!isValid(token, address)) {
-			// TODO if invalid (and exists), just delete the token
 			throw new Error("Token is not valid");
 		}
 
@@ -107,9 +228,6 @@ export const authorize = ({
 				},
 			}));
 
-		// TODO... should we just delete this?
-		//  It might be nice to keep it around a while so we
-		//  can have a nicer error message
 		await tx.token.update({
 			where: { id: token.id },
 			data: { valid: false },
@@ -126,7 +244,6 @@ export const authenticate = async (token: string): Promise<Email> => {
 	});
 
 	if (dbToken === null || !dbToken.valid || dbToken.expiration < new Date()) {
-		// TODO if invalid, just delete the token
 		throw new Error("Token is not valid");
 	} else {
 		return dbToken.email;

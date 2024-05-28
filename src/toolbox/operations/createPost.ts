@@ -8,7 +8,7 @@ import { HashedString } from "../../types/hashed";
 import { Some, unwrapOr } from "../../types/option";
 import { match, P } from "ts-pattern";
 import { Post } from "../schema/post";
-import { login } from "../../auth/operations";
+import { getUnsubLink, login, startVerification } from "../../auth/operations";
 import { enqueue } from "../../email";
 import { db } from "../../db";
 import Config from "../../Config";
@@ -16,7 +16,7 @@ import Config from "../../Config";
 // TODO you NEED to be able to unsubscribe/manage prefs
 //  and you should also be able to unsub per-comment
 // TODO to unsub ALL is /emails/ID/unsubscribe
-// TODO to ubsub ONE is /emails/ID/posts/ID/unsubscribe
+// TODO to unsub ONE is /emails/ID/posts/ID/unsubscribe
 
 const sendConfirmationEmail = (env: { address: string; boxId: string; postId: string }) => {
 	// TODO we should override what the actual message is here
@@ -26,13 +26,13 @@ const sendConfirmationEmail = (env: { address: string; boxId: string; postId: st
 	login({ email: env.address, protocol: "https", redirect: url }).catch(() => {});
 };
 
-const sendNotificationEmail = (env: { address: string; boxId: string; childId: string }) => {
-	// TODO is this where it's going to live?
+const sendNotificationEmail = async (env: { address: string; boxId: string; childId: string }) => {
 	const url = new URL(`https://${Config.HOST}/boxes/${env.boxId}/posts/${env.childId}`);
+	const { link: unsub } = await getUnsubLink(db, env.address);
 	enqueue(db, {
 		address: env.address,
 		subject: "You received a new reply",
-		html: `<a href="${url.toString()}">Click here to see your reply</a>`,
+		html: `<a href="${url.toString()}">Click here to see your reply</a>. <a href="${unsub.toString()}">unsubscribe</a>`,
 	}).catch(() => {});
 };
 
@@ -54,11 +54,13 @@ export const createPost = async (
 				posterId: await posters.getId(ip),
 			});
 
+			// TODO these messages should really be in a transaction with posts.create(..)
+			if (email?.confirmed === false) {
+				await startVerification(db, email.address);
+			}
+
 			return map(creationResult, (post): Post => {
 				// TODO these messages should really be in a transaction with posts.create(..)
-				if (email?.confirmed === false) {
-					sendConfirmationEmail({ address: email.address, boxId, postId: post.id });
-				}
 				if (parent && parent.subscribed && parent.email?.confirmed && parent.email.subscribed) {
 					sendNotificationEmail({ address: parent.email.address, boxId, childId: post.id });
 				}

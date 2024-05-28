@@ -2,16 +2,27 @@ import { db } from "../../db";
 import { SeasonState } from "../SeasonState";
 import Config from "../../Config";
 import { enqueue, Message } from "../../email";
+import { getUnsubLink } from "../../auth/operations";
 
-type RecipientEntry = { recipient: { email: { address: string }; name: string } };
+type RecipientEntry = { recipient: { email: { address: string; subscribed: boolean }; name: string } };
 
-const toMessages = (seasonId: string, entries: RecipientEntry[]): Message[] => {
+const toMessages = async (
+	tx: Pick<typeof db, "token">,
+	seasonId: string,
+	entries: RecipientEntry[],
+): Promise<Message[]> => {
 	const link = `https://${Config.HOST}/secret-dj/games/${seasonId}`;
-	return entries.map(({ recipient }) => ({
-		address: recipient.email.address,
-		html: `${recipient.name}, your playlist is ready. <a href="${link}">click here to see your playlist</a>`,
-		subject: "a season of secret dj has ended",
-	}));
+	const futureMessages = entries
+		.filter(({ recipient }) => recipient.email.subscribed)
+		.map(async ({ recipient }) => {
+			const { link: unsub } = await getUnsubLink(tx, recipient.email.address);
+			return {
+				address: recipient.email.address,
+				html: `${recipient.name}, your playlist is ready. <a href="${link}">click here to see your playlist</a>. <a href="${unsub.toString()}">unsubscribe</a>`,
+				subject: "a season of secret dj has ended",
+			};
+		});
+	return Promise.all(futureMessages);
 };
 
 export const endFinishedSeasons = async () => {
@@ -35,6 +46,7 @@ export const endFinishedSeasons = async () => {
 							email: {
 								select: {
 									address: true,
+									subscribed: true,
 								},
 							},
 						},
@@ -52,8 +64,7 @@ export const endFinishedSeasons = async () => {
 					state: SeasonState.ENDED,
 				},
 			});
-			// TODO should be some way to opt out of these emails
-			await enqueue(tx, ...toMessages(id, entries));
+			await enqueue(tx, ...(await toMessages(tx, id, entries)));
 		}),
 	);
 	const updates = await Promise.all(futureUpdates);
