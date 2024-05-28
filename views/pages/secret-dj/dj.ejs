@@ -40,7 +40,7 @@
 			</table>
 			<%- include('../../partials/boxes/page-controls', {query, params: ['entryTake', 'seasonCursor', 'seasonTake'], cursor: entryCursor, cursorName: 'entryCursor'}); %>
 			<% } else { %>
-			<p><%=name%> has made any playlists for secret dj</p>
+			<p><%=name%> has not made any playlists for secret dj</p>
 			<% } %>
 			<% if (seasons.length) { %>
 			<p>here are all the seasons hosted by <%=name%></p>

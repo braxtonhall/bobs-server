@@ -9,6 +9,10 @@ html {
 	-moz-osx-font-smoothing: grayscale;
 }
 
+body {
+	padding-bottom: 0.67em;
+}
+
 h1 > a {
 	color: #f0f8ff;
 }
@@ -59,8 +63,20 @@ form > * {
 	margin: 4px 0;
 }
 
+form > button {
+	border-style: double;
+}
+
+form > button:hover {
+	cursor: pointer;
+}
+
 hr {
 	height: 2px;
 	width: 90%;
 	background: #000;
+}
+
+.delete-game-button {
+	background-color: #ffd1d1;
 }

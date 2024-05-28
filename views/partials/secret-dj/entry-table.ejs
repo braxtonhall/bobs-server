@@ -1,11 +1,16 @@
+<% if (season.entries.length) { %>
 <table>
 	<tr>
 		<th>recipient</th>
+		<% if (season.ruleCount > 1) { %>
 		<% for (let i = 0; i < season.ruleCount; i++) { %>
 		<th>
 			rule
 			<%=i + 1%>
 		</th>
+		<% } %>
+		<% } else { %>
+		<th>rule</th>
 		<% } %>
 		<th>entry page</th>
 	</tr>
@@ -22,3 +27,6 @@
 	</a>
 	<% } %>
 </table>
+<% } else { %>
+no one has signed up for this season of secret dj yet
+<% } %>
