@@ -1,5 +1,5 @@
 import { CreatePost } from "../schema/createPost";
-import { Err, map, Result } from "../../types/result";
+import { Err, Ok, Result } from "../../types/result";
 import posts from "../storage/posts";
 import posters from "../storage/posters";
 import emails from "../storage/emails";
@@ -8,7 +8,7 @@ import { HashedString } from "../../types/hashed";
 import { Some, unwrapOr } from "../../types/option";
 import { match, P } from "ts-pattern";
 import { Post } from "../schema/post";
-import { getUnsubLink, login, startVerification } from "../../auth/operations";
+import { getUnsubLink, startVerification } from "../../auth/operations";
 import { enqueue } from "../../email";
 import { db } from "../../db";
 import Config from "../../Config";
@@ -18,18 +18,10 @@ import Config from "../../Config";
 // TODO to unsub ALL is /emails/ID/unsubscribe
 // TODO to unsub ONE is /emails/ID/posts/ID/unsubscribe
 
-const sendConfirmationEmail = (env: { address: string; boxId: string; postId: string }) => {
-	// TODO we should override what the actual message is here
-	// TODO this is also probably the wrong url
-	const url = new URL(`https://${Config.HOST}/boxes/${env.boxId}/posts/${env.postId}`).toString();
-	// TODO we want add a  /verify/:id and also a /unsubscribe/:id. That way we can JUST confirm emails!
-	login({ email: env.address, protocol: "https", redirect: url }).catch(() => {});
-};
-
 const sendNotificationEmail = async (env: { address: string; boxId: string; childId: string }) => {
 	const url = new URL(`https://${Config.HOST}/boxes/${env.boxId}/posts/${env.childId}`);
 	const { link: unsub } = await getUnsubLink(db, env.address);
-	enqueue(db, {
+	await enqueue(db, {
 		address: env.address,
 		subject: "You received a new reply",
 		html: `<a href="${url.toString()}">Click here to see your reply</a>. <a href="${unsub.toString()}">unsubscribe</a>`,
@@ -59,19 +51,22 @@ export const createPost = async (
 				await startVerification(db, email.address);
 			}
 
-			return map(creationResult, (post): Post => {
-				// TODO these messages should really be in a transaction with posts.create(..)
-				if (parent && parent.subscribed && parent.email?.confirmed && parent.email.subscribed) {
-					sendNotificationEmail({ address: parent.email.address, boxId, childId: post.id });
-				}
-				return {
-					id: post.id,
-					createdAt: post.createdAt,
-					parent: post.parent?.id,
-					deletable: true,
-					content,
-					from,
-				};
+			if (creationResult.type == "err") {
+				return creationResult;
+			}
+
+			const post = creationResult.value;
+			// TODO these messages should really be in a transaction with posts.create(..)
+			if (parent && parent.subscribed && parent.email?.confirmed && parent.email.subscribed) {
+				await sendNotificationEmail({ address: parent.email.address, boxId, childId: post.id });
+			}
+			return Ok({
+				id: post.id,
+				createdAt: post.createdAt,
+				parent: post.parent?.id,
+				deletable: true,
+				content,
+				from,
 			});
 		})
 		.otherwise(() => Err(Failure.MISSING_DEPENDENCY));
