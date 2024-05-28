@@ -12,7 +12,7 @@ import { Participant } from "@prisma/client";
 import { deleteGame } from "../../src/secret-dj/operations/deleteGame";
 import { getSeason } from "../../src/secret-dj/operations/getSeason";
 import { submitPlaylist } from "../../src/secret-dj/operations/submitPlaylist";
-import { endFinishedSeasons } from "../../src/secret-dj/operations/endFinishedSeasons";
+import { endSeasonIfFinished } from "../../src/secret-dj/operations/endSeasonIfFinished";
 
 describe("Basic flow", () => {
 	let email: Awaited<ReturnType<typeof db.email.create>>;
@@ -364,6 +364,11 @@ describe("multiple users flow", () => {
 		});
 	});
 
+	it("cannot yet archive the game (sign-up)", async () => {
+		const finishedSeasons = await endSeasonIfFinished(seasonId);
+		expect(finishedSeasons).toEqual(false);
+	});
+
 	it("owner starts game, participants matched to one another, no participant left unmatched", async () => {
 		await startGame({ ownerId: ownerParticipant.id, seasonId });
 
@@ -466,6 +471,12 @@ describe("multiple users flow", () => {
 	});
 	it("owner can NO LONGER delete game after starting", () =>
 		expect(deleteGame({ seasonId, ownerId: ownerParticipant.id })).rejects.toThrow());
+
+	it("cannot yet archive the game (in-progress)", async () => {
+		const finishedSeasons = await endSeasonIfFinished(seasonId);
+		expect(finishedSeasons).toEqual(false);
+	});
+
 	it("participants can submit their playlist submissions", async () => {
 		await submitPlaylist({
 			seasonId,
@@ -573,6 +584,7 @@ describe("multiple users flow", () => {
 			],
 		});
 	});
+
 	it("participants can edit their playlist submissions", async () => {
 		await submitPlaylist({
 			seasonId,
@@ -613,9 +625,10 @@ describe("multiple users flow", () => {
 	});
 
 	it("game becomes archived", async () => {
-		const finishedSeasons = await endFinishedSeasons();
-		expect(finishedSeasons).toEqual(1);
+		const finishedSeasons = await endSeasonIfFinished(seasonId);
+		expect(finishedSeasons).toEqual(true);
 	});
+
 	it("participants can NOW see recipient playlists", async () => {
 		const recipientIdToSubmissionUrlMap: { [key: string]: string } = {};
 		const { entries: allEntries } = await getSeason(seasonId);
