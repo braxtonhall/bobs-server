@@ -11,6 +11,11 @@ import { api as unauthenticatedApi, views as unauthenticatedViews } from "./tool
 import { views as secretDjViews } from "./secret-dj/routers/views";
 import subdomain from "express-subdomain";
 import { adminViews } from "./toolbox/routers/views";
+import { z } from "zod";
+import emails from "./toolbox/storage/emails";
+import { parse } from "./parse";
+import { match, P } from "ts-pattern";
+import { Ok } from "./types/result";
 
 // TODO would be nice to also have a basic iframe for people who do not want to implement on their own
 //  iframe should be able to inherit either style tags or links to style
@@ -31,7 +36,38 @@ const views = express()
 	.use("/secret-dj", enforceLoggedIn, secretDjViews)
 	.use(unauthenticatedViews)
 	.use("/toolbox", enforceLoggedIn, adminViews)
-	.get("/", enforceLoggedIn, (req, res) => res.render("pages/index"));
+	.use(enforceLoggedIn)
+	.get("/settings", (req, res) =>
+		res.render("pages/settings", {
+			subscribed: res.locals.email.subscribed,
+			error: "",
+			success: "",
+		}),
+	)
+	.post("/settings", async (req, res) => {
+		const result = parse(
+			z.object({
+				subscribed: z
+					.literal("on")
+					.optional()
+					.transform((on) => on === "on"),
+			}),
+			req.body,
+		);
+		return match(result)
+			.with(Ok(P.select()), async ({ subscribed }) => {
+				await emails.updateSettings(res.locals.email.id, subscribed);
+				return res.render("pages/settings", { subscribed, error: "", success: "saved" });
+			})
+			.otherwise(() =>
+				res.render("pages/settings", {
+					subscribed: res.locals.email.subscribed,
+					error: "that didn't work",
+					success: "",
+				}),
+			);
+	})
+	.get("/", (req, res) => res.render("pages/index"));
 
 const api = express().use(unauthenticatedApi);
 
