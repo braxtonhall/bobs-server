@@ -7,7 +7,14 @@ const runningJobs = new Set<NodeJS.Timeout>();
 
 const stop = () => runningJobs.forEach((interval) => clearInterval(interval));
 
-const start = () => jobs.forEach((job) => runningJobs.add(setInterval(job.callback, job.interval)));
+const start = () => {
+	now();
+	jobs.forEach((job) => {
+		if (job.interval < Infinity) {
+			runningJobs.add(setInterval(job.callback, job.interval));
+		}
+	});
+};
 
 const now = () => {
 	const invocations = jobs.map((job) => (async () => job.callback())());
