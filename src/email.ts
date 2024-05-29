@@ -2,6 +2,7 @@ import sendgrid from "@sendgrid/mail";
 import Config from "./Config";
 import { Message as PrismaMessage } from "@prisma/client";
 import { db } from "./db";
+import { setTimeout } from "timers/promises";
 
 sendgrid.setApiKey(Config.SENDGRID_API_KEY);
 
@@ -14,7 +15,7 @@ export const enqueue = async (client: Pick<typeof db, "message">, ...messages: M
 
 const locks = new Set<number>();
 
-export const sendQueuedMessages = async () => {
+export const sendQueuedMessages = async (errorDelay = 1000) => {
 	try {
 		const message = await db.message.findFirst({ orderBy: { id: "asc" } });
 		if (message) {
@@ -25,11 +26,15 @@ export const sendQueuedMessages = async () => {
 						await sendMessage(message);
 					}
 					await db.message.delete({ where: { id: message.id } });
+					setImmediate(sendQueuedMessages);
+				} catch (error) {
+					console.error("Unexpected error", error);
+					await setTimeout(errorDelay);
+					setImmediate(sendQueuedMessages, errorDelay * 2);
 				} finally {
 					locks.delete(message.id);
 				}
 			}
-			setImmediate(sendQueuedMessages);
 		}
 	} catch {
 		// Do nothing
@@ -40,11 +45,19 @@ const sendMessage = async (message: Message): Promise<void> => {
 	if (Config.EMAIL_DISABLED) {
 		console.log(message);
 	} else {
-		await sendgrid.send({
-			from: Config.EMAIL_FROM,
-			to: message.address,
-			subject: message.subject,
-			html: message.html,
-		});
+		await sendgrid
+			.send({
+				from: Config.EMAIL_FROM,
+				to: message.address,
+				subject: message.subject,
+				html: message.html,
+			})
+			.catch((error) => {
+				if (error?.code === 400) {
+					console.log("Bad request at", message.address);
+				} else {
+					throw error;
+				}
+			});
 	}
 };
