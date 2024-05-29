@@ -77,7 +77,8 @@ hr {
 	background: #000;
 }
 
-.delete-game-button {
+.delete-game-button,
+.leave-game-button {
 	background-color: #ffd1d1;
 }
 

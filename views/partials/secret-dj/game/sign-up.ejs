@@ -52,4 +52,9 @@
 		<% } %>
 		<button type="submit"><%= action %> rules!</button>
 	</form>
+	<% if (recipient !== null) { %>
+	<form class="leave-game-form" method="post" action="/secret-dj/games/<%=season.id%>/leave">
+		<button type="submit" class="leave-game-button">leave game</button>
+	</form>
+	<% } %>
 </div>

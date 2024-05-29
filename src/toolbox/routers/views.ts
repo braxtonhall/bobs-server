@@ -16,7 +16,6 @@ import { editBoxSchema } from "../schema/editBox";
 import posts from "../storage/posts";
 import posters from "../storage/posters";
 import { getEmailPosts } from "../operations/getEmailPosts";
-import { Email } from "@prisma/client";
 
 // TODO there is WAY too much repetition here... There must be a good way to get reuse a lot of code
 

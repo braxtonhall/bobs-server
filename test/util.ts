@@ -9,7 +9,6 @@ export const dropTables = async () => {
 	await db.token.deleteMany();
 	await db.post.deleteMany();
 	await db.poster.deleteMany();
-	await db.rule.deleteMany();
 	await db.entry.deleteMany();
 	await db.season.deleteMany();
 	await db.box.deleteMany();

@@ -98,7 +98,7 @@ model Season {
 model Rule {
   id              Int    @id @default(autoincrement())
   text            String
-  entry           Entry  @relation("EntryRules", fields: [playlistEntryId], references: [id])
+  entry           Entry  @relation("EntryRules", fields: [playlistEntryId], references: [id], onDelete: Cascade)
   playlistEntryId String
 }
 

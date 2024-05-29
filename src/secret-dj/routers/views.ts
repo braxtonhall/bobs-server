@@ -25,6 +25,7 @@ import { editGame } from "../operations/editGame";
 import Config from "../../Config";
 import { getDjEntries } from "../operations/getDjEntries";
 import { setRules } from "../operations/setRules";
+import { leaveGame } from "../operations/leaveGame";
 
 export const views = express()
 	.use(getParticipation)
@@ -135,8 +136,17 @@ export const views = express()
 		}
 	})
 	.post("/games/:id/leave", async (req, res) => {
-		// TODO
-		return res.status(500).send("Not yet implemented");
+		try {
+			await leaveGame({ seasonId: req.params.id, recipientId: res.locals.participant.id });
+			return res.redirect(
+				`/secret-dj/games/${req.params.id}?success=${encodeURIComponent("you are no longer in this game")}`,
+			);
+		} catch (err) {
+			console.log(err);
+			return res.redirect(
+				`/secret-dj/games/${req.params.id}?error=${encodeURIComponent("that didn't quite work")}`,
+			);
+		}
 	})
 	.post("/games/:id/edit", async (req, res) => {
 		const seasonId = req.params.id;
@@ -146,7 +156,7 @@ export const views = express()
 			await editGame({ name, description, seasonId, ownerId: participant.id });
 			return res.redirect(`/secret-dj/games/${seasonId}?success=${encodeURIComponent("game data updated!")}`);
 		} catch {
-			return res.redirect(`/secret-dj/games/${seasonId}?error=${"that didn't quite work"}`);
+			return res.redirect(`/secret-dj/games/${seasonId}?error=${encodeURIComponent("that didn't quite work")}`);
 		}
 	})
 	.post("/games/:id/rules", async (req, res) => {

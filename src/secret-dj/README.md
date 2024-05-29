@@ -6,5 +6,4 @@
 - Style inheritance
 - Migrate success/error messages to session express-express
 - Delete should take you to an "Are you SURE?" page
-- You should be able to leave a game before it starts
 - Page for viewing comments replies and replying
