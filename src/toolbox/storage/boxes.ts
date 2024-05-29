@@ -18,7 +18,7 @@ const getOrigin = async (id: string): Promise<Option<string>> =>
 		.with(null, None)
 		.otherwise(({ origin }) => (origin ? Some(origin) : None));
 
-const create = async (data: { name: string; origin?: string; ownerId: string }): Promise<string> =>
+const create = async (data: { name: string; origin?: string; ownerId: string; stylesheet?: string }): Promise<string> =>
 	db.box
 		.create({
 			data: data,
@@ -31,7 +31,7 @@ const create = async (data: { name: string; origin?: string; ownerId: string }):
 const edit = async (
 	id: string,
 	ownerId: string,
-	data: { name?: string; origin?: string },
+	data: { name?: string; origin?: string; stylesheet?: string },
 ): Promise<Result<undefined, Failure.MISSING_DEPENDENCY | Failure.FORBIDDEN>> => {
 	if (await exists(id)) {
 		const result = await db.box.update({
@@ -56,15 +56,13 @@ const exists = (id: string): Promise<boolean> =>
 	db.box.findUnique({ where: { id }, select: { id: true } }).then((result) => !!result);
 
 const getStatus = (id: string) =>
-	db.box
-		.findUnique({ where: { id }, select: { name: true, deleted: true, stylesheets: { select: { link: true } } } })
-		.then((result) => {
-			if (result) {
-				return Some(result);
-			} else {
-				return None();
-			}
-		});
+	db.box.findUnique({ where: { id }, select: { name: true, deleted: true, stylesheet: true } }).then((result) => {
+		if (result) {
+			return Some(result);
+		} else {
+			return None();
+		}
+	});
 
 const getDetails = (id: string, ownerId: string, postCount: number, cursor?: string) =>
 	db.box

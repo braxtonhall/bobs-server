@@ -20,7 +20,12 @@
 		<td class="post-message"><%= post.content %></td>
 		<td class="post-poster"><%= post.from || 'anonymous' %></td>
 		<td class="post-date date-time" data-ms="<%=post.createdAt.valueOf()%>"><%= post.createdAt.toUTCString() %></td>
-		<td class="post-reply">REPLY FORM HERE</td>
+		<td class="post-reply">
+			<details>
+				<summary>reply</summary>
+				<%- include('submit-post', {box, replyId: post.id}); %>
+			</details>
+		</td>
 	</tr>
 	<% } %>
 </table>

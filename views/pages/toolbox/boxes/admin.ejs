@@ -26,6 +26,9 @@
 				<label for="origin" class="origin-label">origin</label>
 				<input class="origin-input" id="origin" name="origin" value="<%= origin %>" />
 
+				<label for="stylesheet" class="stylesheet-label">stylesheet</label>
+				<input class="stylesheet-input" id="stylesheet" name="stylesheet" />
+
 				<button class="edit-save">submit</button>
 			</form>
 
@@ -47,6 +50,7 @@
 							action="/toolbox/boxes/admin/<%= id %>/posts/<%=post.id%>/unhide"
 						>
 							<button class="hide-submit">unhide</button>
+							<%/* TODO pass through some query params!!! */%>
 						</form>
 						<% } else {%>
 						<form
@@ -55,6 +59,7 @@
 							action="/toolbox/boxes/admin/<%= id %>/posts/<%=post.id%>/hide"
 						>
 							<button class="hide-submit">hide</button>
+							<%/* TODO pass through some query params!!! */%>
 						</form>
 						<% } %>
 					</td>

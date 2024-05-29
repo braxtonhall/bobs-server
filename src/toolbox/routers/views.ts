@@ -28,12 +28,12 @@ export const views = express()
 			await getPosts(req.params.box, hashString(req.ip ?? ""), req.query),
 			await boxesClient.getStatus(req.params.box),
 		])
-			.with([Ok(P.select("post")), Some(P.select("box"))], ({ post, box }) =>
+			.with([Ok(P.select("posts")), Some(P.select("box"))], ({ posts, box }) =>
 				res.render("pages/box", {
-					...post,
+					...posts,
 					box: { ...box, id: req.params.box },
 					query: req.query,
-					stylesheets: box.stylesheets.map(({ link }) => link),
+					replyId: false,
 				}),
 			)
 			.otherwise(() => res.sendStatus(404)),

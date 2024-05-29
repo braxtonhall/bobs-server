@@ -1,4 +1,5 @@
 import { db } from "../../db";
+import Config from "../../Config";
 
 type Environment = {
 	name: string;
@@ -19,6 +20,7 @@ export const createGame = async ({ name, description, ruleCount, ownerId, emailI
 			data: {
 				name: "comments",
 				ownerId: emailId,
+				stylesheet: `https://${Config.HOST}/public/secret-dj/styles.css`,
 			},
 			select: {
 				id: true,

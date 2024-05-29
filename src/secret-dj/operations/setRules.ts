@@ -1,5 +1,6 @@
 import { db } from "../../db";
 import { SeasonState } from "../SeasonState";
+import Config from "../../Config";
 
 type Environment = {
 	seasonId: string;
@@ -45,6 +46,7 @@ export const setRules = ({ seasonId, recipientId, rules }: Environment) =>
 				data: {
 					name: "comments",
 					ownerId: result.owner.email.id,
+					stylesheet: `https://${Config.HOST}/public/secret-dj/styles.css`,
 				},
 				select: {
 					id: true,

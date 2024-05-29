@@ -146,4 +146,12 @@ td.post-date {
 	font-size: 12px;
 }
 
+td.post-reply {
+	font-size: 12px;
+}
+
+td.post-reply:has(> details[open]) {
+	display: block;
+}
+
 /* ********** END EXPERIMENTAL COMMENT BOX STYLING ********** */

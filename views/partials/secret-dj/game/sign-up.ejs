@@ -44,7 +44,7 @@
 		<% for (let i = 0; i < season.ruleCount; i++) { %>
 		<% const currentRule = recipient === null ? "" : recipient.rules[i].text %>
 		<div>
-			<label>rule <%=season.ruleCount > 1 ? i + 1 : ''%></label>
+			<label for="rule-<%=i+1%>">rule <%=season.ruleCount > 1 ? i + 1 : ''%></label>
 			<br />
 			<input name="rules[]" type="text" id="rule-<%=i+1%>" value="<%= currentRule %>" />
 			<br />

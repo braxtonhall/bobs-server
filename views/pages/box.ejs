@@ -1,7 +1,7 @@
 <head>
-	<%for (const stylesheet of stylesheets) {%>
-	<link rel="stylesheet" href="<%=stylesheet%>" />
-	<%}%>
+	<% if (box.stylesheet) {%>
+	<link rel="stylesheet" href="<%=box.stylesheet%>" />
+	<% } %>
 </head>
 <body>
 	<h1 class="box-name"><%= box.name%></h1>

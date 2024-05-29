@@ -15,5 +15,9 @@
 		title="A valid email address"
 	/>
 
+	<%if (replyId) { %>
+	<input type="hidden" name="parent" value="<%= replyId %>" readonly />
+	<% } %>
+
 	<button class="new-post-submit">submit</button>
 </form>
