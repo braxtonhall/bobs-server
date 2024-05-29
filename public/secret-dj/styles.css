@@ -89,11 +89,16 @@ iframe.comments {
 	border: 1px dashed;
 }
 
-h1.box-name {
-	display: none;
+.new-post-form > * {
+	display: block;
 }
 
-tr.post-header {
+.new-post-poster-label,
+.new-post-poster,
+.new-post-email,
+.new-post-email-label,
+.box-name,
+.post-header {
 	display: none;
 }
 
@@ -130,6 +135,7 @@ tr.post-row td:nth-child(2) {
 
 table.post-table {
 	border: none;
+	width: 100%;
 }
 
 td.post-poster {

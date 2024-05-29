@@ -1,9 +1,9 @@
 <form method="post" class="new-post-form" action="/boxes/<%= box.id %>/posts">
-	<label for="content" class="new-post-content-label">message</label>
-	<textarea class="new-post-content" id="content" name="content" required></textarea>
+	<label for="content" class="new-post-message-label">message</label>
+	<textarea class="new-post-message" id="content" name="content" required></textarea>
 
-	<label for="from" class="new-post-from-label">username (optional)</label>
-	<input placeholder="username" class="new-post-from" id="from" name="from" />
+	<label for="from" class="new-post-poster-label">username (optional)</label>
+	<input placeholder="username" class="new-post-poster" id="from" name="from" />
 
 	<label for="email" class="new-post-email-label">email for replies (optional and not shown to others)</label>
 	<input
