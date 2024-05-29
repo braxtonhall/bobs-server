@@ -134,6 +134,10 @@ export const views = express()
 			return res.redirect(`/secret-dj/games/${seasonId}?error=${encodeURIComponent("that did not work")}`);
 		}
 	})
+	.post("/games/:id/leave", async (req, res) => {
+		// TODO
+		return res.status(500).send("Not yet implemented");
+	})
 	.post("/games/:id/edit", async (req, res) => {
 		const seasonId = req.params.id;
 		try {
