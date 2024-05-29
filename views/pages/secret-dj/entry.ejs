@@ -20,15 +20,22 @@
 					<a href="/secret-dj/games/<%=entry.season.id%>"><%=entry.season.name%></a>
 				</h3>
 				<% } %>
+				<%if (entry.rules.length === 1) { %>
+				<h4><%=entry.rules[0].text%></h4>
+				<% } else { %>
 				<h4>rules:</h4>
 				<ol>
 					<% for (const rule of entry.rules) { %>
 					<li><%=rule.text%></li>
 					<% } %>
 				</ol>
+				<% }  %>
 				<% if (entry.season.state === 'ended') { %>
 				<%- include('../../partials/secret-dj/entry-embed', { recipient: entry }); %>
-				<% } %>
+				<% } else { %>
+				the playlist will appear here when <a href="/secret-dj/games/<%=entry.season.id%>">this season</a> of
+				secret dj is completed
+				<% }  %>
 			</div>
 		</main>
 	</body>
