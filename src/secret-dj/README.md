@@ -1,6 +1,7 @@
 # secret-dj TODOs
 
-- Comments need to work
+- Comments need to look good
+- You should be able to unsubscribe from comment emails
 - Viewing a user or an entry or a game needs to be public (with a join button)
 - Clean up the emails
 - View counter admin page
