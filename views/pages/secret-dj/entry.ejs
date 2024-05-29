@@ -14,10 +14,12 @@
 				<h2>
 					a playlist for <a href="/secret-dj/djs/<%= entry.recipient.id %>"><%= entry.recipient.name %></a>
 				</h2>
+				<% if (entry.season.state === 'ended') { %>
 				<h3>
 					curated by <a href="/secret-dj/djs/<%= entry.dj.id %>"><%= entry.dj.name %></a> during the game
 					<a href="/secret-dj/games/<%=entry.season.id%>"><%=entry.season.name%></a>
 				</h3>
+				<% } %>
 				<h4>test</h4>
 				<h4>rules:</h4>
 				<ol>
