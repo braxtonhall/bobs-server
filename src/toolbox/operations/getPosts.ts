@@ -23,6 +23,7 @@ export const toPostMember =
 			: undefined,
 		children: post._count.children,
 		deletable:
+			post.box.deleted === false &&
 			post.poster.ip === requestor &&
 			post.createdAt.valueOf() > earliestDeletableTime &&
 			post._count.children === 0,

@@ -8,7 +8,6 @@ import { Failure } from "../../src/types/failure";
 import Config from "../../src/Config";
 import { hashString } from "../../src/util";
 import { None, Some } from "../../src/types/option";
-import { getPosts } from "../../src/toolbox/operations/getPosts";
 
 describe("posts", () => {
 	const posterIp = "foo";
@@ -120,6 +119,7 @@ describe("posts", () => {
 						createdAt: post.createdAt,
 						poster: { ip: hashString(posterIp) },
 						_count: { children: 0 },
+						box: { deleted: false },
 					},
 				]),
 			);
@@ -146,6 +146,7 @@ describe("posts", () => {
 					parent: post.parent,
 					poster: { ip: hashString(posterIp) },
 					_count: { children: 0 },
+					box: { deleted: false },
 				});
 			}
 			expect(
@@ -196,6 +197,7 @@ describe("posts", () => {
 					createdAt: child.createdAt,
 					poster: { ip: hashString(posterIp) },
 					_count: { children: 0 },
+					box: { deleted: false },
 				},
 				{
 					content: "This is a parent",
@@ -205,6 +207,7 @@ describe("posts", () => {
 					createdAt: parent.createdAt,
 					poster: { ip: hashString(posterIp) },
 					_count: { children: 1 },
+					box: { deleted: false },
 				},
 			]);
 		});
@@ -255,6 +258,7 @@ describe("posts", () => {
 					createdAt: aliveB.createdAt,
 					poster: { ip: hashString(posterIp) },
 					_count: { children: 0 },
+					box: { deleted: false },
 				},
 				{
 					content: "This is dead",
@@ -264,6 +268,7 @@ describe("posts", () => {
 					createdAt: dead.createdAt,
 					poster: { ip: hashString(posterIp) },
 					_count: { children: 1 },
+					box: { deleted: false },
 				},
 				{
 					content: "This is first alive",
@@ -273,6 +278,7 @@ describe("posts", () => {
 					createdAt: aliveA.createdAt,
 					poster: { ip: hashString(posterIp) },
 					_count: { children: 1 },
+					box: { deleted: false },
 				},
 			]);
 		});
@@ -323,6 +329,7 @@ describe("posts", () => {
 					createdAt: aliveB.createdAt,
 					poster: { ip: hashString(posterIp) },
 					_count: { children: 0 },
+					box: { deleted: false },
 				},
 				{
 					content: "This is first alive",
@@ -332,6 +339,7 @@ describe("posts", () => {
 					createdAt: aliveA.createdAt,
 					poster: { ip: hashString(posterIp) },
 					_count: { children: 0 },
+					box: { deleted: false },
 				},
 			]);
 		});
@@ -382,6 +390,7 @@ describe("posts", () => {
 					createdAt: aliveB.createdAt,
 					poster: { ip: hashString(posterIp) },
 					_count: { children: 0 },
+					box: { deleted: false },
 				},
 				{
 					content: "This is dead",
@@ -391,6 +400,7 @@ describe("posts", () => {
 					createdAt: dead.createdAt,
 					poster: { ip: hashString(posterIp) },
 					_count: { children: 1 },
+					box: { deleted: false },
 				},
 				{
 					content: "This is first alive",
@@ -400,6 +410,7 @@ describe("posts", () => {
 					createdAt: aliveA.createdAt,
 					poster: { ip: hashString(posterIp) },
 					_count: { children: 1 },
+					box: { deleted: false },
 				},
 			]);
 		});
@@ -438,6 +449,7 @@ describe("posts", () => {
 					createdAt: C.createdAt,
 					poster: { ip: hashString(posterIp) },
 					_count: { children: 0 },
+					box: { deleted: false },
 				},
 				{
 					content: "This is B",
@@ -447,6 +459,7 @@ describe("posts", () => {
 					createdAt: B.createdAt,
 					poster: { ip: hashString(posterIp) },
 					_count: { children: 0 },
+					box: { deleted: false },
 				},
 				{
 					content: "This is A",
@@ -456,6 +469,7 @@ describe("posts", () => {
 					createdAt: A.createdAt,
 					poster: { ip: hashString(posterIp) },
 					_count: { children: 0 },
+					box: { deleted: false },
 				},
 			];
 			expect(
@@ -525,6 +539,7 @@ describe("posts", () => {
 						createdAt: post.createdAt,
 						poster: { ip: hashString(posterIp) },
 						_count: { children: 0 },
+						box: { deleted: false },
 					},
 				]),
 			);
@@ -566,6 +581,7 @@ describe("posts", () => {
 						createdAt: post.createdAt,
 						poster: { ip: hashString(posterIp) },
 						_count: { children: 0 },
+						box: { deleted: false },
 					},
 				]),
 			);
@@ -612,6 +628,7 @@ describe("posts", () => {
 						createdAt: post.createdAt,
 						poster: { ip: hashString(posterIp) },
 						_count: { children: 0 },
+						box: { deleted: false },
 					},
 				]),
 			);
@@ -648,6 +665,7 @@ describe("posts", () => {
 						createdAt: post.createdAt,
 						poster: { ip: hashString(posterIp) },
 						_count: { children: 0 },
+						box: { deleted: false },
 					},
 				]),
 			);

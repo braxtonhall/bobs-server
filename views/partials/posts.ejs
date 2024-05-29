@@ -5,7 +5,9 @@
 			<th class="post-message post-header-cell">post</th>
 			<th class="post-poster post-header-cell">poster</th>
 			<th class="post-date post-header-cell">date</th>
+			<% if (!box.deleted) { %>
 			<th class="post-reply post-header-cell">reply</th>
+			<% } %>
 		</tr>
 	</thead>
 	<% for (const post of posts) { %>
@@ -20,12 +22,14 @@
 		<td class="post-message"><%= post.content %></td>
 		<td class="post-poster"><%= post.from || 'anonymous' %></td>
 		<td class="post-date date-time" data-ms="<%=post.createdAt.valueOf()%>"><%= post.createdAt.toUTCString() %></td>
+		<% if (!box.deleted) { %>
 		<td class="post-reply">
 			<details>
 				<summary>reply</summary>
 				<%- include('submit-post', {box, replyId: post.id}); %>
 			</details>
 		</td>
+		<% } %>
 	</tr>
 	<% } %>
 </table>

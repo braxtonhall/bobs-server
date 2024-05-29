@@ -76,7 +76,10 @@ export const deletePost = async (query: DeletePostQuery): Promise<Result<undefin
 		.$transaction([
 			db.post.deleteMany({
 				where: {
-					boxId: query.boxId,
+					box: {
+						id: query.boxId,
+						deleted: false,
+					},
 					id: query.postId,
 					posterId: query.posterId,
 					createdAt: {
@@ -144,6 +147,11 @@ const listInternal = ({ boxId, showDead, cursor, count, ip }: Query) => {
 			createdAt: true,
 			content: true,
 			from: true,
+			box: {
+				select: {
+					deleted: true,
+				},
+			},
 			poster: {
 				select: {
 					ip: true,
