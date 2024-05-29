@@ -6,5 +6,4 @@
 - View counter admin page
 - Style inheritance
 - Migrate success/error messages to session express-express
-- Combine update and create rules into one function (and also is participating in)
 - Delete should take you to an "Are you SURE?" page

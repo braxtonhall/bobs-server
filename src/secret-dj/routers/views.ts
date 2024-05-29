@@ -20,13 +20,11 @@ import { getEntry } from "../operations/getEntry";
 import { submitPlaylist } from "../operations/submitPlaylist";
 import { deleteGame } from "../operations/deleteGame";
 import { startGame } from "../operations/startGame";
-import { enrolInGame } from "../operations/enrolInGame";
-import { isParticipantRegisteredInGame } from "../operations/isParticipantRegisteredInGame";
-import { updateRules } from "../operations/updateRules";
 import { endFinishedSeasons } from "../operations/endFinishedSeasons";
 import { editGame } from "../operations/editGame";
 import Config from "../../Config";
 import { getDjEntries } from "../operations/getDjEntries";
+import { setRules } from "../operations/setRules";
 
 export const views = express()
 	.use(getParticipation)
@@ -150,11 +148,7 @@ export const views = express()
 		const seasonId = req.params.id;
 		try {
 			const { recipientId, rules } = submitRulesSchema.parse(req.body);
-			if (await isParticipantRegisteredInGame({ seasonId, participantId: recipientId })) {
-				await updateRules({ seasonId, recipientId, rules });
-			} else {
-				await enrolInGame({ seasonId, recipientId, rules });
-			}
+			await setRules({ seasonId, recipientId, rules });
 			return res.redirect(`/secret-dj/games/${seasonId}?success=${encodeURIComponent("game rules updated!")}`);
 		} catch {
 			return res.redirect(`/secret-dj/games/${seasonId}?error=${encodeURIComponent("that did not work")}`);

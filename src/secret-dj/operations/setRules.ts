@@ -7,7 +7,7 @@ type Environment = {
 	rules: string[];
 };
 
-export const updateRules = ({ seasonId, recipientId, rules }: Environment) =>
+export const setRules = ({ seasonId, recipientId, rules }: Environment) =>
 	db.$transaction(async (tx) => {
 		const result = await tx.season.findUnique({
 			where: {
@@ -24,27 +24,49 @@ export const updateRules = ({ seasonId, recipientId, rules }: Environment) =>
 			throw new Error(`Should have provided ${result.ruleCount} rules`);
 		}
 
-		const entry = await tx.entry.findFirst({
+		const maybeEntry = await tx.entry.findFirst({
 			where: {
 				seasonId,
 				recipientId,
 			},
 		});
-		if (entry === null) {
-			throw new Error("You have not signed up for this season of secret dj");
-		}
-
-		const futureDelete = tx.rule.deleteMany({ where: { playlistEntryId: entry.id } });
-		const futureCreates = rules.map((rule) =>
-			tx.rule.create({
+		if (maybeEntry === null) {
+			await tx.entry.create({
 				data: {
-					text: rule,
-					playlistEntryId: entry.id,
+					seasonId,
+					recipientId,
+					rules: {
+						createMany: {
+							data: rules.map((text) => ({ text })),
+						},
+					},
 				},
 				select: {
 					id: true,
 				},
-			}),
-		);
-		await Promise.all([futureDelete, ...futureCreates]);
+			});
+		} else {
+			await tx.entry.update({
+				where: {
+					id: maybeEntry.id,
+				},
+				data: {
+					rules: {
+						deleteMany: {},
+					},
+				},
+			});
+			await tx.entry.update({
+				where: {
+					id: maybeEntry.id,
+				},
+				data: {
+					rules: {
+						createMany: {
+							data: rules.map((text) => ({ text })),
+						},
+					},
+				},
+			});
+		}
 	});

@@ -1,8 +1,7 @@
 import { db } from "../../src/db";
 import { createGame } from "../../src/secret-dj/operations/createGame";
 import { getActiveGames } from "../../src/secret-dj/operations/getActiveGames";
-import { enrolInGame } from "../../src/secret-dj/operations/enrolInGame";
-import { updateRules } from "../../src/secret-dj/operations/updateRules";
+import { setRules } from "../../src/secret-dj/operations/setRules";
 import { startGame } from "../../src/secret-dj/operations/startGame";
 import { getGamesForParticipant } from "../../src/secret-dj/operations/getGamesForParticipant";
 import { SeasonState } from "../../src/secret-dj/SeasonState";
@@ -58,28 +57,23 @@ describe("Basic flow", () => {
 			ownedSeasons: [{ id: expect.any(String), name: "sdj 2024", state: SeasonState.SIGN_UP, ruleCount: 2 }],
 		}));
 
-	it("should not allow you to update rules if you have not signed up yet", () =>
-		expect(
-			updateRules({ seasonId: gameId, recipientId: participant.id, rules: ["foo", "bar"] }),
-		).rejects.toThrow());
-
 	it("should require that a game exists", () =>
 		expect(
-			enrolInGame({ seasonId: gameId + 1, recipientId: participant.id, rules: ["foo", "bar"] }),
+			setRules({ seasonId: gameId + 1, recipientId: participant.id, rules: ["foo", "bar"] }),
 		).rejects.toThrow());
 
 	it("should require that a participant exists", () =>
 		expect(
-			enrolInGame({ seasonId: gameId, recipientId: participant.id + 1, rules: ["foo", "bar"] }),
+			setRules({ seasonId: gameId, recipientId: participant.id + 1, rules: ["foo", "bar"] }),
 		).rejects.toThrow());
 
 	it("should enforce rule count", () =>
 		expect(
-			enrolInGame({ seasonId: gameId, recipientId: participant.id, rules: ["foo", "bar", "baz"] }),
+			setRules({ seasonId: gameId, recipientId: participant.id, rules: ["foo", "bar", "baz"] }),
 		).rejects.toThrow());
 
 	it("should be able to sign up for a game", async () => {
-		await enrolInGame({ seasonId: gameId, recipientId: participant.id, rules: ["foo", "bar"] });
+		await setRules({ seasonId: gameId, recipientId: participant.id, rules: ["foo", "bar"] });
 	});
 
 	it("should now show up in the list of games", async () => {
@@ -119,13 +113,8 @@ describe("Basic flow", () => {
 			ownedSeasons: [{ id: expect.any(String), name: "sdj 2024", state: SeasonState.SIGN_UP, ruleCount: 2 }],
 		}));
 
-	it("should not allow signing up for the game again", () =>
-		expect(
-			enrolInGame({ seasonId: gameId, recipientId: participant.id, rules: ["foo", "bar"] }),
-		).rejects.toThrow());
-
 	it("should allow one to edit their rules", async () => {
-		await updateRules({ seasonId: gameId, recipientId: participant.id, rules: ["baz", "qux"] });
+		await setRules({ seasonId: gameId, recipientId: participant.id, rules: ["baz", "qux"] });
 		const games = await getActiveGames();
 		expect(games).toEqual([
 			{
@@ -157,9 +146,7 @@ describe("Basic flow", () => {
 		expect(startGame({ ownerId: participant.id, seasonId: gameId })).rejects.toThrow());
 
 	it("should no longer be possible to edit rules", () =>
-		expect(
-			updateRules({ seasonId: gameId, recipientId: participant.id, rules: ["foo", "bar"] }),
-		).rejects.toThrow());
+		expect(setRules({ seasonId: gameId, recipientId: participant.id, rules: ["foo", "bar"] })).rejects.toThrow());
 
 	it("participant games should include signed up for entry", async () =>
 		expect(await getGamesForParticipant({ participantId: participant.id })).toEqual({
@@ -277,9 +264,9 @@ describe("multiple users flow", () => {
 		const activeGames = await getActiveGames();
 		expect(activeGames.length).toEqual(1);
 
-		await enrolInGame({ seasonId, recipientId: ownerParticipant.id, rules: ["a"] });
-		await enrolInGame({ seasonId, recipientId: participantA.id, rules: ["b"] });
-		await enrolInGame({ seasonId, recipientId: participantB.id, rules: ["c"] });
+		await setRules({ seasonId, recipientId: ownerParticipant.id, rules: ["a"] });
+		await setRules({ seasonId, recipientId: participantA.id, rules: ["b"] });
+		await setRules({ seasonId, recipientId: participantB.id, rules: ["c"] });
 
 		const gamesForOwner = await getGamesForParticipant({ participantId: ownerParticipant.id });
 		expect(gamesForOwner).toEqual({
@@ -343,9 +330,9 @@ describe("multiple users flow", () => {
 	it("should no longer be able to delete a game", () =>
 		expect(deleteGame({ seasonId, ownerId: ownerParticipant.id })).rejects.toThrow());
 	it("edited rules must still adhere to rule count", async () =>
-		expect(updateRules({ seasonId, recipientId: participantA.id, rules: ["a", "b", "c"] })).rejects.toThrow());
+		expect(setRules({ seasonId, recipientId: participantA.id, rules: ["a", "b", "c"] })).rejects.toThrow());
 	it("participants can edit their rule sets arbitrarily", async () => {
-		await updateRules({ seasonId, recipientId: participantA.id, rules: ["new updated rule"] });
+		await setRules({ seasonId, recipientId: participantA.id, rules: ["new updated rule"] });
 		const gamesForA = await getGamesForParticipant({ participantId: participantA.id });
 		expect(gamesForA).toEqual({
 			ownedSeasons: [],
