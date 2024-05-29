@@ -1,18 +1,32 @@
 <table>
+	<thead>
+		<tr>
+			<th></th>
+			<th>post</th>
+			<th>poster</th>
+			<th>date</th>
+		</tr>
+	</thead>
 	<% for (const post of posts) { %>
 	<tr class="post-row">
 		<td class="post-delete">
-			<% if (post.deletable) { /* TODO it would be nice to pass on query params */ %>
+			<% if (post.deletable) { /* TODO Maybe return to this when you have a page for the post itself */ %>
 			<form class="delete-form" method="POST" action="/boxes/<%= box.id %>/posts/<%= post.id %>/delete">
 				<button class="delete-form-submit">delete</button>
 			</form>
 			<% } %>
 		</td>
-		<td class="post-date" data-ms="<%=post.createdAt.valueOf()%>"><%= post.createdAt.toDateString() %></td>
-		<td class="post-poster"><%= post.from %></td>
 		<td class="post-message"><%= post.content %></td>
+		<td class="post-poster"><%= post.from || 'anonymous' %></td>
+		<td class="post-date date-time" data-ms="<%=post.createdAt.valueOf()%>"><%= post.createdAt.toUTCString() %></td>
 	</tr>
 	<% } %>
 </table>
+
+<script>
+	for (const element of document.getElementsByClassName("date-time")) {
+		element.textContent = new Date(Number(element.dataset.ms)).toLocaleString();
+	}
+</script>
 
 <%- include('boxes/page-controls', {query, params: ['take', 'dead'], cursor, cursorName: 'cursor'}); %>
