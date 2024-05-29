@@ -80,3 +80,9 @@ hr {
 .delete-game-button {
 	background-color: #ffd1d1;
 }
+
+iframe.comments {
+	margin-top: 2em;
+	height: 50vh;
+	border: 1px dashed;
+}

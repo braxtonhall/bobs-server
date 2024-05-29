@@ -21,13 +21,13 @@ import posters from "../storage/posters";
 // TODO these will probably all be embeds
 
 export const views = express()
-	.get("/boxes/:box/posts", async (req, res) =>
+	.get("/boxes/:box", async (req, res) =>
 		match([
 			await getPosts(req.params.box, hashString(req.ip ?? ""), req.query),
 			await boxesClient.getStatus(req.params.box),
 		])
 			.with([Ok(P.select("post")), Some(P.select("box"))], ({ post, box }) =>
-				res.render("pages/box", { ...post, box, query: req.query }),
+				res.render("pages/box", { ...post, box: { ...box, id: req.params.box }, query: req.query }),
 			)
 			.otherwise(() => res.sendStatus(404)),
 	)
@@ -35,7 +35,7 @@ export const views = express()
 		match([parse(createPostSchema, req.body), req.ip])
 			.with([Ok(P.select("post")), P.string.select("ip")], async ({ ip, post }) =>
 				match(await createPost(req.params.box, post, hashString(ip)))
-					.with(Ok(P.select()), () => res.redirect(`/boxes/${req.params.box}/posts`))
+					.with(Ok(P.select()), () => res.redirect(`/boxes/${req.params.box}`))
 					.with(Err(Failure.PRECONDITION_FAILED), () => res.sendStatus(412))
 					.with(Err(P._), () => res.sendStatus(404))
 					.exhaustive(),
@@ -43,11 +43,11 @@ export const views = express()
 			.with([Err(P.select()), P._], (message) => res.send(message).status(400))
 			.otherwise(() => res.sendStatus(400)),
 	)
-	.post("/boxes/:box/posts/delete", async (req, res) =>
-		match([req.ip, req.body.id])
-			.with([P.string, P.string], async ([ip, id]) =>
-				match(await deletePost(hashString(ip), req.params.box, id))
-					.with(Ok(), () => res.redirect(`/boxes/${req.params.box}/posts`))
+	.post("/boxes/:box/posts/:id/delete", async (req, res) =>
+		match(req.ip)
+			.with(P.string, async (ip) =>
+				match(await deletePost(hashString(ip), req.params.box, req.params.id))
+					.with(Ok(), () => res.redirect(`/boxes/${req.params.box}`))
 					.with(Err(Failure.MISSING_DEPENDENCY), () => res.sendStatus(404))
 					.with(Err(Failure.UNAUTHORIZED), () => res.sendStatus(401))
 					.with(Err(Failure.PRECONDITION_FAILED), () => res.sendStatus(412))
