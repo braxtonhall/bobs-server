@@ -73,16 +73,8 @@ export const setRules = ({ seasonId, recipientId, rules }: Environment) =>
 				},
 				data: {
 					rules: {
+						// Order matters in prisma (TERRIBLE!!!)
 						deleteMany: {},
-					},
-				},
-			});
-			await tx.entry.update({
-				where: {
-					id: maybeEntry.id,
-				},
-				data: {
-					rules: {
 						createMany: {
 							data: rules.map((text) => ({ text })),
 						},
