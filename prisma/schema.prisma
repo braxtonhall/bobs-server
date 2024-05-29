@@ -25,7 +25,7 @@ model Message {
 
 model Token {
   id             Int      @id @default(autoincrement())
-  email          Email    @relation(fields: [emailId], references: [id])
+  email          Email    @relation(fields: [emailId], references: [id], onDelete: Cascade)
   type           String
   emailId        String
   temporaryToken String?  @unique
@@ -34,16 +34,24 @@ model Token {
 }
 
 model Box {
-  sort    Int     @id @default(autoincrement())
-  id      String  @unique @default(cuid())
-  name    String
-  origin  String?
-  owner   Email   @relation(fields: [ownerId], references: [id])
-  ownerId String
-  posts   Post[]
-  deleted Boolean @default(false)
-  Season  Season?
-  Entry   Entry?
+  sort        Int          @id @default(autoincrement())
+  id          String       @unique @default(cuid())
+  name        String
+  origin      String?
+  owner       Email        @relation(fields: [ownerId], references: [id])
+  ownerId     String
+  posts       Post[]
+  deleted     Boolean      @default(false)
+  stylesheets Stylesheet[]
+  Season      Season?
+  Entry       Entry?
+}
+
+model Stylesheet {
+  id    Int    @id @default(autoincrement())
+  link  String
+  Box   Box    @relation(fields: [boxId], references: [id], onDelete: Cascade)
+  boxId String
 }
 
 model Counter {

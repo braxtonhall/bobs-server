@@ -1,3 +1,5 @@
 <% for (const param of params) { %>
+<% if (query[param]) { %>
 <input type="hidden" name="<%=param%>" value="<%= query[param] %>" readonly />
+<% } %>
 <% } %>

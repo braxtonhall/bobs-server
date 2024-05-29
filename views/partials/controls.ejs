@@ -6,8 +6,6 @@
 		<% } else { %>
 		<button class="more-controls-show-dead more-controls-dead" name="dead" value="true">show dead</button>
 		<% } %>
-		<% if (query.cursor) { %>
-		<input type="hidden" name="cursor" value="<%= query.cursor %>" readonly />
-		<% } %>
+		<%- include('util/query-passthrough', {query, params: ['take', 'cursor']}); %>
 	</form>
 </details>

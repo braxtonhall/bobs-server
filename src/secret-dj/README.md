@@ -9,3 +9,4 @@
 - Page for viewing comments replies and replying
 - Views should redirect to https
 - API should support http except for authenticated ones
+- More controls should have a "per page" with min and max set by the config

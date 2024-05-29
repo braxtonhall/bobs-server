@@ -16,26 +16,10 @@ import { editBoxSchema } from "../schema/editBox";
 import posts from "../storage/posts";
 import posters from "../storage/posters";
 import { getEmailPosts } from "../operations/getEmailPosts";
-import { ParsedQs } from "qs";
 
 // TODO there is WAY too much repetition here... There must be a good way to get reuse a lot of code
 
 // TODO these will probably all be embeds
-
-const collectStyleSheets = (query: ParsedQs): string[] => {
-	const collect = (unknown: ParsedQs | string): string[] => {
-		if (typeof unknown === "string") {
-			return [unknown];
-		} else if (typeof unknown.stylesheet === "string") {
-			return [unknown.stylesheet];
-		} else if (Array.isArray(unknown.stylesheet)) {
-			return unknown.stylesheet.flatMap(collect);
-		} else {
-			return [];
-		}
-	};
-	return collect(query);
-};
 
 export const views = express()
 	.get("/boxes/:box", async (req, res) =>
@@ -49,7 +33,7 @@ export const views = express()
 					...post,
 					box: { ...box, id: req.params.box },
 					query: req.query,
-					stylesheets: collectStyleSheets(req.query),
+					stylesheets: box.stylesheets.map(({ link }) => link),
 				}),
 			)
 			.otherwise(() => res.sendStatus(404)),

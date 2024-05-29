@@ -56,13 +56,15 @@ const exists = (id: string): Promise<boolean> =>
 	db.box.findUnique({ where: { id }, select: { id: true } }).then((result) => !!result);
 
 const getStatus = (id: string) =>
-	db.box.findUnique({ where: { id }, select: { name: true, deleted: true } }).then((result) => {
-		if (result) {
-			return Some(result);
-		} else {
-			return None();
-		}
-	});
+	db.box
+		.findUnique({ where: { id }, select: { name: true, deleted: true, stylesheets: { select: { link: true } } } })
+		.then((result) => {
+			if (result) {
+				return Some(result);
+			} else {
+				return None();
+			}
+		});
 
 const getDetails = (id: string, ownerId: string, postCount: number, cursor?: string) =>
 	db.box

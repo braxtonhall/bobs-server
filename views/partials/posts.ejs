@@ -5,6 +5,7 @@
 			<th class="post-message post-header-cell">post</th>
 			<th class="post-poster post-header-cell">poster</th>
 			<th class="post-date post-header-cell">date</th>
+			<th class="post-reply post-header-cell">reply</th>
 		</tr>
 	</thead>
 	<% for (const post of posts) { %>
@@ -19,6 +20,7 @@
 		<td class="post-message"><%= post.content %></td>
 		<td class="post-poster"><%= post.from || 'anonymous' %></td>
 		<td class="post-date date-time" data-ms="<%=post.createdAt.valueOf()%>"><%= post.createdAt.toUTCString() %></td>
+		<td class="post-reply">REPLY FORM HERE</td>
 	</tr>
 	<% } %>
 </table>

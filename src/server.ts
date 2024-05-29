@@ -69,9 +69,7 @@ const views = express()
 	})
 	.get("/", (req, res) => res.render("pages/index"));
 
-const api = express().use(unauthenticatedApi);
-
-export const app = express().use(subdomain("api", api)).use(views);
+const api = express().use(subdomain("api", unauthenticatedApi));
 
 export const getServers = async () => ({
 	// TODO if request is not secure, you need to REDIRECT!!
@@ -80,7 +78,7 @@ export const getServers = async () => ({
 			cert: await fs.readFile(Config.SSL_CERT_PATH),
 			key: await fs.readFile(Config.SSL_KEY_PATH),
 		},
-		app,
+		express().use(api).use(views),
 	),
-	http: http.createServer(app),
+	http: http.createServer(api), // TODO some of the views we might want over http as well
 });
