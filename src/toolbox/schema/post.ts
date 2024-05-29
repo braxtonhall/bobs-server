@@ -4,6 +4,9 @@ export type Post = {
 	content: string;
 	from: string;
 	deletable: boolean;
-	parent?: string;
-	dead: boolean;
+	parent?: {
+		id: string;
+		content: string;
+	};
+	children: number;
 };

@@ -119,7 +119,6 @@ describe("posts", () => {
 						parent: post.parent,
 						createdAt: post.createdAt,
 						poster: { ip: hashString(posterIp) },
-						dead: false,
 						_count: { children: 0 },
 					},
 				]),
@@ -147,7 +146,6 @@ describe("posts", () => {
 					parent: post.parent,
 					poster: { ip: hashString(posterIp) },
 					_count: { children: 0 },
-					dead: false,
 				});
 			}
 			expect(
@@ -192,12 +190,12 @@ describe("posts", () => {
 					from: "Nobody",
 					id: child.id,
 					parent: {
+						content: "This is a parent",
 						id: parent.id,
 					},
 					createdAt: child.createdAt,
 					poster: { ip: hashString(posterIp) },
 					_count: { children: 0 },
-					dead: false,
 				},
 				{
 					content: "This is a parent",
@@ -207,7 +205,6 @@ describe("posts", () => {
 					createdAt: parent.createdAt,
 					poster: { ip: hashString(posterIp) },
 					_count: { children: 1 },
-					dead: false,
 				},
 			]);
 		});
@@ -227,6 +224,7 @@ describe("posts", () => {
 					content: "This is dead",
 					from: "Nobody",
 					posterId: info.posterId,
+					parentId: aliveA.id,
 				}),
 			);
 			const aliveB = unsafeUnwrap(
@@ -235,6 +233,7 @@ describe("posts", () => {
 					content: "This is second alive",
 					from: "Nobody",
 					posterId: info.posterId,
+					parentId: dead.id,
 				}),
 			);
 			const poster = await posts.setDeadAndGetPosterId(dead.id, info.emailId, true);
@@ -252,21 +251,19 @@ describe("posts", () => {
 					content: "This is second alive",
 					from: "Nobody",
 					id: aliveB.id,
-					parent: null,
+					parent: { id: dead.id, content: "This is dead" },
 					createdAt: aliveB.createdAt,
 					poster: { ip: hashString(posterIp) },
 					_count: { children: 0 },
-					dead: false,
 				},
 				{
 					content: "This is dead",
 					from: "Nobody",
 					id: dead.id,
-					parent: null,
+					parent: { id: aliveA.id, content: "This is first alive" },
 					createdAt: dead.createdAt,
 					poster: { ip: hashString(posterIp) },
-					_count: { children: 0 },
-					dead: true,
+					_count: { children: 1 },
 				},
 				{
 					content: "This is first alive",
@@ -275,8 +272,7 @@ describe("posts", () => {
 					parent: null,
 					createdAt: aliveA.createdAt,
 					poster: { ip: hashString(posterIp) },
-					_count: { children: 0 },
-					dead: false,
+					_count: { children: 1 },
 				},
 			]);
 		});
@@ -296,6 +292,7 @@ describe("posts", () => {
 					content: "This is dead",
 					from: "Nobody",
 					posterId: info.posterId,
+					parentId: aliveA.id,
 				}),
 			);
 			const aliveB = unsafeUnwrap(
@@ -304,6 +301,7 @@ describe("posts", () => {
 					content: "This is second alive",
 					from: "Nobody",
 					posterId: info.posterId,
+					parentId: dead.id,
 				}),
 			);
 			const poster = await posts.setDeadAndGetPosterId(dead.id, info.emailId, true);
@@ -325,7 +323,6 @@ describe("posts", () => {
 					createdAt: aliveB.createdAt,
 					poster: { ip: hashString(posterIp) },
 					_count: { children: 0 },
-					dead: false,
 				},
 				{
 					content: "This is first alive",
@@ -335,7 +332,6 @@ describe("posts", () => {
 					createdAt: aliveA.createdAt,
 					poster: { ip: hashString(posterIp) },
 					_count: { children: 0 },
-					dead: false,
 				},
 			]);
 		});
@@ -355,6 +351,7 @@ describe("posts", () => {
 					content: "This is dead",
 					from: "Nobody",
 					posterId: info.posterId,
+					parentId: aliveA.id,
 				}),
 			);
 			const aliveB = unsafeUnwrap(
@@ -363,6 +360,7 @@ describe("posts", () => {
 					content: "This is second alive",
 					from: "Nobody",
 					posterId: info.posterId,
+					parentId: dead.id,
 				}),
 			);
 			const poster = await posts.setDeadAndGetPosterId(dead.id, info.emailId, true);
@@ -380,21 +378,19 @@ describe("posts", () => {
 					content: "This is second alive",
 					from: "Nobody",
 					id: aliveB.id,
-					parent: null,
+					parent: { id: dead.id, content: "This is dead" },
 					createdAt: aliveB.createdAt,
 					poster: { ip: hashString(posterIp) },
 					_count: { children: 0 },
-					dead: false,
 				},
 				{
 					content: "This is dead",
 					from: "Nobody",
 					id: dead.id,
-					parent: null,
+					parent: { id: aliveA.id, content: "This is first alive" },
 					createdAt: dead.createdAt,
 					poster: { ip: hashString(posterIp) },
-					_count: { children: 0 },
-					dead: true, // TODO reconfigure this so dead:true doesn't escape the api. no client should know this
+					_count: { children: 1 },
 				},
 				{
 					content: "This is first alive",
@@ -403,8 +399,7 @@ describe("posts", () => {
 					parent: null,
 					createdAt: aliveA.createdAt,
 					poster: { ip: hashString(posterIp) },
-					_count: { children: 0 },
-					dead: false,
+					_count: { children: 1 },
 				},
 			]);
 		});
@@ -443,7 +438,6 @@ describe("posts", () => {
 					createdAt: C.createdAt,
 					poster: { ip: hashString(posterIp) },
 					_count: { children: 0 },
-					dead: false,
 				},
 				{
 					content: "This is B",
@@ -453,7 +447,6 @@ describe("posts", () => {
 					createdAt: B.createdAt,
 					poster: { ip: hashString(posterIp) },
 					_count: { children: 0 },
-					dead: false,
 				},
 				{
 					content: "This is A",
@@ -463,7 +456,6 @@ describe("posts", () => {
 					createdAt: A.createdAt,
 					poster: { ip: hashString(posterIp) },
 					_count: { children: 0 },
-					dead: false,
 				},
 			];
 			expect(
@@ -533,7 +525,6 @@ describe("posts", () => {
 						createdAt: post.createdAt,
 						poster: { ip: hashString(posterIp) },
 						_count: { children: 0 },
-						dead: false,
 					},
 				]),
 			);
@@ -575,7 +566,6 @@ describe("posts", () => {
 						createdAt: post.createdAt,
 						poster: { ip: hashString(posterIp) },
 						_count: { children: 0 },
-						dead: false,
 					},
 				]),
 			);
@@ -622,7 +612,6 @@ describe("posts", () => {
 						createdAt: post.createdAt,
 						poster: { ip: hashString(posterIp) },
 						_count: { children: 0 },
-						dead: false,
 					},
 				]),
 			);
@@ -659,7 +648,6 @@ describe("posts", () => {
 						createdAt: post.createdAt,
 						poster: { ip: hashString(posterIp) },
 						_count: { children: 0 },
-						dead: false,
 					},
 				]),
 			);

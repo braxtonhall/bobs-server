@@ -63,9 +63,14 @@ export const createPost = async (
 			return Ok({
 				id: post.id,
 				createdAt: post.createdAt,
-				parent: post.parent?.id,
+				parent: post.parent
+					? {
+							id: post.parent.id,
+							content: post.parent.content,
+						}
+					: undefined,
 				deletable: true,
-				dead: false,
+				children: 0,
 				content,
 				from,
 			});

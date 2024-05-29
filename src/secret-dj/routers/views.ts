@@ -46,7 +46,10 @@ export const views = express()
 		const { seasons, cursor } = await getJoinableGames({
 			participantId,
 			cursor: typeof req.query.cursor === "string" ? req.query.cursor : undefined,
-			take: Math.max(1, Math.min(Number(req.query.take) || Config.DEFAULT_PAGE_SIZE, Config.MAXIMUM_PAGE_SIZE)),
+			take: Math.max(
+				Config.MINIMUM_PAGE_SIZE,
+				Math.min(Number(req.query.take) || Config.DEFAULT_PAGE_SIZE, Config.MAXIMUM_PAGE_SIZE),
+			),
 		});
 		res.render("pages/secret-dj/browse", { query: req.query, seasons, cursor, participantId });
 	})
@@ -55,7 +58,10 @@ export const views = express()
 		const { seasons, cursor } = await getSeasonsForParticipant({
 			participantId,
 			cursor: typeof req.query.cursor === "string" ? req.query.cursor : undefined,
-			take: Math.max(1, Math.min(Number(req.query.take) || Config.DEFAULT_PAGE_SIZE, Config.MAXIMUM_PAGE_SIZE)),
+			take: Math.max(
+				Config.MINIMUM_PAGE_SIZE,
+				Math.min(Number(req.query.take) || Config.DEFAULT_PAGE_SIZE, Config.MAXIMUM_PAGE_SIZE),
+			),
 		});
 		return res.render("pages/secret-dj/index", { query: req.query, seasons, cursor, participantId });
 	})
@@ -63,7 +69,10 @@ export const views = express()
 		const participantId = res.locals.participant.id;
 		const { seasons, cursor } = await getArchivedSeasons({
 			cursor: typeof req.query.cursor === "string" ? req.query.cursor : undefined,
-			take: Math.max(1, Math.min(Number(req.query.take) || Config.DEFAULT_PAGE_SIZE, Config.MAXIMUM_PAGE_SIZE)),
+			take: Math.max(
+				Config.MINIMUM_PAGE_SIZE,
+				Math.min(Number(req.query.take) || Config.DEFAULT_PAGE_SIZE, Config.MAXIMUM_PAGE_SIZE),
+			),
 		});
 		return res.render("pages/secret-dj/archive", { query: req.query, seasons, cursor, participantId });
 	})
@@ -73,12 +82,12 @@ export const views = express()
 				participantId: req.params.id,
 				entryCursor: typeof req.query.entryCursor === "string" ? req.query.entryCursor : undefined,
 				entryTake: Math.max(
-					1,
+					Config.MINIMUM_PAGE_SIZE,
 					Math.min(Number(req.query.entryTake) || Config.DEFAULT_PAGE_SIZE, Config.MAXIMUM_PAGE_SIZE),
 				),
 				seasonCursor: typeof req.query.seasonCursor === "string" ? req.query.seasonCursor : undefined,
 				seasonTake: Math.max(
-					1,
+					Config.MINIMUM_PAGE_SIZE,
 					Math.min(Number(req.query.seasonTake) || Config.DEFAULT_PAGE_SIZE, Config.MAXIMUM_PAGE_SIZE),
 				),
 			});

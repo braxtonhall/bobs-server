@@ -8,9 +8,9 @@
 		</tr>
 	</thead>
 	<% for (const post of posts) { %>
-	<tr class="post-row<%=post.dead ? ' dead' : ''%>">
+	<tr class="post-row">
 		<td class="post-delete">
-			<% if (post.deletable) { /* TODO Maybe return to this when you have a page for the post itself */ %>
+			<% if (post.deletable) { /* TODO should pass along the query parameters!!! */ %>
 			<form class="delete-form" method="POST" action="/boxes/<%= box.id %>/posts/<%= post.id %>/delete">
 				<button class="delete-form-submit">delete</button>
 			</form>

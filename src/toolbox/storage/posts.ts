@@ -49,6 +49,7 @@ const internalCreate = ({ emailId, content, posterId, boxId, from, parentId }: C
 				parent: {
 					select: {
 						id: true,
+						content: true,
 					},
 				},
 			},
@@ -143,15 +144,16 @@ const listInternal = ({ boxId, showDead, cursor, count, ip }: Query) => {
 			createdAt: true,
 			content: true,
 			from: true,
-			dead: true,
 			poster: {
 				select: {
 					ip: true,
 				},
 			},
 			parent: {
+				where: showDead ? {} : defaultQuery,
 				select: {
 					id: true,
+					content: true,
 				},
 			},
 			_count: {

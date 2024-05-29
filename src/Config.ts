@@ -16,6 +16,7 @@ const environmentSchema = z.object({
 	HTTP_PORT: z.coerce.number().default(80),
 	HTTPS_PORT: z.coerce.number().default(443),
 	DEFAULT_PAGE_SIZE: z.coerce.number().default(20),
+	MINIMUM_PAGE_SIZE: z.coerce.number().default(1),
 	MAXIMUM_PAGE_SIZE: z.coerce.number().default(100),
 	DELETION_TIME_MS: z.coerce.number().default(1000 * 60 * 10),
 	KARMA_KILL_THRESHOLD: z.coerce.number().default(5),

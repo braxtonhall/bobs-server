@@ -8,15 +8,20 @@ import { match, P } from "ts-pattern";
 
 const getEarliestDeletableTime = () => Date.now() - Config.DELETION_TIME_MS;
 
-const toPostMember =
+export const toPostMember =
 	(requestor: HashedString, earliestDeletableTime: number) =>
 	(post: InternalPost): Post => ({
 		id: post.id,
 		createdAt: post.createdAt,
 		content: post.content,
 		from: post.from,
-		parent: post.parent?.id,
-		dead: post.poster.ip === requestor ? false : post.dead,
+		parent: post.parent
+			? {
+					id: post.parent.id,
+					content: post.parent.content,
+				}
+			: undefined,
+		children: post._count.children,
 		deletable:
 			post.poster.ip === requestor &&
 			post.createdAt.valueOf() > earliestDeletableTime &&
@@ -29,7 +34,7 @@ export const getPosts = async (
 	query: { cursor?: string; dead?: string; take?: string },
 ): Promise<Result<{ posts: Post[]; cursor?: string }, Failure.MISSING_DEPENDENCY>> => {
 	const userPageSize = Number(query.take) || Config.DEFAULT_PAGE_SIZE;
-	const pageSize = Math.max(1, Math.min(userPageSize, Config.MAXIMUM_PAGE_SIZE));
+	const pageSize = Math.max(Config.MINIMUM_PAGE_SIZE, Math.min(userPageSize, Config.MAXIMUM_PAGE_SIZE));
 	const result = await posts.list({
 		boxId,
 		ip: requestor,
