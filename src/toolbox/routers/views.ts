@@ -16,19 +16,41 @@ import { editBoxSchema } from "../schema/editBox";
 import posts from "../storage/posts";
 import posters from "../storage/posters";
 import { getEmailPosts } from "../operations/getEmailPosts";
+import { ParsedQs } from "qs";
 
 // TODO there is WAY too much repetition here... There must be a good way to get reuse a lot of code
 
 // TODO these will probably all be embeds
 
+const collectStyleSheets = (query: ParsedQs): string[] => {
+	const collect = (unknown: ParsedQs | string): string[] => {
+		if (typeof unknown === "string") {
+			return [unknown];
+		} else if (typeof unknown.stylesheet === "string") {
+			return [unknown.stylesheet];
+		} else if (Array.isArray(unknown.stylesheet)) {
+			return unknown.stylesheet.flatMap(collect);
+		} else {
+			return [];
+		}
+	};
+	return collect(query);
+};
+
 export const views = express()
 	.get("/boxes/:box", async (req, res) =>
 		match([
+			// TODO use a parser that omits poorly formed queries
 			await getPosts(req.params.box, hashString(req.ip ?? ""), req.query),
 			await boxesClient.getStatus(req.params.box),
 		])
 			.with([Ok(P.select("post")), Some(P.select("box"))], ({ post, box }) =>
-				res.render("pages/box", { ...post, box: { ...box, id: req.params.box }, query: req.query }),
+				res.render("pages/box", {
+					...post,
+					box: { ...box, id: req.params.box },
+					query: req.query,
+					stylesheets: collectStyleSheets(req.query),
+				}),
 			)
 			.otherwise(() => res.sendStatus(404)),
 	)
@@ -50,7 +72,7 @@ export const views = express()
 				match(await deletePost(hashString(ip), req.params.box, req.params.id))
 					.with(Ok(), () => res.redirect(`/boxes/${req.params.box}`))
 					.with(Err(Failure.MISSING_DEPENDENCY), () => res.sendStatus(404))
-					.with(Err(Failure.UNAUTHORIZED), () => res.sendStatus(401))
+					.with(Err(Failure.FORBIDDEN), () => res.sendStatus(403))
 					.with(Err(Failure.PRECONDITION_FAILED), () => res.sendStatus(412))
 					.exhaustive(),
 			)
@@ -65,20 +87,20 @@ const killProcedure = (dead: boolean) => async (req: Request<{ postId: string; b
 			return res.redirect(`/toolbox/boxes/admin/${req.params.boxId}`);
 		})
 		.with(Err(Failure.MISSING_DEPENDENCY), () => res.sendStatus(404))
-		.with(Err(Failure.UNAUTHORIZED), () => res.sendStatus(401))
+		.with(Err(Failure.FORBIDDEN), () => res.sendStatus(403))
 		.exhaustive();
 
 const deleteProcedure = (deleted: boolean) => async (req: Request<{ id: string }>, res: Response) =>
 	match(await boxesClient.setBoxDeletion(req.params.id, res.locals.email.id, deleted))
 		.with(Ok(P._), () => res.redirect(`/toolbox/boxes/admin/${req.params.id}`))
-		.with(Err(Failure.UNAUTHORIZED), () => res.sendStatus(401))
+		.with(Err(Failure.FORBIDDEN), () => res.sendStatus(403))
 		.with(Err(Failure.MISSING_DEPENDENCY), () => res.sendStatus(404))
 		.exhaustive();
 
 const subscribedProcedure = (subscribed: boolean) => async (req: Request<{ id: string }>, res: Response) =>
 	match(await posts.setSubscription(req.params.id, res.locals.email.id, subscribed))
 		.with(Ok(P._), () => res.redirect(`/toolbox/boxes/posts?${new URLSearchParams(req.body).toString()}`))
-		.with(Err(Failure.UNAUTHORIZED), () => res.sendStatus(401))
+		.with(Err(Failure.FORBIDDEN), () => res.sendStatus(403))
 		.with(Err(Failure.MISSING_DEPENDENCY), () => res.sendStatus(404))
 		.exhaustive();
 
@@ -119,7 +141,7 @@ const boxAdminViews = express()
 			.with(Ok(P.select()), async (payload) =>
 				match(await boxesClient.edit(req.params.id, res.locals.email.id, payload))
 					.with(Ok(), () => res.redirect(`/toolbox/boxes/admin/${req.params.id}?message=success`))
-					.with(Err(Failure.UNAUTHORIZED), () => res.sendStatus(401))
+					.with(Err(Failure.FORBIDDEN), () => res.sendStatus(403))
 					.with(Err(Failure.MISSING_DEPENDENCY), () => res.sendStatus(404))
 					.exhaustive(),
 			)

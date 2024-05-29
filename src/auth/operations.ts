@@ -11,7 +11,6 @@ import { enqueue } from "../email";
 type Confirmation = {
 	address: string;
 	temporaryToken: string;
-	protocol: string;
 	expiration: Date;
 	redirect?: string;
 };
@@ -22,7 +21,7 @@ const sendConfirmationEmail = async (tx: Pick<typeof db, "message">, confirmatio
 		token: confirmation.temporaryToken,
 		...(typeof confirmation.redirect === "string" && { redirect: confirmation.redirect }),
 	} satisfies AuthorizePayload);
-	const url = new URL(`${confirmation.protocol}://${Config.HOST}/authorize?${searchParams}`);
+	const url = new URL(`https://${Config.HOST}/authorize?${searchParams}`);
 	await enqueue(tx, {
 		address: confirmation.address,
 		subject: "One Time Password",
@@ -157,9 +156,15 @@ export const completeVerification = async ({
 				},
 			});
 		}
+		if (!subscribed) {
+			await tx.token.update({
+				where: { id: token.id },
+				data: { valid: false },
+			});
+		}
 	});
 
-export const login = ({ email: address, protocol, redirect }: { email: string; protocol: string; redirect?: string }) =>
+export const login = ({ email: address, redirect }: { email: string; redirect?: string }) =>
 	db.$transaction(async (tx) => {
 		const temporaryToken = randomUUID();
 		const expiration = DateTime.now().plus({ minute: Config.LOGIN_TOKEN_EXPIRATION_MIN }).toJSDate();
@@ -176,7 +181,7 @@ export const login = ({ email: address, protocol, redirect }: { email: string; p
 				},
 			},
 		});
-		await sendConfirmationEmail(tx, { address, temporaryToken, protocol, expiration, redirect }).catch(() => {});
+		await sendConfirmationEmail(tx, { address, temporaryToken, expiration, redirect }).catch(() => {});
 	});
 
 export const authorize = ({

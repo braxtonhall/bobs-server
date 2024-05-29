@@ -32,7 +32,7 @@ const edit = async (
 	id: string,
 	ownerId: string,
 	data: { name?: string; origin?: string },
-): Promise<Result<undefined, Failure.MISSING_DEPENDENCY | Failure.UNAUTHORIZED>> => {
+): Promise<Result<undefined, Failure.MISSING_DEPENDENCY | Failure.FORBIDDEN>> => {
 	if (await exists(id)) {
 		const result = await db.box.update({
 			where: {
@@ -45,7 +45,7 @@ const edit = async (
 		if (result) {
 			return Ok();
 		} else {
-			return Err(Failure.UNAUTHORIZED);
+			return Err(Failure.FORBIDDEN);
 		}
 	} else {
 		return Err(Failure.MISSING_DEPENDENCY);
@@ -125,7 +125,7 @@ const setBoxDeletion = async (id: string, ownerId: string, deleted: boolean) =>
 		if (box === null) {
 			return Err(Failure.MISSING_DEPENDENCY);
 		} else if (box.ownerId !== ownerId) {
-			return Err(Failure.UNAUTHORIZED);
+			return Err(Failure.FORBIDDEN);
 		} else {
 			return Ok(await tx.box.update({ where: { id, ownerId }, data: { deleted }, select: { deleted: true } }));
 		}

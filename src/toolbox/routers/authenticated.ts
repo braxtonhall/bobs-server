@@ -16,7 +16,7 @@ const _killProcedure = (dead: boolean) => async (req: Request<{ id: string }>, r
 			return res.sendStatus(200);
 		})
 		.with(Err(Failure.MISSING_DEPENDENCY), () => res.sendStatus(404))
-		.with(Err(Failure.UNAUTHORIZED), () => res.sendStatus(401))
+		.with(Err(Failure.FORBIDDEN), () => res.sendStatus(403))
 		.exhaustive();
 
 // TODO authentication...

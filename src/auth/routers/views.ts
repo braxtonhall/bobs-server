@@ -31,7 +31,6 @@ export const views = express()
 		const email: string = req.body.email;
 		void login({
 			email,
-			protocol: req.protocol,
 			redirect: typeof req.body.redirect === "string" ? req.body.redirect : undefined,
 		}).catch(() => {});
 		return res.redirect(

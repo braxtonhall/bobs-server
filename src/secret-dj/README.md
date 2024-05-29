@@ -7,3 +7,5 @@
 - Migrate success/error messages to session express-express
 - Delete should take you to an "Are you SURE?" page
 - Page for viewing comments replies and replying
+- Views should redirect to https
+- API should support http except for authenticated ones

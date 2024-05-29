@@ -34,7 +34,7 @@ export const getPosts = async (
 		boxId,
 		ip: requestor,
 		showDead: query.dead === "true",
-		cursor: query.cursor,
+		cursor: typeof query.cursor === "string" ? query.cursor : undefined,
 		count: pageSize + 1,
 	});
 	return match(result)

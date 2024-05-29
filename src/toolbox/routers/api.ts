@@ -63,7 +63,7 @@ export const api = express()
 				match(await deletePost(hashString(ip), req.params.box, req.params.post))
 					.with(Ok(), () => res.sendStatus(200))
 					.with(Err(Failure.MISSING_DEPENDENCY), () => res.sendStatus(404))
-					.with(Err(Failure.UNAUTHORIZED), () => res.sendStatus(401))
+					.with(Err(Failure.FORBIDDEN), () => res.sendStatus(403))
 					.with(Err(Failure.PRECONDITION_FAILED), () => res.sendStatus(412))
 					.exhaustive(),
 			)

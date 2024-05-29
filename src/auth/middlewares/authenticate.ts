@@ -12,15 +12,6 @@ const authenticateToken = async (token: string, res: Response, next: NextFunctio
 	return next();
 };
 
-export const authenticateHeader = async (req: Request, res: Response, next: NextFunction) => {
-	const { authorization } = req.headers;
-	if (authorization === undefined || !authorization.startsWith("Bearer ")) {
-		return res.sendStatus(400);
-	}
-	const token = authorization.replace("Bearer ", "");
-	return authenticateToken(token, res, next);
-};
-
 export const authenticateCookie = async (req: Request, res: Response, next: NextFunction) =>
 	authenticateToken(req.cookies.token, res, next);
 

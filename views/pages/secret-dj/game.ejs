@@ -33,7 +33,10 @@
 				<%- include('../../partials/secret-dj/entry-table'); %>
 			</div>
 
-			<iframe class="comments embed" src="/boxes/<%=boxId%>"></iframe>
+			<iframe
+				class="comments embed"
+				src="/boxes/<%=boxId%>?stylesheet=<%= encodeURIComponent(`https://${host}/public/secret-dj/styles.css`) %>"
+			></iframe>
 		</main>
 	</body>
 </html>

@@ -686,7 +686,7 @@ describe("posts", () => {
 					posterId: info.posterId,
 				}),
 			);
-			expect(await posts.setDeadAndGetPosterId(post.id, randomUUID(), true)).toEqual(Err(Failure.UNAUTHORIZED));
+			expect(await posts.setDeadAndGetPosterId(post.id, randomUUID(), true)).toEqual(Err(Failure.FORBIDDEN));
 		});
 
 		it("should fail to set a post undead if you use the wrong owner email", async () => {
@@ -698,7 +698,7 @@ describe("posts", () => {
 					posterId: info.posterId,
 				}),
 			);
-			expect(await posts.setDeadAndGetPosterId(post.id, randomUUID(), false)).toEqual(Err(Failure.UNAUTHORIZED));
+			expect(await posts.setDeadAndGetPosterId(post.id, randomUUID(), false)).toEqual(Err(Failure.FORBIDDEN));
 		});
 	});
 
@@ -784,7 +784,7 @@ describe("posts", () => {
 				boxId: info.boxId,
 				posterId: info.posterId + 1,
 			});
-			expect(result).toEqual(Err(Failure.UNAUTHORIZED));
+			expect(result).toEqual(Err(Failure.FORBIDDEN));
 		});
 
 		it("should fail to delete a post that is too old", async () => {

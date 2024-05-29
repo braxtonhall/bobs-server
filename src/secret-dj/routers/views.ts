@@ -110,6 +110,7 @@ export const views = express()
 				recipient,
 				dj,
 				boxId: season.box.id,
+				host: Config.HOST,
 			});
 		} catch {
 			return res.sendStatus(404);
@@ -204,6 +205,7 @@ export const views = express()
 				entry,
 				participant: res.locals.participant,
 				boxId: entry.box.id,
+				host: Config.HOST,
 			});
 		} catch {
 			return res.sendStatus(404);

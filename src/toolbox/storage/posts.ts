@@ -69,7 +69,7 @@ type DeletePostQuery = {
 	postId: string;
 	posterId: number;
 };
-type DeletePostFailure = Failure.MISSING_DEPENDENCY | Failure.PRECONDITION_FAILED | Failure.UNAUTHORIZED;
+type DeletePostFailure = Failure.MISSING_DEPENDENCY | Failure.PRECONDITION_FAILED | Failure.FORBIDDEN;
 export const deletePost = async (query: DeletePostQuery): Promise<Result<undefined, DeletePostFailure>> =>
 	db
 		.$transaction([
@@ -95,7 +95,7 @@ export const deletePost = async (query: DeletePostQuery): Promise<Result<undefin
 			match({ count, post })
 				.with({ count: 0, post: null }, () => Err(Failure.MISSING_DEPENDENCY))
 				.with({ count: 0, post: { posterId: query.posterId } }, () => Err(Failure.PRECONDITION_FAILED))
-				.with({ count: 0, post: P._ }, () => Err(Failure.UNAUTHORIZED))
+				.with({ count: 0, post: P._ }, () => Err(Failure.FORBIDDEN))
 				.with({ count: P._, post: P._ }, () => Ok())
 				.exhaustive(),
 		);
@@ -210,7 +210,7 @@ const setDeadAndGetPosterId = async (
 	id: string,
 	ownerId: string,
 	dead: boolean,
-): Promise<Result<number, Failure.MISSING_DEPENDENCY | Failure.UNAUTHORIZED>> =>
+): Promise<Result<number, Failure.MISSING_DEPENDENCY | Failure.FORBIDDEN>> =>
 	db
 		.$transaction([
 			db.post.findUnique({
@@ -233,7 +233,7 @@ const setDeadAndGetPosterId = async (
 			if (post === null) {
 				return Err(Failure.MISSING_DEPENDENCY);
 			} else if (count === 0) {
-				return Err(Failure.UNAUTHORIZED);
+				return Err(Failure.FORBIDDEN);
 			} else {
 				return Ok(post.posterId);
 			}
@@ -243,14 +243,14 @@ const setSubscription = async (
 	id: string,
 	emailId: string,
 	subscribed: boolean,
-): Promise<Result<undefined, Failure.MISSING_DEPENDENCY | Failure.UNAUTHORIZED>> =>
+): Promise<Result<undefined, Failure.MISSING_DEPENDENCY | Failure.FORBIDDEN>> =>
 	db.$transaction(async (tx) => {
 		try {
 			await tx.post.update({ where: { id, emailId }, data: { subscribed }, select: { id: true } });
 			return Ok();
 		} catch {
 			const exists = await tx.post.findUnique({ where: { id } });
-			return Err(exists ? Failure.UNAUTHORIZED : Failure.MISSING_DEPENDENCY);
+			return Err(exists ? Failure.FORBIDDEN : Failure.MISSING_DEPENDENCY);
 		}
 	});
 
