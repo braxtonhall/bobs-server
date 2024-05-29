@@ -18,7 +18,6 @@ export const createGame = async ({ name, description, ruleCount, ownerId, emailI
 		const box = await tx.box.create({
 			data: {
 				name: "comments",
-				origin: "*",
 				ownerId: emailId,
 			},
 			select: {

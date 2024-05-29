@@ -5,4 +5,5 @@ export type Post = {
 	from: string;
 	deletable: boolean;
 	parent?: string;
+	dead: boolean;
 };

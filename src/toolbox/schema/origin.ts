@@ -3,7 +3,10 @@ import { z } from "zod";
 export const originSchema = z
 	.string()
 	.transform((address) => address.trim())
-	.transform((address, ctx): string => {
+	.transform((address, ctx): string | undefined => {
+		if (address === "") {
+			return undefined;
+		}
 		if (address === "*") {
 			return address;
 		}

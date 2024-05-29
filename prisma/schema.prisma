@@ -37,7 +37,7 @@ model Box {
   sort    Int     @id @default(autoincrement())
   id      String  @unique @default(cuid())
   name    String
-  origin  String
+  origin  String?
   owner   Email   @relation(fields: [ownerId], references: [id])
   ownerId String
   posts   Post[]
@@ -47,12 +47,12 @@ model Box {
 }
 
 model Counter {
-  id      String @id @default(cuid())
+  id      String  @id @default(cuid())
   name    String
-  origin  String
-  owner   Email  @relation(fields: [ownerId], references: [id])
+  origin  String?
+  owner   Email   @relation(fields: [ownerId], references: [id])
   ownerId String
-  count   Int    @default(0)
+  count   Int     @default(0)
 }
 
 model Poster {

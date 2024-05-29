@@ -16,6 +16,7 @@ const toPostMember =
 		content: post.content,
 		from: post.from,
 		parent: post.parent?.id,
+		dead: post.poster.ip === requestor ? false : post.dead,
 		deletable:
 			post.poster.ip === requestor &&
 			post.createdAt.valueOf() > earliestDeletableTime &&

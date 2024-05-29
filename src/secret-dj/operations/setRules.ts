@@ -44,7 +44,6 @@ export const setRules = ({ seasonId, recipientId, rules }: Environment) =>
 			const box = await tx.box.create({
 				data: {
 					name: "comments",
-					origin: "*",
 					ownerId: result.owner.email.id,
 				},
 				select: {

@@ -16,9 +16,9 @@ const getOrigin = async (id: string): Promise<Option<string>> =>
 		}),
 	)
 		.with(null, None)
-		.otherwise(({ origin }) => Some(origin));
+		.otherwise(({ origin }) => (origin ? Some(origin) : None));
 
-const create = async (data: { name: string; origin: string; ownerId: string }): Promise<string> =>
+const create = async (data: { name: string; origin?: string; ownerId: string }): Promise<string> =>
 	db.box
 		.create({
 			data: data,

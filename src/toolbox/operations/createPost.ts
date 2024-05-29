@@ -65,6 +65,7 @@ export const createPost = async (
 				createdAt: post.createdAt,
 				parent: post.parent?.id,
 				deletable: true,
+				dead: false,
 				content,
 				from,
 			});

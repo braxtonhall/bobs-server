@@ -143,6 +143,7 @@ const listInternal = ({ boxId, showDead, cursor, count, ip }: Query) => {
 			createdAt: true,
 			content: true,
 			from: true,
+			dead: true,
 			poster: {
 				select: {
 					ip: true,

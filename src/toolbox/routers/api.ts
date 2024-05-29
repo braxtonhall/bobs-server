@@ -26,7 +26,7 @@ const allowOrigin =
 				);
 				return next();
 			})
-			.otherwise(() => res.sendStatus(404));
+			.otherwise(next);
 
 export const api = express()
 	.use(bodyParser.json({ type: "application/json" }))
@@ -38,7 +38,6 @@ export const api = express()
 		"/boxes/:box/*",
 		allowOrigin<{ box: string }>((params) => boxes.getOrigin(params.box)),
 	)
-	// TODO static version with posts directly in the html for people without javascript (basis of embed version)
 	// TODO /boxes/:box/posts/:id (has a boolean on it for if it is dead. returns true only if NOT from ip)
 	// TODO /boxes/:box/posts/:id/children
 	.get("/boxes/:box/posts", async (req, res) =>
