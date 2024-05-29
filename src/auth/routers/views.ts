@@ -3,8 +3,9 @@ import { authorize, completeVerification, deauthenticate, login } from "../opera
 import Config from "../../Config";
 import { checkLoggedIn } from "../middlewares/authenticate";
 import { authorizePayloadSchema } from "../schemas";
+import { Duration } from "luxon";
 
-const tokenMaxAge = Config.API_TOKEN_EXPIRATION_HOURS * 60 * 60 * 1000;
+const tokenMaxAge = Duration.fromObject({ hour: Config.API_TOKEN_EXPIRATION_HOURS }).toMillis();
 
 export const views = express()
 	.get("/verify", async (req, res) => {

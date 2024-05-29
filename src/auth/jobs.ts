@@ -1,7 +1,7 @@
 import type { Job } from "../jobs";
 import Config from "../Config";
 import { db } from "../db";
-import { DateTime } from "luxon";
+import { DateTime, Duration } from "luxon";
 
 export const removeTokens = {
 	callback: async () =>
@@ -12,5 +12,5 @@ export const removeTokens = {
 				},
 			},
 		}),
-	interval: Config.TOKEN_CLEANUP_INTERVAL_HOURS * 60 * 60 * 1000,
+	interval: Duration.fromObject({ hour: Config.TOKEN_CLEANUP_INTERVAL_HOURS }).toMillis(),
 } satisfies Job;
