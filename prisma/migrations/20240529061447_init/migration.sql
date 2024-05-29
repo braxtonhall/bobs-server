@@ -82,7 +82,9 @@ CREATE TABLE "Season" (
     "description" TEXT NOT NULL,
     "ruleCount" INTEGER NOT NULL,
     "state" TEXT NOT NULL DEFAULT 'sign-up',
-    CONSTRAINT "Season_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "Participant" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    "boxId" TEXT NOT NULL,
+    CONSTRAINT "Season_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "Participant" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "Season_boxId_fkey" FOREIGN KEY ("boxId") REFERENCES "Box" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -101,9 +103,11 @@ CREATE TABLE "Entry" (
     "recipientId" TEXT NOT NULL,
     "djId" TEXT,
     "submissionUrl" TEXT,
+    "boxId" TEXT NOT NULL,
     CONSTRAINT "Entry_seasonId_fkey" FOREIGN KEY ("seasonId") REFERENCES "Season" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "Entry_recipientId_fkey" FOREIGN KEY ("recipientId") REFERENCES "Participant" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "Entry_djId_fkey" FOREIGN KEY ("djId") REFERENCES "Participant" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+    CONSTRAINT "Entry_djId_fkey" FOREIGN KEY ("djId") REFERENCES "Participant" ("id") ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT "Entry_boxId_fkey" FOREIGN KEY ("boxId") REFERENCES "Box" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -133,7 +137,13 @@ CREATE UNIQUE INDEX "Post_id_key" ON "Post"("id");
 CREATE UNIQUE INDEX "Season_id_key" ON "Season"("id");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Season_boxId_key" ON "Season"("boxId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Entry_id_key" ON "Entry"("id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Entry_boxId_key" ON "Entry"("boxId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Participant_emailId_key" ON "Participant"("emailId");

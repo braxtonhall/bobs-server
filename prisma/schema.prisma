@@ -42,6 +42,8 @@ model Box {
   ownerId String
   posts   Post[]
   deleted Boolean @default(false)
+  Season  Season?
+  Entry   Entry?
 }
 
 model Counter {
@@ -89,6 +91,8 @@ model Season {
   entries     Entry[]     @relation("SeasonEntries")
   ruleCount   Int
   state       String      @default("sign-up")
+  box         Box         @relation(fields: [boxId], references: [id])
+  boxId       String      @unique
 }
 
 model Rule {
@@ -109,6 +113,8 @@ model Entry {
   djId          String?
   rules         Rule[]       @relation("EntryRules")
   submissionUrl String?
+  box           Box          @relation(fields: [boxId], references: [id])
+  boxId         String       @unique
 }
 
 model Participant {

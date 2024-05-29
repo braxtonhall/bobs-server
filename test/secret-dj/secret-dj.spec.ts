@@ -7,7 +7,7 @@ import { getGamesForParticipant } from "../../src/secret-dj/operations/getGamesF
 import { SeasonState } from "../../src/secret-dj/SeasonState";
 import { dropTables } from "../util";
 import { setParticipant } from "../../src/secret-dj/operations/setParticipant";
-import { Participant } from "@prisma/client";
+import { Email, Participant } from "@prisma/client";
 import { deleteGame } from "../../src/secret-dj/operations/deleteGame";
 import { getSeason } from "../../src/secret-dj/operations/getSeason";
 import { submitPlaylist } from "../../src/secret-dj/operations/submitPlaylist";
@@ -41,7 +41,13 @@ describe("Basic flow", () => {
 		expect(startGame({ ownerId: participant.id, seasonId: "0" })).rejects.toThrow());
 
 	it("should be able to create a game", async () => {
-		gameId = await createGame({ name: "sdj 2024", ruleCount: 2, ownerId: participant.id, description: "foo" });
+		gameId = await createGame({
+			name: "sdj 2024",
+			ruleCount: 2,
+			ownerId: participant.id,
+			description: "foo",
+			emailId: email.id,
+		});
 		expect(gameId).toEqual(expect.any(String));
 	});
 
@@ -177,12 +183,15 @@ describe("multiple users flow", () => {
 	let ownerParticipant: Participant;
 	let participantA: Participant;
 	let participantB: Participant;
+	let ownerEmail: Email;
+	let participantAEmail: Email;
+	let participantBEmail: Email;
 
 	let seasonId: string;
 
 	beforeAll(async () => {
 		await dropTables();
-		const [ownerEmail, participantAEmail, participantBEmail] = await Promise.all(
+		[ownerEmail, participantAEmail, participantBEmail] = await Promise.all(
 			["owner@secretdj.com", "a@secretdj.com", "b@secretdj.com"].map((email) =>
 				db.email.create({ data: { address: email } }),
 			),
@@ -198,6 +207,7 @@ describe("multiple users flow", () => {
 			ruleCount: 1,
 			ownerId: ownerParticipant.id,
 			description: "bar",
+			emailId: ownerEmail.id,
 		});
 		expect(seasonId).toEqual(expect.any(String));
 		const gamesForOwner = await getGamesForParticipant({ participantId: ownerParticipant.id });
@@ -215,13 +225,22 @@ describe("multiple users flow", () => {
 		});
 	});
 	it("non-existent participants can't create games", async () =>
-		expect(createGame({ name: "awesomesauce", ruleCount: 1, ownerId: "9999", description: "" })).rejects.toThrow());
+		expect(
+			createGame({
+				name: "awesomesauce",
+				ruleCount: 1,
+				ownerId: "9999",
+				description: "",
+				emailId: ownerEmail.id,
+			}),
+		).rejects.toThrow());
 	it("owner can delete game after creating", async () => {
 		const mistakenlyCreatedSeasonId = await createGame({
 			name: "asdf",
 			ruleCount: 9,
 			ownerId: ownerParticipant.id,
 			description: "baz",
+			emailId: ownerEmail.id,
 		});
 		const gamesForOwnerBeforeDeletion = await getGamesForParticipant({ participantId: ownerParticipant.id });
 		expect(gamesForOwnerBeforeDeletion).toEqual({

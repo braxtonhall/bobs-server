@@ -174,7 +174,8 @@ export const views = express()
 		try {
 			const { name, description, rules: ruleCount } = createSeasonPayloadSchema.parse(req.body);
 			const participant: Participant = res.locals.participant;
-			const id = await createGame({ name, description, ruleCount, ownerId: participant.id });
+			const email: Email = res.locals.email;
+			const id = await createGame({ name, description, ruleCount, ownerId: participant.id, emailId: email.id });
 			return res.redirect(`games/${id}?success=${encodeURIComponent("new game created!")}`);
 		} catch (err) {
 			console.log(err);

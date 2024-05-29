@@ -25,7 +25,7 @@ export const sendQueuedMessages = async (errorDelay = 1000) => {
 					if (message.expiration === null || message.expiration >= new Date()) {
 						await sendMessage(message);
 					}
-					await db.message.delete({ where: { id: message.id } });
+					await db.message.deleteMany({ where: { id: message.id } });
 					setImmediate(sendQueuedMessages);
 				} catch (error) {
 					console.error("Unexpected error", error);

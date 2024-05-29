@@ -16,6 +16,15 @@ export const setRules = ({ seasonId, recipientId, rules }: Environment) =>
 			},
 			select: {
 				ruleCount: true,
+				owner: {
+					select: {
+						email: {
+							select: {
+								id: true,
+							},
+						},
+					},
+				},
 			},
 		});
 		if (result === null) {
@@ -31,6 +40,17 @@ export const setRules = ({ seasonId, recipientId, rules }: Environment) =>
 			},
 		});
 		if (maybeEntry === null) {
+			// https://github.com/prisma/prisma/issues/7093 this is *really* annoying
+			const box = await tx.box.create({
+				data: {
+					name: "comments",
+					origin: "*",
+					ownerId: result.owner.email.id,
+				},
+				select: {
+					id: true,
+				},
+			});
 			await tx.entry.create({
 				data: {
 					seasonId,
@@ -40,6 +60,7 @@ export const setRules = ({ seasonId, recipientId, rules }: Environment) =>
 							data: rules.map((text) => ({ text })),
 						},
 					},
+					boxId: box.id,
 				},
 				select: {
 					id: true,
