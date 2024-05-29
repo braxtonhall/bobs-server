@@ -15,6 +15,8 @@ import { createBoxSchema } from "../schema/createBox";
 import { editBoxSchema } from "../schema/editBox";
 import posts from "../storage/posts";
 import posters from "../storage/posters";
+import { getEmailPosts } from "../operations/getEmailPosts";
+import { Email } from "@prisma/client";
 
 // TODO there is WAY too much repetition here... There must be a good way to get reuse a lot of code
 
@@ -74,6 +76,13 @@ const deleteProcedure = (deleted: boolean) => async (req: Request<{ id: string }
 		.with(Err(Failure.MISSING_DEPENDENCY), () => res.sendStatus(404))
 		.exhaustive();
 
+const subscribedProcedure = (subscribed: boolean) => async (req: Request<{ id: string }>, res: Response) =>
+	match(await posts.setSubscription(req.params.id, res.locals.email.id, subscribed))
+		.with(Ok(P._), () => res.redirect(`/toolbox/boxes/posts?${new URLSearchParams(req.body).toString()}`))
+		.with(Err(Failure.UNAUTHORIZED), () => res.sendStatus(401))
+		.with(Err(Failure.MISSING_DEPENDENCY), () => res.sendStatus(404))
+		.exhaustive();
+
 const boxAdminViews = express()
 	.get("/create", async (req, res) => res.render("pages/toolbox/boxes/create"))
 	.post("/create", async (req, res) =>
@@ -129,6 +138,16 @@ const boxAdminViews = express()
 			typeof req.query.cursor === "string" ? req.query.cursor : undefined,
 		);
 		return res.render("pages/toolbox/boxes/archive", { boxes, cursor, query: req.query });
+	})
+	.post("/posts/:id/unsubscribe", subscribedProcedure(false))
+	.post("/posts/:id/subscribe", subscribedProcedure(true))
+	.get("/posts", async (req, res) => {
+		const { posts, cursor } = await getEmailPosts({
+			address: res.locals.email.address,
+			take: Math.max(1, Math.min(Number(req.query.take) || Config.DEFAULT_PAGE_SIZE, Config.MAXIMUM_PAGE_SIZE)),
+			cursor: typeof req.query.cursor === "string" ? req.query.cursor : undefined,
+		});
+		return res.render("pages/toolbox/boxes/posts", { posts, cursor, query: req.query });
 	})
 	.get("/", async (req, res) => {
 		const { boxes, cursor } = await boxesClient.list(

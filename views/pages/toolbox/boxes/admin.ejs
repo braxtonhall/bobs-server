@@ -46,7 +46,7 @@
 							method="POST"
 							action="/toolbox/boxes/admin/<%= id %>/posts/<%=post.id%>/unhide"
 						>
-							<button class="hide-submit" name="id" value="<%= post.id %>">unhide</button>
+							<button class="hide-submit">unhide</button>
 						</form>
 						<% } else {%>
 						<form
@@ -54,7 +54,7 @@
 							method="POST"
 							action="/toolbox/boxes/admin/<%= id %>/posts/<%=post.id%>/hide"
 						>
-							<button class="hide-submit" name="id" value="<%= post.id %>">hide</button>
+							<button class="hide-submit">hide</button>
 						</form>
 						<% } %>
 					</td>

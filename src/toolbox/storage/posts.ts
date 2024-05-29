@@ -1,7 +1,7 @@
 import { db } from "../../db";
 import { HashedString } from "../../types/hashed";
 import Config from "../../Config";
-import { Ok, Err, Result } from "../../types/result";
+import { Err, Ok, Result } from "../../types/result";
 import { match, P } from "ts-pattern";
 import { Failure } from "../../types/failure";
 import boxes from "./boxes";
@@ -238,10 +238,26 @@ const setDeadAndGetPosterId = async (
 			}
 		});
 
+const setSubscription = async (
+	id: string,
+	emailId: string,
+	subscribed: boolean,
+): Promise<Result<undefined, Failure.MISSING_DEPENDENCY | Failure.UNAUTHORIZED>> =>
+	db.$transaction(async (tx) => {
+		try {
+			await tx.post.update({ where: { id, emailId }, data: { subscribed }, select: { id: true } });
+			return Ok();
+		} catch {
+			const exists = await tx.post.findUnique({ where: { id } });
+			return Err(exists ? Failure.UNAUTHORIZED : Failure.MISSING_DEPENDENCY);
+		}
+	});
+
 export default {
 	create,
 	get,
 	list,
 	delete: deletePost,
 	setDeadAndGetPosterId,
+	setSubscription,
 };

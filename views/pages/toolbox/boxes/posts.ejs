@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<%- include('../../../partials/head'); %>
+	</head>
+	<body>
+		<header>
+			<%- include('../../../partials/header'); %>
+		</header>
+
+		<main>
+			<div>hello! these are posts by you</div>
+
+			<table>
+				<tr>
+					<th>subscription</th>
+					<th>date</th>
+					<th>poster</th>
+					<th>message</th>
+				</tr>
+
+				<% for (const post of posts) { %>
+				<tr data-id="<%=post.id%>" class="<%= post.dead ? 'dead' : ''%>">
+					<td>
+						<% if (post.subscribed) { %>
+						<form class="hide-form" method="POST" action="/toolbox/boxes/posts/<%=post.id%>/unsubscribe">
+							<button class="hide-submit">unsubscribe</button>
+							<%- include('../../../partials/util/query-passthrough', {query, params: ['take', 'cursor']}); %>
+						</form>
+						<% } else {%>
+						<form class="hide-form" method="POST" action="/toolbox/boxes/posts/<%=post.id%>/subscribe">
+							<button class="hide-submit">subscribe</button>
+							<%- include('../../../partials/util/query-passthrough', {query, params: ['take', 'cursor']}); %>
+						</form>
+						<% } %>
+					</td>
+					<td><%= post.createdAt %></td>
+					<td><%= post.from %></td>
+					<td><%= post.content %></td>
+				</tr>
+				<% } %>
+			</table>
+			<%- include('../../../partials/boxes/page-controls', {query, params: ['take'], cursor, cursorName: 'cursor'}); %>
+		</main>
+	</body>
+</html>
