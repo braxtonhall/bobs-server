@@ -82,8 +82,62 @@ hr {
 	background-color: #ffd1d1;
 }
 
+/* ********** BEGIN EXPERIMENTAL COMMENT BOX STYLING ********** */
+
 iframe.comments {
-	margin-top: 2em;
 	height: 50vh;
 	border: 1px dashed;
 }
+
+h1.box-name {
+	display: none;
+}
+
+tr.post-header {
+	display: none;
+}
+
+tr.post-row {
+	display: block;
+	padding-bottom: 1em;
+	position: relative;
+	width: 80%;
+}
+
+tr.post-row td {
+	text-align: left;
+}
+
+tr.post-row td:first-child {
+	position: absolute;
+	left: 105%;
+	padding: 0;
+	margin: 0;
+	border: none;
+}
+
+tr.post-row td:first-child > form {
+	right: 0;
+	padding: 0;
+	margin: 0;
+	width: 0;
+	border: none;
+}
+
+tr.post-row td:nth-child(2) {
+	display: block;
+}
+
+table.post-table {
+	border: none;
+}
+
+td.post-poster {
+	font-size: 14px;
+}
+
+td.post-date {
+	font-size: 12px;
+}
+
+/* ********** END EXPERIMENTAL COMMENT BOX STYLING ********** */
