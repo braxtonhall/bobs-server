@@ -7,6 +7,11 @@ export const getSeason = async (seasonId: string) => {
 		},
 		include: {
 			owner: true,
+			box: {
+				select: {
+					id: true,
+				},
+			},
 			entries: {
 				select: {
 					id: true,

@@ -108,6 +108,7 @@ export const views = express()
 				participant: res.locals.participant,
 				recipient,
 				dj,
+				boxId: season.box.id,
 			});
 		} catch {
 			return res.sendStatus(404);
@@ -185,7 +186,11 @@ export const views = express()
 	.get("/games/:seasonId/entries/:entryId", async (req, res) => {
 		try {
 			const entry = await getEntry(req.params);
-			return res.render("pages/secret-dj/entry", { entry, participant: res.locals.participant });
+			return res.render("pages/secret-dj/entry", {
+				entry,
+				participant: res.locals.participant,
+				boxId: entry.box.id,
+			});
 		} catch {
 			return res.sendStatus(404);
 		}
