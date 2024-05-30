@@ -12,31 +12,7 @@ import { getUnsubLink, startVerification } from "../../auth/operations";
 import { enqueue } from "../../email";
 import { db } from "../../db";
 import Config from "../../Config";
-
-// TODO this should be done via ejs. The user content could have html in it
-const notificationHtml = (env: {
-	replyContent: string;
-	originalContent: string;
-	replyLink: string;
-	originalLink: string;
-	unsubscribeLink: string;
-	manageLink: string;
-}) => `You are receiving this email because <a href="${env.originalLink}">one of your messages</a> received a new <a href="${env.replyLink}">reply</a>.
-<div style="border: dashed 1px; width: 400px%; padding: 0.5em">
-<blockquote style="border: dotted 1px; color: gray; padding: 0.5em; margin: 0.5em; font-style: italic;">
-<a href="${env.originalLink}">
-${env.originalContent.length > 90 ? env.originalContent.slice(0, 90) + "..." : env.originalContent}
-</a>
-</blockquote>
-<span>
-<a href="${env.replyLink}">
-${env.replyContent}
-</a>
-</span>
-</div>
-To manage your email preferences, sign in to bob's server <a href="${env.manageLink}">here</a>.
-To unsubscribe from all emails from bob's server, <a href="${env.unsubscribeLink}">click here</a>.
-`;
+import ejs from "ejs";
 
 const sendNotificationEmail = async (env: {
 	address: string;
@@ -47,17 +23,18 @@ const sendNotificationEmail = async (env: {
 	parentContent: string;
 }) => {
 	const { link: unsubLink } = await getUnsubLink(db, env.address);
+	const html = await ejs.renderFile("views/emails/reply.ejs", {
+		manageLink: new URL(`https://${Config.HOST}/toolbox/posts`).toString(),
+		replyLink: new URL(`https://${Config.HOST}/boxes/${env.boxId}?cursor=${env.childId}`).toString(),
+		replyContent: env.childContent,
+		originalLink: new URL(`https://${Config.HOST}/boxes/${env.boxId}?cursor=${env.parentId}`).toString(),
+		originalContent: env.parentContent,
+		unsubscribeLink: unsubLink.toString(),
+	});
 	await enqueue(db, {
 		address: env.address,
 		subject: "You received a new reply",
-		html: notificationHtml({
-			manageLink: new URL(`https://${Config.HOST}/toolbox/posts`).toString(),
-			replyLink: new URL(`https://${Config.HOST}/boxes/${env.boxId}?cursor=${env.childId}`).toString(),
-			replyContent: env.childContent,
-			originalLink: new URL(`https://${Config.HOST}/boxes/${env.boxId}?cursor=${env.parentId}`).toString(),
-			originalContent: env.parentContent,
-			unsubscribeLink: unsubLink.toString(),
-		}),
+		html,
 	}).catch(() => {});
 };
 

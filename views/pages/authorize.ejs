@@ -10,11 +10,12 @@
 
 		<main>
 			<div>
-				<h1>authorize</h1>
+				<h1>login</h1>
+				a one time use password has been sent to <code><%=query.email ?? '???'%></code>.
 				<form class="authorize-form" action="/authorize">
 					<input type="hidden" name="email" value="<%= query.email ?? '' %>" readonly />
 
-					<label for="token" class="token-label">token</label>
+					<label for="token" class="token-label">one time password</label>
 					<input class="token-input" id="token" name="token" required autocomplete="off" />
 
 					<input type="hidden" name="redirect" value="<%= query.redirect ?? '' %>" readonly />

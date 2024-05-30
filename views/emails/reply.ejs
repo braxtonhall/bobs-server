@@ -1,0 +1,14 @@
+You are receiving this email because <a href="<%=originalLink%>">one of your messages</a> received a new
+<a href="<%=replyLink%>">reply</a>.
+<div style="border: dashed 1px; width: 400px; padding: 0.5em">
+	<blockquote style="border: dotted 1px; color: gray; padding: 0.5em; margin: 0.5em; font-style: italic">
+		<a href="<%=originalLink%>">
+			<%=originalContent.length > 90 ? originalContent.slice(0, 90) + "..." : originalContent%>
+		</a>
+	</blockquote>
+	<span>
+		<a href="<%=replyLink%>"><%=replyContent%></a>
+	</span>
+</div>
+To manage your email preferences, sign in to bob's server <a href="<%=manageLink%>">here</a>. To unsubscribe from all
+emails from bob's server, <a href="<%=unsubscribeLink%>">click here</a>.
