@@ -1,5 +1,5 @@
-<hr />
 <% if (dj) { %>
+<hr />
 <h3>a playlist for <a href="/secret-dj/djs/<%= dj.recipient.id %>"><%= dj.recipient.name %></a></h3>
 <h4>rules:</h4>
 <ol>
@@ -12,7 +12,5 @@
 	<input name="link" id="playlist-url" type="text" value="<%= dj.submissionUrl %>" />
 	<button type="submit"><%=dj.submissionUrl === null ? 'submit' : 'edit'%> playlist!</button>
 </form>
-<% } %>
-<% if (dj) { %>
 <%- include('../entry-embed', { recipient: {...dj, dj: participant} }); %>
 <% } %>

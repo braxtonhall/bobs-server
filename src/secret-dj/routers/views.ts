@@ -136,31 +136,45 @@ export const views = express()
 			return res.sendStatus(404);
 		}
 	})
-	.use(enforceLoggedIn)
-	.use(enforceParticipation)
 	.get("/games/:id", async (req, res) => {
 		try {
-			const participantId = res.locals.participant.id;
 			const season = await getSeason(req.params.id);
-			const { recipient, dj } = await getParticipantEntriesForSeason({
-				seasonId: season.id,
-				userId: participantId,
-			});
-			return res.render("pages/secret-dj/game", {
-				error: typeof req.query.error === "string" ? req.query.error : "",
-				success: typeof req.query.success === "string" ? req.query.success : "",
-				season,
-				participant: res.locals.participant,
-				recipient,
-				dj,
-				boxId: season.box.id,
-				host: Config.HOST,
-				protocol: req.protocol,
-			});
+			if (res.locals.participating) {
+				const participantId = res.locals.participant.id;
+				const { recipient, dj } = await getParticipantEntriesForSeason({
+					seasonId: season.id,
+					userId: participantId,
+				});
+				return res.render("pages/secret-dj/game", {
+					error: typeof req.query.error === "string" ? req.query.error : "",
+					success: typeof req.query.success === "string" ? req.query.success : "",
+					season,
+					participant: res.locals.participant,
+					recipient,
+					dj,
+					boxId: season.box.id,
+					host: Config.HOST,
+					protocol: req.protocol,
+				});
+			} else {
+				return res.render("pages/secret-dj/game", {
+					error: typeof req.query.error === "string" ? req.query.error : "",
+					success: typeof req.query.success === "string" ? req.query.success : "",
+					season,
+					participant: null,
+					recipient: null,
+					dj: null,
+					boxId: season.box.id,
+					host: Config.HOST,
+					protocol: req.protocol,
+				});
+			}
 		} catch {
 			return res.sendStatus(404);
 		}
 	})
+	.use(enforceLoggedIn)
+	.use(enforceParticipation)
 	.post("/games/:id/start", async (req, res) => {
 		const seasonId = req.params.id;
 		try {
