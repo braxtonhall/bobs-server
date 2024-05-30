@@ -6,6 +6,8 @@
 
 # Not blocking a v1 release
 
+- the comment boxes need max-width instead of hard coded widths
+- word breaking on comment boxes
 - Migrate success/error messages to session express-session
 - Delete should take you to an "Are you SURE?" page
 - Views should redirect to https
