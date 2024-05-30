@@ -6,6 +6,7 @@
 
 # Not blocking a v1 release
 
+- for the owner, the table should show who has and has not yet submitted
 - the comment boxes need max-width instead of hard coded widths
 - word breaking on comment boxes
 - Migrate success/error messages to session express-session
