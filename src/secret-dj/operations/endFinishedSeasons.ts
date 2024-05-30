@@ -6,11 +6,7 @@ import { getUnsubLink } from "../../auth/operations";
 
 type RecipientEntry = { recipient: { email: { address: string; subscribed: boolean }; name: string } };
 
-const toMessages = async (
-	tx: Pick<typeof db, "token">,
-	seasonId: string,
-	entries: RecipientEntry[],
-): Promise<Message[]> => {
+const toMessages = (tx: Pick<typeof db, "token">, seasonId: string, entries: RecipientEntry[]): Promise<Message[]> => {
 	const link = `https://${Config.HOST}/secret-dj/games/${seasonId}`;
 	const futureMessages = entries
 		.filter(({ recipient }) => recipient.email.subscribed)
@@ -18,7 +14,8 @@ const toMessages = async (
 			const { link: unsub } = await getUnsubLink(tx, recipient.email.address);
 			return {
 				address: recipient.email.address,
-				html: `${recipient.name}, your playlist is ready. <a href="${link}">click here to see your playlist</a>. <a href="${unsub.toString()}">unsubscribe</a>`,
+				html: `${recipient.name}, your playlist is ready. <a href="${link}">click here to see your playlist</a>.
+to unsubscribe from all emails from bob's server, <a href="${unsub.toString()}">click here</a>`,
 				subject: "a season of secret dj has ended",
 			};
 		});

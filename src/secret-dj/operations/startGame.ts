@@ -55,7 +55,8 @@ const toMessages = (
 			const { link: unsub } = await getUnsubLink(tx, recipient.email.address);
 			return {
 				address: recipient.email.address,
-				html: `${recipient.name}, time to start making playlist. <a href="${link}">click here to see your rules</a>. <a href="${unsub.toString()}">unsubscribe</a>`,
+				html: `${recipient.name}, it's time to start making playlist. <a href="${link}">click here to see your rules</a>.
+to unsubscribe from all emails from bob's server, <a href="${unsub.toString()}">click here</a>`,
 				subject: "a new season of secret dj has started",
 			};
 		});

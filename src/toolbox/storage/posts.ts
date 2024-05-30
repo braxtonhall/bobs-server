@@ -192,6 +192,7 @@ const get = async (
 		id: string;
 		subscribed: boolean;
 		email: { address: string; subscribed: boolean; confirmed: boolean } | null;
+		content: string;
 	}>
 > =>
 	match(
@@ -210,6 +211,7 @@ const get = async (
 					},
 				},
 				subscribed: true,
+				content: true,
 			},
 		}),
 	)

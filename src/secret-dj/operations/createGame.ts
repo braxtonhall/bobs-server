@@ -18,7 +18,7 @@ export const createGame = async ({ name, description, ruleCount, ownerId, emailI
 		// https://github.com/prisma/prisma/issues/7093 this is *really* annoying
 		const box = await tx.box.create({
 			data: {
-				name: "comments",
+				name: `comments for secret dj season ${name}`,
 				ownerId: emailId,
 				stylesheet: `https://${Config.HOST}/public/secret-dj/styles.css`,
 			},

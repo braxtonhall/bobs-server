@@ -24,8 +24,10 @@ const sendConfirmationEmail = async (tx: Pick<typeof db, "message">, confirmatio
 	const url = new URL(`https://${Config.HOST}/authorize?${searchParams}`);
 	await enqueue(tx, {
 		address: confirmation.address,
-		subject: "One Time Password",
-		html: `<a href="${url.toString()}">Click this link to log in</a>`,
+		subject: "Your one time password for Bob's Server",
+		html: `<a href="${url.toString()}">Click this link to log in</a>, or use the following sequence as your password:
+<br />
+<code>${confirmation.temporaryToken}</code>`,
 		expiration: confirmation.expiration,
 	});
 };
@@ -49,8 +51,11 @@ const sendVerificationEmail = async (tx: Pick<typeof db, "message" | "token">, a
 	const verifyLink = new URL(`https://${Config.HOST}/verify?${unsubscribeLink.searchParams.toString()}`);
 	await enqueue(tx, {
 		address,
-		subject: "Confirm your email address",
-		html: `<a href="${verifyLink.toString()}">Click this link to verify</a> or <a href="${unsubscribeLink.toString()}">Click this link to unsubscribe</a>`,
+		subject: "Please verify your email address",
+		html: `You are receiving this email because a comment has been posted using your email address.
+
+Verify your address by clicking <a href="${verifyLink.toString()}">this link</a> to get notified when someone replies to your message.
+To unsubscribe from all emails from bob's server, <a href="${unsubscribeLink.toString()}">click here</a>`,
 		expiration,
 	});
 };

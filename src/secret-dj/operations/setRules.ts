@@ -10,13 +10,14 @@ type Environment = {
 
 export const setRules = ({ seasonId, recipientId, rules }: Environment) =>
 	db.$transaction(async (tx) => {
-		const result = await tx.season.findUnique({
+		const season = await tx.season.findUnique({
 			where: {
 				id: seasonId,
 				state: SeasonState.SIGN_UP,
 			},
 			select: {
 				ruleCount: true,
+				name: true,
 				owner: {
 					select: {
 						email: {
@@ -28,10 +29,10 @@ export const setRules = ({ seasonId, recipientId, rules }: Environment) =>
 				},
 			},
 		});
-		if (result === null) {
+		if (season === null) {
 			throw new Error("Game does not exist in sign-up");
-		} else if (result.ruleCount !== rules.length) {
-			throw new Error(`Should have provided ${result.ruleCount} rules`);
+		} else if (season.ruleCount !== rules.length) {
+			throw new Error(`Should have provided ${season.ruleCount} rules`);
 		}
 
 		const maybeEntry = await tx.entry.findFirst({
@@ -41,11 +42,19 @@ export const setRules = ({ seasonId, recipientId, rules }: Environment) =>
 			},
 		});
 		if (maybeEntry === null) {
+			const recipient = await tx.participant.findUniqueOrThrow({
+				where: {
+					id: recipientId,
+				},
+				select: {
+					name: true,
+				},
+			});
 			// https://github.com/prisma/prisma/issues/7093 this is *really* annoying
 			const box = await tx.box.create({
 				data: {
-					name: "comments",
-					ownerId: result.owner.email.id,
+					name: `comments for ${recipient} in the secret dj season ${season.name}`,
+					ownerId: season.owner.email.id,
 					stylesheet: `https://${Config.HOST}/public/secret-dj/styles.css`,
 				},
 				select: {

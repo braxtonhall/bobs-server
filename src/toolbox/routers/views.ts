@@ -150,19 +150,6 @@ const boxAdminViews = express()
 		);
 		return res.render("pages/toolbox/boxes/archive", { boxes, cursor, query: req.query });
 	})
-	.post("/posts/:id/unsubscribe", subscribedProcedure(false))
-	.post("/posts/:id/subscribe", subscribedProcedure(true))
-	.get("/posts", async (req, res) => {
-		const { posts, cursor } = await getEmailPosts({
-			address: res.locals.email.address,
-			take: Math.max(
-				Config.MINIMUM_PAGE_SIZE,
-				Math.min(Number(req.query.take) || Config.DEFAULT_PAGE_SIZE, Config.MAXIMUM_PAGE_SIZE),
-			),
-			cursor: typeof req.query.cursor === "string" ? req.query.cursor : undefined,
-		});
-		return res.render("pages/toolbox/boxes/posts", { posts, cursor, query: req.query });
-	})
 	.get("/", async (req, res) => {
 		const { boxes, cursor } = await boxesClient.list(
 			res.locals.email.id,
@@ -178,7 +165,23 @@ const boxAdminViews = express()
 
 const counterAdminViews = express().get("/", (req, res) => res.render("pages/toolbox/counters/index"));
 
+const postsAdminViews = express()
+	.post("/:id/unsubscribe", subscribedProcedure(false))
+	.post("/:id/subscribe", subscribedProcedure(true))
+	.get("/", async (req, res) => {
+		const { posts, cursor } = await getEmailPosts({
+			address: res.locals.email.address,
+			take: Math.max(
+				Config.MINIMUM_PAGE_SIZE,
+				Math.min(Number(req.query.take) || Config.DEFAULT_PAGE_SIZE, Config.MAXIMUM_PAGE_SIZE),
+			),
+			cursor: typeof req.query.cursor === "string" ? req.query.cursor : undefined,
+		});
+		return res.render("pages/toolbox/boxes/posts", { posts, cursor, query: req.query });
+	});
+
 export const adminViews = express()
 	.use("/counters", counterAdminViews)
 	.use("/boxes", boxAdminViews)
+	.use("/posts", postsAdminViews)
 	.get("/", (req, res) => res.render("pages/toolbox/index"));

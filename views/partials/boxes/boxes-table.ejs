@@ -1,13 +1,15 @@
 <table>
 	<tr>
 		<th>name</th>
-		<th>link</th>
+		<th>manage</th>
+		<th>view</th>
 	</tr>
 
 	<% for (const box of boxes) { %>
 	<tr>
 		<td><%=box.name%></td>
-		<td><a href="/toolbox/boxes/admin/<%= box.id %>">view</a></td>
+		<td><a href="/toolbox/boxes/admin/<%= box.id %>">manage</a></td>
+		<td><a href="/boxes/<%= box.id %>">view</a></td>
 	</tr>
 	<% } %>
 </table>
