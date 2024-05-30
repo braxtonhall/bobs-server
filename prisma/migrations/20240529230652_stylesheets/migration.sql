@@ -1,7 +1,0 @@
--- CreateTable
-CREATE TABLE "Stylesheet" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "link" TEXT NOT NULL,
-    "boxId" TEXT NOT NULL,
-    CONSTRAINT "Stylesheet_boxId_fkey" FOREIGN KEY ("boxId") REFERENCES "Box" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
-);

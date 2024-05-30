@@ -23,7 +23,7 @@ CREATE TABLE "Token" (
     "temporaryToken" TEXT,
     "valid" BOOLEAN NOT NULL DEFAULT true,
     "expiration" DATETIME NOT NULL,
-    CONSTRAINT "Token_emailId_fkey" FOREIGN KEY ("emailId") REFERENCES "Email" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "Token_emailId_fkey" FOREIGN KEY ("emailId") REFERENCES "Email" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -31,9 +31,10 @@ CREATE TABLE "Box" (
     "sort" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "origin" TEXT NOT NULL,
+    "origin" TEXT,
     "ownerId" TEXT NOT NULL,
     "deleted" BOOLEAN NOT NULL DEFAULT false,
+    "stylesheet" TEXT,
     CONSTRAINT "Box_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "Email" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
@@ -41,7 +42,7 @@ CREATE TABLE "Box" (
 CREATE TABLE "Counter" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "name" TEXT NOT NULL,
-    "origin" TEXT NOT NULL,
+    "origin" TEXT,
     "ownerId" TEXT NOT NULL,
     "count" INTEGER NOT NULL DEFAULT 0,
     CONSTRAINT "Counter_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "Email" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
@@ -92,7 +93,7 @@ CREATE TABLE "Rule" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "text" TEXT NOT NULL,
     "playlistEntryId" TEXT NOT NULL,
-    CONSTRAINT "Rule_playlistEntryId_fkey" FOREIGN KEY ("playlistEntryId") REFERENCES "Entry" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "Rule_playlistEntryId_fkey" FOREIGN KEY ("playlistEntryId") REFERENCES "Entry" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
