@@ -2,8 +2,7 @@
 
 # Blocking a v1 release
 
-- Viewing a user or an entry or a game needs to be public (with a join button)
-- Clean up the emails
+- Limit number of characters in every string field (both client and server side)
 
 # Not blocking a v1 release
 
