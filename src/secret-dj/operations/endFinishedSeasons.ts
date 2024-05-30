@@ -15,6 +15,7 @@ const toMessages = (tx: Pick<typeof db, "token">, seasonId: string, entries: Rec
 			return {
 				address: recipient.email.address,
 				html: `${recipient.name}, your playlist is ready. <a href="${link}">click here to see your playlist</a>.
+<br/>
 to unsubscribe from all emails from bob's server, <a href="${unsub.toString()}">click here</a>`,
 				subject: "a season of secret dj has ended",
 			};
