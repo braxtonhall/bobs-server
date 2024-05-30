@@ -73,6 +73,7 @@ const getDetails = (id: string, ownerId: string, postCount: number, cursor?: str
 				name: true,
 				origin: true,
 				deleted: true,
+				stylesheet: true,
 				posts: {
 					cursor: cursor ? { id: cursor } : undefined,
 					orderBy: { sort: "desc" },
