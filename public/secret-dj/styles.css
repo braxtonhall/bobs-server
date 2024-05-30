@@ -13,8 +13,17 @@ body {
 	padding-bottom: 0.67em;
 }
 
+h1 > * {
+	color: #f0f8ff;
+	font-size: 0.6em;
+}
+
 h1 > a {
 	color: #f0f8ff;
+}
+
+h1 > *:last-child {
+	font-size: 1em;
 }
 
 a {
