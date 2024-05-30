@@ -98,6 +98,7 @@ iframe.comments {
 .new-post-email,
 .new-post-email-label,
 .box-name,
+.post-poster,
 .post-header {
 	display: none;
 }
@@ -152,6 +153,19 @@ td.post-reply {
 
 td.post-reply:has(> details[open]) {
 	display: block;
+}
+
+blockquote.post-parent-content {
+	font-size: 14px;
+	font-style: italic;
+	border: dotted;
+	padding: 0.5em;
+	margin: 0.5em;
+	color: #858a8f;
+}
+
+blockquote.post-parent-content > a {
+	color: #858a8f;
 }
 
 /* ********** END EXPERIMENTAL COMMENT BOX STYLING ********** */
