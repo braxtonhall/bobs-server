@@ -7,6 +7,7 @@ const environmentSchema = z.object({
 	SENDGRID_API_KEY: z.string(),
 	EMAIL_FROM: z.string(),
 	JWT_SECRET: z.string(),
+	SESSION_SECRET: z.string(),
 	HOST: z.string(),
 	LOGIN_TOKEN_EXPIRATION_MIN: z.coerce.number().default(10),
 	API_TOKEN_EXPIRATION_HOURS: z.coerce.number().default(12),

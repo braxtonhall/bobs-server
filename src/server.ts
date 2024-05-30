@@ -18,18 +18,12 @@ import { match, P } from "ts-pattern";
 import { Ok } from "./types/result";
 import session from "express-session";
 
-// TODO would be nice to also have a basic iframe for people who do not want to implement on their own
-//  iframe should be able to inherit either style tags or links to style
-//  this is set via url query parameter, and there is a URL builder on the admin site for "create iframe"
-//  that includes a preview of the iframe and example HTML
-//  on a site like embed.bobs-server.net/...
 // TODO would be great to also serve a javascript client
-
 // TODO this whole system is a mess...
 
 const views = express()
 	.set("view engine", "ejs")
-	.use(session({ secret: "bob's server", cookie: { maxAge: 60000 }, resave: true, saveUninitialized: true }))
+	.use(session({ secret: Config.SESSION_SECRET, cookie: { maxAge: 60000 }, resave: true, saveUninitialized: true }))
 	.use("/public", express.static("public"))
 	.post("/*", bodyParser.urlencoded({ extended: true }))
 	.use(cookieParser())
