@@ -75,6 +75,7 @@ describe("posts", () => {
 					id: expect.any(String),
 					subscribed: true,
 					email: null,
+					content: "This is a test",
 				}),
 			);
 		});
