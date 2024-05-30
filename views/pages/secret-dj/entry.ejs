@@ -9,16 +9,13 @@
 		</header>
 
 		<main>
-			<%- include('../../partials/secret-dj/secret-dj-title'); %>
+			<%- include('../../partials/secret-dj/secret-dj-title', {path: [{href: `/secret-dj/games/${entry.season.id}`, name: entry.season.name}]}); %>
 			<div>
 				<h2>
 					a playlist for <a href="/secret-dj/djs/<%= entry.recipient.id %>"><%= entry.recipient.name %></a>
 				</h2>
 				<% if (entry.season.state === 'ended') { %>
-				<h3>
-					curated by <a href="/secret-dj/djs/<%= entry.dj.id %>"><%= entry.dj.name %></a> during the game
-					<a href="/secret-dj/games/<%=entry.season.id%>"><%=entry.season.name%></a>
-				</h3>
+				<h3>curated by <a href="/secret-dj/djs/<%= entry.dj.id %>"><%= entry.dj.name %></a></h3>
 				<% } %>
 				<%if (entry.rules.length === 1) { %>
 				<h4><%=entry.rules[0].text%></h4>
@@ -33,8 +30,10 @@
 				<% if (entry.season.state === 'ended') { %>
 				<%- include('../../partials/secret-dj/entry-embed', { recipient: entry }); %>
 				<% } else { %>
-				the playlist will appear here when <a href="/secret-dj/games/<%=entry.season.id%>">this season</a> of
-				secret dj is completed
+				the playlist
+				<%=entry.submissionUrl ? 'is ready and' : ''%>
+				will appear here when <a href="/secret-dj/games/<%=entry.season.id%>">this season</a> of secret dj is
+				completed
 				<% }  %>
 				<hr />
 				<h2>comments</h2>
