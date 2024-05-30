@@ -1,7 +1,7 @@
 <% if (season.entries.length) { %>
 <table>
 	<tr>
-		<th>recipient</th>
+		<th>participant</th>
 		<% if (season.ruleCount > 1) { %>
 		<% for (let i = 0; i < season.ruleCount; i++) { %>
 		<th>
@@ -13,18 +13,22 @@
 		<th>rule</th>
 		<% } %>
 		<th>entry page</th>
+		<% if (season.state === 'in-progress') { %>
+		<th>ready</th>
+		<% } %>
 	</tr>
 	<% for (const entry of season.entries) { %>
 	<% const link = `/secret-dj/games/${season.id}/entries/${entry.id}`%>
-	<a href="<%=link%>">
-		<tr>
-			<td><a href="/secret-dj/djs/<%= entry.recipient.id %>"><%= entry.recipient.name %></a></td>
-			<% for (const rule of entry.rules) { %>
-			<td><%=rule.text%></td>
-			<% } %>
-			<td><a href="<%=link%>">view</a></td>
-		</tr>
-	</a>
+	<tr>
+		<td><a href="/secret-dj/djs/<%= entry.recipient.id %>"><%= entry.recipient.name %></a></td>
+		<% for (const rule of entry.rules) { %>
+		<td><%=rule.text%></td>
+		<% } %>
+		<td><a href="<%=link%>">view</a></td>
+		<% if (season.state === 'in-progress') { %>
+		<td><%= entry.submissionUrl ? '💿' : '' %></td>
+		<% } %>
+	</tr>
 	<% } %>
 </table>
 <% } else { %>
