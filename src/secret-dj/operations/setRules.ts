@@ -53,7 +53,7 @@ export const setRules = ({ seasonId, recipientId, rules }: Environment) =>
 			// https://github.com/prisma/prisma/issues/7093 this is *really* annoying
 			const box = await tx.box.create({
 				data: {
-					name: `comments for ${recipient} in the secret dj season ${season.name}`,
+					name: `comments for ${recipient.name} in the secret dj season ${season.name}`,
 					ownerId: season.owner.email.id,
 					stylesheet: `https://${Config.HOST}/public/secret-dj/styles.css`,
 				},
