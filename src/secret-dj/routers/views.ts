@@ -27,6 +27,7 @@ import { getDjEntries } from "../operations/getDjEntries";
 import { setRules } from "../operations/setRules";
 import { leaveGame } from "../operations/leaveGame";
 import { enforceLoggedIn } from "../../auth/middlewares/authenticate";
+import { clearMessagesAndSet, getMessagesAndClear } from "./sessionUtils";
 
 export const views = express()
 	.use(getParticipation)
@@ -145,9 +146,10 @@ export const views = express()
 					seasonId: season.id,
 					userId: participantId,
 				});
+				const { error, success } = getMessagesAndClear(req);
 				return res.render("pages/secret-dj/game", {
-					error: typeof req.query.error === "string" ? req.query.error : "",
-					success: typeof req.query.success === "string" ? req.query.success : "",
+					error,
+					success,
 					season,
 					participant: res.locals.participant,
 					recipient,
@@ -157,9 +159,10 @@ export const views = express()
 					protocol: req.protocol,
 				});
 			} else {
+				const { error, success } = getMessagesAndClear(req);
 				return res.render("pages/secret-dj/game", {
-					error: typeof req.query.error === "string" ? req.query.error : "",
-					success: typeof req.query.success === "string" ? req.query.success : "",
+					error,
+					success,
 					season,
 					participant: null,
 					recipient: null,
@@ -180,9 +183,11 @@ export const views = express()
 		try {
 			const ownerId = res.locals.participant.id;
 			await startGame({ seasonId, ownerId });
-			return res.redirect(`/secret-dj/games/${seasonId}?success=${encodeURIComponent("new game started!")}`);
+			clearMessagesAndSet({ req, success: "new game started!" });
+			return res.redirect(`/secret-dj/games/${seasonId}`);
 		} catch {
-			return res.redirect(`/secret-dj/games/${seasonId}?error=${encodeURIComponent("that did not work")}`);
+			clearMessagesAndSet({ req, error: "sorry, that didn't quite work" });
+			return res.redirect(`/secret-dj/games/${seasonId}`);
 		}
 	})
 	.post("/games/:id/delete", async (req, res) => {
@@ -192,20 +197,19 @@ export const views = express()
 			await deleteGame({ seasonId, ownerId });
 			return res.redirect("/secret-dj");
 		} catch {
-			return res.redirect(`/secret-dj/games/${seasonId}?error=${encodeURIComponent("that did not work")}`);
+			clearMessagesAndSet({ req, error: "sorry, that didn't quite work" });
+			return res.redirect(`/secret-dj/games/${seasonId}`);
 		}
 	})
 	.post("/games/:id/leave", async (req, res) => {
 		try {
 			await leaveGame({ seasonId: req.params.id, recipientId: res.locals.participant.id });
-			return res.redirect(
-				`/secret-dj/games/${req.params.id}?success=${encodeURIComponent("you are no longer in this game")}`,
-			);
+			clearMessagesAndSet({ req, success: "you are no longer in this game" });
+			return res.redirect(`/secret-dj/games/${req.params.id}`);
 		} catch (err) {
 			console.log(err);
-			return res.redirect(
-				`/secret-dj/games/${req.params.id}?error=${encodeURIComponent("that didn't quite work")}`,
-			);
+			clearMessagesAndSet({ req, error: "sorry, that didn't quite work" });
+			return res.redirect(`/secret-dj/games/${req.params.id}`);
 		}
 	})
 	.post("/games/:id/edit", async (req, res) => {
@@ -214,9 +218,11 @@ export const views = express()
 			const { name, description } = editSeasonPayloadSchema.parse(req.body);
 			const participant: Participant = res.locals.participant;
 			await editGame({ name, description, seasonId, ownerId: participant.id });
-			return res.redirect(`/secret-dj/games/${seasonId}?success=${encodeURIComponent("game data updated!")}`);
+			clearMessagesAndSet({ req, success: "game data updated!" });
+			return res.redirect(`/secret-dj/games/${seasonId}`);
 		} catch {
-			return res.redirect(`/secret-dj/games/${seasonId}?error=${encodeURIComponent("that didn't quite work")}`);
+			clearMessagesAndSet({ req, error: "sorry, that didn't quite work" });
+			return res.redirect(`/secret-dj/games/${seasonId}`);
 		}
 	})
 	.post("/games/:id/rules", async (req, res) => {
@@ -224,9 +230,11 @@ export const views = express()
 		try {
 			const { recipientId, rules } = submitRulesSchema.parse(req.body);
 			await setRules({ seasonId, recipientId, rules });
-			return res.redirect(`/secret-dj/games/${seasonId}?success=${encodeURIComponent("game rules updated!")}`);
+			clearMessagesAndSet({ req, success: "game rules updated!" });
+			return res.redirect(`/secret-dj/games/${seasonId}`);
 		} catch {
-			return res.redirect(`/secret-dj/games/${seasonId}?error=${encodeURIComponent("that did not work")}`);
+			clearMessagesAndSet({ req, error: "sorry, that didn't quite work" });
+			return res.redirect(`/secret-dj/games/${seasonId}`);
 		}
 	})
 	.post("/games/:id/playlist", async (req, res) => {
@@ -239,9 +247,11 @@ export const views = express()
 				djId: res.locals.participant.id,
 			});
 			await endFinishedSeasons();
-			return res.redirect(`/secret-dj/games/${seasonId}?success=${encodeURIComponent("playlist submitted!")}`);
+			clearMessagesAndSet({ req, success: "playlist submitted!" });
+			return res.redirect(`/secret-dj/games/${seasonId}`);
 		} catch {
-			return res.redirect(`/secret-dj/games/${seasonId}?error=${encodeURIComponent("that did not work")}`);
+			clearMessagesAndSet({ req, error: "sorry, that didn't quite work" });
+			return res.redirect(`/secret-dj/games/${seasonId}`);
 		}
 	})
 	.get("/create", (req, res) => res.render("pages/secret-dj/create", { error: "" }))
@@ -251,7 +261,8 @@ export const views = express()
 			const participant: Participant = res.locals.participant;
 			const email: Email = res.locals.email;
 			const id = await createGame({ name, description, ruleCount, ownerId: participant.id, emailId: email.id });
-			return res.redirect(`games/${id}?success=${encodeURIComponent("new game created!")}`);
+			clearMessagesAndSet({ req, success: "new game created!" });
+			return res.redirect(`games/${id}`);
 		} catch (err) {
 			console.log(err);
 			return res.render("pages/secret-dj/create", { error: "That didn't quite work" });

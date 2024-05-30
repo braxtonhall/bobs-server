@@ -16,6 +16,7 @@ import emails from "./toolbox/storage/emails";
 import { parse } from "./parse";
 import { match, P } from "ts-pattern";
 import { Ok } from "./types/result";
+import session from "express-session";
 
 // TODO would be nice to also have a basic iframe for people who do not want to implement on their own
 //  iframe should be able to inherit either style tags or links to style
@@ -28,6 +29,7 @@ import { Ok } from "./types/result";
 
 const views = express()
 	.set("view engine", "ejs")
+	.use(session({ secret: "bob's server", cookie: { maxAge: 60000 }, resave: true, saveUninitialized: true }))
 	.use("/public", express.static("public"))
 	.post("/*", bodyParser.urlencoded({ extended: true }))
 	.use(cookieParser())
