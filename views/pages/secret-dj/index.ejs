@@ -13,14 +13,18 @@
 			<p>hello! welcome to secret dj 8)</p>
 			<ul>
 				<li><a href="/secret-dj/games">browse</a></li>
-				<li><a href="/secret-dj/create">create</a></li>
 				<li><a href="/secret-dj/archive">archive</a></li>
+				<% if (participantId) { %>
+				<li><a href="/secret-dj/create">create</a></li>
 				<li><a href="/secret-dj/settings">settings</a></li>
-				<li><a href="/secret-dj/djs/<%=participantId%>">me</a></li>
+				<li><a href="/secret-dj/djs/<%= participantId %>">me</a></li>
+				<% } else { %>
+				<li><a href="/secret-dj/signup?redirect=%2Fsecret-dj">join</a></li>
+				<% } %>
 			</ul>
 			<% if (seasons.length) { %>
 			<%- include('../../partials/secret-dj/game-table', {query, showOwnership: true, seasons, participantId, defaultControls: true}); %>
-			<% } else { %>
+			<% } else if (participantId) { %>
 			you are currently not participating in any secret dj games. click <a href="/secret-dj/games">browse</a> to
 			find a game to join
 			<% } %>

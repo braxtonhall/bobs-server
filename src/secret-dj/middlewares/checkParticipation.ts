@@ -3,14 +3,16 @@ import { Email } from "@prisma/client";
 import { db } from "../../db";
 
 export const getParticipation = async (req: Request, res: Response, next: NextFunction) => {
-	const email: Email = res.locals.email;
-	const participant = await db.participant.findUnique({ where: { emailId: email.id } });
-	if (participant) {
-		res.locals.participant = participant;
-		res.locals.participating = true;
-	} else {
-		res.locals.participating = false;
+	if (res.locals.logged) {
+		const email: Email = res.locals.email;
+		const participant = await db.participant.findUnique({ where: { emailId: email.id } });
+		if (participant) {
+			res.locals.participant = participant;
+			res.locals.participating = true;
+			return next();
+		}
 	}
+	res.locals.participating = false;
 	return next();
 };
 

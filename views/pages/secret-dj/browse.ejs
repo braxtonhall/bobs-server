@@ -18,8 +18,9 @@
 			<%- include('../../partials/secret-dj/game-table', {query, showOwnership: true, seasons, participantId, defaultControls: true}); %>
 			<% } else { %>
 			<p>
-				there currently no open games of secret dj.
+				there currently no open games of secret dj. <%if (participantId) {%>
 				<a href="/secret-dj/create">click here to create one yourself</a>
+				<%}%>
 			</p>
 			<% } %>
 		</main>

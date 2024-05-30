@@ -3,7 +3,7 @@ import { Season } from "@prisma/client";
 import { SeasonState } from "../SeasonState";
 
 type Environment = {
-	participantId: string;
+	participantId?: string;
 	cursor?: string;
 	take: number;
 };
@@ -12,29 +12,33 @@ type Environment = {
  * this is used for the browse page
  * @param participantId
  * @param cursor
+ * @param take
  */
 export const getJoinableGames = async ({
 	participantId,
 	cursor,
 	take,
 }: Environment): Promise<{ seasons: Pick<Season, "state" | "name">[]; cursor?: string }> => {
-	const seasons = await db.season.findMany({
-		where: {
-			AND: [
-				{
-					state: SeasonState.SIGN_UP,
-				},
-				{
-					entries: {
-						none: {
-							recipient: {
-								id: participantId,
+	const query = participantId
+		? {
+				AND: [
+					{
+						state: SeasonState.SIGN_UP,
+					},
+					{
+						entries: {
+							none: {
+								recipient: {
+									id: participantId,
+								},
 							},
 						},
 					},
-				},
-			],
-		},
+				],
+			}
+		: { state: SeasonState.SIGN_UP };
+	const seasons = await db.season.findMany({
+		where: query,
 		select: {
 			owner: true,
 			state: true,

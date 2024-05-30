@@ -9,8 +9,8 @@ type Environment = {
 
 /**
  * this is used for the archive page
- * @param participantId
  * @param cursor
+ * @param take
  */
 export const getArchivedSeasons = async ({
 	cursor,

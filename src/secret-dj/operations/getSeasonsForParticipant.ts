@@ -12,6 +12,7 @@ type Environment = {
  * this is used for the main landing page of secret-dj
  * @param participantId
  * @param cursor
+ * @param take
  */
 export const getSeasonsForParticipant = async ({
 	participantId,

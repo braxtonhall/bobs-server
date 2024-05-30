@@ -26,11 +26,14 @@ import Config from "../../Config";
 import { getDjEntries } from "../operations/getDjEntries";
 import { setRules } from "../operations/setRules";
 import { leaveGame } from "../operations/leaveGame";
+import { enforceLoggedIn } from "../../auth/middlewares/authenticate";
 
 export const views = express()
 	.use(getParticipation)
-	.get("/signup", checkParticipation, (req, res) => res.render("pages/secret-dj/signup", { error: "" }))
-	.post("/signup", checkParticipation, async (req, res) => {
+	.get("/signup", enforceLoggedIn, checkParticipation, (req, res) =>
+		res.render("pages/secret-dj/signup", { error: "" }),
+	)
+	.post("/signup", enforceLoggedIn, checkParticipation, async (req, res) => {
 		try {
 			const email: Email = res.locals.email;
 			const { name } = signupPayloadSchema.parse(req.body);
@@ -40,9 +43,8 @@ export const views = express()
 			return res.render("pages/secret-dj/signup", { error: "that didn't quite work" });
 		}
 	})
-	.use(enforceParticipation)
 	.get("/games", async (req, res) => {
-		const participantId = res.locals.participant.id;
+		const participantId = res.locals.participant?.id;
 		const { seasons, cursor } = await getJoinableGames({
 			participantId,
 			cursor: typeof req.query.cursor === "string" ? req.query.cursor : undefined,
@@ -54,19 +56,28 @@ export const views = express()
 		res.render("pages/secret-dj/browse", { query: req.query, seasons, cursor, participantId });
 	})
 	.get("/", async (req, res) => {
-		const participantId = res.locals.participant.id;
-		const { seasons, cursor } = await getSeasonsForParticipant({
-			participantId,
-			cursor: typeof req.query.cursor === "string" ? req.query.cursor : undefined,
-			take: Math.max(
-				Config.MINIMUM_PAGE_SIZE,
-				Math.min(Number(req.query.take) || Config.DEFAULT_PAGE_SIZE, Config.MAXIMUM_PAGE_SIZE),
-			),
-		});
-		return res.render("pages/secret-dj/index", { query: req.query, seasons, cursor, participantId });
+		if (res.locals.participating) {
+			const participantId = res.locals.participant.id;
+			const { seasons, cursor } = await getSeasonsForParticipant({
+				participantId,
+				cursor: typeof req.query.cursor === "string" ? req.query.cursor : undefined,
+				take: Math.max(
+					Config.MINIMUM_PAGE_SIZE,
+					Math.min(Number(req.query.take) || Config.DEFAULT_PAGE_SIZE, Config.MAXIMUM_PAGE_SIZE),
+				),
+			});
+			return res.render("pages/secret-dj/index", { query: req.query, seasons, cursor, participantId });
+		} else {
+			return res.render("pages/secret-dj/index", {
+				query: req.query,
+				seasons: [],
+				cursor: "",
+				participantId: "",
+				emailId: res.locals.email?.id,
+			});
+		}
 	})
 	.get("/archive", async (req, res) => {
-		const participantId = res.locals.participant.id;
 		const { seasons, cursor } = await getArchivedSeasons({
 			cursor: typeof req.query.cursor === "string" ? req.query.cursor : undefined,
 			take: Math.max(
@@ -74,7 +85,16 @@ export const views = express()
 				Math.min(Number(req.query.take) || Config.DEFAULT_PAGE_SIZE, Config.MAXIMUM_PAGE_SIZE),
 			),
 		});
-		return res.render("pages/secret-dj/archive", { query: req.query, seasons, cursor, participantId });
+		if (res.locals.participating) {
+			return res.render("pages/secret-dj/archive", {
+				query: req.query,
+				seasons,
+				cursor,
+				participantId: res.locals.participant.id,
+			});
+		} else {
+			return res.render("pages/secret-dj/archive", { query: req.query, seasons, cursor, participantId: "" });
+		}
 	})
 	.get("/djs/:id", async (req, res) => {
 		try {
@@ -103,6 +123,21 @@ export const views = express()
 			return res.sendStatus(404);
 		}
 	})
+	.get("/games/:seasonId/entries/:entryId", async (req, res) => {
+		try {
+			const entry = await getEntry(req.params);
+			return res.render("pages/secret-dj/entry", {
+				entry,
+				boxId: entry.box.id,
+				host: Config.HOST,
+				protocol: req.protocol,
+			});
+		} catch {
+			return res.sendStatus(404);
+		}
+	})
+	.use(enforceLoggedIn)
+	.use(enforceParticipation)
 	.get("/games/:id", async (req, res) => {
 		try {
 			const participantId = res.locals.participant.id;
@@ -206,20 +241,6 @@ export const views = express()
 		} catch (err) {
 			console.log(err);
 			return res.render("pages/secret-dj/create", { error: "That didn't quite work" });
-		}
-	})
-	.get("/games/:seasonId/entries/:entryId", async (req, res) => {
-		try {
-			const entry = await getEntry(req.params);
-			return res.render("pages/secret-dj/entry", {
-				entry,
-				participant: res.locals.participant,
-				boxId: entry.box.id,
-				host: Config.HOST,
-				protocol: req.protocol,
-			});
-		} catch {
-			return res.sendStatus(404);
 		}
 	})
 	.get("/settings", (req, res) =>
