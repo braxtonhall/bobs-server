@@ -11,7 +11,7 @@ export type SettingsPayload = SignupPayload;
 export const createSeasonPayloadSchema = z.object({
 	name: z.string().min(1),
 	description: z.string().default(""),
-	rules: z.coerce.number().min(1),
+	rules: z.coerce.number().int().min(1),
 });
 export type CreateSeasonPayload = z.infer<typeof createSeasonPayloadSchema>;
 
