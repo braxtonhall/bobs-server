@@ -21,13 +21,32 @@
 
 			<form method="post" class="edit-form" action="/toolbox/boxes/admin/<%= id %>/edit">
 				<label for="name" class="name-label">name</label>
-				<input class="name-input" id="name" name="name" value="<%= name %>" required />
+				<input
+					class="name-input"
+					id="name"
+					name="name"
+					value="<%= name %>"
+					required
+					maxlength="<%=Config.DEFAULT_MAX_LENGTH%>"
+				/>
 
 				<label for="origin" class="origin-label">origin</label>
-				<input class="origin-input" id="origin" name="origin" value="<%= origin %>" />
+				<input
+					class="origin-input"
+					id="origin"
+					name="origin"
+					value="<%= origin %>"
+					maxlength="<%=Config.DEFAULT_MAX_LENGTH%>"
+				/>
 
 				<label for="stylesheet" class="stylesheet-label">stylesheet</label>
-				<input class="stylesheet-input" id="stylesheet" name="stylesheet" value="<%= stylesheet %>" />
+				<input
+					class="stylesheet-input"
+					id="stylesheet"
+					name="stylesheet"
+					value="<%= stylesheet %>"
+					maxlength="<%=Config.DEFAULT_MAX_LENGTH%>"
+				/>
 
 				<button class="edit-save">submit</button>
 			</form>

@@ -143,6 +143,10 @@ tr.post-row td:nth-child(2) {
 	display: block;
 }
 
+td.post-message > .post-message-content {
+	white-space: pre-wrap;
+}
+
 table.post-table {
 	border: none;
 	width: 100%;

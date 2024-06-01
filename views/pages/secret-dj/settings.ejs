@@ -24,7 +24,14 @@
 			<form name="settings-form" method="post">
 				<label for="name" class="name-label">name</label>
 				<br />
-				<input class="name-input" id="name" name="name" value="<%=name%>" required />
+				<input
+					class="name-input"
+					id="name"
+					name="name"
+					value="<%=name%>"
+					maxlength="<%=Config.DEFAULT_MAX_LENGTH%>"
+					required
+				/>
 				<br />
 				<button class="settings-save">save</button>
 			</form>

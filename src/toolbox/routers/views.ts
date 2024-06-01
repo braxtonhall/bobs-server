@@ -34,6 +34,7 @@ export const views = express()
 					box: { ...box, id: req.params.box },
 					query: req.query,
 					replyId: false,
+					Config,
 				}),
 			)
 			.otherwise(() => res.sendStatus(404)),
@@ -89,7 +90,7 @@ const subscribedProcedure = (subscribed: boolean) => async (req: Request<{ id: s
 		.exhaustive();
 
 const boxAdminViews = express()
-	.get("/create", async (req, res) => res.render("pages/toolbox/boxes/create"))
+	.get("/create", async (req, res) => res.render("pages/toolbox/boxes/create", { Config }))
 	.post("/create", async (req, res) =>
 		match(parse(createBoxSchema, req.body))
 			.with(Ok(P.select()), async ({ name, origin }) => {
@@ -119,6 +120,7 @@ const boxAdminViews = express()
 					...result,
 					query: req.query,
 					message: typeof req.query.message === "string" ? req.query.message : "",
+					Config,
 				}),
 			)
 			.otherwise(() => res.sendStatus(404));
@@ -148,7 +150,7 @@ const boxAdminViews = express()
 			),
 			typeof req.query.cursor === "string" ? req.query.cursor : undefined,
 		);
-		return res.render("pages/toolbox/boxes/archive", { boxes, cursor, query: req.query });
+		return res.render("pages/toolbox/boxes/archive", { boxes, cursor, query: req.query, Config });
 	})
 	.get("/", async (req, res) => {
 		const { boxes, cursor } = await boxesClient.list(
@@ -160,7 +162,7 @@ const boxAdminViews = express()
 			),
 			typeof req.query.cursor === "string" ? req.query.cursor : undefined,
 		);
-		return res.render("pages/toolbox/boxes/index", { boxes, cursor, query: req.query });
+		return res.render("pages/toolbox/boxes/index", { boxes, cursor, query: req.query, Config });
 	});
 
 const counterAdminViews = express().get("/", (req, res) => res.render("pages/toolbox/counters/index"));
@@ -177,7 +179,7 @@ const postsAdminViews = express()
 			),
 			cursor: typeof req.query.cursor === "string" ? req.query.cursor : undefined,
 		});
-		return res.render("pages/toolbox/boxes/posts", { posts, cursor, query: req.query });
+		return res.render("pages/toolbox/boxes/posts", { posts, cursor, query: req.query, Config });
 	});
 
 export const adminViews = express()

@@ -38,6 +38,7 @@ const views = express()
 			subscribed: res.locals.email.subscribed,
 			error: "",
 			success: "",
+			Config,
 		}),
 	)
 	.post("/settings", async (req, res) => {
@@ -53,13 +54,14 @@ const views = express()
 		return match(result)
 			.with(Ok(P.select()), async ({ subscribed }) => {
 				await emails.updateSettings(res.locals.email.id, subscribed);
-				return res.render("pages/settings", { subscribed, error: "", success: "saved" });
+				return res.render("pages/settings", { subscribed, error: "", success: "saved", Config });
 			})
 			.otherwise(() =>
 				res.render("pages/settings", {
 					subscribed: res.locals.email.subscribed,
 					error: "that didn't work",
 					success: "",
+					Config,
 				}),
 			);
 	})

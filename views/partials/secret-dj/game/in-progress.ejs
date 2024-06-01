@@ -9,7 +9,13 @@
 </ol>
 <form class="submit-playlist-form" method="POST" action="<%= `/secret-dj/games/${season.id}/playlist` %>">
 	<label for="playlist-url">playlist url</label>
-	<input name="link" id="playlist-url" type="text" value="<%= dj.submissionUrl %>" />
+	<input
+		name="link"
+		id="playlist-url"
+		type="text"
+		value="<%= dj.submissionUrl %>"
+		maxlength="<%=Config.DEFAULT_MAX_LENGTH%>"
+	/>
 	<button type="submit"><%=dj.submissionUrl === null ? 'submit' : 'edit'%> playlist!</button>
 </form>
 <%- include('../entry-embed', { recipient: {...dj, dj: participant} }); %>

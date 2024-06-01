@@ -16,12 +16,23 @@
 				<form name="create-form" method="post">
 					<label for="name" class="name-label">name</label>
 					<br />
-					<input class="name-input" id="name" name="name" required />
+					<input
+						class="name-input"
+						id="name"
+						name="name"
+						maxlength="<%=Config.DEFAULT_MAX_LENGTH%>"
+						required
+					/>
 					<br />
 
 					<label for="description" class="description-label">description</label>
 					<br />
-					<textarea class="description-input" id="description" name="description"></textarea>
+					<textarea
+						class="description-input"
+						id="description"
+						name="description"
+						maxlength="<%=Config.DESCRIPTION_MAX_LENGTH%>"
+					></textarea>
 					<br />
 
 					<label for="rules" class="rules-label">rule count</label>

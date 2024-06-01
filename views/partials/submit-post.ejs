@@ -1,9 +1,21 @@
 <form method="post" class="new-post-form" action="/boxes/<%= box.id %>/posts">
 	<label for="content" class="new-post-message-label">message</label>
-	<textarea class="new-post-message" id="content" name="content" required></textarea>
+	<textarea
+		class="new-post-message"
+		id="content"
+		name="content"
+		required
+		maxlength="<%=Config.COMMENT_MAX_LENGTH%>"
+	></textarea>
 
 	<label for="from" class="new-post-poster-label">username (optional)</label>
-	<input placeholder="username" class="new-post-poster" id="from" name="from" />
+	<input
+		placeholder="username"
+		class="new-post-poster"
+		id="from"
+		name="from"
+		maxlength="<%=Config.DEFAULT_MAX_LENGTH%>"
+	/>
 
 	<label for="email" class="new-post-email-label">email for replies (optional and not shown to others)</label>
 	<input
@@ -13,6 +25,7 @@
 		name="email"
 		pattern="^\S+@\S+\.\S+$"
 		title="A valid email address"
+		maxlength="<%=Config.DEFAULT_MAX_LENGTH%>"
 	/>
 
 	<%if (replyId) { %>

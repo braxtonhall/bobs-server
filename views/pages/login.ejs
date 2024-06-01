@@ -22,6 +22,7 @@
 						required
 						pattern="^\S+@\S+\.\S+$"
 						title="A valid email address"
+						maxlength="<%=Config.DEFAULT_MAX_LENGTH%>"
 					/>
 					<input type="hidden" name="redirect" value="<%= query.redirect ?? '' %>" readonly />
 					<button class="login-submit">submit</button>

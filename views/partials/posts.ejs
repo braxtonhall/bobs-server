@@ -28,7 +28,7 @@
 				>
 			</blockquote>
 			<%}%>
-			<%= post.content %>
+			<div class="post-message-content"><%= post.content %></div>
 		</td>
 		<td class="post-poster"><%= post.from || 'anonymous' %></td>
 		<td class="post-date date-time" data-ms="<%=post.createdAt.valueOf()%>"><%= post.createdAt.toUTCString() %></td>

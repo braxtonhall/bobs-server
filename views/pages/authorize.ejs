@@ -16,7 +16,14 @@
 					<input type="hidden" name="email" value="<%= query.email ?? '' %>" readonly />
 
 					<label for="token" class="token-label">one time password</label>
-					<input class="token-input" id="token" name="token" required autocomplete="off" />
+					<input
+						class="token-input"
+						id="token"
+						name="token"
+						required
+						autocomplete="off"
+						maxlength="<%=Config.DEFAULT_MAX_LENGTH%>"
+					/>
 
 					<input type="hidden" name="redirect" value="<%= query.redirect ?? '' %>" readonly />
 					<button class="login-submit">submit</button>

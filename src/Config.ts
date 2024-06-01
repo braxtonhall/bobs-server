@@ -26,7 +26,8 @@ const environmentSchema = z.object({
 		.optional()
 		.transform((string) => string === "true"),
 	DEFAULT_MAX_LENGTH: z.coerce.number().int().default(100),
-	COMMENT_MAX_LENGTH: z.coerce.number().int().default(1000),
+	DESCRIPTION_MAX_LENGTH: z.coerce.number().int().default(500),
+	COMMENT_MAX_LENGTH: z.coerce.number().int().default(2000),
 });
 
 const Config = environmentSchema.parse(process.env);

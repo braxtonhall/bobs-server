@@ -5,7 +5,7 @@ import Config from "../Config";
 export const loginPayloadSchema = z.object({
 	email: emailSchema,
 });
-export type LoginPayload = z.infer<typeof authorizePayloadSchema>;
+export type LoginPayload = z.infer<typeof loginPayloadSchema>;
 
 export const authorizePayloadSchema = z.object({
 	email: emailSchema,

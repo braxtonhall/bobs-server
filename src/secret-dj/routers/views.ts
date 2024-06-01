@@ -32,7 +32,7 @@ import { clearMessagesAndSet, getMessagesAndClear } from "./sessionUtils";
 export const views = express()
 	.use(getParticipation)
 	.get("/signup", enforceLoggedIn, checkParticipation, (req, res) =>
-		res.render("pages/secret-dj/signup", { error: "" }),
+		res.render("pages/secret-dj/signup", { error: "", Config }),
 	)
 	.post("/signup", enforceLoggedIn, checkParticipation, async (req, res) => {
 		try {
@@ -41,7 +41,7 @@ export const views = express()
 			await setParticipant({ emailId: email.id, name });
 			return res.redirect(req.originalUrl);
 		} catch (error) {
-			return res.render("pages/secret-dj/signup", { error: "that didn't quite work" });
+			return res.render("pages/secret-dj/signup", { error: "that didn't quite work", Config });
 		}
 	})
 	.get("/games", async (req, res) => {
@@ -54,7 +54,7 @@ export const views = express()
 				Math.min(Number(req.query.take) || Config.DEFAULT_PAGE_SIZE, Config.MAXIMUM_PAGE_SIZE),
 			),
 		});
-		res.render("pages/secret-dj/browse", { query: req.query, seasons, cursor, participantId });
+		res.render("pages/secret-dj/browse", { query: req.query, seasons, cursor, participantId, Config });
 	})
 	.get("/", async (req, res) => {
 		if (res.locals.participating) {
@@ -67,7 +67,7 @@ export const views = express()
 					Math.min(Number(req.query.take) || Config.DEFAULT_PAGE_SIZE, Config.MAXIMUM_PAGE_SIZE),
 				),
 			});
-			return res.render("pages/secret-dj/index", { query: req.query, seasons, cursor, participantId });
+			return res.render("pages/secret-dj/index", { query: req.query, seasons, cursor, participantId, Config });
 		} else {
 			return res.render("pages/secret-dj/index", {
 				query: req.query,
@@ -75,6 +75,7 @@ export const views = express()
 				cursor: "",
 				participantId: "",
 				emailId: res.locals.email?.id,
+				Config,
 			});
 		}
 	})
@@ -92,9 +93,16 @@ export const views = express()
 				seasons,
 				cursor,
 				participantId: res.locals.participant.id,
+				Config,
 			});
 		} else {
-			return res.render("pages/secret-dj/archive", { query: req.query, seasons, cursor, participantId: "" });
+			return res.render("pages/secret-dj/archive", {
+				query: req.query,
+				seasons,
+				cursor,
+				participantId: "",
+				Config,
+			});
 		}
 	})
 	.get("/djs/:id", async (req, res) => {
@@ -119,6 +127,7 @@ export const views = express()
 				entryCursor,
 				seasons,
 				seasonCursor,
+				Config,
 			});
 		} catch {
 			return res.sendStatus(404);
@@ -132,6 +141,7 @@ export const views = express()
 				boxId: entry.box.id,
 				host: Config.HOST,
 				protocol: req.protocol,
+				Config,
 			});
 		} catch {
 			return res.sendStatus(404);
@@ -157,6 +167,7 @@ export const views = express()
 					boxId: season.box.id,
 					host: Config.HOST,
 					protocol: req.protocol,
+					Config,
 				});
 			} else {
 				const { error, success } = getMessagesAndClear(req);
@@ -170,6 +181,7 @@ export const views = express()
 					boxId: season.box.id,
 					host: Config.HOST,
 					protocol: req.protocol,
+					Config,
 				});
 			}
 		} catch {
@@ -254,7 +266,7 @@ export const views = express()
 			return res.redirect(`/secret-dj/games/${seasonId}`);
 		}
 	})
-	.get("/create", (req, res) => res.render("pages/secret-dj/create", { error: "" }))
+	.get("/create", (req, res) => res.render("pages/secret-dj/create", { error: "", Config }))
 	.post("/create", async (req, res) => {
 		try {
 			const { name, description, rules: ruleCount } = createSeasonPayloadSchema.parse(req.body);
@@ -265,7 +277,7 @@ export const views = express()
 			return res.redirect(`games/${id}`);
 		} catch (err) {
 			console.log(err);
-			return res.render("pages/secret-dj/create", { error: "That didn't quite work" });
+			return res.render("pages/secret-dj/create", { error: "That didn't quite work", Config });
 		}
 	})
 	.get("/settings", (req, res) =>
@@ -273,6 +285,7 @@ export const views = express()
 			name: res.locals.participant.name,
 			error: "",
 			success: "",
+			Config,
 		}),
 	)
 	.post("/settings", async (req, res) => {
@@ -280,12 +293,13 @@ export const views = express()
 			const { name } = settingsPayloadSchema.parse(req.body);
 			const email: Email = res.locals.email;
 			await setParticipant({ emailId: email.id, name });
-			return res.render("pages/secret-dj/settings", { name, error: "", success: "saved" });
+			return res.render("pages/secret-dj/settings", { name, error: "", success: "saved", Config });
 		} catch {
 			return res.render("pages/secret-dj/settings", {
 				name: res.locals.participant.name,
 				error: "that didn't work",
 				success: "",
+				Config,
 			});
 		}
 	});

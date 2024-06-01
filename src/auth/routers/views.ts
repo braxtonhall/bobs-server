@@ -26,7 +26,7 @@ export const views = express()
 			return res.sendStatus(404);
 		}
 	})
-	.get("/login", checkLoggedIn, (req, res) => res.render("pages/login", { query: req.query }))
+	.get("/login", checkLoggedIn, (req, res) => res.render("pages/login", { query: req.query, Config }))
 	.post("/login", checkLoggedIn, (req, res) => {
 		const email: string = req.body.email;
 		void login({
@@ -40,7 +40,7 @@ export const views = express()
 	.get("/authorize", checkLoggedIn, async (req, res) => {
 		const result = authorizePayloadSchema.safeParse(req.query);
 		if (!result.success) {
-			return res.render("pages/authorize", { query: req.query, error: result.error.message });
+			return res.render("pages/authorize", { query: req.query, error: "", Config });
 		}
 		try {
 			const { email, token: temporaryToken } = result.data;
@@ -51,6 +51,7 @@ export const views = express()
 			return res.render("pages/authorize", {
 				query: req.query,
 				error: "that token was not correct or was expired",
+				Config,
 			});
 		}
 	})
