@@ -78,5 +78,9 @@ export const getServers = async () => ({
 		},
 		express().use(api).use(views),
 	),
-	http: http.createServer(api), // TODO some of the views we might want over http as well
+	http: http.createServer(
+		express()
+			.use(api)
+			.use((req, res) => res.redirect(`https://${Config.HOST}${req.originalUrl}`)),
+	),
 });
