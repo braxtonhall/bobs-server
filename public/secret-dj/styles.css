@@ -121,11 +121,9 @@ iframe.comments {
 }
 
 .new-post-poster-label,
-.new-post-poster,
 .new-post-email,
 .new-post-email-label,
 .box-name,
-.post-poster,
 .post-header {
 	display: none;
 }
@@ -168,7 +166,8 @@ tr.post-row > td.post-message {
 	display: block;
 }
 
-td.post-message > .post-message-content {
+td.post-message > .post-message-content,
+td.post-poster {
 	white-space: pre-wrap;
 	overflow-wrap: anywhere;
 	word-break: normal;
