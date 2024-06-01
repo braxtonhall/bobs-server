@@ -24,7 +24,13 @@
 			<div class="post-message-content"><%= post.content %></div>
 		</td>
 		<td class="post-poster"><%= post.from || 'anonymous' %></td>
-		<td class="post-date date-time" data-ms="<%=post.createdAt.valueOf()%>"><%= post.createdAt.toUTCString() %></td>
+		<td class="post-date">
+			<a class="post-date-link" href="?<%=new URLSearchParams({...query, cursor: post.id}).toString()%>">
+				<span class="date-time" data-ms="<%=post.createdAt.valueOf()%>"
+					><%= post.createdAt.toUTCString() %></span
+				>
+			</a>
+		</td>
 		<td class="post-delete">
 			<% if (post.deletable) { /* TODO should pass along the query parameters!!! */ %>
 			<form class="delete-form" method="POST" action="/boxes/<%= box.id %>/posts/<%= post.id %>/delete">

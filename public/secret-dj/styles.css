@@ -127,6 +127,10 @@ iframe.comments {
 	display: none;
 }
 
+a.post-date-link {
+	color: unset;
+}
+
 tr.post-row {
 	display: block;
 	padding-bottom: 1em;
