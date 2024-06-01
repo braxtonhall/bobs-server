@@ -107,7 +107,7 @@ export const views = express()
 	})
 	.get("/djs/:id", async (req, res) => {
 		try {
-			const { entries, entryCursor, name, seasonCursor, seasons } = await getDjEntries({
+			const result = await getDjEntries({
 				participantId: req.params.id,
 				entryCursor: typeof req.query.entryCursor === "string" ? req.query.entryCursor : undefined,
 				entryTake: Math.max(
@@ -119,14 +119,16 @@ export const views = express()
 					Config.MINIMUM_PAGE_SIZE,
 					Math.min(Number(req.query.seasonTake) || Config.DEFAULT_PAGE_SIZE, Config.MAXIMUM_PAGE_SIZE),
 				),
+				submissionCursor:
+					typeof req.query.submissionCursor === "string" ? req.query.submissionCursor : undefined,
+				submissionTake: Math.max(
+					Config.MINIMUM_PAGE_SIZE,
+					Math.min(Number(req.query.submissionTake) || Config.DEFAULT_PAGE_SIZE, Config.MAXIMUM_PAGE_SIZE),
+				),
 			});
 			return res.render("pages/secret-dj/dj", {
 				query: req.query,
-				name,
-				entries,
-				entryCursor,
-				seasons,
-				seasonCursor,
+				...result,
 				Config,
 			});
 		} catch {

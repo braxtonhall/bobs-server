@@ -7,6 +7,8 @@ type Environment = {
 	entryTake: number;
 	seasonTake: number;
 	seasonCursor?: string;
+	submissionCursor?: string;
+	submissionTake: number;
 };
 
 export const getDjEntries = async ({
@@ -15,6 +17,8 @@ export const getDjEntries = async ({
 	entryTake,
 	seasonTake,
 	seasonCursor,
+	submissionTake,
+	submissionCursor,
 }: Environment) => {
 	const result = await db.participant.findUnique({
 		where: {
@@ -33,6 +37,27 @@ export const getDjEntries = async ({
 				},
 				take: seasonTake + 1,
 				cursor: seasonCursor ? { id: seasonCursor } : undefined,
+				orderBy: { sort: "desc" },
+			},
+			recipientEntries: {
+				where: {
+					season: {
+						state: SeasonState.ENDED,
+						ruleCount: { gt: 0 },
+					},
+				},
+				select: {
+					id: true,
+					rules: true,
+					season: {
+						select: {
+							name: true,
+							id: true,
+						},
+					},
+				},
+				take: entryTake + 1,
+				cursor: entryCursor ? { id: entryCursor } : undefined,
 				orderBy: { sort: "desc" },
 			},
 			djEntries: {
@@ -56,8 +81,8 @@ export const getDjEntries = async ({
 						},
 					},
 				},
-				take: entryTake + 1,
-				cursor: entryCursor ? { id: entryCursor } : undefined,
+				take: submissionTake + 1,
+				cursor: submissionCursor ? { id: submissionCursor } : undefined,
 				orderBy: { sort: "desc" },
 			},
 		},
@@ -65,8 +90,10 @@ export const getDjEntries = async ({
 	if (result) {
 		return {
 			name: result.name,
-			entries: result.djEntries.slice(0, entryTake),
-			entryCursor: result.djEntries[entryTake]?.id,
+			entries: result.recipientEntries.slice(0, entryTake),
+			entryCursor: result.recipientEntries[entryTake]?.id,
+			submissions: result.djEntries.slice(0, submissionTake),
+			submissionCursor: result.djEntries[submissionTake]?.id,
 			seasons: result.ownedSeasons.slice(0, seasonTake),
 			seasonCursor: result.ownedSeasons[seasonTake]?.id,
 		};

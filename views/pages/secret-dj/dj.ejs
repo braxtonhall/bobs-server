@@ -13,39 +13,84 @@
 			<div>
 				<h2><%=name%></h2>
 			</div>
-			<% if (entries.length) { %>
-			<p>here are all the playlists made by <%=name%></p>
-			<table>
-				<tr>
-					<th>game name</th>
-					<th>recipient</th>
-					<th>view</th>
-				</tr>
-				<% for (const entry of entries) { %>
-				<% const recipientLink = `/secret-dj/djs/${entry.recipient.id}`%>
-				<% const gameLink = `/secret-dj/games/${entry.season.id}`%>
-				<% const entryLink = `/secret-dj/games/${entry.season.id}/entries/${entry.id}`%>
-				<tr>
-					<td>
-						<a href="<%=gameLink%>"><%= entry.season.name %></a>
-					</td>
-					<td>
-						<a href="<%=recipientLink%>"><%= entry.recipient.name %></a>
-					</td>
-					<td>
-						<a href="<%=entryLink%>">view</a>
-					</td>
-				</tr>
+
+			<div class="dj-entries">
+				<% if (entries.length) { %>
+				<p>
+					here are all the rules set by
+					<%=name%>
+				</p>
+				<table>
+					<tr>
+						<th>game name</th>
+						<th>rules</th>
+						<th>view</th>
+					</tr>
+					<% for (const entry of entries) { %>
+					<% const gameLink = `/secret-dj/games/${entry.season.id}`%>
+					<% const entryLink = `/secret-dj/games/${entry.season.id}/entries/${entry.id}`%>
+					<tr>
+						<td>
+							<a href="<%=gameLink%>"><%= entry.season.name %></a>
+						</td>
+						<td class="entry-table-rule">
+							<ol>
+								<% for (const rule of entry.rules) { %>
+								<li><%=rule.text%></li>
+								<% } %>
+							</ol>
+						</td>
+						<td>
+							<a href="<%=entryLink%>">view</a>
+						</td>
+					</tr>
+					<% } %>
+				</table>
+				<%- include('../../partials/boxes/page-controls', {query, params: ['entryTake', 'seasonCursor', 'seasonTake', 'submissionTake', 'submissionCursor'], cursor: entryCursor, cursorName: 'entryCursor'}); %>
+				<% } else { %>
+				<p><%=name%> has not set any rules for secret dj</p>
 				<% } %>
-			</table>
-			<%- include('../../partials/boxes/page-controls', {query, params: ['entryTake', 'seasonCursor', 'seasonTake'], cursor: entryCursor, cursorName: 'entryCursor'}); %>
-			<% } else { %>
-			<p><%=name%> has not made any playlists for secret dj</p>
-			<% } %>
+			</div>
+
+			<div class="dj-submissions">
+				<% if (submissions.length) { %>
+				<p>
+					here are all the playlists made by
+					<%=name%>
+				</p>
+				<table>
+					<tr>
+						<th>game name</th>
+						<th>recipient</th>
+						<th>view</th>
+					</tr>
+					<% for (const entry of submissions) { %>
+					<% const recipientLink = `/secret-dj/djs/${entry.recipient.id}`%>
+					<% const gameLink = `/secret-dj/games/${entry.season.id}`%>
+					<% const entryLink = `/secret-dj/games/${entry.season.id}/entries/${entry.id}`%>
+					<tr>
+						<td>
+							<a href="<%=gameLink%>"><%= entry.season.name %></a>
+						</td>
+						<td>
+							<a href="<%=recipientLink%>"><%= entry.recipient.name %></a>
+						</td>
+						<td>
+							<a href="<%=entryLink%>">view</a>
+						</td>
+					</tr>
+					<% } %>
+				</table>
+				<%- include('../../partials/boxes/page-controls', {query, params: ['entryTake', 'seasonCursor', 'seasonTake', 'submissionTake', 'entryCursor'], cursor: submissionCursor, cursorName: 'submissionCursor'}); %>
+				<% } else { %>
+				<p><%=name%> has not made any playlists for secret dj</p>
+				<% } %>
+			</div>
+
 			<% if (seasons.length) { %>
 			<p>here are all the seasons hosted by <%=name%></p>
 			<%- include('../../partials/secret-dj/game-table', {showOwnership: false, seasons, defaultControls: false}); %>
-			<%- include('../../partials/boxes/page-controls', {query, params: ['entryTake', 'entryCursor', 'seasonTake'], cursor: seasonCursor, cursorName: 'seasonCursor'}); %>
+			<%- include('../../partials/boxes/page-controls', {query, params: ['entryTake', 'entryCursor', 'seasonTake', 'submissionTake', 'submissionCursor'], cursor: seasonCursor, cursorName: 'seasonCursor'}); %>
 			<% } else { %>
 			<p><%=name%> has not hosted any seasons of secret dj</p>
 			<% } %>
