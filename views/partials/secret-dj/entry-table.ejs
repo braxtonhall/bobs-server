@@ -22,7 +22,7 @@
 	<tr>
 		<td><a href="/secret-dj/djs/<%= entry.recipient.id %>"><%= entry.recipient.name %></a></td>
 		<% for (const rule of entry.rules) { %>
-		<td><%=rule.text%></td>
+		<td class="entry-table-rule"><%=rule.text%></td>
 		<% } %>
 		<td><a href="<%=link%>">view</a></td>
 		<% if (season.state === 'in-progress') { %>

@@ -47,6 +47,10 @@ a {
 	word-break: break-all;
 }
 
+.entry-table-rule {
+	text-align: left;
+}
+
 @media only screen and (max-width: 700px) {
 	.embed {
 		width: 100%;
