@@ -9,5 +9,6 @@
 	<%- include('../partials/submit-post'); %>
 	<% } %>
 	<%- include('../partials/posts'); %>
+	<%- include('../partials/boxes/page-controls', {query, params: ['take', 'dead'], cursor, cursorName: 'cursor'}); %>
 	<%- include('../partials/controls') %>
 </body>

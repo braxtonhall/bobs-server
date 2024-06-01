@@ -2,9 +2,9 @@ import { HashedString } from "../../types/hashed";
 import posts, { InternalPost } from "../storage/posts";
 import Config from "../../Config";
 import { Post } from "../schema/post";
-import { Ok, Result } from "../../types/result";
-import { Failure } from "../../types/failure";
+import { Ok } from "../../types/result";
 import { match, P } from "ts-pattern";
+import { map, None, Option, Some } from "../../types/option";
 
 const getEarliestDeletableTime = () => Date.now() - Config.DELETION_TIME_MS;
 
@@ -32,7 +32,7 @@ export const getPosts = async (
 	boxId: string,
 	requestor: HashedString,
 	query: { cursor?: string; dead?: string; take?: string },
-): Promise<Result<{ posts: Post[]; cursor?: string }, Failure.MISSING_DEPENDENCY>> => {
+): Promise<Option<{ posts: Post[]; cursor?: string }>> => {
 	const userPageSize = Number(query.take) || Config.DEFAULT_PAGE_SIZE;
 	const pageSize = Math.max(Config.MINIMUM_PAGE_SIZE, Math.min(userPageSize, Config.MAXIMUM_PAGE_SIZE));
 	const result = await posts.list({
@@ -45,10 +45,33 @@ export const getPosts = async (
 	return match(result)
 		.with(Ok(P.select()), (posts) => {
 			const externalPosts = posts.map(toPostMember(requestor, getEarliestDeletableTime()));
-			return Ok({
+			return Some({
 				posts: externalPosts.slice(0, pageSize),
 				cursor: externalPosts[pageSize]?.id,
 			});
 		})
-		.otherwise((result) => result);
+		.otherwise(None);
+};
+
+export const getPost = async (
+	boxId: string,
+	postId: string,
+	requestor: HashedString,
+	query: { dead?: string },
+): Promise<Option<Post>> => {
+	return map(
+		await posts.get({
+			boxId,
+			postId,
+			ip: requestor,
+			showDead: query.dead === "true",
+		}),
+		(post) => {
+			const result = toPostMember(requestor, getEarliestDeletableTime())(post);
+			return {
+				...result,
+				box: post.box,
+			};
+		},
+	);
 };

@@ -70,7 +70,7 @@ describe("posts", () => {
 					posterId: info.posterId,
 				}),
 			);
-			expect(await posts.get(post.id, info.boxId)).toEqual(
+			expect(await posts.getNotificationInfo(post.id, info.boxId)).toEqual(
 				Some({
 					id: expect.any(String),
 					subscribed: true,
@@ -89,11 +89,11 @@ describe("posts", () => {
 					posterId: info.posterId,
 				}),
 			);
-			expect(await posts.get(post.id, randomUUID())).toEqual(None());
+			expect(await posts.getNotificationInfo(post.id, randomUUID())).toEqual(None());
 		});
 
 		it("should fail to find from a user id that does not exist", async () =>
-			expect(await posts.get(randomUUID(), randomUUID())).toEqual(None()));
+			expect(await posts.getNotificationInfo(randomUUID(), randomUUID())).toEqual(None()));
 
 		it("should list a post", async () => {
 			const post = unsafeUnwrap(

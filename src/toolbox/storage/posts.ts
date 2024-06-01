@@ -117,62 +117,66 @@ const list = async (query: Query): Promise<Result<InternalPost[], Failure.MISSIN
 		.exists(query.boxId)
 		.then(async (exists) => (exists ? Ok(await listInternal(query)) : Err(Failure.MISSING_DEPENDENCY)));
 
-const listInternal = ({ boxId, showDead, cursor, count, ip }: Query) => {
-	const defaultQuery = {
-		OR: [
-			{
-				poster: {
-					ip,
-				},
-			},
-			{
-				AND: [
-					{
-						dead: false,
-					},
-					{
-						poster: {
-							karma: {
-								lt: Config.KARMA_KILL_THRESHOLD,
-							},
-						},
-					},
-				],
-			},
-		],
-	};
-	return db.post.findMany({
-		select: {
-			id: true,
-			createdAt: true,
-			content: true,
-			from: true,
-			box: {
-				select: {
-					deleted: true,
-				},
-			},
+const makeDefaultQuery = (ip: HashedString) => ({
+	OR: [
+		{
 			poster: {
-				select: {
-					ip: true,
-				},
-			},
-			parent: {
-				where: showDead ? {} : defaultQuery,
-				select: {
-					id: true,
-					content: true,
-				},
-			},
-			_count: {
-				select: {
-					// We want all children, as this is used for
-					// if something is deletable
-					// not just undead children
-					children: {},
-				},
+				ip,
 			},
 		},
+		{
+			AND: [
+				{
+					dead: false,
+				},
+				{
+					poster: {
+						karma: {
+							lt: Config.KARMA_KILL_THRESHOLD,
+						},
+					},
+				},
+			],
+		},
+	],
+});
+
+const defaultSelection = <T>(whereParent: T) => ({
+	id: true,
+	createdAt: true,
+	content: true,
+	from: true,
+	box: {
+		select: {
+			deleted: true,
+		},
+	},
+	poster: {
+		select: {
+			ip: true,
+		},
+	},
+	parent: {
+		where: whereParent,
+		select: {
+			id: true,
+			content: true,
+		},
+	},
+	_count: {
+		select: {
+			// We want all children, as this is used for
+			// if something is deletable
+			// not just undead children
+			children: {},
+		},
+	},
+});
+
+const listInternal = ({ boxId, showDead, cursor, count, ip }: Query) => {
+	const defaultQuery = makeDefaultQuery(ip);
+	return db.post.findMany({
+		select: defaultSelection(showDead ? {} : defaultQuery),
 		where: {
 			boxId,
 			...(showDead ? {} : defaultQuery),
@@ -185,7 +189,43 @@ const listInternal = ({ boxId, showDead, cursor, count, ip }: Query) => {
 	});
 };
 
-const get = async (
+const getPost = async ({
+	boxId,
+	postId,
+	showDead,
+	ip,
+}: {
+	boxId: string;
+	postId: string;
+	showDead: boolean;
+	ip: HashedString;
+}) => {
+	const defaultQuery = makeDefaultQuery(ip);
+	const post = await db.post.findUnique({
+		select: {
+			...defaultSelection(showDead ? {} : defaultQuery),
+			box: {
+				select: {
+					id: true,
+					name: true,
+					stylesheet: true,
+					deleted: true,
+				},
+			},
+		},
+		where: {
+			boxId,
+			id: postId,
+		},
+	});
+	if (post) {
+		return Some(post);
+	} else {
+		return None;
+	}
+};
+
+const getNotificationInfo = async (
 	postId: string,
 	boxId: string,
 ): Promise<
@@ -269,8 +309,9 @@ const setSubscription = async (
 
 export default {
 	create,
-	get,
+	getNotificationInfo,
 	list,
+	get: getPost,
 	delete: deletePost,
 	setDeadAndGetPosterId,
 	setSubscription,

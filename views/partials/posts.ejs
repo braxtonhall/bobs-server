@@ -15,7 +15,8 @@
 		<td class="post-message">
 			<% if (post.parent) {%>
 			<blockquote class="post-parent-content">
-				<a href="?<%=new URLSearchParams({...query, cursor: post.parent.id}).toString()%>"
+				<a
+					href="/boxes/<%= box.id %>/posts/<%= post.parent.id %>?<%=new URLSearchParams({...query}).toString()%>"
 					><%=post.parent.content.length > 90 ? post.parent.content.slice(0, 90) + '...' :
 					post.parent.content%></a
 				>
@@ -25,7 +26,10 @@
 		</td>
 		<td class="post-poster"><%= post.from || 'anonymous' %></td>
 		<td class="post-date">
-			<a class="post-date-link" href="?<%=new URLSearchParams({...query, cursor: post.id}).toString()%>">
+			<a
+				class="post-date-link"
+				href="/boxes/<%= box.id %>/posts/<%= post.id %>?<%=new URLSearchParams({...query}).toString()%>"
+			>
 				<span class="date-time" data-ms="<%=post.createdAt.valueOf()%>"
 					><%= post.createdAt.toUTCString() %></span
 				>
@@ -55,5 +59,3 @@
 		element.textContent = new Date(Number(element.dataset.ms)).toLocaleString();
 	}
 </script>
-
-<%- include('boxes/page-controls', {query, params: ['take', 'dead'], cursor, cursorName: 'cursor'}); %>
