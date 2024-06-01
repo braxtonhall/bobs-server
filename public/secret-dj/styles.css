@@ -9,10 +9,6 @@ html {
 	-moz-osx-font-smoothing: grayscale;
 }
 
-body {
-	padding-bottom: 0.67em;
-}
-
 h1 > * {
 	color: #f0f8ff;
 	font-size: 0.6em;
