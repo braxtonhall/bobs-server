@@ -55,6 +55,11 @@ a {
 	.embed {
 		width: 100%;
 	}
+
+	form {
+		width: 100% !important;
+		box-sizing: border-box;
+	}
 }
 
 table,
@@ -79,6 +84,11 @@ form {
 
 form > * {
 	margin: 4px 0;
+	display: block;
+}
+
+form button {
+	margin-top: 1em;
 }
 
 form > button {
@@ -107,10 +117,6 @@ iframe.comments {
 	border: 1px dashed;
 }
 
-.new-post-form > * {
-	display: block;
-}
-
 .new-post-poster-label,
 .new-post-poster,
 .new-post-email,
@@ -124,7 +130,6 @@ iframe.comments {
 tr.post-row {
 	display: block;
 	padding-bottom: 1em;
-	width: 100%;
 }
 
 tr.post-row td {
@@ -163,7 +168,6 @@ td.post-message > .post-message-content {
 
 table.post-table {
 	border: none;
-	width: 100%;
 }
 
 td.post-poster {

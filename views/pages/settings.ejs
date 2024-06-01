@@ -22,14 +22,12 @@
 
 			<form name="settings-form" method="post">
 				<label for="subscribed" class="subscribed-label">email notifications</label>
-				<br />
 				<% if (subscribed) { %>
 				<input type="checkbox" class="subscribed-input" id="subscribed" name="subscribed" checked />
 				<% } else { %>
 				<input type="checkbox" class="subscribed-input" id="subscribed" name="subscribed" />
 				<% } %>
 
-				<br />
 				<button class="settings-save">save</button>
 			</form>
 		</main>

@@ -6,7 +6,6 @@
 	<% const editGameDetailsEndpoint = `/secret-dj/games/${season.id}/edit`%>
 	<form class="edit-game-form" method="POST" action="<%=editGameDetailsEndpoint%>">
 		<label for="name" class="name-label">name</label>
-		<br />
 		<input
 			class="name-input"
 			id="name"
@@ -15,10 +14,9 @@
 			value="<%=season.name%>"
 			maxlength="<%=Config.DEFAULT_MAX_LENGTH%>"
 		/>
-		<br />
 
 		<label for="description" class="description-label">description</label>
-		<br />
+
 		<textarea
 			class="description-input"
 			id="description"
@@ -27,7 +25,7 @@
 		>
 <%=season.description%></textarea
 		>
-		<br />
+
 		<button type="submit">edit</button>
 	</form>
 	<% if (season.entries.length) { %>
@@ -57,18 +55,17 @@
 	<form class="enroll-game-form" method="POST" action="<%=submitRulesEndpoint%>">
 		<% for (let i = 0; i < season.ruleCount; i++) { %> <% const currentRule = recipient === null ? "" :
 		recipient.rules[i].text %>
-		<div>
-			<label for="rule-<%=i+1%>">rule <%=season.ruleCount > 1 ? i + 1 : ''%></label>
-			<br />
-			<input
-				name="rules[]"
-				type="text"
-				id="rule-<%=i+1%>"
-				value="<%= currentRule %>"
-				maxlength="<%=Config.DESCRIPTION_MAX_LENGTH%>"
-			/>
-			<br />
-		</div>
+
+		<label for="rule-<%=i+1%>">rule <%=season.ruleCount > 1 ? i + 1 : ''%></label>
+
+		<input
+			name="rules[]"
+			type="text"
+			id="rule-<%=i+1%>"
+			value="<%= currentRule %>"
+			maxlength="<%=Config.DESCRIPTION_MAX_LENGTH%>"
+		/>
+
 		<% } %>
 		<button type="submit"><%= action %> rules!</button>
 	</form>
