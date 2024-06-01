@@ -87,7 +87,7 @@ form > * {
 	display: block;
 }
 
-form button {
+form button:not(:first-child) {
 	margin-top: 1em;
 }
 
