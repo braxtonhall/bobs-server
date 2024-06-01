@@ -228,8 +228,8 @@ export const views = express()
 	.post("/games/:id/rules", async (req, res) => {
 		const seasonId = req.params.id;
 		try {
-			const { recipientId, rules } = submitRulesSchema.parse(req.body);
-			await setRules({ seasonId, recipientId, rules });
+			const { rules } = submitRulesSchema.parse(req.body);
+			await setRules({ seasonId, recipientId: res.locals.participant.id, rules });
 			clearMessagesAndSet({ req, success: "game rules updated!" });
 			return res.redirect(`/secret-dj/games/${seasonId}`);
 		} catch {

@@ -1,7 +1,8 @@
 import { z } from "zod";
+import Config from "../Config";
 
 export const signupPayloadSchema = z.object({
-	name: z.string().min(1),
+	name: z.string().min(1).max(Config.DEFAULT_MAX_LENGTH),
 });
 export type SignupPayload = z.infer<typeof signupPayloadSchema>;
 
@@ -9,36 +10,35 @@ export const settingsPayloadSchema = signupPayloadSchema;
 export type SettingsPayload = SignupPayload;
 
 export const createSeasonPayloadSchema = z.object({
-	name: z.string().min(1),
-	description: z.string().default(""),
+	name: z.string().min(1).max(Config.DEFAULT_MAX_LENGTH),
+	description: z.string().max(Config.DEFAULT_MAX_LENGTH).default(""),
 	rules: z.coerce.number().int().min(1),
 });
 export type CreateSeasonPayload = z.infer<typeof createSeasonPayloadSchema>;
 
-export const editSeasonPayloadSchema = z.object({
-	name: z.string().min(1),
-	description: z.string().default(""),
-});
+export const editSeasonPayloadSchema = createSeasonPayloadSchema.omit({ rules: true });
 export type EditSeasonPayload = z.infer<typeof editSeasonPayloadSchema>;
 
 export const submitPlaylistPayloadSchema = z.object({
-	link: z.string().transform((address, ctx): string => {
-		try {
-			return new URL(address).toString();
-		} catch {
-			// Do nothing :)
-		}
-		ctx.addIssue({
-			code: z.ZodIssueCode.custom,
-			message: "Link should be a website url",
-		});
-		return z.NEVER;
-	}),
+	link: z
+		.string()
+		.max(Config.DEFAULT_MAX_LENGTH)
+		.transform((address, ctx): string => {
+			try {
+				return new URL(address).toString();
+			} catch {
+				// Do nothing :)
+			}
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				message: "Link should be a website url",
+			});
+			return z.NEVER;
+		}),
 });
 export type SubmitPlaylistPayload = z.infer<typeof submitPlaylistPayloadSchema>;
 
 export const submitRulesSchema = z.object({
-	recipientId: z.string().min(1),
-	rules: z.array(z.string()).min(1),
+	rules: z.array(z.string().min(1).max(Config.DEFAULT_MAX_LENGTH)).min(1),
 });
 export type SubmitRulesSchema = z.infer<typeof submitRulesSchema>;

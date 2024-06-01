@@ -40,7 +40,7 @@ export const views = express()
 	.get("/authorize", checkLoggedIn, async (req, res) => {
 		const result = authorizePayloadSchema.safeParse(req.query);
 		if (!result.success) {
-			return res.render("pages/authorize", { query: req.query, error: "" });
+			return res.render("pages/authorize", { query: req.query, error: result.error.message });
 		}
 		try {
 			const { email, token: temporaryToken } = result.data;

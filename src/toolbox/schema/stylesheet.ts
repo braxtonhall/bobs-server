@@ -1,8 +1,10 @@
 import { z } from "zod";
+import Config from "../../Config";
 
 export const stylesheetSchema = z
 	.string()
-	.transform((address) => address.trim())
+	.trim()
+	.max(Config.DEFAULT_MAX_LENGTH)
 	.transform((address, ctx): string | undefined => {
 		if (address === "") {
 			return undefined;

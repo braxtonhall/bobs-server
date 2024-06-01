@@ -41,9 +41,8 @@
 	<% } %>
 	<% const submitRulesEndpoint = `/secret-dj/games/${season.id}/rules`%>
 	<form class="enroll-game-form" method="POST" action="<%=submitRulesEndpoint%>">
-		<input type="hidden" name="recipientId" value="<%= participant.id %>" readonly />
-		<% for (let i = 0; i < season.ruleCount; i++) { %>
-		<% const currentRule = recipient === null ? "" : recipient.rules[i].text %>
+		<% for (let i = 0; i < season.ruleCount; i++) { %> <% const currentRule = recipient === null ? "" :
+		recipient.rules[i].text %>
 		<div>
 			<label for="rule-<%=i+1%>">rule <%=season.ruleCount > 1 ? i + 1 : ''%></label>
 			<br />
