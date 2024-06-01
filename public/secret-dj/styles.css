@@ -115,31 +115,35 @@ iframe.comments {
 tr.post-row {
 	display: block;
 	padding-bottom: 1em;
-	position: relative;
-	width: 80%;
+	width: 100%;
 }
 
 tr.post-row td {
 	text-align: left;
 }
 
-tr.post-row td:first-child {
-	position: absolute;
-	right: -10px;
+tr.post-row > td.post-delete {
+	padding: 0;
+}
+
+td.post-delete:not(:has(> form)) {
+	display: none;
+}
+
+tr.post-row td.post-delete > form {
 	padding: 0;
 	margin: 0;
+	width: unset;
 	border: none;
 }
 
-tr.post-row td:first-child > form {
-	right: 0;
-	padding: 0;
+tr.post-row td.post-delete > form > button {
 	margin: 0;
-	width: 0;
+	background: none;
 	border: none;
 }
 
-tr.post-row td:nth-child(2) {
+tr.post-row > td.post-message {
 	display: block;
 }
 

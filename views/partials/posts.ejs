@@ -1,10 +1,10 @@
 <table class="post-table">
 	<thead class="post-thead">
 		<tr class="post-header">
-			<th class="post-delete post-header-cell"></th>
 			<th class="post-message post-header-cell">post</th>
 			<th class="post-poster post-header-cell">poster</th>
 			<th class="post-date post-header-cell">date</th>
+			<th class="post-delete post-header-cell">delete</th>
 			<% if (!box.deleted) { %>
 			<th class="post-reply post-header-cell">reply</th>
 			<% } %>
@@ -12,13 +12,6 @@
 	</thead>
 	<% for (const post of posts) { %>
 	<tr class="post-row">
-		<td class="post-delete">
-			<% if (post.deletable) { /* TODO should pass along the query parameters!!! */ %>
-			<form class="delete-form" method="POST" action="/boxes/<%= box.id %>/posts/<%= post.id %>/delete">
-				<button class="delete-form-submit">delete</button>
-			</form>
-			<% } %>
-		</td>
 		<td class="post-message">
 			<% if (post.parent) {%>
 			<blockquote class="post-parent-content">
@@ -32,6 +25,13 @@
 		</td>
 		<td class="post-poster"><%= post.from || 'anonymous' %></td>
 		<td class="post-date date-time" data-ms="<%=post.createdAt.valueOf()%>"><%= post.createdAt.toUTCString() %></td>
+		<td class="post-delete">
+			<% if (post.deletable) { /* TODO should pass along the query parameters!!! */ %>
+			<form class="delete-form" method="POST" action="/boxes/<%= box.id %>/posts/<%= post.id %>/delete">
+				<button class="delete-form-submit">delete</button>
+			</form>
+			<% } %>
+		</td>
 		<% if (!box.deleted) { %>
 		<td class="post-reply">
 			<details>
