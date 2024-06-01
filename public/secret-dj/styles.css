@@ -42,6 +42,11 @@ a {
 	width: 50%;
 }
 
+.description {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
 @media only screen and (max-width: 700px) {
 	.embed {
 		width: 100%;

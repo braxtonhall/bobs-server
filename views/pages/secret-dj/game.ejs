@@ -18,7 +18,7 @@
 			<% } %>
 			<div>
 				<h2><%=season.name%></h2>
-				<p><%=season.description%></p>
+				<p class="description"><%=season.description%></p>
 				<% if (season.state === 'sign-up') { %>
 				<%- include('../../partials/secret-dj/game/sign-up'); %>
 				<% } else if (season.state === 'in-progress') { %>
