@@ -166,9 +166,10 @@ const listInternal = ({ boxId, showDead, cursor, count, ip }: Query) => {
 			},
 			_count: {
 				select: {
-					children: {
-						where: showDead ? {} : defaultQuery,
-					},
+					// We want all children, as this is used for
+					// if something is deletable
+					// not just undead children
+					children: {},
 				},
 			},
 		},

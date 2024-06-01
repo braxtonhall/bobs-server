@@ -87,7 +87,6 @@ export const createPost = async (
 						}
 					: undefined,
 				deletable: true,
-				children: 0,
 				content,
 				from,
 			});

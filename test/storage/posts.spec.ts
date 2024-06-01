@@ -339,7 +339,7 @@ describe("posts", () => {
 					parent: null,
 					createdAt: aliveA.createdAt,
 					poster: { ip: hashString(posterIp) },
-					_count: { children: 0 },
+					_count: { children: 1 },
 					box: { deleted: false },
 				},
 			]);

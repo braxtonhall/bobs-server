@@ -21,7 +21,6 @@ export const toPostMember =
 					content: post.parent.content,
 				}
 			: undefined,
-		children: post._count.children,
 		deletable:
 			post.box.deleted === false &&
 			post.poster.ip === requestor &&
