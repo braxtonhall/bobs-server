@@ -39,6 +39,6 @@ export const submitPlaylistPayloadSchema = z.object({
 export type SubmitPlaylistPayload = z.infer<typeof submitPlaylistPayloadSchema>;
 
 export const submitRulesSchema = z.object({
-	rules: z.array(z.string().min(1).max(Config.DEFAULT_MAX_LENGTH)).min(1),
+	rules: z.array(z.string().min(1).max(Config.DESCRIPTION_MAX_LENGTH)).min(1),
 });
 export type SubmitRulesSchema = z.infer<typeof submitRulesSchema>;
