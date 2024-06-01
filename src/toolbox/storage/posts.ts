@@ -22,6 +22,7 @@ type Query = {
 	cursor?: string;
 	count: number;
 	ip: HashedString;
+	back?: boolean;
 };
 
 export type InternalPost = Awaited<ReturnType<typeof listInternal>>[number];
@@ -173,7 +174,7 @@ const defaultSelection = <T>(whereParent: T) => ({
 	},
 });
 
-const listInternal = ({ boxId, showDead, cursor, count, ip }: Query) => {
+const listInternal = ({ boxId, showDead, cursor, count, ip, back }: Query) => {
 	const defaultQuery = makeDefaultQuery(ip);
 	return db.post.findMany({
 		select: defaultSelection(showDead ? {} : defaultQuery),
@@ -185,7 +186,7 @@ const listInternal = ({ boxId, showDead, cursor, count, ip }: Query) => {
 		orderBy: {
 			sort: "desc",
 		},
-		take: count,
+		take: back ? -count : count,
 	});
 };
 
