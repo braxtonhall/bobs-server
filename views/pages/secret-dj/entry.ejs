@@ -19,7 +19,7 @@
 				<% } %>
 				<%if (entry.rules.length === 1) { %>
 				<h4><%=entry.rules[0].text%></h4>
-				<% } else { %>
+				<% } else if (entry.rules.length) { %>
 				<h4>rules:</h4>
 				<ol>
 					<% for (const rule of entry.rules) { %>

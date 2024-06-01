@@ -11,8 +11,8 @@ type Environment = {
 
 export const createGame = async ({ name, description, ruleCount, ownerId, emailId }: Environment): Promise<string> =>
 	db.$transaction(async (tx) => {
-		if (ruleCount < 1) {
-			throw new Error("Rule count must be equal to or greater than 1");
+		if (ruleCount < 0) {
+			throw new Error("Rule count must be equal to or greater than 0");
 		}
 
 		// https://github.com/prisma/prisma/issues/7093 this is *really* annoying

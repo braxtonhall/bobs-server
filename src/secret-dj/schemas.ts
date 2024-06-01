@@ -12,7 +12,7 @@ export type SettingsPayload = SignupPayload;
 export const createSeasonPayloadSchema = z.object({
 	name: z.string().min(1).max(Config.DEFAULT_MAX_LENGTH),
 	description: z.string().max(Config.DESCRIPTION_MAX_LENGTH).default(""),
-	rules: z.coerce.number().int().min(1),
+	rules: z.coerce.number().int().min(0),
 });
 export type CreateSeasonPayload = z.infer<typeof createSeasonPayloadSchema>;
 
@@ -39,6 +39,6 @@ export const submitPlaylistPayloadSchema = z.object({
 export type SubmitPlaylistPayload = z.infer<typeof submitPlaylistPayloadSchema>;
 
 export const submitRulesSchema = z.object({
-	rules: z.array(z.string().min(1).max(Config.DESCRIPTION_MAX_LENGTH)).min(1),
+	rules: z.array(z.string().min(1).max(Config.DESCRIPTION_MAX_LENGTH)).default([]),
 });
 export type SubmitRulesSchema = z.infer<typeof submitRulesSchema>;

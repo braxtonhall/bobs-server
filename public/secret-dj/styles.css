@@ -52,6 +52,14 @@ a {
 	text-align: left;
 }
 
+.entry-table-rule > ol {
+	padding-left: 20px;
+}
+
+.entry-table-rule > ol > li + li {
+	margin-top: 0.5em;
+}
+
 @media only screen and (max-width: 700px) {
 	.embed,
 	form {

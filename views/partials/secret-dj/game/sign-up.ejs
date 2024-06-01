@@ -42,16 +42,21 @@
 	<% } %>
 	<% } %>
 	<hr />
-	<% const action = recipient === null ? 'submit' : 'edit';%>
-	<h3>
-		<%=action%>
-		your rules
-	</h3>
+	<h3>your controls</h3>
 	<% if (recipient !== null) { %>
-	you have successfully submitted your rules! now you can wait for the owner to start the game. you will get an email
-	when it is time to start making a playlist for someone
+	you have successfully joined! now you can wait for the owner to start the game. you will get an email when it is
+	time to start making a playlist for someone
 	<% } %>
+
+	<% if (recipient === null && season.ruleCount > 0) { %> want to join? create
+	<%= season.ruleCount === 1 ? 'a rule' : 'rules'%>
+	for the playlist that you want to receive
+	<% } %>
+
+	<% const action = recipient === null ? 'join' : 'edit';%>
 	<% const submitRulesEndpoint = `/secret-dj/games/${season.id}/rules`%>
+
+	<% if (recipient === null || season.ruleCount > 0) { %>
 	<form class="enroll-game-form" method="POST" action="<%=submitRulesEndpoint%>">
 		<% for (let i = 0; i < season.ruleCount; i++) { %> <% const currentRule = recipient === null ? "" :
 		recipient.rules[i].text %>
@@ -67,8 +72,9 @@
 		/>
 
 		<% } %>
-		<button type="submit"><%= action %> rules!</button>
+		<button type="submit"><%= action %></button>
 	</form>
+	<% } %>
 	<% if (recipient !== null) { %>
 	<form class="leave-game-form" method="post" action="/secret-dj/games/<%=season.id%>/leave">
 		<button type="submit" class="leave-game-button">leave game</button>
