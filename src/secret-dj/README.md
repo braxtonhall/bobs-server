@@ -2,7 +2,6 @@
 
 # Blocking a v1 release
 
-- Limit number of characters in every string field (both client and server side)
 - Views should redirect to https
 
 # Not blocking a v1 release
