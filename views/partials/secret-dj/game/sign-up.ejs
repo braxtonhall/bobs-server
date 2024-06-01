@@ -36,7 +36,7 @@
 	</form>
 	<% } else { %>
 	<% const deleteEndpoint = `/secret-dj/games/${season.id}/delete`%>
-	<form class="delete-game-form" method="POST" action="<%=deleteEndpoint%>">
+	<form class="delete-game-form" action="<%=deleteEndpoint%>">
 		<button type="submit" class="delete-game-button">delete game</button>
 	</form>
 	<% } %>

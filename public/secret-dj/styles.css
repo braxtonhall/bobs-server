@@ -104,6 +104,7 @@ hr {
 }
 
 .delete-game-button,
+.cancel-submit-button,
 .leave-game-button {
 	background-color: #ffd1d1;
 }

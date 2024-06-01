@@ -28,7 +28,7 @@
 				</ol>
 				<% }  %>
 				<% if (entry.season.state === 'ended') { %>
-				<%- include('../../partials/secret-dj/entry-embed', { recipient: entry }); %>
+				<%- include('../../partials/secret-dj/entry-embed', { link: entry.submissionUrl }); %>
 				<% } else { %>
 				the playlist
 				<%=entry.submissionUrl ? 'is ready and' : ''%>

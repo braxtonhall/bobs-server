@@ -7,7 +7,12 @@
 	<li><%=rule.text%></li>
 	<% } %>
 </ol>
-<form class="submit-playlist-form" method="POST" action="<%= `/secret-dj/games/${season.id}/playlist` %>">
+<% if (dj.submissionUrl) { %>
+you have successfully submitted a playlist! one made for you will appear here when all playlists have been submitted
+<% } else { %>
+it's time to start making a playlist! following the rules above, curate a playlist, and submit it here
+<% } %>
+<form class="submit-playlist-form" action="<%= `/secret-dj/games/${season.id}/playlist` %>">
 	<label for="playlist-url">playlist url</label>
 	<input
 		name="link"
@@ -18,7 +23,7 @@
 	/>
 	<button type="submit"><%=dj.submissionUrl === null ? 'submit' : 'edit'%> playlist!</button>
 </form>
-<%- include('../entry-embed', { recipient: {...dj, dj: participant} }); %>
+<%- include('../entry-embed', { link: dj.submissionUrl }); %>
 <% } else { %>
 are you supposed to be playing in this game of secret dj?
 <a href="/login?redirect=<%=encodeURIComponent(`/secret-dj/games/${season.id}`)%>">click here to log in!</a>

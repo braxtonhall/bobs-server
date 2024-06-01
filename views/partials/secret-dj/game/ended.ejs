@@ -9,7 +9,7 @@
 		<% } %>
 	</ol>
 	<% if (recipient.dj) { %>
-	<%- include('../entry-embed'); %>
+	<%- include('../entry-embed', {link: recipient.submissionUrl}); %>
 	<% } %>
 	<% } %>
 </h3>

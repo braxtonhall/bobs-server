@@ -202,6 +202,14 @@ export const views = express()
 			return res.redirect(`/secret-dj/games/${seasonId}`);
 		}
 	})
+	.get("/games/:id/delete", async (req, res) => {
+		const seasonId = req.params.id;
+		try {
+			return res.render("pages/secret-dj/delete", { season: await getSeason(seasonId) });
+		} catch {
+			return res.sendStatus(404);
+		}
+	})
 	.post("/games/:id/delete", async (req, res) => {
 		const seasonId = req.params.id;
 		try {
@@ -209,6 +217,9 @@ export const views = express()
 			await deleteGame({ seasonId, ownerId });
 			return res.redirect("/secret-dj");
 		} catch {
+			// TODO if the game has ALREADY been deleted... really we should be checking if this is a...
+			//  404 -> go back to /secret-dj
+			//  403 -> go back to /secret-dj/games/seasonId
 			clearMessagesAndSet({ req, error: "sorry, that didn't quite work" });
 			return res.redirect(`/secret-dj/games/${seasonId}`);
 		}
@@ -246,6 +257,17 @@ export const views = express()
 			return res.redirect(`/secret-dj/games/${seasonId}`);
 		} catch {
 			clearMessagesAndSet({ req, error: "sorry, that didn't quite work" });
+			return res.redirect(`/secret-dj/games/${seasonId}`);
+		}
+	})
+	.get("/games/:id/playlist", async (req, res) => {
+		const seasonId = req.params.id;
+		try {
+			const { link } = submitPlaylistPayloadSchema.parse(req.query);
+			const season = await getSeason(seasonId);
+			return res.render("pages/secret-dj/submit", { link, season });
+		} catch (err) {
+			clearMessagesAndSet({ req, error: "that didn't work" });
 			return res.redirect(`/secret-dj/games/${seasonId}`);
 		}
 	})

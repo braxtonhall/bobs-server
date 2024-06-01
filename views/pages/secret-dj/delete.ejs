@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<%- include('../../partials/secret-dj/head'); %>
+	</head>
+	<body>
+		<header>
+			<%- include('../../partials/header'); %>
+		</header>
+
+		<main>
+			<%- include('../../partials/secret-dj/secret-dj-title', {path: [{href: `/secret-dj/games/${season.id}`, name: season.name}]}); %>
+			<div>
+				<h2>delete game</h2>
+				are you sure you want to delete this game? to confirm, type "delete"
+
+				<% const deleteEndpoint = `/secret-dj/games/${season.id}/delete`%>
+				<form class="delete-game-form" method="post" action="<%= deleteEndpoint %>">
+					<label for="confirmation">confirmation</label>
+					<input
+						id="confirmation"
+						required
+						placeholder="delete"
+						autocomplete="off"
+						pattern="delete"
+						title="delete"
+					/>
+					<button type="submit" class="delete-game-button">delete game</button>
+				</form>
+			</div>
+		</main>
+	</body>
+</html>
