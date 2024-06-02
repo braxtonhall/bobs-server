@@ -30,14 +30,26 @@ const create = async (data: { name: string; origin?: string; ownerId: string; st
 
 const edit = async (
 	id: string,
-	ownerId: string,
+	userId: string,
 	data: { name?: string; origin?: string; stylesheet?: string },
 ): Promise<Result<undefined, Failure.MISSING_DEPENDENCY | Failure.FORBIDDEN>> => {
 	if (await exists(id)) {
 		const result = await db.box.update({
 			where: {
 				id,
-				ownerId,
+				OR: [
+					{
+						ownerId: userId,
+					},
+					{
+						permissions: {
+							some: {
+								emailId: userId,
+								canSetDetails: true,
+							},
+						},
+					},
+				],
 			},
 			data,
 			select: { id: true },
@@ -64,10 +76,28 @@ const getStatus = (id: string) =>
 		}
 	});
 
-const getDetails = (id: string, ownerId: string, postCount: number, cursor?: string) =>
+const getDetails = (id: string, userId: string, postCount: number, cursor?: string) =>
 	db.box
 		.findUnique({
-			where: { id, ownerId },
+			where: {
+				id,
+				OR: [
+					{ ownerId: userId },
+					{
+						permissions: {
+							some: {
+								emailId: userId,
+								OR: [
+									{ canKill: true },
+									{ canSetDetails: true },
+									{ canDelete: true },
+									{ canSetPermissions: true },
+								],
+							},
+						},
+					},
+				],
+			},
 			select: {
 				id: true,
 				name: true,
@@ -91,6 +121,17 @@ const getDetails = (id: string, ownerId: string, postCount: number, cursor?: str
 						dead: true,
 					},
 				},
+				permissions: {
+					where: {
+						emailId: userId,
+					},
+					select: {
+						canKill: true,
+						canSetDetails: true,
+						canDelete: true,
+						canSetPermissions: true,
+					},
+				},
 			},
 		})
 		.then((result) => {
@@ -105,11 +146,26 @@ const getDetails = (id: string, ownerId: string, postCount: number, cursor?: str
 			}
 		});
 
-const list = async (ownerId: string, deleted: boolean, count: number, cursor?: string) => {
+const list = async (userId: string, deleted: boolean, count: number, cursor?: string) => {
 	const boxes = await db.box.findMany({
 		where: {
-			ownerId,
 			deleted,
+			OR: [
+				{ ownerId: userId },
+				{
+					permissions: {
+						some: {
+							emailId: userId,
+							OR: [
+								{ canKill: true },
+								{ canSetDetails: true },
+								{ canDelete: true },
+								{ canSetPermissions: true },
+							],
+						},
+					},
+				},
+			],
 		},
 		cursor: typeof cursor === "string" ? { id: cursor } : undefined,
 		orderBy: {
@@ -120,15 +176,27 @@ const list = async (ownerId: string, deleted: boolean, count: number, cursor?: s
 	return { boxes: boxes.slice(0, count), cursor: boxes[count]?.id };
 };
 
-const setBoxDeletion = async (id: string, ownerId: string, deleted: boolean) =>
+const setBoxDeletion = async (id: string, userId: string, deleted: boolean) =>
 	db.$transaction(async (tx) => {
-		const box = await tx.box.findUnique({ where: { id }, select: { deleted: true, ownerId: true } });
+		const box = await tx.box.findUnique({
+			where: { id },
+			select: {
+				deleted: true,
+				ownerId: true,
+				permissions: {
+					where: {
+						emailId: userId,
+						canDelete: true,
+					},
+				},
+			},
+		});
 		if (box === null) {
 			return Err(Failure.MISSING_DEPENDENCY);
-		} else if (box.ownerId !== ownerId) {
+		} else if (box.ownerId !== userId && box.permissions.length === 0) {
 			return Err(Failure.FORBIDDEN);
 		} else {
-			return Ok(await tx.box.update({ where: { id, ownerId }, data: { deleted }, select: { deleted: true } }));
+			return Ok(await tx.box.update({ where: { id }, data: { deleted }, select: { deleted: true } }));
 		}
 	});
 

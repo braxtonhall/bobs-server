@@ -129,7 +129,7 @@ const boxAdminViews = express()
 		match(parse(editBoxSchema, req.body))
 			.with(Ok(P.select()), async (payload) =>
 				match(await boxesClient.edit(req.params.id, res.locals.email.id, payload))
-					.with(Ok(), () => res.redirect(`/toolbox/boxes/admin/${req.params.id}?message=success`))
+					.with(Ok(), () => res.redirect(`/toolbox/boxes/admin/${req.params.id}?message=success`)) // TODO express-session here
 					.with(Err(Failure.FORBIDDEN), () => res.sendStatus(403))
 					.with(Err(Failure.MISSING_DEPENDENCY), () => res.sendStatus(404))
 					.exhaustive(),
