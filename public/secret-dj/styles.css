@@ -64,6 +64,17 @@ a {
 	}
 }
 
+input {
+	width: 62%;
+	box-sizing: border-box;
+}
+
+textarea {
+	width: 100%;
+	box-sizing: border-box;
+	aspect-ratio: 1.618/0.25;
+}
+
 table,
 th,
 td {
