@@ -1,0 +1,2199 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<!-- Required meta tags -->
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+		<!-- Bootstrap CSS -->
+		<link
+			rel="stylesheet"
+			href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+			integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+			crossorigin="anonymous"
+		/>
+
+		<title>Secret DJ</title>
+
+		<link rel="icon" type="image/png" href="/public/secret-dj/favicon.png" />
+
+		<style>
+			html,
+			body,
+			#root,
+			#loading {
+				height: 100% !important;
+			}
+
+			body {
+				margin: 0 !important;
+			}
+
+			#loading {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+		</style>
+		<style>
+			body {
+				background-color: #e0cfe6;
+			}
+			#table-center {
+				text-align: center;
+				padding: 5% 2% 1%;
+			}
+			#table-center table {
+				text-align: left;
+			}
+			#table-center table .playlist-cell {
+				width: 250px;
+			}
+			#registration-landing {
+				display: grid;
+				grid-template-columns: 25% 75%;
+			}
+			#registration-landing #sign-up-text {
+				padding: 5% 0 1%;
+				font-family: Tahoma, Geneva, sans-serif;
+				z-index: -1;
+			}
+			#registration-landing #sign-up-text #secret {
+				position: absolute;
+				font-size: 700%;
+				color: #f0f8ff;
+			}
+			#registration-landing #sign-up-text #dj {
+				position: absolute;
+				font-size: 2100%;
+				margin-top: 2%;
+				margin-left: 3%;
+				color: #f0f8ff;
+			}
+			#registration-landing #sign-up-text #sign-up {
+				position: absolute;
+				z-index: 1;
+				margin-top: 14%;
+				font-size: 500%;
+			}
+			#registration-landing #sign-up-text #more-info {
+				position: absolute;
+				z-index: 1;
+				margin-top: 20%;
+				margin-left: 5%;
+				font-size: 300%;
+			}
+			#registration-landing #sign-up-text #more-info-small {
+				position: absolute;
+				z-index: 1;
+				margin-top: 20%;
+				margin-left: 2%;
+				font-size: 200%;
+			}
+			form {
+				padding: 2% 5% 1%;
+				width: 100%;
+			}
+			form #button-centerer {
+				text-align: center;
+			}
+			form #new-user-entries {
+				display: grid;
+				grid-template-columns: 1fr;
+				grid-gap: 20px;
+				justify-items: center;
+			}
+			form #new-user-entries #personal-info {
+				width: 100%;
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				grid-gap: 20px;
+				justify-items: center;
+			}
+			form #new-user-entries .form-group {
+				width: 100%;
+				margin-bottom: 0;
+			}
+			#go-to-signup {
+				position: absolute;
+				margin-left: 70%;
+				margin-top: 30%;
+			}
+			#closed-reg-sdj {
+				font-family: Tahoma, Geneva, sans-serif;
+				z-index: -1;
+				color: #f0f8ff;
+				font-size: 700%;
+				position: absolute;
+			}
+			#closed-reg-info {
+				font-family: Tahoma, Geneva, sans-serif;
+				color: #f0f8ff;
+				margin-left: 1%;
+			}
+			#recipient-instructions {
+				margin-top: 5%;
+				text-align: right;
+				padding: 2% 5% 1%;
+			}
+			#recipient-instructions #gap-filler {
+				height: 5em;
+				width: 10%;
+			}
+			#recipient-instructions form {
+				padding: 0 0 0;
+				width: 100%;
+				text-align: left;
+			}
+			#submit-playlist-container #submit-playlist {
+				float: left;
+				height: 3em;
+			}
+			#submit-playlist-container .alert {
+				width: 80%;
+				float: right;
+			}
+			#logout {
+				margin-left: 1em;
+				margin-bottom: 1em;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="root" style="">
+			<h3 id="closed-reg-sdj">SECRET DJ</h3>
+			<div id="table-container">
+				<div id="table-center">
+					<!-- Nav tabs -->
+					<ul class="nav nav-tabs" id="myTab" role="tablist">
+						<li class="nav-item">
+							<a
+								class="nav-link active"
+								id="present-tab"
+								data-toggle="tab"
+								href="#present"
+								role="tab"
+								aria-controls="present"
+								aria-selected="true"
+								>recc centre</a
+							>
+						</li>
+						<li class="nav-item">
+							<a
+								class="nav-link"
+								id="side-d-tab"
+								data-toggle="tab"
+								href="#side-d"
+								role="tab"
+								aria-controls="side-d"
+								aria-selected="false"
+								>March 2022</a
+							>
+						</li>
+						<li class="nav-item">
+							<a
+								class="nav-link"
+								id="310-tab"
+								data-toggle="tab"
+								href="#cpsc310"
+								role="tab"
+								aria-controls="310"
+								aria-selected="false"
+								>CPSC 310 2020W2</a
+							>
+						</li>
+						<li class="nav-item">
+							<a
+								class="nav-link"
+								id="side-c-tab"
+								data-toggle="tab"
+								href="#side-c"
+								role="tab"
+								aria-controls="side-c"
+								aria-selected="false"
+								>January 2021</a
+							>
+						</li>
+						<li class="nav-item">
+							<a
+								class="nav-link"
+								id="side-b-tab"
+								data-toggle="tab"
+								href="#side-b"
+								role="tab"
+								aria-controls="side-b"
+								aria-selected="false"
+								>July 2020</a
+							>
+						</li>
+						<li class="nav-item">
+							<a
+								class="nav-link"
+								id="side-a-tab"
+								data-toggle="tab"
+								href="#side-a"
+								role="tab"
+								aria-controls="side-a"
+								aria-selected="false"
+								>June 2019</a
+							>
+						</li>
+					</ul>
+
+					<!-- Tab panes -->
+					<div class="tab-content">
+						<div
+							class="tab-pane fade show active"
+							id="present"
+							role="tabpanel"
+							aria-labelledby="present-tab"
+						>
+							<table class="table">
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Rule 1</th>
+										<th>Rule 2</th>
+										<th>Playlist</th>
+									</tr>
+								</thead>
+								<tbody id="participant-table-body">
+									<tr class="recording-list-item">
+										<td class="name">braxton</td>
+										<td class="rule1">
+											a sketch of your home in song. be that a place, a memory, or an aspiration
+										</td>
+										<td class="rule2">playlist title named after food that makes you feel safe</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/20gGGcCPdeBoD66BJgBwV6?si=BZa8BhlzSWe4IeBB9f8D4w"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">leanna</td>
+										<td class="rule1">
+											no songs that have had any promotion by its artists! (no mvs, not a
+											single—any songs u feel dont get enough love from an artist and/or their
+											fans)
+										</td>
+										<td class="rule2">
+											songs you'd listen to when you're feeling aaagaggghghhg!!!!! what that means
+											is up to u but if u want some more direction: songs for when your mind is
+											moving a mile a minute
+										</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/78cDDWy2xPuZ7wGAXm2bMm?si=kQCCxB2lRG6KwMUePYST0w"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">avery</td>
+										<td class="rule1">dark and gloomy please</td>
+										<td class="rule2">some Italian artists would be great</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/7sFmV5dvj7636u3LkWlgUU"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">aymen</td>
+										<td class="rule1">songs you dance to in your room (!!!)</td>
+										<td class="rule2">
+											songs that make you feel like you’re inside a computer/machine among the
+											wiring, whirring, and blinking lights
+										</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/7eelkvu0aDXLxkTlvz0g6T?si=29_BOb5iSsCik7drgxFmmw"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Daniel</td>
+										<td class="rule1">Only canadian artists</td>
+										<td class="rule2">Only music from the last 5 years</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/37bqpgzSefnQTHjWsNeAcB?si=YtBTJ3OPSeegkSeTpemJaQ"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Cam</td>
+										<td class="rule1">Music that makes you feel like you can fly</td>
+										<td class="rule2">
+											From the first track to the last, the vibe of the Playlist should reflect
+											your accension based on the bell curve
+										</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/3B1Anuf67Zrj9cFDr2ZBcR?si=xH48Q9HfSjeB8mT8SsHrFg"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">David</td>
+										<td class="rule1">
+											Songs must features prominent samples or be the sample itself
+										</td>
+										<td class="rule2">
+											should cover multiple genres, e.g. hip hop and house and ...
+										</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/0qAzLqJ4dIwpjfU8FYyX27?si=870e1bcfbdcd466d"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Jin</td>
+										<td class="rule1">
+											duets exclusively! (defined as "musical composition for two performers in
+											which the performers have equal importance to the piece".) with voices or
+											instrumental, doesn't matter!
+										</td>
+										<td class="rule2">
+											must include pieces from 5 different decades of your choice
+										</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/4OWvcE3k1eMvMeDRE3bxlS"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">shirley</td>
+										<td class="rule1">songs that feel like being in some sort of liminal space</td>
+										<td class="rule2">
+											songs that feel like they'd be in the end credits of a film (any genre)
+										</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/5AkAiGXBava3rdUc0pS0lE"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">May</td>
+										<td class="rule1">A few songs from up and coming artists (debut after 2020)</td>
+										<td class="rule2">A genre you've been into lately</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/1kZSpHEdrauF8x03jjSSU9?si=713a4001cd0243a7"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Artemisia</td>
+										<td class="rule1">Must have pretty synths</td>
+										<td class="rule2">Either able to shake ass or jump around to it</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/2Xo5Qx9YPejsk5q3ccx3dH?si=d39f0aec5983435f"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="tab-pane fade" id="side-d" role="tabpanel" aria-labelledby="side-d-tab">
+							<table class="table">
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Rule 1</th>
+										<th>Rule 2</th>
+										<th>Playlist</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr class="recording-list-item">
+										<td class="name">Braxton</td>
+										<td class="rule1">
+											make a playlist for your high-school love. it has been a while. tell them
+											something.
+										</td>
+										<td class="rule2">favour kindness and sentimentality.</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/5Gf4KCattmxiEOzkIfRAQO"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">David</td>
+										<td class="rule1">Make it cohesive, ie no sudden/jarring changes</td>
+										<td class="rule2">Have fun with it. Make a fun playlist</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/1DzKPozyiNIr74XiMYcGCO"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Kayleigh</td>
+										<td class="rule1">
+											Please include some songs that make you feel “main character energy”
+										</td>
+										<td class="rule2">
+											There has to be a song in the playlist (you at least don’t mind) which has
+											one of the followings words in the title: night, blue, purple, city
+										</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/5vAWROgZ9qmB1tdGlqxUDb"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">rat</td>
+										<td class="rule1">"Songs to X into a Y to" for some X, Y</td>
+										<td class="rule2">
+											Every transition should be so disorienting I throw up out of sheer
+											confusion, have fun with it
+										</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/0ShPAhO0tCuogpPi4yUnEo"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Artemisia</td>
+										<td class="rule1">gay and slutty</td>
+										<td class="rule2">euphoric synths</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/7miNakSCQMNlaOCquMVJXO"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">avery</td>
+										<td class="rule1">im a soft boy, please nothing too harsh</td>
+										<td class="rule2">
+											given the mantra "ahead, ahead, i am pushing", what songs come to mind?
+										</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/1xUJkVoFilTUPBQMDxx7d9"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Cam</td>
+										<td class="rule1">
+											First half of the night at a party. First 3 tracks gets things going, next 3
+											are played mid-rager.
+										</td>
+										<td class="rule2">
+											Second half of the night. Next 2 theme a fight, 2 tracks of the host
+											shutting things down and a final track themes you and your friends walk home
+											reminiscing over what just transpired.
+										</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/6sIJEALUROfkY783ARrYsW"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Halina</td>
+										<td class="rule1">Songs to herald Spring</td>
+										<td class="rule2">
+											Out of 8 songs, 4 songs must be sung in a language other than english
+										</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/09AE2xtReH53ZdKneeZpNE"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Alisa</td>
+										<td class="rule1">
+											from the perspective of a femme fatale/siren otw to hunt for prey
+										</td>
+										<td class="rule2">a mix of both slower and fast paced songs</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/1aMntwzjUOTXcJbmaWgW8x"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Sam</td>
+										<td class="rule1">All songs must be album openers</td>
+										<td class="rule2">only songs from artists you have seen live</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/7BvJutwQNfgQRYHO8LWzd7"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Jerry</td>
+										<td class="rule1">
+											Pick two songs you like that you feel are as far apart
+											musically/stylistically as possible. One of these songs will be the first
+											song and the other will be the last song.
+										</td>
+										<td class="rule2">
+											Fill in the rest of the playlist with songs changing in style gradually from
+											the first song to the last, like you're painting a color wheel.
+										</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/6k5TIpAfFWVd6Z07GvkJOc"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="tab-pane fade" id="cpsc310" role="tabpanel" aria-labelledby="310-tab">
+							<table class="table">
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Rule 1</th>
+										<th>Rule 2</th>
+										<th>Playlist</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr class="recording-list-item">
+										<td class="name">braxtonhall</td>
+										<td class="rule1">
+											The playlist should be a sketch of the most stressful course you took at UBC
+										</td>
+										<td class="rule2">
+											The playlist title should be the "courses_title" for this course from the
+											courses dataset, or a standout line from the syllabus
+										</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/6JHBcVjY5MlgPZGE0rxvtg?si=QkGv3CBHQZmOeIOLSVtOsg"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">DavidBromley</td>
+										<td class="rule1">
+											The playlist should be cohesive, i.e. it should attempt to maintain sonic or
+											thematic similarity. Any major transition should be done gradually unless
+											for some specific effect. Be a DJ
+										</td>
+										<td class="rule2">Celebrate your hidden treasures and noteable finds</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/03XpNusXHEXHs0Nf3XszJA?si=0Wujp3kdQ-W1Mn_y_YDoCA"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">moguri</td>
+										<td class="rule1">
+											theme must be a) the feeling u get when you think of your favorite thing or
+											b) tonally jarring from one song to the next. feel free to take any
+											liberties w/ this rule!
+										</td>
+										<td class="rule2">
+											playlist title should be the name of an indie band that doesn't exist
+										</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/5KosoW91jvviXuN4I0ig7M"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">sy</td>
+										<td class="rule1">
+											option a:&nbsp;tell a complete story with the playlist. could be something
+											as mundane as going to the gas station or something wild. have some plot
+											twists! character development! it's up to you
+										</td>
+										<td class="rule2">
+											option b: create a playlist that will make you disintegrate into the void à
+											la the disintegration loops. make the title the name of a nonexistent movie
+										</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/2t2Dps2EeIA3wjkUT8qTZP?si=d0cf68fa27bd4a30"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Bronwyn</td>
+										<td class="rule1">
+											The first letter of each song should spell out a secret message
+										</td>
+										<td class="rule2">
+											I should want to fight a bear at the end of listening to the playlist
+										</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/5asZnYqfgucDHoiC7StANi?si=czzmj49TS7WEIPMbzrpAIw"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Lian Shao</td>
+										<td class="rule1">
+											Playlist should be full of stuff you listen to while you're seriously
+											unmotivated sad and about to cry
+										</td>
+										<td class="rule2">no like seriously I'm really down bad rn</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/5Et9bGfbpERgkAK3SHjtoK?si=ypzMOsL-Q5ScMjAPHlRnHA"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">WZ</td>
+										<td class="rule1">Each track must be in a different language</td>
+										<td class="rule2">Each track must be in a different genre</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/0tVI53zsjbUF7AWpr8XNEM?si=56c7098814674fa9"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Bryan Edgecombe</td>
+										<td class="rule1">
+											No guitars and no keyboards (includes pianos, synths, organs, harpsichords,
+											etc.)
+										</td>
+										<td class="rule2">Every song must have prominent vocals.</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/3MPpG9rCFYZJPjmFWjn6IL?si=1RztLNUXQeGZxW9DGQaxYw"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Elisa</td>
+										<td class="rule1">
+											The playlist should chart your emotional state through the pandemic
+										</td>
+										<td class="rule2">Playlist description should be an existential haiku</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/6BybAiduX55fhuXSWUVIlI?si=qftklRZzQrq4AX7L_larjA"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="tab-pane fade" id="side-c" role="tabpanel" aria-labelledby="side-c-tab">
+							<table class="table">
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Rule 1</th>
+										<th>Rule 2</th>
+										<th>Playlist</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr class="recording-list-item">
+										<td class="name">Braxton</td>
+										<td class="rule1">
+											The playlist should be a sketch of the first home you lived in (other than
+											dorms) after moving out of your parents' place
+										</td>
+										<td class="rule2">
+											The playlist title must read like a Craiglist ad title for this home
+										</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/4wvmsF0GzvpcdeU3g8Lxk8?si=5o1P-IuCSaSLxkeKCzgf4w"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Jin</td>
+										<td class="rule1">
+											Make a playlist based on the beaufort wind force scale (either sea or land
+											conditions): https://en.m.wikipedia.org/wiki/Beaufort_scale
+										</td>
+										<td class="rule2">At least half of the songs must contain rap / spoken word</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/3hzMFldecQBU4dOtsPzFGR?si=Uv_o1qkERn-6ywH7yAyxAQ"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Halina</td>
+										<td class="rule1">
+											This is the age of short attention spans - no more than 8 songs please!
+										</td>
+										<td class="rule2">
+											Upbeat songs that are easy to learn to sing (folk ideally but open to
+											others)
+										</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/0mhSPJZHh8OT9g7MX9KYmc?si=inrG4BotTP-jqWCHtA8b-g"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Kayleigh</td>
+										<td class="rule1">Songs can't be before 2010.</td>
+										<td class="rule2">
+											At least one song has to be a song that evokes the colour blue for you. (Or
+											feeling of "blue", whatever you take that to mean).
+										</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/2e2Wgm9LINxD1FFnR0IjQH?si=2zk5-codQWuPcMvKWkZkvg"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Curtis</td>
+										<td class="rule1">Half playlist hot songs, half chilly songs</td>
+										<td class="rule2">have fun and be yourself</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/3ZWxeTMEepyXLKpB5wdHPY?si=H0k1hURRT3WgM63cbLUtAA"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Avery</td>
+										<td class="rule1">
+											every band must be from a country which touches the danube river
+										</td>
+										<td class="rule2">
+											you must attach an aesthetic image to the playlist which, in your opinion,
+											matches the playlists vibe
+										</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/5mJ2irpKnM2uH9I8SsZoaw?si=JMkBHzasTDeVspvYnp4VTg"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">May</td>
+										<td class="rule1">interesting use of instruments</td>
+										<td class="rule2">nujabes inspired</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/0Q928Q30qA8F8iYPsFN0ig?si=SBsVEmu2Rdq4om5xXGGomA"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Brandon</td>
+										<td class="rule1">
+											recreate, edit down, or build upon a playist you've already created
+										</td>
+										<td class="rule2">
+											capture the theme (interpret how u will) of your playlist in the title
+										</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/3WYyBw2akjdADd3KgGy2N9"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Venessa</td>
+										<td class="rule1">Needs a lot of distortion pedals</td>
+										<td class="rule2">Need at least one "shimmery-effect"/sparkly guitar part</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/37LcejKJrlic7Pa8chiEBY?si=CGqEPpcGTMCZN90pjIfjsA"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Joy</td>
+										<td class="rule1">Songs must contain fruit in the title or in the lyrics</td>
+										<td class="rule2">Song titles should have a tropical vibe</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/7e0RHG1UIzIc0ZKIeLkXtB"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Leon</td>
+										<td class="rule1">no more than two instruments per track</td>
+										<td class="rule2">genre of the first track is classic</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/1evEhO1V29yDd6kvFtF1vs?si=06U3_CDnSmGKPKS5scGP6A"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">JY</td>
+										<td class="rule1">
+											First half: songs that get u through the night, second half: songs from your
+											sex playlist, if you don't have one, make one (I don't have one either)
+										</td>
+										<td class="rule2">Each half should follow an arc</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/7jgonOqBLuw2hvexQlGjFE?si=KmCjwYOATj63HOxk-IJqnw"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Daniel</td>
+										<td class="rule1">songs that make you want to deadlift</td>
+										<td class="rule2">songs that make your body involuntarily shake</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/4iWQsVE8nwxkGuNHXMXNHo?si=mKCLSqGCQtGc73GZj2Hi0A"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Tintin</td>
+										<td class="rule1">
+											Songs that remind you of the _____est times of your life (fill in with
+											whatever emotion/state you want)
+										</td>
+										<td class="rule2">Title of playlist must describe feelings :-)</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/25OnucPwrStqIQ7iK317Si"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Sherry</td>
+										<td class="rule1">What do you think I’m yearning for?</td>
+										<td class="rule2">Chaotic primal but also classy</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/41KcdGGDyIiCAo0f54IQfs"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Paulette</td>
+										<td class="rule1">
+											the theme of the playlist should be upbeat, songs that make u excited for
+											life
+										</td>
+										<td class="rule2">try using songs from your most obscure artists</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/4YerNUbeGDodRq68FmwWmS?si=gTJeXAtZRCSeF-Vozq_HKw"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Jarette</td>
+										<td class="rule1">Songs must have been released between 1995-2005</td>
+										<td class="rule2">Sad songs only please :(</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/3dboA8pF9Ixr54Kc9rCKl4?si=3i2UioJDSVy_XjGSzGkjSQ"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Sunny n Danny</td>
+										<td class="rule1">
+											Songs we can have sex to (no drake, the weekend, and cigarettes after sex
+											pls)
+										</td>
+										<td class="rule2">Include at least 1 song that uses theremin</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://www.youtube.com/embed/videoseries?list=PLYEdeyRpiiFrz9Q7KtJyPcEDObIlr809O"
+												width="250"
+												height="80"
+												frameborder="0"
+												allow="autoplay; encrypted-media"
+												allowfullscreen=""
+											></iframe>
+											<a
+												href="https://www.youtube.com/playlist?list=PLYEdeyRpiiFrz9Q7KtJyPcEDObIlr809O"
+												>Link</a
+											>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Jack</td>
+										<td class="rule1">
+											Songs that make you think of outer space, but not strictly through lyrics
+										</td>
+										<td class="rule2">Can be any emotion really</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/1ZzHe8WBFQE4btA7YUm0Ut?si=6eDwQ52mTXWNmprIv69ZqA"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Anton</td>
+										<td class="rule1">
+											The playlist should contain songs by musicians you know (and value)
+											personally, if you know any. if not, maybe musicians from the area you live
+											in, you local scene or something like that..
+										</td>
+										<td class="rule2">
+											Some of the songs must contain a sustained tone (like a drone) and some
+											electonic (synthesized) elemements
+										</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/3eXnUWF7sYyQx6dPpZsEpI?si=8R7Sx-iZT6SFztyCiqp3-A"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Artemis (formerly EAJ)</td>
+										<td class="rule1">demonic pop hooks</td>
+										<td class="rule2">kickdrum and or butt lyric</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://youtube.com/embed/videoseries?list=PLf2ZpKaVFA0MPOyODhEx08ZSKVJreTmfh"
+												width="250"
+												height="80"
+												frameborder="0"
+												allow="autoplay; encrypted-media"
+												allowfullscreen=""
+											></iframe>
+											<a
+												href="https://youtube.com/playlist?list=PLf2ZpKaVFA0MPOyODhEx08ZSKVJreTmfh"
+												>Link</a
+											>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Cameron Lee</td>
+										<td class="rule1">
+											Songs that make you put your headphones on and look out the bus window on a
+											rainy day to
+										</td>
+										<td class="rule2">at least 2 song must have &lt;1000 plays</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/1yxhCKxAvfiivDbpxWA50H?si=5IA_eQf6TN2Bf9OyAllDww"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">ailís</td>
+										<td class="rule1">
+											imagine a night at the disco on your own - from dressing up in your dancing
+											outfit to walking home at dawn
+										</td>
+										<td class="rule2">nice to hear some 80's vibe</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/57izXhdguaKESc8aHXm40v"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Addyson</td>
+										<td class="rule1">
+											What do you want to be like when you’re 75? Create a playlist that describes
+											how you want to be in the world at 75 years old.
+										</td>
+										<td class="rule2">
+											You could use playlist titles to describe your 75 year old self or choose
+											songs where the lyrics evoke that image. (The songs themselves don’t have to
+											be older, but they can).
+										</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://youtube.com/embed/videoseries?list=PLggrej5lFW0ERjjuGoyWddOakQvmNDS7L"
+												width="250"
+												height="80"
+												frameborder="0"
+												allow="autoplay; encrypted-media"
+												allowfullscreen=""
+											></iframe>
+											<a
+												href="https://youtube.com/playlist?list=PLggrej5lFW0ERjjuGoyWddOakQvmNDS7L"
+												>Link</a
+											>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Emmanuelle</td>
+										<td class="rule1">
+											A playlist inspired by the adolescent euphoria of making your Sims
+											characters woohoo
+										</td>
+										<td class="rule2">
+											The title of the playlist must include at least one word from each selected
+											song
+										</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/3zSP3rMotliHyUDRvo5qH4?si=166d1QzuRfaJgnKnAKrXow"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Tara</td>
+										<td class="rule1">
+											First half should be songs that you feel/felt represented important periods
+											in your life.
+										</td>
+										<td class="rule2">
+											Second half must be songs that would make a good morning alarm clock to
+											start the day off right! For my sake
+										</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/1C7NXDiHqRHUNpP0PfAqcg"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Rain</td>
+										<td class="rule1">chill but not "lofi hiphop"</td>
+										<td class="rule2">no lyrics pls</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/4ZeE5nVBFm28qXDHvRSDId"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Alex</td>
+										<td class="rule1">goth/emo/melancholy/sorrowful vibes</td>
+										<td class="rule2">
+											instrumentals only (ideally not much guitar, anything else is fair game)
+											*bonus points for older classical finds
+										</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/2523p8fnA6Aj4TpsSRobR7?si=_tTaNQf8Roy5FjpvJeCOsg"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Alisa</td>
+										<td class="rule1">Songs you would hear at a secret rave</td>
+										<td class="rule2">
+											At least 50% of the featured artists should be women or nb
+										</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/0k2IqiEFylm72sRKdtMP6t?si=rEKArRh0TMulhQ297ktAVQ"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">anisa</td>
+										<td class="rule1">songs for the heart</td>
+										<td class="rule2">no english</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/2TcyfXQZXzgN1H5NzPA3vI?si=7VMOI61qTkGVUaNTInD_Rg"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Amanda&amp;Ding</td>
+										<td class="rule1">
+											The playlist should remind you of a person/event/inanimate object/idea that
+											inspired you in 2020
+										</td>
+										<td class="rule2">All songs should be good for a slow dance party</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/21JRZsauOJinae5IEzcpB4"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">jerry</td>
+										<td class="rule1">
+											songs have to be in chronological order by year of release -- no two songs
+											from the same year
+										</td>
+										<td class="rule2">tell me the story or history of a genre</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/7CiSBvRL7PxvJ09yz0Fg7v?si=UoLD-425RhKZQJaz1NuDOw"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Zak</td>
+										<td class="rule1">
+											Must be based on your favorite movie, but no songs from the soundtrack
+										</td>
+										<td class="rule2">
+											This is an easy one, add 3 songs on the end of it that you wanna show even
+											if they have no relevence
+										</td>
+
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/7Ae68QGCdGjAqy5pbta0lQ?si=aLU-lq6lRP2a_GBeSzOL3Q"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="tab-pane fade" id="side-b" role="tabpanel" aria-labelledby="side-b-tab">
+							<table class="table">
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Rule 1</th>
+										<th>Rule 2</th>
+										<th>Playlist</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr class="recording-list-item">
+										<td class="name">Cam</td>
+										<td class="rule1">All songs must NOT be in english</td>
+										<td class="rule2">
+											first song must have a clarinet, last song must have a guitar solo over 30
+											seconds
+										</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/4Q3ALnXGOnPPEB1nlvFav8?si=c1o88yJxTtaQPYX2NE5MHA"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Sam</td>
+										<td class="rule1">half of the songs must be pre 2000, half post 2000</td>
+										<td class="rule2">
+											Must choose songs that remind you of a certain time or place
+										</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/5NWTuWqYTptbC3J7UpVEn7?si=VCfMeCoYTk6FfnxoEFT-ew"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Rojina</td>
+										<td class="rule1">Alternative and/or Rap Music</td>
+										<td class="rule2">
+											Song is not about love/relationships/a man/dating... i think you get the
+											point?
+										</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/48plbL53lTEhrv5nDdTmaK?si=gaGdqSnRQY2gvMzhP-3X4Q"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">May</td>
+										<td class="rule1">should be about religion</td>
+										<td class="rule2">Or about dreaming</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/50rkFQS661qLZfJoejlJ0g?si=2RhTq_5sSuSu271rfkodzQ"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Anisa</td>
+										<td class="rule1">no country / minimal rap</td>
+										<td class="rule2">all songs must be by women/fem identifying artists</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/62AteJPw0A4tyL89Mywt9E?si=OoT0QxplRV-uYhvcgP8-bA"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Halina</td>
+										<td class="rule1">All songs must remind you of nature</td>
+										<td class="rule2">
+											4 songs from your 4 most recently saved albums/songs on Spotify
+										</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/3SxOcr6M6uhvL7WIG0URjq?si=dYYn2TG3QTGFQKGwfY2QUQ"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Jerry</td>
+										<td class="rule1">Choose a unifying theme for the playlist</td>
+										<td class="rule2">Have fun</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/4aJqIEyo59TxT9G284RK6a?si=59BQa5i0RquPlwCn--3yIg"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Braxton</td>
+										<td class="rule1">The playlist should be a self-portrait using songs</td>
+										<td class="rule2">
+											The playlist title must be something someone said about you
+										</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/3qE0rKlcEKGh2eAs44OSLp?si=QVNxUEqRQrywgYuBCakLrQ"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Jarette</td>
+										<td class="rule1">
+											Each song should remind you of a season (max 2 songs per season)
+										</td>
+										<td class="rule2">
+											All songs must be, in your opinion, overrated or underrated
+										</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/0r1oaN1vNf9y34UtXHeulV"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Zak</td>
+										<td class="rule1">playlist must get progressively harsher</td>
+										<td class="rule2">start with an instrumental</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/2Nkaqvvn6O6UjunU9ZRdhX?si=SUorWbVWREKK4wNZNHXbDQ"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Avery</td>
+										<td class="rule1">All songs must be from a country in the EU/Eurozone</td>
+										<td class="rule2">There must be some mix of "happy" and "sad" songs</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/3SdBVCQX89Z8bUFcvK8MGn"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Amanda</td>
+										<td class="rule1">All songs must be in 3/4 rhythm</td>
+										<td class="rule2">
+											At least 3 songs must be from your recently made playlists
+										</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/75r1qDQdLImJ3mJ9jA635B?si=nkuQq_x_TwawcHC-ajIzHQ "
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Jin</td>
+										<td class="rule1">
+											every song title must include an object, preferably inanimate
+										</td>
+										<td class="rule2">
+											every song must contain one line you (playlist maker) strongly relate to
+											that's not in the chorus
+										</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/2lG54dKc1ol8MuH0HiyMK6?si=wjc73IZyTAeIjuLCEq2q8w"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Pedro</td>
+										<td class="rule1">
+											The songs must have a music video with a strong narrative (YT playlist works
+											if you want to)
+										</td>
+										<td class="rule2">You can't link that one AltJ song.</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://www.youtube.com/embed/videoseries?list=PLBLPi3uNUE9IO9BjLgBfLEM6UqfPBEb4l"
+												width="250"
+												height="80"
+												frameborder="0"
+												allow="autoplay; encrypted-media"
+												allowfullscreen=""
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Tara</td>
+										<td class="rule1">
+											First half should be instrumentals and include at least one 10+ minute song
+										</td>
+										<td class="rule2">
+											Last half should have a "tone shift" during the song (open to
+											interpretation)
+										</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/6dcf1kLuVm23aXzTqd8PLf?si=sMGppyLhQQ6Nx1QVUFa4iw"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Addyson</td>
+										<td class="rule1">
+											The title of the songs should read like a poem when read back-to-back
+										</td>
+										<td class="rule2">
+											The title of the first song should be something that brings you joy, that
+											fills you up
+										</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/5HO0NgwzEb4feNodF4wOnp?si=IuQjDqIcTE2QckkNVQhsMw"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Charlie</td>
+										<td class="rule1">mostly songs that make you feel strong</td>
+										<td class="rule2">
+											mostly songs that are (in your opinion) good but (according to general
+											opinion) uncool to like
+										</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://www.youtube.com/embed/videoseries?list=PLwQFQQlaAs4x7MDO_JQxmGvgRXfwoU60U"
+												width="250"
+												height="80"
+												frameborder="0"
+												allow="autoplay; encrypted-media"
+												allowfullscreen=""
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Alisa</td>
+										<td class="rule1">
+											Idk how to explain this but if I were to map the tempo of the playlist from
+											start to finish it would look like a mountain
+										</td>
+										<td class="rule2">Send songs that you would listen to when around nature</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/5V4BVcn25vio6yZ1Gc5RXE?si=2XbHI0yRRjyjWldLWJ7yWg"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Brandon</td>
+										<td class="rule1">All BIPOC artists</td>
+										<td class="rule2">Each song has interesting album art</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/5dvA3BZtmL1WFS2jEVjUiX?si=EvQRoZ9URC6VHnSqaScUdw"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Paula</td>
+										<td class="rule1">
+											Don't worry too much about what I will like and send me your guilty pleasure
+											(yes, that song you don't want to admit you like).
+										</td>
+										<td class="rule2">
+											Send me songs that have made you feel things, like that song you always
+											listen to when you want to cry, or a song that made you laugh a little on
+											the first listen.
+										</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/3VEF3uh7rHFNXDdWQr2QTZ?si=BkbKwzCYTvOhUxvggU_uxQ"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Alex</td>
+										<td class="rule1">4 Instrumental that you think help you focus best</td>
+										<td class="rule2">4 songs that you have listened to most</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/5d09FMc53wIoz1tCGCblQ6?si=BRUipxrhQuKaeOX4SsgvnQ "
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Sydney</td>
+										<td class="rule1">
+											If I'm put on aux in a car full of people cooler than me, I must be able to
+											rely on this playlist to make me seem cool as well
+										</td>
+										<td class="rule2">nothing sad, I cry easily</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/7cm9P0IAh2tlD3dNjQoNLZ?si=oILIBcOOSmKjvT9QqWeQSw"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Tintin</td>
+										<td class="rule1">(approximately) Half of the songs cannot have any lyrics</td>
+										<td class="rule2">All vocalists must not be men</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/2UrAZXbVakOR96EpCKKqYM?si=2TNN_6hJR_GJ4uIMPciXmQ"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="tab-pane fade" id="side-a" role="tabpanel" aria-labelledby="side-a-tab">
+							<table class="table">
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>Rule 1</th>
+										<th>Rule 2</th>
+										<th>Playlist</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr class="recording-list-item">
+										<td class="name">Braxton</td>
+										<td class="rule1">
+											All songs' album artwork must in black and white (at least mostly)
+										</td>
+										<td class="rule2">No swearing in any songs!</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/4pWj90Ki55aAk8Cf72uy8m?si=jNQzm738SIi9J7qx8cf33g"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Tuya</td>
+										<td class="rule1">
+											songs should have at least one made up word or a word with 9 or more letters
+										</td>
+										<td class="rule2">one singer i.e. not a band</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/7t2atX6j4hxmPBrgwCa5QN?si=GN5HnIMjQsaATgFQ-7ZwUA"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Curtis</td>
+										<td class="rule1">
+											Songs have to be in consecutive years (ex 1993, 1994, etc)
+										</td>
+										<td class="rule2">first song happy, last song sad</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/5CR8igConbgAlPMfpF0uFg?si=Yc_Us8NWRKqG_IFslrvRXg"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Jerry</td>
+										<td class="rule1">At least 2 japanese songs</td>
+										<td class="rule2">Half the songs must be 2010 or newer</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/2BackfdLD0naZE0es0xG4E?si=5TwoVplsRoqjDEDnSeG22g"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Avery</td>
+										<td class="rule1">Vocalist must play an instrument other than guitar</td>
+										<td class="rule2">
+											At least 1/10 of the playlist should be in a language other than English
+										</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/7qO0q1Ob5joiWZZVfFKSry?si=4tdw4j9-TJuNJmAObN6AUA"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Halina</td>
+										<td class="rule1">Must have at least one song about a bird</td>
+										<td class="rule2">No songs by British/American/Canadian musicians</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/50mzdP4rc5KIEpXjF1HDKi"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Jarette</td>
+										<td class="rule1">4 songs must be from a band of 2 members</td>
+										<td class="rule2">
+											Last 4 must come from solo artists of different nationalities
+										</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/0HM2WXzZwKnom5nkcAuYba?si=730vKSHARJylZSsbGPctyQ"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Rojina</td>
+										<td class="rule1">All songs must be by women POC</td>
+										<td class="rule2">
+											At least half the songs must not be in English, Japanese or Korean
+										</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/377khUvlR70k0N41rBoNBx?si=kvR-xfbeRL6mlUyO_PybuA"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">May</td>
+										<td class="rule1">Each song must contain more than one language</td>
+										<td class="rule2">One of the songs must have a piano solo</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/1TEcmOjWJxuLXqr29MgLUG?si=dg4pO3gjQQeBzFoC3zL7Wg"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Amanda</td>
+										<td class="rule1">All songs must come from soundtracks of movies</td>
+										<td class="rule2">
+											The first letter of the current song title must be the last letter of the
+											previous song title
+										</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/1OC55hOz5wloNuTMuO3nSS?si=gMZs2c9YSQmvEjOSoQJ2lA"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Sonny</td>
+										<td class="rule1">All female identifying artists</td>
+										<td class="rule2">Artists must know how to play at least one instrument</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/1oG33RrYawBgU174Oo4hjA"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Zak</td>
+										<td class="rule1">All songs must be instrumental</td>
+										<td class="rule2">
+											First half should be high energy, last half should be low energy
+										</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/2VzmuWR7301gvcBlgFypFt?si=2VirTynAQQeFo78RjJlLQw"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Pedro</td>
+										<td class="rule1">Must have 3 of the heaviest and slowest songs you know.</td>
+										<td class="rule2">
+											Must have 3 songs with "clever" lyrics, wordplay or songwritting
+										</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/0bUffRYhF1rDDyTrqWoVX5?si=TlgUQPRyRj2r0D_AiHNDrg"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+									<tr class="recording-list-item">
+										<td class="name">Alisa</td>
+										<td class="rule1">All songs must be by women/fem identifying artists</td>
+										<td class="rule2">All songs must include two different languages</td>
+										<td class="playlist-cell">
+											<iframe
+												src="https://open.spotify.com/embed/playlist/7567yCWo9rz0UilPxBSpBg?si=Vzc75IKATaqNpn1caWhCrw"
+												width="250"
+												height="80"
+												frameborder="0"
+												allowtransparency="true"
+												allow="encrypted-media"
+											></iframe>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Optional JavaScript -->
+		<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+		<script
+			src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+			integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+			crossorigin="anonymous"
+		></script>
+		<script
+			src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+			integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+			crossorigin="anonymous"
+		></script>
+		<script
+			src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+			integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+			crossorigin="anonymous"
+		></script>
+	</body>
+</html>

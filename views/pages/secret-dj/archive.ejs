@@ -17,8 +17,28 @@
 			<p>these games have now ended and are now available to view</p>
 			<%- include('../../partials/secret-dj/game-table', {query, showOwnership: true, seasons, participantId, defaultControls: true}); %>
 			<% } else { %>
-			<p>there are no historical games of secret dj</p>
+			<p>there are no historical games of secret dj on bob's server</p>
 			<% } %>
+			<details>
+				<summary>older?</summary>
+				<p>
+					to see a copy of the original secret dj website, go
+					<a href="/public/secret-dj/old.html"><span>here</span></a
+					>. it can be a bit hard to see the playlists now that spotify has started heavily rate limiting the
+					embeds, so there is a more detailed archive
+					<a href="https://braxtonhall.ca/secretdj.render"><span>here</span></a>
+					<%/* TODO this detailed archive here because i don't trust myself to maintain that URL */%>
+				</p>
+				<p>
+					to see the original secret dj
+					<i>spreadsheet</i>, go
+					<a href="https://docs.google.com/spreadsheets/d/1XtRnrI4eFB2tLDATytHVh6CA7uDv6W_AN2XuqodSbug"
+						><span>here</span></a
+					>
+					<%/* TODO move the sheet itself to here to decouple from GOOGLE */%>
+					<%/* TODO use google's history to copy out the original instructions and RANDOM counter >:) */%>
+				</p>
+			</details>
 		</main>
 	</body>
 </html>
