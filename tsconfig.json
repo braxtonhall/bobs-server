@@ -18,9 +18,10 @@
 		"allowJs": true,
 		"noImplicitOverride": true
 	},
-	"include": ["src", "scripts", "test"],
-	"exclude": ["node_modules"],
 	"ts-node": {
+		"files": true,
 		"preferTsExts": true
-	}
+	},
+	"include": ["src", "scripts", "test"],
+	"exclude": ["node_modules"]
 }

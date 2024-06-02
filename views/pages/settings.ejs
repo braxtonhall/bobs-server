@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<%- include('../partials/head'); %>
+	</head>
+	<body>
+		<header>
+			<%- include('../partials/header'); %>
+		</header>
+
+		<main>
+			<div>
+				<h2>settings</h2>
+			</div>
+
+			<% if (error) { %>
+			<p class="error"><%= error %></p>
+			<% } %>
+			<% if (success) { %>
+			<p class="success"><%= success %></p>
+			<% } %>
+
+			<form name="settings-form" method="post">
+				<label for="subscribed" class="subscribed-label">email notifications</label>
+				<% if (subscribed) { %>
+				<input type="checkbox" class="subscribed-input" id="subscribed" name="subscribed" checked />
+				<% } else { %>
+				<input type="checkbox" class="subscribed-input" id="subscribed" name="subscribed" />
+				<% } %>
+
+				<button class="settings-save">save</button>
+			</form>
+		</main>
+	</body>
+</html>

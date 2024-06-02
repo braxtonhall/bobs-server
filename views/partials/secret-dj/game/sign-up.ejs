@@ -1,0 +1,82 @@
+<% if (participant) { %>
+<% if (season.owner.id === participant.id) { %>
+<div>
+	<hr />
+	<h3>owner controls 👑</h3>
+	<% const editGameDetailsEndpoint = `/secret-dj/games/${season.id}/edit`%>
+	<form class="edit-game-form" method="POST" action="<%=editGameDetailsEndpoint%>">
+		<label for="name" class="name-label">name</label>
+		<input
+			class="name-input"
+			id="name"
+			name="name"
+			required
+			value="<%=season.name%>"
+			maxlength="<%=Config.DEFAULT_MAX_LENGTH%>"
+		/>
+
+		<label for="description" class="description-label">description</label>
+
+		<textarea
+			class="description-input"
+			id="description"
+			name="description"
+			maxlength="<%=Config.DESCRIPTION_MAX_LENGTH%>"
+		>
+<%=season.description%></textarea
+		>
+
+		<button type="submit">edit</button>
+	</form>
+	<% if (season.entries.length) { %>
+	<% const startGameEndpoint = `/secret-dj/games/${season.id}/start`%>
+	<p>when you feel like you have enough participants, start the game to assign everyone a playlist to make</p>
+	<form class="start-game-form" method="POST" action="<%=startGameEndpoint%>">
+		<button type="submit">start game!</button>
+	</form>
+	<% } else { %>
+	<% const deleteEndpoint = `/secret-dj/games/${season.id}/delete`%>
+	<form class="delete-game-form" action="<%=deleteEndpoint%>">
+		<button type="submit" class="delete-game-button">delete game</button>
+	</form>
+	<% } %>
+	<% } %>
+	<hr />
+	<h3>your controls</h3>
+	<% if (recipient !== null) { %>
+	you have successfully joined! now you can wait for the owner to start the game. you will get an email when it is
+	time to start making a playlist for someone
+	<% } %>
+
+	<% if (recipient === null && season.ruleCount > 0) { %> want to join? create
+	<%= season.ruleCount === 1 ? 'a rule' : 'rules'%>
+	for the playlist that you want to receive
+	<% } %>
+
+	<% const action = recipient === null ? 'join' : 'edit';%>
+	<% const submitRulesEndpoint = `/secret-dj/games/${season.id}/rules`%>
+
+	<% if (recipient === null || season.ruleCount > 0) { %>
+	<form class="enroll-game-form" method="POST" action="<%=submitRulesEndpoint%>">
+		<% for (let i = 0; i < season.ruleCount; i++) { %> <% const currentRule = recipient === null ? "" :
+		recipient.rules[i].text %>
+
+		<label for="rule-<%=i+1%>">rule <%=season.ruleCount > 1 ? i + 1 : ''%></label>
+
+		<textarea name="rules[]" type="text" id="rule-<%=i+1%>" maxlength="<%=Config.DESCRIPTION_MAX_LENGTH%>">
+<%= currentRule %></textarea
+		>
+		<% } %>
+		<button type="submit"><%= action %></button>
+	</form>
+	<% } %>
+	<% if (recipient !== null) { %>
+	<form class="leave-game-form" method="post" action="/secret-dj/games/<%=season.id%>/leave">
+		<button type="submit" class="leave-game-button">leave game</button>
+	</form>
+	<% } %>
+</div>
+<% } else { %>
+this season of secret dj is still accepting new participants.
+<a href="/secret-dj/signup?redirect=<%=encodeURIComponent(`/secret-dj/games/${season.id}`)%>">click here to join!</a>
+<% }  %>

@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<%- include('../../partials/secret-dj/head'); %>
+	</head>
+	<body>
+		<header>
+			<%- include('../../partials/header'); %>
+		</header>
+
+		<main>
+			<%- include('../../partials/secret-dj/secret-dj-title'); %>
+			<div>
+				<h2>archive</h2>
+			</div>
+			<% if (seasons.length) { %>
+			<p>these games have now ended and are now available to view</p>
+			<%- include('../../partials/secret-dj/game-table', {query, showOwnership: true, seasons, participantId, defaultControls: true}); %>
+			<% } else { %>
+			<p>there are no historical games of secret dj</p>
+			<% } %>
+		</main>
+	</body>
+</html>

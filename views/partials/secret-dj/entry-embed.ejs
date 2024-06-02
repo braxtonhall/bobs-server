@@ -1,0 +1,31 @@
+<% if (link) { %>
+<% if (link.startsWith("https://open.spotify.com")) { %>
+<% const spotifyPlaylistId = new URL(link).pathname.match(/[^\/]+/g).slice(-1) %>
+<% const spotifyEmbedUrl = `https://open.spotify.com/embed/playlist/${spotifyPlaylistId}`%>
+<iframe
+	style="border-radius: 12px"
+	class="embed"
+	src="<%= spotifyEmbedUrl %>"
+	height="400"
+	frameborder="0"
+	allowfullscreen=""
+	allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+	loading="lazy"
+></iframe>
+<% } else if (link.startsWith("https://www.youtube.com/playlist")) { %>
+<% const youtubePlaylistId = new URL(link).searchParams.get("list") %>
+<% const youtubeEmbedUrl = `https://www.youtube.com/embed/videoseries?list=${youtubePlaylistId}`%>
+<iframe
+	class="embed"
+	height="400"
+	src="<%= youtubeEmbedUrl %>"
+	title="YouTube video player"
+	frameborder="0"
+	allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+	referrerpolicy="strict-origin-when-cross-origin"
+	allowfullscreen
+></iframe>
+<% } else { %>
+<p><a href="<%= link %>">link</a></p>
+<% } %>
+<% } %>

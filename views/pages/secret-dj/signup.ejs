@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<%- include('../../partials/secret-dj/head'); %>
+	</head>
+	<body>
+		<header>
+			<%- include('../../partials/header'); %>
+		</header>
+
+		<main>
+			<%- include('../../partials/secret-dj/secret-dj-title'); %>
+			<div>
+				hello! would you like to join secret dj? just give us a name to call you by.
+
+				<form class="signup-form" method="post">
+					<label for="name" class="name-label">name</label>
+					<input
+						class="name-input"
+						id="name"
+						name="name"
+						maxlength="<%=Config.DEFAULT_MAX_LENGTH%>"
+						required
+					/>
+
+					<button class="signup-submit">submit</button>
+				</form>
+				<% if (error) { %>
+				<span><%= error %></span>
+				<% } %>
+			</div>
+		</main>
+	</body>
+</html>

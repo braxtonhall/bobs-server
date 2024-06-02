@@ -1,36 +1,35 @@
 import "dotenv/config";
 import { z } from "zod";
 
-type Config = {
-	[K in keyof typeof environmentSchema]: z.infer<ReturnType<(typeof environmentSchema)[K]>>;
-};
-
-const requiredString = () => z.string();
-
-const numberWithDefault = (defaultValue: number) => (key: string) =>
-	z.coerce.number().default(() => {
-		console.warn(`Environment variable "${key}" was not set. Using default value: "${defaultValue}"`);
-		return defaultValue;
-	});
-
-const environmentSchema = {
-	SSL_CERT_PATH: requiredString,
-	SSL_KEY_PATH: requiredString,
-	HTTP_PORT: numberWithDefault(80),
-	HTTPS_PORT: numberWithDefault(443),
-	DEFAULT_PAGE_SIZE: numberWithDefault(20),
-	MAXIMUM_PAGE_SIZE: numberWithDefault(100),
-	DELETION_TIME_MS: numberWithDefault(1000 * 60 * 10),
-	KARMA_KILL_THRESHOLD: numberWithDefault(5),
-};
-
-const validatedConfig: Record<string, unknown> = {};
-
-const Config = new Proxy({} as Config, {
-	get(_: Config, key: keyof Config): Config[typeof key] {
-		validatedConfig[key] ??= environmentSchema[key](key).parse(process.env[key]);
-		return validatedConfig[key] as Config[typeof key];
-	},
+const environmentSchema = z.object({
+	SSL_CERT_PATH: z.string(),
+	SSL_KEY_PATH: z.string(),
+	SENDGRID_API_KEY: z.string(),
+	EMAIL_FROM: z.string(),
+	JWT_SECRET: z.string(),
+	SESSION_SECRET: z.string(),
+	HOST: z.string(),
+	LOGIN_TOKEN_EXPIRATION_MIN: z.coerce.number().default(10),
+	API_TOKEN_EXPIRATION_HOURS: z.coerce.number().default(12),
+	VERIFY_TOKEN_EXPIRATION_DAYS: z.coerce.number().default(90),
+	TOKEN_CLEANUP_INTERVAL_HOURS: z.coerce.number().default(4),
+	EXPIRED_TOKEN_STORAGE_HOURS: z.coerce.number().default(12),
+	HTTP_PORT: z.coerce.number().default(80),
+	HTTPS_PORT: z.coerce.number().default(443),
+	DEFAULT_PAGE_SIZE: z.coerce.number().default(20),
+	MINIMUM_PAGE_SIZE: z.coerce.number().default(1),
+	MAXIMUM_PAGE_SIZE: z.coerce.number().default(100),
+	DELETION_TIME_MS: z.coerce.number().default(1000 * 60 * 10),
+	KARMA_KILL_THRESHOLD: z.coerce.number().default(5),
+	EMAIL_DISABLED: z
+		.string()
+		.optional()
+		.transform((string) => string === "true"),
+	DEFAULT_MAX_LENGTH: z.coerce.number().int().default(100),
+	DESCRIPTION_MAX_LENGTH: z.coerce.number().int().default(500),
+	COMMENT_MAX_LENGTH: z.coerce.number().int().default(2000),
 });
+
+const Config = environmentSchema.parse(process.env);
 
 export default Config;

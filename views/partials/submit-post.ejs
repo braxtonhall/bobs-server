@@ -1,0 +1,36 @@
+<form method="post" class="new-post-form" action="/boxes/<%= box.id %>/posts">
+	<label for="content" class="new-post-message-label">message</label>
+	<textarea
+		class="new-post-message"
+		id="content"
+		name="content"
+		required
+		maxlength="<%=Config.COMMENT_MAX_LENGTH%>"
+	></textarea>
+
+	<label for="from" class="new-post-poster-label">name</label>
+	<input
+		placeholder="name (optional)"
+		class="new-post-poster"
+		id="from"
+		name="from"
+		maxlength="<%=Config.DEFAULT_MAX_LENGTH%>"
+	/>
+
+	<label for="email" class="new-post-email-label">email for replies (optional and not shown to others)</label>
+	<input
+		placeholder="email"
+		class="new-post-email"
+		id="email"
+		name="email"
+		pattern="^\S+@\S+\.\S+$"
+		title="A valid email address"
+		maxlength="<%=Config.DEFAULT_MAX_LENGTH%>"
+	/>
+
+	<%if (replyId) { %>
+	<input type="hidden" name="parent" value="<%= replyId %>" readonly />
+	<% } %>
+
+	<button class="new-post-submit">submit</button>
+</form>

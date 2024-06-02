@@ -1,6 +1,6 @@
-import { db } from "../../src/storage/db";
-import posts from "../../src/storage/posts";
-import { createTestData } from "../createTestData";
+import { db } from "../../src/db";
+import posts from "../../src/toolbox/storage/posts";
+import { createTestData, dropTables } from "../util";
 import * as time from "jest-date-mock";
 import { randomUUID } from "crypto";
 import { Err, Ok, unsafeUnwrap } from "../../src/types/result";
@@ -12,13 +12,10 @@ import { None, Some } from "../../src/types/option";
 describe("posts", () => {
 	const posterIp = "foo";
 	const ownerEmail = "braxtonjhall@gmail.com";
-	let info: { boxId: string; posterId: number };
+	let info: { boxId: string; posterId: number; emailId: string };
 
 	beforeAll(async () => {
-		await db.post.deleteMany();
-		await db.poster.deleteMany();
-		await db.box.deleteMany();
-		await db.admin.deleteMany();
+		await dropTables();
 		info = await createTestData(ownerEmail, posterIp);
 	});
 	beforeEach(time.clear);
@@ -35,8 +32,7 @@ describe("posts", () => {
 			expect(post).toEqual(
 				Ok({
 					createdAt: expect.any(Date),
-					id: expect.any(Number),
-					userId: expect.any(String),
+					id: expect.any(String),
 					parent: null,
 				}),
 			);
@@ -58,14 +54,14 @@ describe("posts", () => {
 				content: "This is a test",
 				from: "Nobody",
 				posterId: info.posterId,
-				parentId: 10,
+				parentId: "10",
 			});
 			expect(post).toEqual(Err(Failure.MISSING_DEPENDENCY));
 		});
 	});
 
 	describe("reading", () => {
-		it("should be able to get the internal id from a user id", async () => {
+		it("should be able to find that a post exists", async () => {
 			const post = unsafeUnwrap(
 				await posts.create({
 					boxId: info.boxId,
@@ -74,10 +70,17 @@ describe("posts", () => {
 					posterId: info.posterId,
 				}),
 			);
-			expect(await posts.getId(post.userId, info.boxId)).toEqual(Some(post.id));
+			expect(await posts.get(post.id, info.boxId)).toEqual(
+				Some({
+					id: expect.any(String),
+					subscribed: true,
+					email: null,
+					content: "This is a test",
+				}),
+			);
 		});
 
-		it("should fail to get an internal id if the box id is incorrect", async () => {
+		it("should fail to find if the box id is incorrect", async () => {
 			const post = unsafeUnwrap(
 				await posts.create({
 					boxId: info.boxId,
@@ -86,11 +89,11 @@ describe("posts", () => {
 					posterId: info.posterId,
 				}),
 			);
-			expect(await posts.getId(post.userId, randomUUID())).toEqual(None);
+			expect(await posts.get(post.id, randomUUID())).toEqual(None());
 		});
 
-		it("should fail to get an internal id from a user id that does not exist", async () =>
-			expect(await posts.getId(randomUUID(), randomUUID())).toEqual(None));
+		it("should fail to find from a user id that does not exist", async () =>
+			expect(await posts.get(randomUUID(), randomUUID())).toEqual(None()));
 
 		it("should list a post", async () => {
 			const post = unsafeUnwrap(
@@ -114,10 +117,10 @@ describe("posts", () => {
 						from: "Nobody",
 						id: post.id,
 						parent: post.parent,
-						userId: post.userId,
 						createdAt: post.createdAt,
 						poster: { ip: hashString(posterIp) },
 						_count: { children: 0 },
+						box: { deleted: false },
 					},
 				]),
 			);
@@ -140,11 +143,11 @@ describe("posts", () => {
 					content,
 					from,
 					id: post.id,
-					userId: post.userId,
 					createdAt: post.createdAt,
 					parent: post.parent,
 					poster: { ip: hashString(posterIp) },
 					_count: { children: 0 },
+					box: { deleted: false },
 				});
 			}
 			expect(
@@ -189,22 +192,23 @@ describe("posts", () => {
 					from: "Nobody",
 					id: child.id,
 					parent: {
-						userId: parent.userId,
+						content: "This is a parent",
+						id: parent.id,
 					},
-					userId: child.userId,
 					createdAt: child.createdAt,
 					poster: { ip: hashString(posterIp) },
 					_count: { children: 0 },
+					box: { deleted: false },
 				},
 				{
 					content: "This is a parent",
 					from: "Nobody",
 					id: parent.id,
 					parent: null,
-					userId: parent.userId,
 					createdAt: parent.createdAt,
 					poster: { ip: hashString(posterIp) },
 					_count: { children: 1 },
+					box: { deleted: false },
 				},
 			]);
 		});
@@ -224,6 +228,7 @@ describe("posts", () => {
 					content: "This is dead",
 					from: "Nobody",
 					posterId: info.posterId,
+					parentId: aliveA.id,
 				}),
 			);
 			const aliveB = unsafeUnwrap(
@@ -232,9 +237,10 @@ describe("posts", () => {
 					content: "This is second alive",
 					from: "Nobody",
 					posterId: info.posterId,
+					parentId: dead.id,
 				}),
 			);
-			const poster = await posts.setDeadAndGetPosterId(dead.userId, ownerEmail, true);
+			const poster = await posts.setDeadAndGetPosterId(dead.id, info.emailId, true);
 			expect(poster).toEqual(Ok(info.posterId));
 			const list = unsafeUnwrap(
 				await posts.list({
@@ -249,31 +255,31 @@ describe("posts", () => {
 					content: "This is second alive",
 					from: "Nobody",
 					id: aliveB.id,
-					parent: null,
-					userId: aliveB.userId,
+					parent: { id: dead.id, content: "This is dead" },
 					createdAt: aliveB.createdAt,
 					poster: { ip: hashString(posterIp) },
 					_count: { children: 0 },
+					box: { deleted: false },
 				},
 				{
 					content: "This is dead",
 					from: "Nobody",
 					id: dead.id,
-					parent: null,
-					userId: dead.userId,
+					parent: { id: aliveA.id, content: "This is first alive" },
 					createdAt: dead.createdAt,
 					poster: { ip: hashString(posterIp) },
-					_count: { children: 0 },
+					_count: { children: 1 },
+					box: { deleted: false },
 				},
 				{
 					content: "This is first alive",
 					from: "Nobody",
 					id: aliveA.id,
 					parent: null,
-					userId: aliveA.userId,
 					createdAt: aliveA.createdAt,
 					poster: { ip: hashString(posterIp) },
-					_count: { children: 0 },
+					_count: { children: 1 },
+					box: { deleted: false },
 				},
 			]);
 		});
@@ -293,6 +299,7 @@ describe("posts", () => {
 					content: "This is dead",
 					from: "Nobody",
 					posterId: info.posterId,
+					parentId: aliveA.id,
 				}),
 			);
 			const aliveB = unsafeUnwrap(
@@ -301,9 +308,10 @@ describe("posts", () => {
 					content: "This is second alive",
 					from: "Nobody",
 					posterId: info.posterId,
+					parentId: dead.id,
 				}),
 			);
-			const poster = await posts.setDeadAndGetPosterId(dead.userId, ownerEmail, true);
+			const poster = await posts.setDeadAndGetPosterId(dead.id, info.emailId, true);
 			expect(poster).toEqual(Ok(info.posterId));
 			const list = unsafeUnwrap(
 				await posts.list({
@@ -319,20 +327,20 @@ describe("posts", () => {
 					from: "Nobody",
 					id: aliveB.id,
 					parent: null,
-					userId: aliveB.userId,
 					createdAt: aliveB.createdAt,
 					poster: { ip: hashString(posterIp) },
 					_count: { children: 0 },
+					box: { deleted: false },
 				},
 				{
 					content: "This is first alive",
 					from: "Nobody",
 					id: aliveA.id,
 					parent: null,
-					userId: aliveA.userId,
 					createdAt: aliveA.createdAt,
 					poster: { ip: hashString(posterIp) },
-					_count: { children: 0 },
+					_count: { children: 1 },
+					box: { deleted: false },
 				},
 			]);
 		});
@@ -352,6 +360,7 @@ describe("posts", () => {
 					content: "This is dead",
 					from: "Nobody",
 					posterId: info.posterId,
+					parentId: aliveA.id,
 				}),
 			);
 			const aliveB = unsafeUnwrap(
@@ -360,9 +369,10 @@ describe("posts", () => {
 					content: "This is second alive",
 					from: "Nobody",
 					posterId: info.posterId,
+					parentId: dead.id,
 				}),
 			);
-			const poster = await posts.setDeadAndGetPosterId(dead.userId, ownerEmail, true);
+			const poster = await posts.setDeadAndGetPosterId(dead.id, info.emailId, true);
 			expect(poster).toEqual(Ok(info.posterId));
 			const list = unsafeUnwrap(
 				await posts.list({
@@ -377,31 +387,31 @@ describe("posts", () => {
 					content: "This is second alive",
 					from: "Nobody",
 					id: aliveB.id,
-					parent: null,
-					userId: aliveB.userId,
+					parent: { id: dead.id, content: "This is dead" },
 					createdAt: aliveB.createdAt,
 					poster: { ip: hashString(posterIp) },
 					_count: { children: 0 },
+					box: { deleted: false },
 				},
 				{
 					content: "This is dead",
 					from: "Nobody",
 					id: dead.id,
-					parent: null,
-					userId: dead.userId,
+					parent: { id: aliveA.id, content: "This is first alive" },
 					createdAt: dead.createdAt,
 					poster: { ip: hashString(posterIp) },
-					_count: { children: 0 },
+					_count: { children: 1 },
+					box: { deleted: false },
 				},
 				{
 					content: "This is first alive",
 					from: "Nobody",
 					id: aliveA.id,
 					parent: null,
-					userId: aliveA.userId,
 					createdAt: aliveA.createdAt,
 					poster: { ip: hashString(posterIp) },
-					_count: { children: 0 },
+					_count: { children: 1 },
+					box: { deleted: false },
 				},
 			]);
 		});
@@ -437,30 +447,30 @@ describe("posts", () => {
 					from: "Nobody",
 					id: C.id,
 					parent: null,
-					userId: C.userId,
 					createdAt: C.createdAt,
 					poster: { ip: hashString(posterIp) },
 					_count: { children: 0 },
+					box: { deleted: false },
 				},
 				{
 					content: "This is B",
 					from: "Nobody",
 					id: B.id,
 					parent: null,
-					userId: B.userId,
 					createdAt: B.createdAt,
 					poster: { ip: hashString(posterIp) },
 					_count: { children: 0 },
+					box: { deleted: false },
 				},
 				{
 					content: "This is A",
 					from: "Nobody",
 					id: A.id,
 					parent: null,
-					userId: A.userId,
 					createdAt: A.createdAt,
 					poster: { ip: hashString(posterIp) },
 					_count: { children: 0 },
+					box: { deleted: false },
 				},
 			];
 			expect(
@@ -478,7 +488,6 @@ describe("posts", () => {
 					showDead: false,
 					count: 3,
 					ip: hashString(posterIp),
-					cursor: C.userId,
 				}),
 			).toEqual(Ok(expected));
 
@@ -488,7 +497,7 @@ describe("posts", () => {
 					showDead: false,
 					count: 3,
 					ip: hashString(posterIp),
-					cursor: B.userId,
+					cursor: B.id,
 				}),
 			).toEqual(Ok(expected.slice(1)));
 
@@ -498,7 +507,7 @@ describe("posts", () => {
 					showDead: false,
 					count: 3,
 					ip: hashString(posterIp),
-					cursor: A.userId,
+					cursor: A.id,
 				}),
 			).toEqual(Ok(expected.slice(2)));
 		});
@@ -528,14 +537,14 @@ describe("posts", () => {
 						from: "Nobody",
 						id: post.id,
 						parent: null,
-						userId: post.userId,
 						createdAt: post.createdAt,
 						poster: { ip: hashString(posterIp) },
 						_count: { children: 0 },
+						box: { deleted: false },
 					},
 				]),
 			);
-			const poster = await posts.setDeadAndGetPosterId(post.userId, ownerEmail, true);
+			const poster = await posts.setDeadAndGetPosterId(post.id, info.emailId, true);
 			expect(poster).toEqual(Ok(info.posterId));
 			expect(
 				await posts.list({
@@ -570,15 +579,15 @@ describe("posts", () => {
 						from: "Nobody",
 						id: post.id,
 						parent: null,
-						userId: post.userId,
 						createdAt: post.createdAt,
 						poster: { ip: hashString(posterIp) },
 						_count: { children: 0 },
+						box: { deleted: false },
 					},
 				]),
 			);
-			const before = await posts.setDeadAndGetPosterId(post.userId, ownerEmail, true);
-			const poster = await posts.setDeadAndGetPosterId(post.userId, ownerEmail, true);
+			const before = await posts.setDeadAndGetPosterId(post.id, info.emailId, true);
+			const poster = await posts.setDeadAndGetPosterId(post.id, info.emailId, true);
 			expect(before).toEqual(Ok(info.posterId));
 			expect(poster).toEqual(Ok(info.posterId));
 			expect(
@@ -600,8 +609,8 @@ describe("posts", () => {
 					posterId: info.posterId,
 				}),
 			);
-			await posts.setDeadAndGetPosterId(post.userId, ownerEmail, true);
-			const poster = await posts.setDeadAndGetPosterId(post.userId, ownerEmail, false);
+			await posts.setDeadAndGetPosterId(post.id, info.emailId, true);
+			const poster = await posts.setDeadAndGetPosterId(post.id, info.emailId, false);
 			expect(poster).toEqual(Ok(info.posterId));
 			expect(
 				await posts.list({
@@ -617,10 +626,10 @@ describe("posts", () => {
 						from: "Nobody",
 						id: post.id,
 						parent: null,
-						userId: post.userId,
 						createdAt: post.createdAt,
 						poster: { ip: hashString(posterIp) },
 						_count: { children: 0 },
+						box: { deleted: false },
 					},
 				]),
 			);
@@ -635,10 +644,10 @@ describe("posts", () => {
 					posterId: info.posterId,
 				}),
 			);
-			const before = await posts.setDeadAndGetPosterId(post.userId, ownerEmail, false);
+			const before = await posts.setDeadAndGetPosterId(post.id, info.emailId, false);
 			expect(before).toEqual(Ok(info.posterId));
-			await posts.setDeadAndGetPosterId(post.userId, ownerEmail, true);
-			const poster = await posts.setDeadAndGetPosterId(post.userId, ownerEmail, false);
+			await posts.setDeadAndGetPosterId(post.id, info.emailId, true);
+			const poster = await posts.setDeadAndGetPosterId(post.id, info.emailId, false);
 			expect(poster).toEqual(Ok(info.posterId));
 			expect(
 				await posts.list({
@@ -654,24 +663,24 @@ describe("posts", () => {
 						from: "Nobody",
 						id: post.id,
 						parent: null,
-						userId: post.userId,
 						createdAt: post.createdAt,
 						poster: { ip: hashString(posterIp) },
 						_count: { children: 0 },
+						box: { deleted: false },
 					},
 				]),
 			);
-			const after = await posts.setDeadAndGetPosterId(post.userId, ownerEmail, false);
+			const after = await posts.setDeadAndGetPosterId(post.id, info.emailId, false);
 			expect(after).toEqual(Ok(info.posterId));
 		});
 
 		it("should fail to set a post to dead if the id does not exist", async () =>
-			expect(await posts.setDeadAndGetPosterId(randomUUID(), ownerEmail, true)).toEqual(
+			expect(await posts.setDeadAndGetPosterId(randomUUID(), info.emailId, true)).toEqual(
 				Err(Failure.MISSING_DEPENDENCY),
 			));
 
 		it("should fail to set a post to undead if the id does not exist", async () =>
-			expect(await posts.setDeadAndGetPosterId(randomUUID(), ownerEmail, false)).toEqual(
+			expect(await posts.setDeadAndGetPosterId(randomUUID(), info.emailId, false)).toEqual(
 				Err(Failure.MISSING_DEPENDENCY),
 			));
 
@@ -684,9 +693,7 @@ describe("posts", () => {
 					posterId: info.posterId,
 				}),
 			);
-			expect(await posts.setDeadAndGetPosterId(post.userId, randomUUID(), true)).toEqual(
-				Err(Failure.UNAUTHORIZED),
-			);
+			expect(await posts.setDeadAndGetPosterId(post.id, randomUUID(), true)).toEqual(Err(Failure.FORBIDDEN));
 		});
 
 		it("should fail to set a post undead if you use the wrong owner email", async () => {
@@ -698,9 +705,7 @@ describe("posts", () => {
 					posterId: info.posterId,
 				}),
 			);
-			expect(await posts.setDeadAndGetPosterId(post.userId, randomUUID(), false)).toEqual(
-				Err(Failure.UNAUTHORIZED),
-			);
+			expect(await posts.setDeadAndGetPosterId(post.id, randomUUID(), false)).toEqual(Err(Failure.FORBIDDEN));
 		});
 	});
 
@@ -715,7 +720,7 @@ describe("posts", () => {
 				}),
 			);
 			const result = await posts.delete({
-				userId: post.userId,
+				postId: post.id,
 				boxId: info.boxId,
 				posterId: info.posterId,
 			});
@@ -724,7 +729,7 @@ describe("posts", () => {
 
 		it("should fail to delete a post that does not exist", async () => {
 			const result = await posts.delete({
-				userId: randomUUID(),
+				postId: randomUUID(),
 				boxId: info.boxId,
 				posterId: info.posterId,
 			});
@@ -748,7 +753,7 @@ describe("posts", () => {
 				parentId: parent.id,
 			});
 			const result = await posts.delete({
-				userId: parent.userId,
+				postId: parent.id,
 				boxId: info.boxId,
 				posterId: info.posterId,
 			});
@@ -765,7 +770,7 @@ describe("posts", () => {
 				}),
 			);
 			const result = await posts.delete({
-				userId: post.userId,
+				postId: post.id,
 				boxId: randomUUID(),
 				posterId: info.posterId,
 			});
@@ -782,11 +787,11 @@ describe("posts", () => {
 				}),
 			);
 			const result = await posts.delete({
-				userId: post.userId,
+				postId: post.id,
 				boxId: info.boxId,
 				posterId: info.posterId + 1,
 			});
-			expect(result).toEqual(Err(Failure.UNAUTHORIZED));
+			expect(result).toEqual(Err(Failure.FORBIDDEN));
 		});
 
 		it("should fail to delete a post that is too old", async () => {
@@ -800,7 +805,7 @@ describe("posts", () => {
 			);
 			time.advanceBy(Config.DELETION_TIME_MS + 1);
 			const result = await posts.delete({
-				userId: post.userId,
+				postId: post.id,
 				boxId: info.boxId,
 				posterId: info.posterId,
 			});

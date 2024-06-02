@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<%- include('../../partials/secret-dj/head'); %>
+	</head>
+	<body>
+		<header>
+			<%- include('../../partials/header'); %>
+		</header>
+
+		<main>
+			<%- include('../../partials/secret-dj/secret-dj-title', {path: [{href: `/secret-dj/games/${season.id}`, name: season.name}]}); %>
+			<div>
+				<h2>confirm submission</h2>
+				everything look right to you?
+
+				<pre><%=link%></pre>
+
+				<p>this is what others will see:</p>
+				<%- include('../../partials/secret-dj/entry-embed'); %>
+				<form
+					class="submit-playlist-form"
+					method="post"
+					action="<%= `/secret-dj/games/${season.id}/playlist` %>"
+				>
+					<button type="submit">confirm</button>
+					<input name="link" type="hidden" value="<%= link %>" readonly />
+				</form>
+			</div>
+		</main>
+	</body>
+</html>

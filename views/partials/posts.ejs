@@ -1,26 +1,59 @@
-<table>
+<table class="post-table">
+	<thead class="post-thead">
+		<tr class="post-header">
+			<th class="post-message post-header-cell">post</th>
+			<th class="post-poster post-header-cell">poster</th>
+			<th class="post-date post-header-cell">date</th>
+			<th class="post-delete post-header-cell">delete</th>
+			<% if (!box.deleted) { %>
+			<th class="post-reply post-header-cell">reply</th>
+			<% } %>
+		</tr>
+	</thead>
 	<% for (const post of posts) { %>
 	<tr class="post-row">
+		<td class="post-message">
+			<% if (post.parent) {%>
+			<blockquote class="post-parent-content">
+				<a href="?<%=new URLSearchParams({...query, cursor: post.parent.id}).toString()%>"
+					><%=post.parent.content.length > 90 ? post.parent.content.slice(0, 90) + '...' :
+					post.parent.content%></a
+				>
+			</blockquote>
+			<%}%>
+			<div class="post-message-content"><%= post.content %></div>
+		</td>
+		<td class="post-poster"><%= post.from || 'anonymous' %></td>
+		<td class="post-date">
+			<a class="post-date-link" href="?<%=new URLSearchParams({...query, cursor: post.id}).toString()%>">
+				<span class="date-time" data-ms="<%=post.createdAt.valueOf()%>"
+					><%= post.createdAt.toUTCString() %></span
+				>
+			</a>
+		</td>
 		<td class="post-delete">
-			<% if (post.deletable) { /* TODO it would be nice to pass on query params */ %>
-			<form class="delete-form" method="POST" action="posts/delete">
-				<button class="delete-form-submit" name="id" value="<%= post.id %>">Delete</button>
+			<% if (post.deletable) { /* TODO should pass along the query parameters!!! */ %>
+			<form class="delete-form" method="POST" action="/boxes/<%= box.id %>/posts/<%= post.id %>/delete">
+				<button class="delete-form-submit">delete</button>
 			</form>
 			<% } %>
 		</td>
-		<td class="post-date" data-ms="<%=post.createdAt.valueOf()%>"><%= post.createdAt.toDateString() %></td>
-		<td class="post-poster"><%= post.from %></td>
-		<td class="post-message"><%= post.content %></td>
+		<% if (!box.deleted) { %>
+		<td class="post-reply">
+			<details>
+				<summary>reply</summary>
+				<%- include('submit-post', {box, replyId: post.id}); %>
+			</details>
+		</td>
+		<% } %>
 	</tr>
 	<% } %>
 </table>
 
-<form class="main-controls-form">
-	<% if (query.cursor) { %>
-	<button class="main-controls-btt">Back to top</button>
-	<% } %>
-	<% if (cursor) { %>
-	<button class="main-controls-next" name="cursor" value="<%= cursor %>">Next Page</button>
-	<% } %>
-	<input type="hidden" name="dead" value="<%= query.dead %>" readonly />
-</form>
+<script>
+	for (const element of document.getElementsByClassName("date-time")) {
+		element.textContent = new Date(Number(element.dataset.ms)).toLocaleString();
+	}
+</script>
+
+<%- include('boxes/page-controls', {query, params: ['take', 'dead'], cursor, cursorName: 'cursor'}); %>

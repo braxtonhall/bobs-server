@@ -1,0 +1,220 @@
+html {
+	background-color: #e0cfe6;
+	font-size: 16px;
+	font-weight: normal;
+	text-shadow: 0 0 0.1px rgba(0, 0, 0, 0.5);
+	text-rendering: optimizeLegibility;
+	font-family: Georgia, serif;
+	-webkit-font-smoothing: subpixel-antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+h1 > * {
+	color: #f0f8ff;
+	font-size: 0.6em;
+}
+
+h1 > a {
+	color: #f0f8ff;
+}
+
+h1 > *:last-child {
+	font-size: 1em;
+}
+
+a {
+	color: #6900ff;
+}
+
+.error {
+	color: red;
+}
+
+.success {
+	color: green;
+}
+
+.embed {
+	width: 50%;
+}
+
+.description {
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+	word-break: normal;
+}
+
+.entry-table-rule {
+	text-align: left;
+}
+
+.entry-table-rule > ol {
+	padding-left: 18px;
+}
+
+.entry-table-rule > ol > li + li {
+	margin-top: 0.5em;
+}
+
+@media only screen and (max-width: 700px) {
+	.embed,
+	form {
+		width: 100% !important;
+		box-sizing: border-box;
+	}
+}
+
+input {
+	width: 62%;
+	box-sizing: border-box;
+}
+
+textarea {
+	width: 100%;
+	box-sizing: border-box;
+	aspect-ratio: 1.618/0.25;
+}
+
+table,
+th,
+td {
+	border: 1px solid;
+	text-align: center;
+	vertical-align: middle;
+}
+
+th,
+td {
+	padding: 4px;
+}
+
+form {
+	margin: 8px 0;
+	padding: 8px;
+	width: 300px;
+	border: 1px dashed;
+}
+
+form > * {
+	margin: 4px 0;
+	display: block;
+}
+
+form button:not(:first-child) {
+	margin-top: 1em;
+}
+
+form > button {
+	border-style: double;
+}
+
+form > button:hover {
+	cursor: pointer;
+}
+
+hr {
+	height: 2px;
+	width: 90%;
+	background: #000;
+}
+
+.delete-game-button,
+.cancel-submit-button,
+.leave-game-button {
+	background-color: #ffd1d1;
+}
+
+/* ********** BEGIN EXPERIMENTAL COMMENT BOX STYLING ********** */
+
+iframe.comments {
+	height: 50vh;
+	border: 1px dashed;
+}
+
+.new-post-poster-label,
+.new-post-email,
+.new-post-email-label,
+.box-name,
+.post-header {
+	display: none;
+}
+
+a.post-date-link {
+	color: unset;
+}
+
+tr.post-row {
+	display: block;
+	padding-bottom: 1em;
+}
+
+tr.post-row td {
+	text-align: left;
+}
+
+tr.post-row > td.post-delete {
+	padding: 0;
+}
+
+td.post-delete:not(:has(> form)) {
+	display: none;
+}
+
+tr.post-row td.post-delete > form {
+	padding: 0;
+	margin: 0;
+	width: unset;
+	border: none;
+}
+
+tr.post-row td.post-delete > form > button {
+	margin: 0;
+	background: none;
+	border: none;
+}
+
+tr.post-row > td.post-message {
+	display: block;
+}
+
+td.post-message > .post-message-content,
+td.post-poster {
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+	word-break: normal;
+}
+
+table.post-table {
+	border: none;
+}
+
+td.post-poster {
+	font-size: 14px;
+}
+
+td.post-date {
+	font-size: 12px;
+}
+
+td.post-reply {
+	font-size: 12px;
+}
+
+td.post-reply:has(> details[open]) {
+	display: block;
+}
+
+blockquote.post-parent-content {
+	font-size: 14px;
+	font-style: italic;
+	border: dotted;
+	padding: 0.5em;
+	margin: 0.5em;
+	color: #858a8f;
+}
+
+blockquote.post-parent-content > a {
+	color: #858a8f;
+}
+
+/* ********** END EXPERIMENTAL COMMENT BOX STYLING ********** */

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<%- include('../partials/head'); %>
+	</head>
+	<body>
+		<header>
+			<%- include('../partials/header'); %>
+		</header>
+
+		<main>
+			<div>
+				<h1>login</h1>
+				a one time use password has been sent to <code><%=query.email ?? '???'%></code>.
+				<form class="authorize-form" action="/authorize">
+					<input type="hidden" name="email" value="<%= query.email ?? '' %>" readonly />
+
+					<label for="token" class="token-label">one time password</label>
+					<input
+						class="token-input"
+						id="token"
+						name="token"
+						required
+						autocomplete="off"
+						maxlength="<%=Config.DEFAULT_MAX_LENGTH%>"
+					/>
+
+					<input type="hidden" name="redirect" value="<%= query.redirect ?? '' %>" readonly />
+					<button class="login-submit">submit</button>
+				</form>
+				<% if (error) { %>
+				<span><%= error %></span>
+				<% } %>
+			</div>
+		</main>
+	</body>
+</html>

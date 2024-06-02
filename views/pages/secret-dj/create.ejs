@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<%- include('../../partials/secret-dj/head'); %>
+	</head>
+	<body>
+		<header>
+			<%- include('../../partials/header'); %>
+		</header>
+
+		<main>
+			<%- include('../../partials/secret-dj/secret-dj-title'); %>
+			<div>
+				<h2>create</h2>
+				<p>create a new secret dj game!</p>
+				<form name="create-form" method="post">
+					<label for="name" class="name-label">name</label>
+					<input
+						class="name-input"
+						id="name"
+						name="name"
+						maxlength="<%=Config.DEFAULT_MAX_LENGTH%>"
+						required
+					/>
+
+					<label for="description" class="description-label">description</label>
+					<textarea
+						class="description-input"
+						id="description"
+						name="description"
+						maxlength="<%=Config.DESCRIPTION_MAX_LENGTH%>"
+					></textarea>
+
+					<label for="rules" class="rules-label">rule count</label>
+					<input type="number" id="rules" name="rules" min="0" value="2" step="1" required />
+
+					<button class="create-save">submit</button>
+				</form>
+			</div>
+		</main>
+	</body>
+</html>

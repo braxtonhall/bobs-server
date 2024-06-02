@@ -1,4 +1,13 @@
-<h1 class="box-name"><%= box.name%></h1>
-<%- include('../partials/form'); %>
-<%- include('../partials/posts'); %>
-<%- include('../partials/controls') %>
+<head>
+	<% if (box.stylesheet) {%>
+	<link rel="stylesheet" href="<%=box.stylesheet%>" />
+	<% } %>
+</head>
+<body>
+	<h1 class="box-name"><%= box.name%></h1>
+	<% if (!box.deleted) { %>
+	<%- include('../partials/submit-post'); %>
+	<% } %>
+	<%- include('../partials/posts'); %>
+	<%- include('../partials/controls') %>
+</body>

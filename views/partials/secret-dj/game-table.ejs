@@ -1,0 +1,26 @@
+<table>
+	<tr>
+		<th>game name</th>
+		<th>game description</th>
+		<% if (showOwnership) { %>
+		<th>game owner</th>
+		<% } %>
+	</tr>
+	<% for (const season of seasons) { %>
+	<% const link = `/secret-dj/games/${season.id}`%>
+	<tr>
+		<td>
+			<% if (showOwnership && season.owner.id === participantId) { %>👑<% } %>
+
+			<a href="<%=link%>"><%= season.name %></a>
+		</td>
+		<td><%= season.description %></td>
+		<% if (showOwnership) { %>
+		<td><a href="/secret-dj/djs/<%=season.owner.id%>"><%= season.owner.name %></a></td>
+		<% } %>
+	</tr>
+	<% } %>
+</table>
+<% if (defaultControls) { %>
+<%- include('../boxes/page-controls', {query, params: ['take'], cursor, cursorName: 'cursor'}); %>
+<% } %>

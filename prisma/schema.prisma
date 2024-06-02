@@ -4,69 +4,130 @@ datasource db {
 }
 
 model Email {
-  id String @id @default(cuid())
-  address String @unique
-  confirmed Boolean @default(false)
-  subscribed Boolean @default(true)
-  admins Admin[]
-  posts Post[]
+  id          String       @id @default(cuid())
+  address     String       @unique
+  confirmed   Boolean      @default(false)
+  subscribed  Boolean      @default(true)
+  posts       Post[]
+  participant Participant? @relation("ParticipantEmail")
+  tokens      Token[]
+  boxes       Box[]
+  counters    Counter[]
 }
 
-model Admin {
-  id Int @id @default(autoincrement())
-  email Email @relation(fields: [emailId], references: [id])
-  emailId String @unique
-  name String
-  boxes Box[]
-  counters Counter[]
+model Message {
+  id         Int       @id @default(autoincrement())
+  address    String
+  subject    String
+  html       String
+  expiration DateTime?
+}
+
+model Token {
+  id             Int      @id @default(autoincrement())
+  email          Email    @relation(fields: [emailId], references: [id], onDelete: Cascade)
+  type           String
+  emailId        String
+  temporaryToken String?  @unique
+  valid          Boolean  @default(true)
+  expiration     DateTime
 }
 
 model Box {
-  id String @id @default(cuid())
-  name String
-  origin String
-  owner Admin @relation(fields: [ownerId], references: [id])
-  ownerId Int
-  posts Post[]
-  deleted Boolean @default(false)
+  sort       Int     @id @default(autoincrement())
+  id         String  @unique @default(cuid())
+  name       String
+  origin     String?
+  owner      Email   @relation(fields: [ownerId], references: [id])
+  ownerId    String
+  posts      Post[]
+  deleted    Boolean @default(false)
+  stylesheet String?
+  Season     Season?
+  Entry      Entry?
 }
 
 model Counter {
-  id String @id @default(cuid())
-  name String
-  origin String
-  owner Admin @relation(fields: [ownerId], references: [id])
-  ownerId Int
-  count Int @default(0)
+  id      String  @id @default(cuid())
+  name    String
+  origin  String?
+  owner   Email   @relation(fields: [ownerId], references: [id])
+  ownerId String
+  count   Int     @default(0)
 }
 
 model Poster {
-  id Int @id @default(autoincrement())
-  ip String @unique
+  id    Int    @id @default(autoincrement())
+  ip    String @unique
   posts Post[]
-  karma Int @default(0)
+  karma Int    @default(0)
 }
 
 model Post {
-  id Int @id @default(autoincrement())
-  userId String @unique @default(cuid())
-  createdAt DateTime @default(now())
-  from String
-  dead Boolean @default(false)
-  content String
-  subscribed Boolean @default(true)
-  poster Poster @relation(fields: [posterId], references: [id])
-  posterId Int
-  email Email? @relation(fields: [emailId], references: [id])
-  emailId String?
-  box Box @relation(fields: [boxId], references: [id])
-  boxId String
-  children Post[] @relation("PostChildren")
-  parent Post? @relation("PostChildren", fields: [parentId], references: [id])
-  parentId Int?
+  sort       Int      @id @default(autoincrement())
+  id         String   @unique @default(cuid())
+  createdAt  DateTime @default(now())
+  from       String
+  dead       Boolean  @default(false)
+  content    String
+  subscribed Boolean  @default(true)
+  poster     Poster   @relation(fields: [posterId], references: [id])
+  posterId   Int
+  email      Email?   @relation(fields: [emailId], references: [id])
+  emailId    String?
+  box        Box      @relation(fields: [boxId], references: [id])
+  boxId      String
+  children   Post[]   @relation("PostChildren")
+  parent     Post?    @relation("PostChildren", fields: [parentId], references: [id])
+  parentId   String?
+}
+
+model Season {
+  sort        Int         @id @default(autoincrement())
+  id          String      @unique @default(cuid())
+  owner       Participant @relation("SeasonOwner", fields: [ownerId], references: [id])
+  ownerId     String
+  name        String
+  description String
+  entries     Entry[]     @relation("SeasonEntries")
+  ruleCount   Int
+  state       String      @default("sign-up")
+  box         Box         @relation(fields: [boxId], references: [id])
+  boxId       String      @unique
+}
+
+model Rule {
+  id              Int    @id @default(autoincrement())
+  text            String
+  entry           Entry  @relation("EntryRules", fields: [playlistEntryId], references: [id], onDelete: Cascade)
+  playlistEntryId String
+}
+
+model Entry {
+  sort          Int          @id @default(autoincrement())
+  id            String       @unique @default(cuid())
+  season        Season       @relation("SeasonEntries", fields: [seasonId], references: [id])
+  seasonId      String
+  recipient     Participant  @relation("RecipientEntries", fields: [recipientId], references: [id])
+  recipientId   String
+  dj            Participant? @relation("DJEntries", fields: [djId], references: [id])
+  djId          String?
+  rules         Rule[]       @relation("EntryRules")
+  submissionUrl String?
+  box           Box          @relation(fields: [boxId], references: [id])
+  boxId         String       @unique
+}
+
+model Participant {
+  id               String   @id @default(cuid())
+  ownedSeasons     Season[] @relation("SeasonOwner")
+  recipientEntries Entry[]  @relation("RecipientEntries")
+  djEntries        Entry[]  @relation("DJEntries")
+  email            Email    @relation("ParticipantEmail", fields: [emailId], references: [id])
+  emailId          String   @unique
+  name             String
 }
 
 generator client {
   provider = "prisma-client-js"
 }
-

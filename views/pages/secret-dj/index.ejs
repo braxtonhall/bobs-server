@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<%- include('../../partials/secret-dj/head'); %>
+	</head>
+	<body>
+		<header>
+			<%- include('../../partials/header'); %>
+		</header>
+
+		<main>
+			<%- include('../../partials/secret-dj/secret-dj-title'); %>
+			<p>hello! welcome to secret dj, a playlist sharing game 8)</p>
+			<ol>
+				<li>djs create rules for the playlist that they wish to receive</li>
+				<li>then, they are randomly assigned another dj for whom they will make a playlist</li>
+				<li>the playlist is constrained by the other dj's rules</li>
+			</ol>
+			<ul>
+				<li><a href="/secret-dj/games">browse</a></li>
+				<li><a href="/secret-dj/archive">archive</a></li>
+				<% if (participantId) { %>
+				<li><a href="/secret-dj/create">create</a></li>
+				<li><a href="/secret-dj/settings">settings</a></li>
+				<li><a href="/secret-dj/djs/<%= participantId %>">me</a></li>
+				<% } else { %>
+				<li><a href="/secret-dj/signup?redirect=%2Fsecret-dj">join</a></li>
+				<% } %>
+			</ul>
+			<% if (seasons.length) { %>
+			<%- include('../../partials/secret-dj/game-table', {query, showOwnership: true, seasons, participantId, defaultControls: true}); %>
+			<% } else if (participantId) { %>
+			you are currently not participating in any secret dj games. click <a href="/secret-dj/games">browse</a> to
+			find a game to join
+			<% } %>
+		</main>
+	</body>
+</html>

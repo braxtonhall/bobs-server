@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<%- include('../partials/head'); %>
+	</head>
+	<body>
+		<header>
+			<%- include('../partials/header'); %>
+		</header>
+
+		<main>
+			<div>
+				<h1>login</h1>
+				to begin logging in, enter your email and click submit. a one time password will be sent to your email
+				address.
+				<form class="login-form" method="post" action="/login">
+					<label for="email" class="email-label">email</label>
+					<input
+						class="email-input"
+						id="email"
+						name="email"
+						required
+						pattern="^\S+@\S+\.\S+$"
+						title="A valid email address"
+						maxlength="<%=Config.DEFAULT_MAX_LENGTH%>"
+					/>
+					<input type="hidden" name="redirect" value="<%= query.redirect ?? '' %>" readonly />
+					<button class="login-submit">submit</button>
+				</form>
+			</div>
+		</main>
+	</body>
+</html>

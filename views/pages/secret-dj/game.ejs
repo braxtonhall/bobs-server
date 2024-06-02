@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<%- include('../../partials/secret-dj/head'); %>
+	</head>
+	<body>
+		<header>
+			<%- include('../../partials/header'); %>
+		</header>
+
+		<main>
+			<%- include('../../partials/secret-dj/secret-dj-title'); %>
+			<% if (error) { %>
+			<p class="error"><%=error%></p>
+			<% } %>
+			<% if (success) { %>
+			<p class="success"><%=success%></p>
+			<% } %>
+			<div>
+				<h2><%=season.name%></h2>
+				<p class="description"><%=season.description%></p>
+				<% if (season.state === 'sign-up') { %>
+				<%- include('../../partials/secret-dj/game/sign-up'); %>
+				<% } else if (season.state === 'in-progress') { %>
+				<%- include('../../partials/secret-dj/game/in-progress'); %>
+				<% } else { %>
+				<%- include('../../partials/secret-dj/game/ended'); %>
+				<% } %>
+			</div>
+
+			<div>
+				<h3>participants</h3>
+				<%- include('../../partials/secret-dj/entry-table'); %>
+			</div>
+			<hr />
+			<h2>comments</h2>
+			<iframe class="comments embed" src="/boxes/<%=boxId%>"></iframe>
+		</main>
+	</body>
+</html>
