@@ -26,8 +26,7 @@ services:
       DATABASE_URL: file://app/db/dev.sqlite
       SSL_CERT_PATH: /etc/ssl/fullchain.pem
       SSL_KEY_PATH: /etc/ssl/privkey.pem
-      HTTP_PORT: 8080
-      HTTPS_PORT: 8443
+      HOST: "${HOST}:8443"
     env_file: .env
     volumes:
       - "${HOST_DB_DIR}:/app/db"
