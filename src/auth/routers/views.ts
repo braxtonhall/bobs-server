@@ -27,12 +27,12 @@ export const views = express()
 		}
 	})
 	.get("/login", checkLoggedIn, (req, res) => res.render("pages/login", { query: req.query, Config }))
-	.post("/login", checkLoggedIn, (req, res) => {
+	.post("/login", checkLoggedIn, async (req, res) => {
 		const email: string = req.body.email;
-		void login({
+		await login({
 			email,
 			redirect: typeof req.body.redirect === "string" ? req.body.redirect : undefined,
-		}).catch(() => {});
+		}).catch(console.error);
 		return res.redirect(
 			`/authorize?${new URLSearchParams({ email, ...(req.body.redirect && { redirect: req.body.redirect }) })}`,
 		);
