@@ -133,6 +133,7 @@ hr {
 iframe.comments {
 	height: 50vh;
 	border: 1px dashed;
+	resize: both;
 }
 
 .new-post-poster-label,
