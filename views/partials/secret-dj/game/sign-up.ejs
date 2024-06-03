@@ -26,6 +26,13 @@
 <%=season.description%></textarea
 		>
 
+		<label for="unlisted" class="rules-label">unlisted</label>
+		<% if (season.unlisted) { %>
+		<input type="checkbox" id="unlisted" name="unlisted" checked />
+		<% } else { %>
+		<input type="checkbox" id="unlisted" name="unlisted" />
+		<% } %>
+
 		<button type="submit">edit</button>
 	</form>
 	<% if (season.entries.length) { %>

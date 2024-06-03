@@ -64,9 +64,13 @@ a {
 	}
 }
 
-input {
+input:not([type="checkbox"]):not([type="number"]) {
 	width: 62%;
 	box-sizing: border-box;
+}
+
+#even-older {
+	margin-top: 1em;
 }
 
 textarea {

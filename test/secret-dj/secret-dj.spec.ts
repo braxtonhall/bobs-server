@@ -47,6 +47,7 @@ describe("Basic flow", () => {
 			ownerId: participant.id,
 			description: "foo",
 			emailId: email.id,
+			unlisted: false,
 		});
 		expect(gameId).toEqual(expect.any(String));
 	});
@@ -208,6 +209,7 @@ describe("multiple users flow", () => {
 			ownerId: ownerParticipant.id,
 			description: "bar",
 			emailId: ownerEmail.id,
+			unlisted: false,
 		});
 		expect(seasonId).toEqual(expect.any(String));
 		const gamesForOwner = await getGamesForParticipant({ participantId: ownerParticipant.id });
@@ -232,6 +234,7 @@ describe("multiple users flow", () => {
 				ownerId: "9999",
 				description: "",
 				emailId: ownerEmail.id,
+				unlisted: false,
 			}),
 		).rejects.toThrow());
 	it("owner can delete game after creating", async () => {
@@ -241,6 +244,7 @@ describe("multiple users flow", () => {
 			ownerId: ownerParticipant.id,
 			description: "baz",
 			emailId: ownerEmail.id,
+			unlisted: false,
 		});
 		const gamesForOwnerBeforeDeletion = await getGamesForParticipant({ participantId: ownerParticipant.id });
 		expect(gamesForOwnerBeforeDeletion).toEqual({
