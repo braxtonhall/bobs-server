@@ -13,6 +13,10 @@ export const createSeasonPayloadSchema = z.object({
 	name: z.string().min(1).max(Config.DEFAULT_MAX_LENGTH),
 	description: z.string().max(Config.DESCRIPTION_MAX_LENGTH).default(""),
 	rules: z.coerce.number().int().min(0),
+	unlisted: z
+		.literal("on")
+		.optional()
+		.transform((on) => on === "on"),
 });
 export type CreateSeasonPayload = z.infer<typeof createSeasonPayloadSchema>;
 
