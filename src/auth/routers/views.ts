@@ -50,7 +50,7 @@ export const views = express()
 		} catch {
 			return res.render("pages/authorize", {
 				query: req.query,
-				error: "that token was not correct or was expired",
+				error: "that password was not correct. it may be expired or already used",
 				Config,
 			});
 		}
