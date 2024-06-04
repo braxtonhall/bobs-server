@@ -7,9 +7,17 @@ type Environment = {
 	ownerId: string;
 	description: string;
 	emailId: string;
+	unlisted: boolean;
 };
 
-export const createGame = async ({ name, description, ruleCount, ownerId, emailId }: Environment): Promise<string> =>
+export const createGame = async ({
+	name,
+	description,
+	ruleCount,
+	ownerId,
+	emailId,
+	unlisted,
+}: Environment): Promise<string> =>
 	db.$transaction(async (tx) => {
 		if (ruleCount < 0) {
 			throw new Error("Rule count must be equal to or greater than 0");
@@ -34,6 +42,7 @@ export const createGame = async ({ name, description, ruleCount, ownerId, emailI
 				ownerId,
 				description,
 				boxId: box.id,
+				unlisted,
 			},
 			select: {
 				id: true,

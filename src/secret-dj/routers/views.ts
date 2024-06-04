@@ -240,9 +240,9 @@ export const views = express()
 	.post("/games/:id/edit", async (req, res) => {
 		const seasonId = req.params.id;
 		try {
-			const { name, description } = editSeasonPayloadSchema.parse(req.body);
+			const { name, description, unlisted } = editSeasonPayloadSchema.parse(req.body);
 			const participant: Participant = res.locals.participant;
-			await editGame({ name, description, seasonId, ownerId: participant.id });
+			await editGame({ name, description, seasonId, ownerId: participant.id, unlisted });
 			clearMessagesAndSet({ req, success: "game data updated!" });
 			return res.redirect(`/secret-dj/games/${seasonId}`);
 		} catch {
@@ -293,10 +293,17 @@ export const views = express()
 	.get("/create", (req, res) => res.render("pages/secret-dj/create", { error: "", Config }))
 	.post("/create", async (req, res) => {
 		try {
-			const { name, description, rules: ruleCount } = createSeasonPayloadSchema.parse(req.body);
+			const { name, description, rules: ruleCount, unlisted } = createSeasonPayloadSchema.parse(req.body);
 			const participant: Participant = res.locals.participant;
 			const email: Email = res.locals.email;
-			const id = await createGame({ name, description, ruleCount, ownerId: participant.id, emailId: email.id });
+			const id = await createGame({
+				name,
+				description,
+				ruleCount,
+				ownerId: participant.id,
+				emailId: email.id,
+				unlisted,
+			});
 			clearMessagesAndSet({ req, success: "new game created!" });
 			return res.redirect(`games/${id}`);
 		} catch (err) {

@@ -107,6 +107,7 @@ model Season {
   entries     Entry[]     @relation("SeasonEntries")
   ruleCount   Int
   state       String      @default("sign-up")
+  unlisted    Boolean     @default(false)
   box         Box         @relation(fields: [boxId], references: [id])
   boxId       String      @unique
 }

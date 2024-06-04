@@ -24,6 +24,8 @@ export const sendQueuedMessages = async (errorDelay = 1000) => {
 					locks.add(message.id);
 					if (message.expiration === null || message.expiration >= new Date()) {
 						await sendMessage(message);
+					} else {
+						console.log("Message for", message.address, "has expired");
 					}
 					await db.message.deleteMany({ where: { id: message.id } });
 					setImmediate(sendQueuedMessages);
