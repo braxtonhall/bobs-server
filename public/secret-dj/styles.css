@@ -34,10 +34,6 @@ a {
 	color: green;
 }
 
-.embed {
-	width: 50%;
-}
-
 .description {
 	white-space: pre-wrap;
 	overflow-wrap: anywhere;
@@ -56,12 +52,18 @@ a {
 	margin-top: 0.5em;
 }
 
-@media only screen and (max-width: 700px) {
-	.embed,
-	form {
-		width: 100% !important;
-		box-sizing: border-box;
-	}
+/* This is the body that is not the comment box */
+body:not(:has(> h1.box-name)) {
+	max-width: 550px;
+	margin: 0 auto 0 auto;
+	padding: 8px;
+}
+
+.embed,
+textarea,
+form {
+	width: 100%;
+	box-sizing: border-box;
 }
 
 input:not([type="checkbox"]):not([type="number"]) {
@@ -74,9 +76,7 @@ input:not([type="checkbox"]):not([type="number"]) {
 }
 
 textarea {
-	width: 100%;
-	box-sizing: border-box;
-	aspect-ratio: 1.618/0.25;
+	aspect-ratio: 1.618/0.125;
 }
 
 table,
@@ -95,7 +95,6 @@ td {
 form {
 	margin: 8px 0;
 	padding: 8px;
-	width: 300px;
 	border: 1px dashed;
 }
 
@@ -133,6 +132,7 @@ hr {
 iframe.comments {
 	height: 50vh;
 	border: 1px dashed;
+	resize: both;
 }
 
 .new-post-poster-label,
@@ -190,6 +190,7 @@ td.post-poster {
 
 table.post-table {
 	border: none;
+	width: 100%;
 }
 
 td.post-poster {
