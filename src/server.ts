@@ -17,6 +17,7 @@ import { parse } from "./parse";
 import { match, P } from "ts-pattern";
 import { Ok } from "./types/result";
 import session from "express-session";
+import { checkboxSchema } from "./util/checkboxSchema";
 
 // TODO would be great to also serve a javascript client
 // TODO this whole system is a mess...
@@ -44,10 +45,7 @@ const views = express()
 	.post("/settings", async (req, res) => {
 		const result = parse(
 			z.object({
-				subscribed: z
-					.literal("on")
-					.optional()
-					.transform((on) => on === "on"),
+				subscribed: checkboxSchema,
 			}),
 			req.body,
 		);

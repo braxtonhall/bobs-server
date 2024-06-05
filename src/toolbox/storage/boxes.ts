@@ -3,6 +3,7 @@ import { match } from "ts-pattern";
 import { None, Option, Some } from "../../types/option";
 import { Err, Ok, Result } from "../../types/result";
 import { Failure } from "../../types/failure";
+import { Email, Permission } from "@prisma/client";
 
 const getOrigin = async (id: string): Promise<Option<string>> =>
 	match(
@@ -30,14 +31,26 @@ const create = async (data: { name: string; origin?: string; ownerId: string; st
 
 const edit = async (
 	id: string,
-	ownerId: string,
+	userId: string,
 	data: { name?: string; origin?: string; stylesheet?: string },
 ): Promise<Result<undefined, Failure.MISSING_DEPENDENCY | Failure.FORBIDDEN>> => {
 	if (await exists(id)) {
 		const result = await db.box.update({
 			where: {
 				id,
-				ownerId,
+				OR: [
+					{
+						ownerId: userId,
+					},
+					{
+						permissions: {
+							some: {
+								emailId: userId,
+								canSetDetails: true,
+							},
+						},
+					},
+				],
 			},
 			data,
 			select: { id: true },
@@ -64,10 +77,28 @@ const getStatus = (id: string) =>
 		}
 	});
 
-const getDetails = (id: string, ownerId: string, postCount: number, cursor?: string) =>
+const getDetails = (id: string, userId: string, postCount: number, cursor?: string) =>
 	db.box
 		.findUnique({
-			where: { id, ownerId },
+			where: {
+				id,
+				OR: [
+					{ ownerId: userId },
+					{
+						permissions: {
+							some: {
+								emailId: userId,
+								OR: [
+									{ canKill: true },
+									{ canSetDetails: true },
+									{ canDelete: true },
+									{ canSetPermissions: true },
+								],
+							},
+						},
+					},
+				],
+			},
 			select: {
 				id: true,
 				name: true,
@@ -91,12 +122,38 @@ const getDetails = (id: string, ownerId: string, postCount: number, cursor?: str
 						dead: true,
 					},
 				},
+				permissions: {
+					where: {
+						emailId: userId,
+					},
+					select: {
+						canKill: true,
+						canSetDetails: true,
+						canDelete: true,
+						canSetPermissions: true,
+						email: {
+							select: {
+								address: true,
+							},
+						},
+					},
+				},
 			},
 		})
 		.then((result) => {
 			if (result) {
+				// if permission array is empty, then user must be the owner
+				const permissions =
+					result.permissions[0] ||
+					({
+						canKill: true,
+						canSetPermissions: true,
+						canDelete: true,
+						canSetDetails: true,
+					} satisfies Omit<(typeof result.permissions)[number], "email">);
 				return Some({
 					...result,
+					permissions,
 					posts: result.posts.slice(0, postCount),
 					cursor: result.posts[postCount]?.id,
 				});
@@ -105,11 +162,26 @@ const getDetails = (id: string, ownerId: string, postCount: number, cursor?: str
 			}
 		});
 
-const list = async (ownerId: string, deleted: boolean, count: number, cursor?: string) => {
+const list = async (userId: string, deleted: boolean, count: number, cursor?: string) => {
 	const boxes = await db.box.findMany({
 		where: {
-			ownerId,
 			deleted,
+			OR: [
+				{ ownerId: userId },
+				{
+					permissions: {
+						some: {
+							emailId: userId,
+							OR: [
+								{ canKill: true },
+								{ canSetDetails: true },
+								{ canDelete: true },
+								{ canSetPermissions: true },
+							],
+						},
+					},
+				},
+			],
 		},
 		cursor: typeof cursor === "string" ? { id: cursor } : undefined,
 		orderBy: {
@@ -120,16 +192,142 @@ const list = async (ownerId: string, deleted: boolean, count: number, cursor?: s
 	return { boxes: boxes.slice(0, count), cursor: boxes[count]?.id };
 };
 
-const setBoxDeletion = async (id: string, ownerId: string, deleted: boolean) =>
-	db.$transaction(async (tx) => {
-		const box = await tx.box.findUnique({ where: { id }, select: { deleted: true, ownerId: true } });
+const ifCanEditBox =
+	<
+		Callback extends (
+			tx: Pick<typeof db, "box" | "email" | "permission">,
+			box: { ownerId: string },
+		) => Promise<Result<unknown, unknown>>,
+	>(
+		ids: { userId: string; boxId: string },
+		permissionNeeded: PermissionKey,
+		callback: Callback,
+	) =>
+	async (
+		tx: Pick<typeof db, "box" | "email" | "permission">,
+	): Promise<Result<never, Failure.MISSING_DEPENDENCY | Failure.FORBIDDEN> | Awaited<ReturnType<Callback>>> => {
+		const box = await tx.box.findUnique({
+			where: { id: ids.boxId },
+			select: {
+				ownerId: true,
+				permissions: {
+					where: {
+						emailId: ids.userId,
+						[permissionNeeded]: true,
+					},
+				},
+			},
+		});
 		if (box === null) {
 			return Err(Failure.MISSING_DEPENDENCY);
-		} else if (box.ownerId !== ownerId) {
+		} else if (box.ownerId !== ids.userId && box.permissions.length === 0) {
 			return Err(Failure.FORBIDDEN);
 		} else {
-			return Ok(await tx.box.update({ where: { id, ownerId }, data: { deleted }, select: { deleted: true } }));
+			return (await callback(tx, box)) as Awaited<ReturnType<Callback>>;
 		}
-	});
+	};
 
-export default { getOrigin, create, edit, exists, getStatus, list, getDetails, setBoxDeletion };
+const setBoxDeletion = async (
+	id: string,
+	userId: string,
+	deleted: boolean,
+): Promise<Result<undefined, Failure.MISSING_DEPENDENCY | Failure.FORBIDDEN>> =>
+	db.$transaction(
+		ifCanEditBox({ boxId: id, userId }, "canDelete", async (tx) => {
+			await tx.box.update({ where: { id }, data: { deleted }, select: { deleted: true } });
+			return Ok();
+		}),
+	);
+
+type PermissionKey = keyof Permission & `can${string}`;
+
+type MaintainerEnv = {
+	userId: string;
+	boxId: string;
+	address: string;
+	permissions: Pick<Permission, PermissionKey>;
+};
+
+const setMaintainer = async ({
+	userId,
+	boxId,
+	address,
+	permissions,
+}: MaintainerEnv): Promise<
+	Result<undefined, Failure.MISSING_DEPENDENCY | Failure.FORBIDDEN | Failure.PRECONDITION_FAILED>
+> =>
+	db.$transaction(
+		ifCanEditBox({ userId, boxId }, "canSetPermissions", async (tx, { ownerId }) => {
+			const { id: emailId } = await tx.email.upsert({
+				where: { address },
+				create: { address },
+				update: {},
+				select: { id: true },
+			});
+			if (emailId === ownerId) {
+				return Err(Failure.PRECONDITION_FAILED);
+			}
+			await tx.permission.upsert({
+				where: {
+					id: { emailId, boxId },
+				},
+				create: {
+					...permissions,
+					emailId,
+					boxId,
+				},
+				update: permissions,
+			});
+			return Ok();
+		}),
+	);
+
+const removeMaintainer = async ({
+	userId,
+	boxId,
+	address,
+}: Omit<MaintainerEnv, "permissions">): Promise<Result<undefined, Failure.MISSING_DEPENDENCY | Failure.FORBIDDEN>> =>
+	db.$transaction(
+		ifCanEditBox({ userId, boxId }, "canSetPermissions", async (tx) => {
+			const result = await tx.permission.deleteMany({
+				where: {
+					boxId,
+					email: {
+						address,
+					},
+				},
+			});
+			return result.count ? Ok() : Err(Failure.MISSING_DEPENDENCY);
+		}),
+	);
+
+const getMaintainers = async ({ userId, boxId }: Omit<MaintainerEnv, "permissions" | "address">) =>
+	db.$transaction(
+		ifCanEditBox(
+			{ userId, boxId },
+			"canSetPermissions",
+			async (tx): Promise<Result<(Permission & { email: Email })[], never>> =>
+				Ok(
+					await tx.permission.findMany({
+						where: { boxId },
+						include: {
+							email: true,
+						},
+					}),
+				),
+		),
+	);
+
+export default {
+	getOrigin,
+	create,
+	edit,
+	exists,
+	getStatus,
+	list,
+	getDetails,
+	setBoxDeletion,
+	setMaintainer,
+	removeMaintainer,
+	getMaintainers,
+};

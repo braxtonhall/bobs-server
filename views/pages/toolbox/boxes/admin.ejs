@@ -14,11 +14,14 @@
 			<%=message%>
 			<%}%>
 
+			<% if (permissions.canDelete) { %>
 			<% const action = deleted ? 'restore':'archive';%>
 			<form method="post" class="<%=action%>" action="/toolbox/boxes/admin/<%= id %>/<%= action %>">
 				<button class="<%=action%>-save"><%=action%></button>
 			</form>
+			<% } %>
 
+			<% if (permissions.canSetDetails) { %>
 			<form method="post" class="edit-form" action="/toolbox/boxes/admin/<%= id %>/edit">
 				<label for="name" class="name-label">name</label>
 				<input
@@ -50,7 +53,13 @@
 
 				<button class="edit-save">submit</button>
 			</form>
+			<% } %>
 
+			<% if (permissions.canSetPermissions) { %>
+			<a href="/toolbox/boxes/admin/<%=id%>/maintainers">manage maintainers</a>
+			<% } %>
+
+			<% if (permissions.canKill) { %>
 			<table>
 				<tr>
 					<th>dead</th>
@@ -88,7 +97,9 @@
 				</tr>
 				<% } %>
 			</table>
+
 			<%- include('../../../partials/boxes/page-controls', {query, params: ['take'], cursor, cursorName: 'cursor'}); %>
+			<% } %>
 		</main>
 	</body>
 </html>
