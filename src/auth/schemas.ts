@@ -9,7 +9,7 @@ export type LoginPayload = z.infer<typeof loginPayloadSchema>;
 
 export const authorizePayloadSchema = z.object({
 	email: emailSchema,
-	token: z.string().max(Config.DEFAULT_MAX_LENGTH),
+	token: z.string().trim().max(Config.DEFAULT_MAX_LENGTH),
 });
 
 export type AuthorizePayload = z.infer<typeof authorizePayloadSchema>;

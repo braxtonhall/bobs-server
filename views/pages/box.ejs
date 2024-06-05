@@ -1,9 +1,10 @@
 <head>
+	<title><%=box.name%></title>
 	<% if (box.stylesheet) {%>
 	<link rel="stylesheet" href="<%=box.stylesheet%>" />
 	<% } %>
 </head>
-<body>
+<body class="box-body">
 	<h1 class="box-name"><%= box.name%></h1>
 	<% if (!box.deleted) { %>
 	<%- include('../partials/submit-post'); %>

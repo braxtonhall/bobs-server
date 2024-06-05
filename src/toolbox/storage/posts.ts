@@ -262,7 +262,7 @@ const getNotificationInfo = async (
 
 const setDeadAndGetPosterId = async (
 	id: string,
-	ownerId: string,
+	userId: string,
 	dead: boolean,
 ): Promise<Result<number, Failure.MISSING_DEPENDENCY | Failure.FORBIDDEN>> =>
 	db
@@ -275,7 +275,19 @@ const setDeadAndGetPosterId = async (
 				where: {
 					id,
 					box: {
-						ownerId,
+						OR: [
+							{
+								ownerId: userId,
+							},
+							{
+								permissions: {
+									some: {
+										emailId: userId,
+										canKill: true,
+									},
+								},
+							},
+						],
 					},
 				},
 				data: {

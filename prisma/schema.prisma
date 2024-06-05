@@ -13,6 +13,7 @@ model Email {
   tokens      Token[]
   boxes       Box[]
   counters    Counter[]
+  permissions Permission[]
 }
 
 model Message {
@@ -34,17 +35,31 @@ model Token {
 }
 
 model Box {
-  sort       Int     @id @default(autoincrement())
-  id         String  @unique @default(cuid())
-  name       String
-  origin     String?
-  owner      Email   @relation(fields: [ownerId], references: [id])
-  ownerId    String
-  posts      Post[]
-  deleted    Boolean @default(false)
-  stylesheet String?
-  Season     Season?
-  Entry      Entry?
+  sort        Int          @id @default(autoincrement())
+  id          String       @unique @default(cuid())
+  name        String
+  origin      String?
+  owner       Email        @relation(fields: [ownerId], references: [id])
+  ownerId     String
+  posts       Post[]
+  deleted     Boolean      @default(false)
+  stylesheet  String?
+  season      Season?
+  entry       Entry?
+  permissions Permission[]
+}
+
+model Permission {
+  boxId             String
+  box               Box     @relation(fields: [boxId], references: [id])
+  emailId           String
+  email             Email   @relation(fields: [emailId], references: [id])
+  canSetDetails     Boolean @default(false)
+  canKill           Boolean @default(false)
+  canDelete         Boolean @default(false)
+  canSetPermissions Boolean @default(false)
+
+  @@id(name: "id", [boxId, emailId])
 }
 
 model Counter {
@@ -92,6 +107,7 @@ model Season {
   entries     Entry[]     @relation("SeasonEntries")
   ruleCount   Int
   state       String      @default("sign-up")
+  unlisted    Boolean     @default(false)
   box         Box         @relation(fields: [boxId], references: [id])
   boxId       String      @unique
 }

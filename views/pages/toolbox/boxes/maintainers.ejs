@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<%- include('../../../partials/head'); %>
+	</head>
+	<body>
+		<header>
+			<%- include('../../../partials/header'); %>
+		</header>
+
+		<main>
+			<h1>moderators</h1>
+
+			<% if (message) {%>
+			<%=message%>
+			<%}%>
+
+			<table>
+				<thead>
+					<tr>
+						<th>email</th>
+						<th>can moderate</th>
+						<th>can update moderators</th>
+						<th>can archive box</th>
+						<th>can edit box details</th>
+						<th>save</th>
+						<th>remove</th>
+					</tr>
+				</thead>
+				<tbody>
+					<% for (const permission of permissions) { %>
+					<tr>
+						<td><%=permission.email.address%></td>
+						<td>
+							<% if (permission.canKill) { %>
+							<input
+								type="checkbox"
+								name="kill"
+								title="moderate"
+								form="<%=permission.emailId%>"
+								checked
+							/>
+							<% } else { %>
+							<input type="checkbox" name="kill" title="moderate" form="<%=permission.emailId%>" />
+							<% } %>
+						</td>
+						<td>
+							<% if (permission.canSetPermissions) { %>
+							<input
+								type="checkbox"
+								name="permissions"
+								title="moderators"
+								form="<%=permission.emailId%>"
+								checked
+							/>
+							<% } else { %>
+							<input
+								type="checkbox"
+								name="permissions"
+								title="moderators"
+								form="<%=permission.emailId%>"
+							/>
+							<% } %>
+						</td>
+						<td>
+							<% if (permission.canDelete) { %>
+							<input
+								type="checkbox"
+								name="delete"
+								title="deletion"
+								form="<%=permission.emailId%>"
+								checked
+							/>
+							<% } else { %>
+							<input type="checkbox" name="delete" title="deletion" form="<%=permission.emailId%>" />
+							<% } %>
+						</td>
+						<td>
+							<% if (permission.canSetDetails) { %>
+							<input
+								type="checkbox"
+								name="details"
+								title="details"
+								form="<%=permission.emailId%>"
+								checked
+							/>
+							<% } else { %>
+							<input type="checkbox" name="details" title="details" form="<%=permission.emailId%>" />
+							<% } %>
+						</td>
+						<td><button form="<%=permission.emailId%>">save</button></td>
+						<td>
+							<form method="post" action="/toolbox/boxes/admin/<%= boxId %>/maintainers/delete">
+								<input name="email" type="hidden" value="<%=permission.email.address%>" />
+								<button>remove</button>
+							</form>
+						</td>
+					</tr>
+					<% } %>
+
+					<tr>
+						<td>
+							<input
+								name="email"
+								required
+								pattern="^\S+@\S+\.\S+$"
+								title="A valid email address"
+								maxlength="<%=Config.DEFAULT_MAX_LENGTH%>"
+								form="new-maintainer"
+							/>
+						</td>
+						<td>
+							<input type="checkbox" name="kill" title="moderate" form="new-maintainer" />
+						</td>
+						<td>
+							<input type="checkbox" name="permissions" title="moderators" form="new-maintainer" />
+						</td>
+						<td>
+							<input type="checkbox" name="delete" title="deletion" form="new-maintainer" />
+						</td>
+						<td>
+							<input type="checkbox" name="details" title="details" form="new-maintainer" />
+						</td>
+						<td><button form="new-maintainer">add</button></td>
+						<td></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<% for (const permission of permissions) { %>
+			<form
+				method="post"
+				action="/toolbox/boxes/admin/<%= boxId %>/maintainers"
+				id="<%=permission.emailId%>"
+				style="display: none"
+			>
+				<input name="email" type="hidden" value="<%=permission.email.address%>" />
+			</form>
+			<% } %>
+
+			<form
+				method="post"
+				action="/toolbox/boxes/admin/<%= boxId %>/maintainers"
+				id="new-maintainer"
+				style="display: none"
+			></form>
+		</main>
+	</body>
+</html>

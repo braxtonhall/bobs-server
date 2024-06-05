@@ -60,6 +60,7 @@ export const endFinishedSeasons = async () => {
 				where: { id },
 				data: {
 					state: SeasonState.ENDED,
+					unlisted: false,
 				},
 			});
 			await enqueue(tx, ...(await toMessages(tx, id, entries)));

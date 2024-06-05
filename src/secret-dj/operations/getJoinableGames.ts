@@ -19,12 +19,14 @@ export const getJoinableGames = async ({
 	cursor,
 	take,
 }: Environment): Promise<{ seasons: Pick<Season, "state" | "name">[]; cursor?: string }> => {
+	const baseQuery = {
+		state: SeasonState.SIGN_UP,
+		unlisted: false,
+	};
 	const query = participantId
 		? {
 				AND: [
-					{
-						state: SeasonState.SIGN_UP,
-					},
+					baseQuery,
 					{
 						entries: {
 							none: {
@@ -36,7 +38,7 @@ export const getJoinableGames = async ({
 					},
 				],
 			}
-		: { state: SeasonState.SIGN_UP };
+		: baseQuery;
 	const seasons = await db.season.findMany({
 		where: query,
 		select: {
