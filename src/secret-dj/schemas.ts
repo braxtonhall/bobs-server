@@ -1,5 +1,6 @@
 import { z } from "zod";
 import Config from "../Config";
+import { checkboxSchema } from "../util/checkboxSchema";
 
 export const signupPayloadSchema = z.object({
 	name: z.string().min(1).max(Config.DEFAULT_MAX_LENGTH),
@@ -13,10 +14,7 @@ export const createSeasonPayloadSchema = z.object({
 	name: z.string().min(1).max(Config.DEFAULT_MAX_LENGTH),
 	description: z.string().max(Config.DESCRIPTION_MAX_LENGTH).default(""),
 	rules: z.coerce.number().int().min(0),
-	unlisted: z
-		.literal("on")
-		.optional()
-		.transform((on) => on === "on"),
+	unlisted: checkboxSchema,
 });
 export type CreateSeasonPayload = z.infer<typeof createSeasonPayloadSchema>;
 

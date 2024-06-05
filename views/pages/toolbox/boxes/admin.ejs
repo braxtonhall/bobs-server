@@ -14,11 +14,14 @@
 			<%=message%>
 			<%}%>
 
+			<% if (permissions.canDelete) { %>
 			<% const action = deleted ? 'restore':'archive';%>
 			<form method="post" class="<%=action%>" action="/toolbox/boxes/admin/<%= id %>/<%= action %>">
 				<button class="<%=action%>-save"><%=action%></button>
 			</form>
+			<% } %>
 
+			<% if (permissions.canSetDetails) { %>
 			<form method="post" class="edit-form" action="/toolbox/boxes/admin/<%= id %>/edit">
 				<label for="name" class="name-label">name</label>
 				<input
@@ -50,45 +53,56 @@
 
 				<button class="edit-save">submit</button>
 			</form>
+			<% } %>
 
-			<table>
-				<tr>
-					<th>dead</th>
-					<th>date</th>
-					<th>poster</th>
-					<th>message</th>
-				</tr>
+			<% if (permissions.canSetPermissions) { %>
+			<a href="/toolbox/boxes/admin/<%=id%>/maintainers">manage maintainers</a>
+			<% } %>
 
-				<% for (const post of posts) { %>
-				<tr data-id="<%=post.id%>" class="<%= post.dead ? 'dead' : ''%>">
-					<td>
-						<% if (post.dead) { %>
-						<form
-							class="hide-form"
-							method="POST"
-							action="/toolbox/boxes/admin/<%= id %>/posts/<%=post.id%>/unhide"
-						>
-							<button class="hide-submit">unhide</button>
-							<%/* TODO pass through some query params!!! */%>
-						</form>
-						<% } else {%>
-						<form
-							class="hide-form"
-							method="POST"
-							action="/toolbox/boxes/admin/<%= id %>/posts/<%=post.id%>/hide"
-						>
-							<button class="hide-submit">hide</button>
-							<%/* TODO pass through some query params!!! */%>
-						</form>
-						<% } %>
-					</td>
-					<td><%= post.createdAt %></td>
-					<td><%= post.from %></td>
-					<td><%= post.content %></td>
-				</tr>
-				<% } %>
-			</table>
-			<%- include('../../../partials/boxes/page-controls', {query, params: ['take'], cursor, cursorName: 'cursor'}); %>
+			<% if (permissions.canKill) { %>
+			<details>
+				<summary>moderation</summary>
+				<table>
+					<tr>
+						<th>dead</th>
+						<th>date</th>
+						<th>poster</th>
+						<th>message</th>
+					</tr>
+
+					<% for (const post of posts) { %>
+					<tr data-id="<%=post.id%>" class="<%= post.dead ? 'dead' : ''%>">
+						<td>
+							<% if (post.dead) { %>
+							<form
+								class="hide-form"
+								method="POST"
+								action="/toolbox/boxes/admin/<%= id %>/posts/<%=post.id%>/unhide"
+							>
+								<button class="hide-submit">unhide</button>
+								<%/* TODO pass through some query params!!! */%>
+							</form>
+							<% } else {%>
+							<form
+								class="hide-form"
+								method="POST"
+								action="/toolbox/boxes/admin/<%= id %>/posts/<%=post.id%>/hide"
+							>
+								<button class="hide-submit">hide</button>
+								<%/* TODO pass through some query params!!! */%>
+							</form>
+							<% } %>
+						</td>
+						<td><%= post.createdAt %></td>
+						<td><%= post.from %></td>
+						<td><%= post.content %></td>
+					</tr>
+					<% } %>
+				</table>
+
+				<%- include('../../../partials/boxes/page-controls', {query, params: ['take'], cursor, cursorName: 'cursor'}); %>
+			</details>
+			<% } %>
 		</main>
 	</body>
 </html>

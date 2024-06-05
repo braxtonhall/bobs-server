@@ -16,6 +16,7 @@ import { editBoxSchema } from "../schema/editBox";
 import posts from "../storage/posts";
 import posters from "../storage/posters";
 import { getEmailPosts } from "../operations/getEmailPosts";
+import { addMaintainerPayloadSchema, removeMaintainerPayloadSchema } from "../schema/maintainers";
 
 // TODO there is WAY too much repetition here... There must be a good way to get reuse a lot of code
 
@@ -77,7 +78,7 @@ const killProcedure = (dead: boolean) => async (req: Request<{ postId: string; b
 
 const deleteProcedure = (deleted: boolean) => async (req: Request<{ id: string }>, res: Response) =>
 	match(await boxesClient.setBoxDeletion(req.params.id, res.locals.email.id, deleted))
-		.with(Ok(P._), () => res.redirect(`/toolbox/boxes/admin/${req.params.id}`))
+		.with(Ok(), () => res.redirect(`/toolbox/boxes/admin/${req.params.id}`))
 		.with(Err(Failure.FORBIDDEN), () => res.sendStatus(403))
 		.with(Err(Failure.MISSING_DEPENDENCY), () => res.sendStatus(404))
 		.exhaustive();
@@ -125,6 +126,61 @@ const boxAdminViews = express()
 			)
 			.otherwise(() => res.sendStatus(404));
 	})
+	.get("/admin/:id/maintainers", async (req, res) =>
+		match(await boxesClient.getMaintainers({ boxId: req.params.id, userId: res.locals.email.id }))
+			.with(Ok(P.select()), (permissions) =>
+				res.render("pages/toolbox/boxes/maintainers", {
+					boxId: req.params.id,
+					Config,
+					permissions,
+					message: typeof req.query.message === "string" ? req.query.message : "",
+				}),
+			)
+			.with(Err(Failure.FORBIDDEN), () => res.sendStatus(403))
+			.with(Err(Failure.MISSING_DEPENDENCY), () => res.sendStatus(404))
+			.exhaustive(),
+	)
+	.post("/admin/:id/maintainers", (req, res) =>
+		match(parse(addMaintainerPayloadSchema, req.body))
+			.with(Ok(P.select()), async ({ email: address, permissions, kill, details, delete: canDelete }) =>
+				match(
+					await boxesClient.setMaintainer({
+						userId: res.locals.email.id,
+						boxId: req.params.id,
+						address,
+						permissions: {
+							canSetPermissions: permissions,
+							canSetDetails: details,
+							canKill: kill,
+							canDelete,
+						},
+					}),
+				)
+					.with(Ok(), () => res.redirect(`/toolbox/boxes/admin/${req.params.id}/maintainers?message=success`)) // TODO express-session here
+					.with(Err(Failure.FORBIDDEN), () => res.sendStatus(403))
+					.with(Err(Failure.MISSING_DEPENDENCY), () => res.sendStatus(404))
+					.with(Err(Failure.PRECONDITION_FAILED), () => res.sendStatus(412))
+					.exhaustive(),
+			)
+			.otherwise(({ value }) => res.send(value).status(400)),
+	)
+	.post("/admin/:id/maintainers/delete", (req, res) =>
+		match(parse(removeMaintainerPayloadSchema, req.body))
+			.with(Ok(P.select()), async ({ email: address }) =>
+				match(
+					await boxesClient.removeMaintainer({
+						userId: res.locals.email.id,
+						boxId: req.params.id,
+						address,
+					}),
+				)
+					.with(Ok(), () => res.redirect(`/toolbox/boxes/admin/${req.params.id}/maintainers?message=success`)) // TODO express-session here
+					.with(Err(Failure.FORBIDDEN), () => res.sendStatus(403))
+					.with(Err(Failure.MISSING_DEPENDENCY), () => res.sendStatus(404))
+					.exhaustive(),
+			)
+			.otherwise(() => res.sendStatus(400)),
+	)
 	.post("/admin/:id/edit", (req, res) =>
 		match(parse(editBoxSchema, req.body))
 			.with(Ok(P.select()), async (payload) =>
