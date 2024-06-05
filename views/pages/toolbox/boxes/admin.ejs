@@ -60,48 +60,45 @@
 			<% } %>
 
 			<% if (permissions.canKill) { %>
-			<details>
-				<summary>moderation</summary>
-				<table>
-					<tr>
-						<th>dead</th>
-						<th>date</th>
-						<th>poster</th>
-						<th>message</th>
-					</tr>
+			<table>
+				<tr>
+					<th>dead</th>
+					<th>date</th>
+					<th>poster</th>
+					<th>message</th>
+				</tr>
 
-					<% for (const post of posts) { %>
-					<tr data-id="<%=post.id%>" class="<%= post.dead ? 'dead' : ''%>">
-						<td>
-							<% if (post.dead) { %>
-							<form
-								class="hide-form"
-								method="POST"
-								action="/toolbox/boxes/admin/<%= id %>/posts/<%=post.id%>/unhide"
-							>
-								<button class="hide-submit">unhide</button>
-								<%/* TODO pass through some query params!!! */%>
-							</form>
-							<% } else {%>
-							<form
-								class="hide-form"
-								method="POST"
-								action="/toolbox/boxes/admin/<%= id %>/posts/<%=post.id%>/hide"
-							>
-								<button class="hide-submit">hide</button>
-								<%/* TODO pass through some query params!!! */%>
-							</form>
-							<% } %>
-						</td>
-						<td><%= post.createdAt %></td>
-						<td><%= post.from %></td>
-						<td><%= post.content %></td>
-					</tr>
-					<% } %>
-				</table>
+				<% for (const post of posts) { %>
+				<tr data-id="<%=post.id%>" class="<%= post.dead ? 'dead' : ''%>">
+					<td>
+						<% if (post.dead) { %>
+						<form
+							class="hide-form"
+							method="POST"
+							action="/toolbox/boxes/admin/<%= id %>/posts/<%=post.id%>/unhide"
+						>
+							<button class="hide-submit">unhide</button>
+							<%/* TODO pass through some query params!!! */%>
+						</form>
+						<% } else {%>
+						<form
+							class="hide-form"
+							method="POST"
+							action="/toolbox/boxes/admin/<%= id %>/posts/<%=post.id%>/hide"
+						>
+							<button class="hide-submit">hide</button>
+							<%/* TODO pass through some query params!!! */%>
+						</form>
+						<% } %>
+					</td>
+					<td><%= post.createdAt %></td>
+					<td><%= post.from %></td>
+					<td><%= post.content %></td>
+				</tr>
+				<% } %>
+			</table>
 
-				<%- include('../../../partials/boxes/page-controls', {query, params: ['take'], cursor, cursorName: 'cursor'}); %>
-			</details>
+			<%- include('../../../partials/boxes/page-controls', {query, params: ['take'], cursor, cursorName: 'cursor'}); %>
 			<% } %>
 		</main>
 	</body>
