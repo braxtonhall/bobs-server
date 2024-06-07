@@ -1,6 +1,6 @@
 import { db } from "../../db";
 import { SeasonState } from "../SeasonState";
-import { enqueue, Message } from "../../email";
+import { enqueue, Message, sendQueuedMessages } from "../../email";
 import Config from "../../Config";
 import { getUnsubLink } from "../../auth/operations";
 
@@ -64,8 +64,8 @@ to unsubscribe from all emails from bob's server, <a href="${unsub.toString()}">
 	return Promise.all(futureMessages);
 };
 
-export const startGame = async ({ ownerId, seasonId }: Environment): Promise<Entry[]> =>
-	db.$transaction(async (tx) => {
+export const startGame = async ({ ownerId, seasonId }: Environment): Promise<Entry[]> => {
+	const updates = await db.$transaction(async (tx) => {
 		const season = await tx.season.update({
 			where: { id: seasonId, ownerId, state: SeasonState.SIGN_UP },
 			select: { entries: true, id: true },
@@ -95,3 +95,6 @@ export const startGame = async ({ ownerId, seasonId }: Environment): Promise<Ent
 			throw new Error(`Could not find eligible season ${seasonId}`);
 		}
 	});
+	void sendQueuedMessages();
+	return updates;
+};
