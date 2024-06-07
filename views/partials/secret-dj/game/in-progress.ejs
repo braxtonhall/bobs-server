@@ -7,10 +7,16 @@
 	<li><%=rule.text%></li>
 	<% } %>
 </ol>
+<details>
+	<summary>comments</summary>
+	<iframe class="comments embed" src="/boxes/<%=dj.boxId%>"></iframe>
+</details>
 <% if (dj.submissionUrl) { %>
-you have successfully submitted a playlist! one made for you will appear here when all playlists have been submitted
+<p>
+	you have successfully submitted a playlist! one made for you will appear here when all playlists have been submitted
+</p>
 <% } else { %>
-it's time to start making a playlist! following the rules above, curate a playlist, and submit it here
+<p>it's time to start making a playlist! following the rules above, curate a playlist, and submit it here</p>
 <% } %>
 <form class="submit-playlist-form" action="<%= `/secret-dj/games/${season.id}/playlist` %>">
 	<label for="playlist-url">playlist url</label>
@@ -27,4 +33,19 @@ it's time to start making a playlist! following the rules above, curate a playli
 <% } else { %>
 are you supposed to be playing in this game of secret dj?
 <a href="/login?redirect=<%=encodeURIComponent(`/secret-dj/games/${season.id}`)%>">click here to log in!</a>
+<% } %>
+
+<% if (recipient) {%>
+<hr />
+<h3>my rules</h3>
+<ol>
+	<% for (const rule of recipient.rules) { %>
+	<li><%=rule.text%></li>
+	<% } %>
+</ol>
+
+<details>
+	<summary>comments</summary>
+	<iframe class="comments embed" src="/boxes/<%=recipient.boxId%>"></iframe>
+</details>
 <% } %>
