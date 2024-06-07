@@ -1,7 +1,7 @@
 import { db } from "../../db";
 import { SeasonState } from "../SeasonState";
 import Config from "../../Config";
-import { enqueue, Message, sendQueuedMessages } from "../../email";
+import { EmailPersona, enqueue, Message, sendQueuedMessages } from "../../email";
 import { getUnsubLink } from "../../auth/operations";
 
 type RecipientEntry = { recipient: { email: { address: string; subscribed: boolean }; name: string } };
@@ -13,6 +13,7 @@ const toMessages = (tx: Pick<typeof db, "token">, seasonId: string, entries: Rec
 		.map(async ({ recipient }) => {
 			const { link: unsub } = await getUnsubLink(tx, recipient.email.address);
 			return {
+				persona: EmailPersona.SECRET_DJ,
 				address: recipient.email.address,
 				html: `${recipient.name}, your playlist is ready. <a href="${link}">click here to see your playlist</a>.
 <br/>
