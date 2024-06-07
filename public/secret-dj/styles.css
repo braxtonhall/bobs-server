@@ -26,6 +26,10 @@ a {
 	color: #6900ff;
 }
 
+details > summary {
+	font-style: italic;
+}
+
 .error {
 	color: red;
 }

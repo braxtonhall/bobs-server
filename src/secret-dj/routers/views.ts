@@ -152,40 +152,25 @@ export const views = express()
 	.get("/games/:id", async (req, res) => {
 		try {
 			const season = await getSeason(req.params.id);
-			if (res.locals.participating) {
-				const participantId = res.locals.participant.id;
-				const { recipient, dj } = await getParticipantEntriesForSeason({
-					seasonId: season.id,
-					userId: participantId,
-				});
-				const { error, success } = getMessagesAndClear(req);
-				return res.render("pages/secret-dj/game", {
-					error,
-					success,
-					season,
-					participant: res.locals.participant,
-					recipient,
-					dj,
-					boxId: season.box.id,
-					host: Config.HOST,
-					protocol: req.protocol,
-					Config,
-				});
-			} else {
-				const { error, success } = getMessagesAndClear(req);
-				return res.render("pages/secret-dj/game", {
-					error,
-					success,
-					season,
-					participant: null,
-					recipient: null,
-					dj: null,
-					boxId: season.box.id,
-					host: Config.HOST,
-					protocol: req.protocol,
-					Config,
-				});
-			}
+			const { error, success } = getMessagesAndClear(req);
+			const { recipient, dj } = res.locals.participating
+				? await getParticipantEntriesForSeason({
+						seasonId: season.id,
+						userId: res.locals.participant.id,
+					})
+				: { recipient: null, dj: null };
+			return res.render("pages/secret-dj/game", {
+				error,
+				success,
+				season,
+				participant: res.locals.participant ?? null,
+				recipient,
+				dj,
+				boxId: season.box.id,
+				host: Config.HOST,
+				protocol: req.protocol,
+				Config,
+			});
 		} catch {
 			return res.sendStatus(404);
 		}
