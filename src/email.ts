@@ -6,7 +6,13 @@ import { setTimeout } from "timers/promises";
 
 sendgrid.setApiKey(Config.SENDGRID_API_KEY);
 
-export type Message = Omit<PrismaMessage, "id" | "expiration"> & Partial<Pick<PrismaMessage, "expiration">>;
+export enum EmailPersona {
+	SECRET_DJ = "secret dj housemaster 💿",
+	BOBS_MAILER = "Bob's Mailer",
+}
+
+export type Message = Omit<PrismaMessage, "id" | "expiration" | "persona"> &
+	Partial<Pick<PrismaMessage, "expiration">> & { persona: EmailPersona };
 
 export const enqueue = async (client: Pick<typeof db, "message">, ...messages: Message[]): Promise<void> => {
 	await client.message.createMany({ data: messages });
@@ -42,13 +48,13 @@ export const sendQueuedMessages = async (errorDelay = 1000) => {
 	}
 };
 
-const sendMessage = async (message: Message): Promise<void> => {
+const sendMessage = async (message: PrismaMessage): Promise<void> => {
 	if (Config.EMAIL_DISABLED) {
 		console.log(message);
 	} else {
 		await sendgrid
 			.send({
-				from: Config.EMAIL_FROM,
+				from: `${message.persona} <${Config.EMAIL_FROM}>`,
 				to: message.address,
 				subject: message.subject,
 				html: message.html,
