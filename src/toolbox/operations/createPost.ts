@@ -9,7 +9,7 @@ import { Some, unwrapOr } from "../../types/option";
 import { match, P } from "ts-pattern";
 import { Post } from "../schema/post";
 import { getUnsubLink, startVerification } from "../../auth/operations";
-import { enqueue } from "../../email";
+import { enqueue, sendQueuedMessages } from "../../email";
 import { db } from "../../db";
 import Config from "../../Config";
 import ejs from "ejs";
@@ -36,6 +36,8 @@ const sendNotificationEmail = async (env: {
 		subject: "You received a new reply",
 		html,
 	}).catch(() => {});
+	// Note: not part of a transaction
+	void sendQueuedMessages();
 };
 
 export const createPost = async (
@@ -57,6 +59,7 @@ export const createPost = async (
 			});
 
 			// TODO these messages should really be in a transaction with posts.create(..)
+			// if we turn this into a transaction, update sendQueuedMessages call
 			if (email?.confirmed === false) {
 				await startVerification(db, email.address);
 			}
