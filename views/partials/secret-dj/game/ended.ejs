@@ -1,15 +1,16 @@
 <% if (recipient)  { %>
-<h3>
-	your playlist has been curated by <a href="/secret-dj/djs/<%= recipient.dj.id %>"><%= recipient.dj.name %></a>
-	<h3 />
-	<h4>your rules</h4>
-	<ol>
-		<% for (const rule of recipient.rules) { %>
-		<li><%=rule.text%></li>
-		<% } %>
-	</ol>
-	<% if (recipient.dj) { %>
-	<%- include('../entry-embed', {link: recipient.submissionUrl}); %>
+<h3>your playlist has been curated by <a href="/secret-dj/djs/<%= recipient.dj.id %>"><%= recipient.dj.name %></a></h3>
+<h4>your rules</h4>
+<ol>
+	<% for (const rule of recipient.rules) { %>
+	<li><%=rule.text%></li>
 	<% } %>
-	<% } %>
-</h3>
+</ol>
+<% if (recipient.dj) { %>
+<%- include('../entry-embed', {link: recipient.submissionUrl}); %>
+<% } %>
+<details>
+	<summary>comments</summary>
+	<iframe class="comments embed" src="/boxes/<%=recipient.boxId%>"></iframe>
+</details>
+<% } %>

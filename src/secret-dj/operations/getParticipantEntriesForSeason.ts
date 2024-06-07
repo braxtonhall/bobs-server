@@ -21,6 +21,7 @@ export const getParticipantEntriesForSeason = async ({ seasonId, userId }: Envir
 			},
 			submissionUrl: true,
 			rules: true,
+			boxId: true,
 		},
 	});
 	const futureDj = db.entry.findFirst({
@@ -38,6 +39,7 @@ export const getParticipantEntriesForSeason = async ({ seasonId, userId }: Envir
 			},
 			submissionUrl: true,
 			rules: true,
+			boxId: true,
 		},
 	});
 	const [recipient, dj] = await Promise.all([futureRecipient, futureDj]);
