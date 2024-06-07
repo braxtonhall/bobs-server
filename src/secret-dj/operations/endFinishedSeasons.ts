@@ -1,7 +1,7 @@
 import { db } from "../../db";
 import { SeasonState } from "../SeasonState";
 import Config from "../../Config";
-import { enqueue, Message } from "../../email";
+import { enqueue, Message, sendQueuedMessages } from "../../email";
 import { getUnsubLink } from "../../auth/operations";
 
 type RecipientEntry = { recipient: { email: { address: string; subscribed: boolean }; name: string } };
@@ -54,8 +54,8 @@ export const endFinishedSeasons = async () => {
 			id: true,
 		},
 	});
-	const futureUpdates = finishedSeasons.map(({ id, entries }) =>
-		db.$transaction(async (tx): Promise<void> => {
+	const futureUpdates = finishedSeasons.map(async ({ id, entries }) => {
+		await db.$transaction(async (tx): Promise<void> => {
 			await tx.season.update({
 				where: { id },
 				data: {
@@ -64,8 +64,9 @@ export const endFinishedSeasons = async () => {
 				},
 			});
 			await enqueue(tx, ...(await toMessages(tx, id, entries)));
-		}),
-	);
+		});
+		void sendQueuedMessages();
+	});
 	const updates = await Promise.all(futureUpdates);
 	return updates.length;
 };

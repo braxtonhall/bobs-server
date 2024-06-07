@@ -11,7 +11,6 @@ export type Message = Omit<PrismaMessage, "id" | "expiration"> & Partial<Pick<Pr
 export const enqueue = async (client: Pick<typeof db, "message">, ...messages: Message[]): Promise<void> => {
 	await client.message.createMany({ data: messages });
 	console.log(new Date().toLocaleString(), `Enqueuing ${messages.length} messages`);
-	void sendQueuedMessages();
 };
 
 const locks = new Set<number>();

@@ -6,7 +6,7 @@ import { randomUUID } from "crypto";
 import { DateTime } from "luxon";
 import Config from "../Config";
 import { AuthorizePayload } from "./schemas";
-import { enqueue } from "../email";
+import { enqueue, sendQueuedMessages } from "../email";
 
 type Confirmation = {
 	address: string;
@@ -58,6 +58,8 @@ Verify your address by clicking <a href="${verifyLink.toString()}">this link</a>
 To unsubscribe from all emails from bob's server, <a href="${unsubscribeLink.toString()}">click here</a>`,
 		expiration,
 	});
+	// Note: not part of a transaction
+	void sendQueuedMessages();
 };
 
 const isValid = (
@@ -169,8 +171,8 @@ export const completeVerification = async ({
 		}
 	});
 
-export const login = ({ email: address, redirect }: { email: string; redirect?: string }) =>
-	db.$transaction(async (tx) => {
+export const login = async ({ email: address, redirect }: { email: string; redirect?: string }) => {
+	await db.$transaction(async (tx) => {
 		const temporaryToken = randomUUID();
 		const expiration = DateTime.now().plus({ minute: Config.LOGIN_TOKEN_EXPIRATION_MIN }).toJSDate();
 		await tx.token.create({
@@ -188,6 +190,8 @@ export const login = ({ email: address, redirect }: { email: string; redirect?: 
 		});
 		await sendConfirmationEmail(tx, { address, temporaryToken, expiration, redirect }).catch(() => {});
 	});
+	void sendQueuedMessages();
+};
 
 export const authorize = ({
 	email: address,
