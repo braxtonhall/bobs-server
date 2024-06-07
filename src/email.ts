@@ -7,7 +7,7 @@ import { setTimeout } from "timers/promises";
 sendgrid.setApiKey(Config.SENDGRID_API_KEY);
 
 export enum EmailPersona {
-	SECRET_DJ = "Secret DJ Housemaster 💿",
+	SECRET_DJ = "secret dj housemaster 💿",
 	BOBS_MAILER = "Bob's Mailer",
 }
 
