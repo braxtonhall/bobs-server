@@ -9,7 +9,7 @@ import { Some, unwrapOr } from "../../types/option";
 import { match, P } from "ts-pattern";
 import { Post } from "../schema/post";
 import { getUnsubLink, startVerification } from "../../auth/operations";
-import { enqueue, sendQueuedMessages } from "../../email";
+import { EmailPersona, enqueue, sendQueuedMessages } from "../../email";
 import { db } from "../../db";
 import Config from "../../Config";
 import ejs from "ejs";
@@ -32,6 +32,7 @@ const sendNotificationEmail = async (env: {
 		unsubscribeLink: unsubLink.toString(),
 	});
 	await enqueue(db, {
+		persona: EmailPersona.BOBS_MAILER,
 		address: env.address,
 		subject: "You received a new reply",
 		html,

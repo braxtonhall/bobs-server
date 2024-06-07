@@ -1,6 +1,6 @@
 import { db } from "../../db";
 import { SeasonState } from "../SeasonState";
-import { enqueue, Message, sendQueuedMessages } from "../../email";
+import { EmailPersona, enqueue, Message, sendQueuedMessages } from "../../email";
 import Config from "../../Config";
 import { getUnsubLink } from "../../auth/operations";
 
@@ -54,6 +54,7 @@ const toMessages = (
 		.map(async ({ recipient }) => {
 			const { link: unsub } = await getUnsubLink(tx, recipient.email.address);
 			return {
+				persona: EmailPersona.SECRET_DJ,
 				address: recipient.email.address,
 				html: `${recipient.name}, it's time to start making a playlist. <a href="${link}">click here to see your rules</a>.
 <br/>

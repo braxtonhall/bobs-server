@@ -21,6 +21,7 @@ model Message {
   address    String
   subject    String
   html       String
+  persona    String
   expiration DateTime?
 }
 
