@@ -7,7 +7,7 @@ import { getUnsubLink } from "../../auth/operations";
 type RecipientEntry = { recipient: { email: { address: string; subscribed: boolean }; name: string } };
 
 const toMessages = (tx: Pick<typeof db, "token">, seasonId: string, entries: RecipientEntry[]): Promise<Message[]> => {
-	const link = `https://${Config.HOST}/secret-dj/games/${seasonId}`;
+	const link = `https://${Config.HOST}/login?redirect=${encodeURIComponent(`/secret-dj/games/${seasonId}`)}`;
 	const futureMessages = entries
 		.filter(({ recipient }) => recipient.email.subscribed)
 		.map(async ({ recipient }) => {

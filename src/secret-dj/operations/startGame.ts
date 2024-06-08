@@ -48,7 +48,7 @@ const toMessages = (
 	seasonId: string,
 	entries: UpdatedEntry[],
 ): Promise<Message[]> => {
-	const link = `https://${Config.HOST}/secret-dj/games/${seasonId}`;
+	const link = `https://${Config.HOST}/login?redirect=${encodeURIComponent(`/secret-dj/games/${seasonId}`)}`;
 	const futureMessages = entries
 		.filter(({ recipient }) => recipient.email.subscribed)
 		.map(async ({ recipient }) => {
