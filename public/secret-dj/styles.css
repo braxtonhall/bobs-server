@@ -44,6 +44,14 @@ details > summary {
 	word-break: normal;
 }
 
+.entry-table td {
+	word-break: break-word;
+}
+
+.rule-list {
+	word-break: break-word;
+}
+
 .entry-table-rule {
 	text-align: left;
 }

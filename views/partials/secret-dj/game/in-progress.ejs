@@ -2,7 +2,7 @@
 <hr />
 <h3>a playlist for <a href="/secret-dj/djs/<%= dj.recipient.id %>"><%= dj.recipient.name %></a></h3>
 <h4>rules:</h4>
-<ol>
+<ol class="rule-list">
 	<% for (const rule of dj.rules) { %>
 	<li><%=rule.text%></li>
 	<% } %>
@@ -40,7 +40,7 @@ are you supposed to be playing in this game of secret dj?
 <% if (recipient) {%>
 <hr />
 <h3>my rules</h3>
-<ol>
+<ol class="rule-list">
 	<% for (const rule of recipient.rules) { %>
 	<li><%=rule.text%></li>
 	<% } %>
