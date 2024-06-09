@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { getPosts } from "../operations/getPosts";
+import { getPost, getPosts } from "../operations/getPosts";
 import { hashString } from "../../util";
 import { match, P } from "ts-pattern";
 import { Err, Ok } from "../../types/result";
@@ -29,7 +29,7 @@ export const views = express()
 			await getPosts(req.params.box, hashString(req.ip ?? ""), req.query),
 			await boxesClient.getStatus(req.params.box),
 		])
-			.with([Ok(P.select("posts")), Some(P.select("box"))], ({ posts, box }) =>
+			.with([Some(P.select("posts")), Some(P.select("box"))], ({ posts, box }) =>
 				res.render("pages/box", {
 					...posts,
 					box: { ...box, id: req.params.box },
@@ -50,6 +50,15 @@ export const views = express()
 					.exhaustive(),
 			)
 			.with([Err(P.select()), P._], (message) => res.send(message).status(400))
+			.otherwise(() => res.sendStatus(400)),
+	)
+	.get("/boxes/:box/posts/:id", async (req, res) =>
+		match(req.ip)
+			.with(P.string.select(), async (ip) =>
+				match(await getPost(req.params.box, req.params.id, hashString(ip), req.query))
+					.with(Some(P.select()), (post) => res.render("pages/post", { post, query: req.query, Config }))
+					.otherwise(() => res.sendStatus(404)),
+			)
 			.otherwise(() => res.sendStatus(400)),
 	)
 	.post("/boxes/:box/posts/:id/delete", async (req, res) =>

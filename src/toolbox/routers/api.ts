@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 import { match, P } from "ts-pattern";
 import boxes from "../storage/boxes";
 import { Option, Some } from "../../types/option";
-import { getPosts } from "../operations/getPosts";
+import { getPost, getPosts } from "../operations/getPosts";
 import { hashString } from "../../util";
 import { createPostSchema } from "../schema/createPost";
 import { parse } from "../../parse";
@@ -42,7 +42,7 @@ export const api = express()
 	// TODO /boxes/:box/posts/:id/children
 	.get("/boxes/:box/posts", async (req, res) =>
 		match(await getPosts(req.params.box, hashString(req.ip ?? ""), req.query))
-			.with(Ok(P.select()), (posts) => res.send(posts))
+			.with(Some(P.select()), (posts) => res.send(posts))
 			.otherwise(() => res.send(404)),
 	)
 	.post("/boxes/:box/posts", async (req, res) =>
@@ -55,6 +55,15 @@ export const api = express()
 					.exhaustive(),
 			)
 			.with([Err(P.select()), P._], (message) => res.send(message).status(400))
+			.otherwise(() => res.sendStatus(400)),
+	)
+	.get("/boxes/:box/posts/:post", async (req, res) =>
+		match(req.ip)
+			.with(P.string.select(), async (ip) =>
+				match(await getPost(req.params.box, req.params.post, hashString(ip), req.query))
+					.with(Some(P.select()), (post) => res.send({ ...post, box: undefined }))
+					.otherwise(() => res.sendStatus(404)),
+			)
 			.otherwise(() => res.sendStatus(400)),
 	)
 	.delete("/boxes/:box/posts/:post", async (req, res) =>

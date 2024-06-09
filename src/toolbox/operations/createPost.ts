@@ -46,7 +46,7 @@ export const createPost = async (
 	{ parent: parentId, email: address, content, from }: CreatePost,
 	ip: HashedString,
 ): Promise<Result<Post, Failure.MISSING_DEPENDENCY | Failure.PRECONDITION_FAILED>> => {
-	const optionParent = parentId === undefined ? Some(undefined) : await posts.get(parentId, boxId);
+	const optionParent = parentId === undefined ? Some(undefined) : await posts.getNotificationInfo(parentId, boxId);
 	return match(optionParent)
 		.with(Some(P.select()), async (parent) => {
 			const email = unwrapOr(await emails.get(address), null);

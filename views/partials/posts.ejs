@@ -25,7 +25,10 @@
 		</td>
 		<td class="post-poster"><%= post.from || 'anonymous' %></td>
 		<td class="post-date">
-			<a class="post-date-link" href="?<%=new URLSearchParams({...query, cursor: post.id}).toString()%>">
+			<a
+				class="post-date-link"
+				href="/boxes/<%= box.id %>/posts/<%= post.id %>?<%=new URLSearchParams({...query}).toString()%>"
+			>
 				<span class="date-time" data-ms="<%=post.createdAt.valueOf()%>"
 					><%= post.createdAt.toUTCString() %></span
 				>
@@ -55,5 +58,3 @@
 		element.textContent = new Date(Number(element.dataset.ms)).toLocaleString();
 	}
 </script>
-
-<%- include('boxes/page-controls', {query, params: ['take', 'dead'], cursor, cursorName: 'cursor'}); %>

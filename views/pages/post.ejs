@@ -1,0 +1,15 @@
+<head>
+	<% if (post.box.stylesheet) {%>
+	<link rel="stylesheet" href="<%=post.box.stylesheet%>" />
+	<% } %>
+</head>
+<body>
+	<h3>
+		viewing a single comment from
+		<a href="/boxes/<%=post.box.id%>?<%= new URLSearchParams({...query}).toString() %>"
+			><span><%=post.box.name%></span></a
+		>
+	</h3>
+	<% /* TODO maybe here we can include direct children? (like slack...) */ %>
+	<%- include('../partials/posts', {posts: [post], box: post.box, query, Config}); %>
+</body>
