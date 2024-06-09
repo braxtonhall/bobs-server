@@ -169,6 +169,7 @@ export const views = express()
 				boxId: season.box.id,
 				host: Config.HOST,
 				protocol: req.protocol,
+				logged: res.locals.logged ?? false,
 				Config,
 			});
 		} catch {
