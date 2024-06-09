@@ -9,18 +9,20 @@
 		<% } %>
 		<th>entry</th>
 		<% if (season.state === 'in-progress') { %>
-		<th>ready</th>
+		<th>💿</th>
 		<% } %>
 	</tr>
 	<% for (const entry of season.entries) { %>
 	<% const link = `/secret-dj/games/${season.id}/entries/${entry.id}`%>
 	<tr>
-		<td><a href="/secret-dj/djs/<%= entry.recipient.id %>"><%= entry.recipient.name %></a></td>
+		<td class="listener-column">
+			<a href="/secret-dj/djs/<%= entry.recipient.id %>"><%= entry.recipient.name %></a>
+		</td>
 		<% if (season.ruleCount === 1) { %>
 		<td class="entry-table-rule"><%=entry.rules[0].text%></td>
 		<% } else  if (season.ruleCount) { %>
 		<td class="entry-table-rule">
-			<ol>
+			<ol class="rule-list">
 				<% for (const rule of entry.rules) { %>
 				<li><%=rule.text%></li>
 				<% } %>
