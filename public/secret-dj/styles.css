@@ -44,6 +44,24 @@ details > summary {
 	word-break: normal;
 }
 
+.confirm-link {
+	white-space: pre-wrap;
+	word-wrap: break-word;
+}
+
+.rule-list {
+	hyphens: auto;
+}
+
+.entry-table .listener-column {
+	max-width: 150px;
+	overflow-wrap: break-word;
+}
+
+.entry-table-rule .rule-list {
+	hyphens: auto;
+}
+
 .entry-table-rule {
 	text-align: left;
 }

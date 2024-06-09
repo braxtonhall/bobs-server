@@ -21,7 +21,7 @@
 				<h4><%=entry.rules[0].text%></h4>
 				<% } else if (entry.rules.length) { %>
 				<h4>rules:</h4>
-				<ol>
+				<ol class="rule-list">
 					<% for (const rule of entry.rules) { %>
 					<li><%=rule.text%></li>
 					<% } %>
