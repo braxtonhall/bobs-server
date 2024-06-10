@@ -71,6 +71,7 @@ export const createPost = async (
 
 				const post = creationResult.value;
 				if (parent && parent.subscribed && parent.email?.confirmed && parent.email.subscribed) {
+					// TODO notification should not go out until deletable has become false
 					await sendNotificationEmail({
 						address: parent.email.address,
 						boxId,
