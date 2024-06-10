@@ -1,4 +1,4 @@
-import { db } from "../../db";
+import { db, transaction } from "../../db";
 import { SeasonState } from "../SeasonState";
 
 type Environment = {
@@ -7,8 +7,8 @@ type Environment = {
 };
 
 export const leaveGame = ({ seasonId, recipientId }: Environment) =>
-	db.$transaction(async (tx) => {
-		const entry = await tx.entry.deleteMany({
+	transaction(async () => {
+		const entry = await db.entry.deleteMany({
 			where: {
 				recipientId,
 				season: {

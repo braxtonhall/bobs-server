@@ -1,4 +1,4 @@
-import { db } from "../../db";
+import { db, transaction } from "../../db";
 import { HashedString } from "../../types/hashed";
 import Config from "../../Config";
 import { Err, Ok, Result } from "../../types/result";
@@ -27,14 +27,14 @@ type Query = {
 export type InternalPost = Awaited<ReturnType<typeof listInternal>>[number];
 
 const internalCreate = ({ emailId, content, posterId, boxId, from, parentId }: CreatePost) =>
-	db.$transaction(async (tx) => {
-		const result = await tx.box.findUnique({ where: { id: boxId }, select: { deleted: true } });
+	transaction(async () => {
+		const result = await db.box.findUnique({ where: { id: boxId }, select: { deleted: true } });
 		if (result === null) {
 			return Err(Failure.MISSING_DEPENDENCY);
 		} else if (result.deleted === true) {
 			return Err(Failure.PRECONDITION_FAILED);
 		}
-		const post = await tx.post.create({
+		const post = await db.post.create({
 			data: {
 				emailId,
 				content,
@@ -72,37 +72,38 @@ type DeletePostQuery = {
 };
 type DeletePostFailure = Failure.MISSING_DEPENDENCY | Failure.PRECONDITION_FAILED | Failure.FORBIDDEN;
 export const deletePost = async (query: DeletePostQuery): Promise<Result<undefined, DeletePostFailure>> =>
-	db
-		.$transaction([
-			db.post.deleteMany({
-				where: {
-					box: {
-						id: query.boxId,
-						deleted: false,
-					},
-					id: query.postId,
-					posterId: query.posterId,
-					createdAt: {
-						gt: new Date(Date.now() - Config.DELETION_TIME_MS),
-					},
-					children: {
-						none: {},
-					},
+	transaction(async () => {
+		const post = await db.post.findUnique({
+			where: { id: query.postId, boxId: query.boxId },
+			select: { id: true, posterId: true },
+		});
+		if (post === null) {
+			return Err(Failure.MISSING_DEPENDENCY);
+		} else if (post.posterId !== query.posterId) {
+			return Err(Failure.FORBIDDEN);
+		}
+		const result = await db.post.deleteMany({
+			where: {
+				box: {
+					id: query.boxId,
+					deleted: false,
 				},
-			}),
-			db.post.findUnique({
-				where: { id: query.postId, boxId: query.boxId },
-				select: { id: true, posterId: true },
-			}),
-		])
-		.then(([{ count }, post]) =>
-			match({ count, post })
-				.with({ count: 0, post: null }, () => Err(Failure.MISSING_DEPENDENCY))
-				.with({ count: 0, post: { posterId: query.posterId } }, () => Err(Failure.PRECONDITION_FAILED))
-				.with({ count: 0, post: P._ }, () => Err(Failure.FORBIDDEN))
-				.with({ count: P._, post: P._ }, () => Ok())
-				.exhaustive(),
-		);
+				id: query.postId,
+				posterId: query.posterId,
+				createdAt: {
+					gt: new Date(Date.now() - Config.DELETION_TIME_MS),
+				},
+				children: {
+					none: {},
+				},
+			},
+		});
+		if (result.count) {
+			return Ok();
+		} else {
+			return Err(Failure.PRECONDITION_FAILED);
+		}
+	});
 
 const toCursor = (cursor: unknown) => {
 	return cursor && typeof cursor === "string"
@@ -224,57 +225,55 @@ const setDeadAndGetPosterId = async (
 	userId: string,
 	dead: boolean,
 ): Promise<Result<number, Failure.MISSING_DEPENDENCY | Failure.FORBIDDEN>> =>
-	db
-		.$transaction([
-			db.post.findUnique({
-				where: { id },
-				select: { posterId: true },
-			}),
-			db.post.updateMany({
-				where: {
-					id,
-					box: {
-						OR: [
-							{
-								ownerId: userId,
-							},
-							{
-								permissions: {
-									some: {
-										emailId: userId,
-										canKill: true,
-									},
+	transaction(async () => {
+		const post = await db.post.findUnique({
+			where: { id },
+			select: { posterId: true },
+		});
+		if (post === null) {
+			return Err(Failure.MISSING_DEPENDENCY);
+		}
+		const { count } = await db.post.updateMany({
+			where: {
+				id,
+				box: {
+					OR: [
+						{
+							ownerId: userId,
+						},
+						{
+							permissions: {
+								some: {
+									emailId: userId,
+									canKill: true,
 								},
 							},
-						],
-					},
+						},
+					],
 				},
-				data: {
-					dead,
-				},
-			}),
-		])
-		.then(([post, { count }]) => {
-			if (post === null) {
-				return Err(Failure.MISSING_DEPENDENCY);
-			} else if (count === 0) {
-				return Err(Failure.FORBIDDEN);
-			} else {
-				return Ok(post.posterId);
-			}
+			},
+			data: {
+				dead,
+			},
 		});
+		if (count === 0) {
+			return Err(Failure.FORBIDDEN);
+		} else {
+			return Ok(post.posterId);
+		}
+	});
 
 const setSubscription = async (
 	id: string,
 	emailId: string,
 	subscribed: boolean,
 ): Promise<Result<undefined, Failure.MISSING_DEPENDENCY | Failure.FORBIDDEN>> =>
-	db.$transaction(async (tx) => {
+	transaction(async () => {
 		try {
-			await tx.post.update({ where: { id, emailId }, data: { subscribed }, select: { id: true } });
+			await db.post.update({ where: { id, emailId }, data: { subscribed }, select: { id: true } });
 			return Ok();
 		} catch {
-			const exists = await tx.post.findUnique({ where: { id } });
+			const exists = await db.post.findUnique({ where: { id } });
 			return Err(exists ? Failure.FORBIDDEN : Failure.MISSING_DEPENDENCY);
 		}
 	});

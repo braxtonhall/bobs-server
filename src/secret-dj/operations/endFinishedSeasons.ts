@@ -1,4 +1,4 @@
-import { db } from "../../db";
+import { db, transaction } from "../../db";
 import { SeasonState } from "../SeasonState";
 import Config from "../../Config";
 import { EmailPersona, enqueue, Message, sendQueuedMessages } from "../../email";
@@ -6,12 +6,12 @@ import { getUnsubLink } from "../../auth/operations";
 
 type RecipientEntry = { recipient: { email: { address: string; subscribed: boolean }; name: string } };
 
-const toMessages = (tx: Pick<typeof db, "token">, seasonId: string, entries: RecipientEntry[]): Promise<Message[]> => {
+const toMessages = (seasonId: string, entries: RecipientEntry[]): Promise<Message[]> => {
 	const link = `https://${Config.HOST}/login?redirect=${encodeURIComponent(`/secret-dj/games/${seasonId}`)}`;
 	const futureMessages = entries
 		.filter(({ recipient }) => recipient.email.subscribed)
 		.map(async ({ recipient }) => {
-			const { link: unsub } = await getUnsubLink(tx, recipient.email.address);
+			const { link: unsub } = await getUnsubLink(recipient.email.address);
 			return {
 				persona: EmailPersona.SECRET_DJ,
 				address: recipient.email.address,
@@ -56,15 +56,15 @@ export const endFinishedSeasons = async () => {
 		},
 	});
 	const futureUpdates = finishedSeasons.map(async ({ id, entries }) => {
-		await db.$transaction(async (tx): Promise<void> => {
-			await tx.season.update({
+		await transaction(async (): Promise<void> => {
+			await db.season.update({
 				where: { id },
 				data: {
 					state: SeasonState.ENDED,
 					unlisted: false,
 				},
 			});
-			await enqueue(tx, ...(await toMessages(tx, id, entries)));
+			await enqueue(...(await toMessages(id, entries)));
 		});
 		void sendQueuedMessages();
 	});

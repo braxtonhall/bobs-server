@@ -1,6 +1,6 @@
 import { Email, Token } from "@prisma/client";
 import { decode, encode } from "./token";
-import { db } from "../db";
+import { db, transaction } from "../db";
 import { TokenType } from "./TokenType";
 import { randomUUID } from "crypto";
 import { DateTime } from "luxon";
@@ -15,14 +15,14 @@ type Confirmation = {
 	redirect?: string;
 };
 
-const sendConfirmationEmail = async (tx: Pick<typeof db, "message">, confirmation: Confirmation): Promise<void> => {
+const sendConfirmationEmail = async (confirmation: Confirmation): Promise<void> => {
 	const searchParams = new URLSearchParams({
 		email: confirmation.address,
 		token: confirmation.temporaryToken,
 		...(typeof confirmation.redirect === "string" && { redirect: confirmation.redirect }),
 	} satisfies AuthorizePayload);
 	const url = new URL(`https://${Config.HOST}/authorize?${searchParams}`);
-	await enqueue(tx, {
+	await enqueue({
 		persona: EmailPersona.BOBS_MAILER,
 		address: confirmation.address,
 		subject: "Your one time password for Bob's Server",
@@ -41,16 +41,16 @@ const unsubLink = ({ email, token }: { email: string; token: string }) => {
 	return new URL(`https://${Config.HOST}/unsubscribe?${searchParams}`);
 };
 
-export const getUnsubLink = async (tx: Pick<typeof db, "token">, address: string) => {
-	const { temporaryToken, expiration } = await getVerificationToken(tx, address);
+export const getUnsubLink = async (address: string) => {
+	const { temporaryToken, expiration } = await getVerificationToken(address);
 	const link = unsubLink({ email: address, token: temporaryToken });
 	return { link, expiration };
 };
 
-const sendVerificationEmail = async (tx: Pick<typeof db, "message" | "token">, address: string): Promise<void> => {
-	const { link: unsubscribeLink, expiration } = await getUnsubLink(tx, address);
+export const startVerification = async (address: string): Promise<void> => {
+	const { link: unsubscribeLink, expiration } = await getUnsubLink(address);
 	const verifyLink = new URL(`https://${Config.HOST}/verify?${unsubscribeLink.searchParams.toString()}`);
-	await enqueue(tx, {
+	await enqueue({
 		address,
 		persona: EmailPersona.BOBS_MAILER,
 		subject: "Please verify your email address",
@@ -60,8 +60,6 @@ Verify your address by clicking <a href="${verifyLink.toString()}">this link</a>
 To unsubscribe from all emails from bob's server, <a href="${unsubscribeLink.toString()}">click here</a>`,
 		expiration,
 	});
-	// Note: not part of a transaction
-	void sendQueuedMessages();
 };
 
 const isValid = (
@@ -70,12 +68,9 @@ const isValid = (
 ): token is NonNullable<typeof token> =>
 	token !== null && token.valid && token.expiration >= new Date() && token.email.address === address;
 
-export const getVerificationToken = async (
-	tx: Pick<typeof db, "token">,
-	address: string,
-): Promise<{ expiration: Date; temporaryToken: string }> => {
+export const getVerificationToken = async (address: string): Promise<{ expiration: Date; temporaryToken: string }> => {
 	const expiration = DateTime.now().plus({ day: Config.VERIFY_TOKEN_EXPIRATION_DAYS }).toJSDate();
-	const existingToken = await tx.token.findFirst({
+	const existingToken = await db.token.findFirst({
 		where: {
 			type: TokenType.VERIFY,
 			email: {
@@ -93,7 +88,7 @@ export const getVerificationToken = async (
 		},
 	});
 	if (existingToken && existingToken.temporaryToken) {
-		await tx.token.update({
+		await db.token.update({
 			where: {
 				id: existingToken.id,
 			},
@@ -104,7 +99,7 @@ export const getVerificationToken = async (
 		return { temporaryToken: existingToken.temporaryToken, expiration };
 	} else {
 		const temporaryToken = randomUUID();
-		await tx.token.create({
+		await db.token.create({
 			data: {
 				type: TokenType.VERIFY,
 				temporaryToken,
@@ -121,10 +116,6 @@ export const getVerificationToken = async (
 	}
 };
 
-export const startVerification = async (tx: Pick<typeof db, "token" | "message">, address: string) => {
-	await sendVerificationEmail(tx, address);
-};
-
 export const completeVerification = async ({
 	email: address,
 	temporaryToken,
@@ -134,8 +125,8 @@ export const completeVerification = async ({
 	temporaryToken: string;
 	subscribed: boolean;
 }) =>
-	db.$transaction(async (tx) => {
-		const token = await tx.token.findUnique({
+	transaction(async () => {
+		const token = await db.token.findUnique({
 			where: {
 				type: TokenType.VERIFY,
 				temporaryToken,
@@ -155,7 +146,7 @@ export const completeVerification = async ({
 		}
 
 		if (token.email.confirmed === false || !subscribed) {
-			await tx.email.update({
+			await db.email.update({
 				where: {
 					address,
 				},
@@ -166,7 +157,7 @@ export const completeVerification = async ({
 			});
 		}
 		if (!subscribed) {
-			await tx.token.update({
+			await db.token.update({
 				where: { id: token.id },
 				data: { valid: false },
 			});
@@ -174,10 +165,10 @@ export const completeVerification = async ({
 	});
 
 export const login = async ({ email: address, redirect }: { email: string; redirect?: string }) => {
-	await db.$transaction(async (tx) => {
+	await transaction(async () => {
 		const temporaryToken = randomUUID();
 		const expiration = DateTime.now().plus({ minute: Config.LOGIN_TOKEN_EXPIRATION_MIN }).toJSDate();
-		await tx.token.create({
+		await db.token.create({
 			data: {
 				type: TokenType.LOGIN,
 				temporaryToken,
@@ -190,7 +181,7 @@ export const login = async ({ email: address, redirect }: { email: string; redir
 				},
 			},
 		});
-		await sendConfirmationEmail(tx, { address, temporaryToken, expiration, redirect }).catch(() => {});
+		await sendConfirmationEmail({ address, temporaryToken, expiration, redirect }).catch(() => {});
 	});
 	void sendQueuedMessages();
 };
@@ -202,8 +193,8 @@ export const authorize = ({
 	email: string;
 	temporaryToken: string;
 }): Promise<string> =>
-	db.$transaction(async (tx) => {
-		const token = await tx.token.findUnique({
+	transaction(async () => {
+		const token = await db.token.findUnique({
 			where: {
 				type: TokenType.LOGIN,
 				temporaryToken,
@@ -222,7 +213,7 @@ export const authorize = ({
 			throw new Error("Token is not valid");
 		}
 
-		const apiToken = await tx.token.create({
+		const apiToken = await db.token.create({
 			data: {
 				type: TokenType.JWT,
 				expiration: DateTime.now().plus({ hour: Config.API_TOKEN_EXPIRATION_HOURS }).toJSDate(),
@@ -235,7 +226,7 @@ export const authorize = ({
 		});
 
 		token.email.confirmed ||
-			(await tx.email.update({
+			(await db.email.update({
 				where: {
 					address,
 				},
@@ -244,7 +235,7 @@ export const authorize = ({
 				},
 			}));
 
-		await tx.token.update({
+		await db.token.update({
 			where: { id: token.id },
 			data: { valid: false },
 		});
