@@ -10,12 +10,9 @@ const storage = new AsyncLocalStorage<Client>();
 
 export const db = new Proxy(prisma as Client, {
 	get(_, key: keyof Client) {
-		const client = storage.getStore();
-		if (client) {
-			return client[key];
-		} else {
-			return prisma[key];
-		}
+		// if a store exists in dynamic scope use it, else default to global client
+		const client = storage.getStore() ?? prisma;
+		return client[key];
 	},
 });
 
