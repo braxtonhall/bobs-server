@@ -1,4 +1,4 @@
-import { db } from "../../db";
+import { db, transaction } from "../../db";
 import Config from "../../Config";
 
 type Environment = {
@@ -18,13 +18,13 @@ export const createGame = async ({
 	emailId,
 	unlisted,
 }: Environment): Promise<string> =>
-	db.$transaction(async (tx) => {
+	transaction(async () => {
 		if (ruleCount < 0) {
 			throw new Error("Rule count must be equal to or greater than 0");
 		}
 
 		// https://github.com/prisma/prisma/issues/7093 this is *really* annoying
-		const box = await tx.box.create({
+		const box = await db.box.create({
 			data: {
 				name: `secret dj/${name}`,
 				ownerId: emailId,
@@ -35,7 +35,7 @@ export const createGame = async ({
 			},
 		});
 
-		const result = await tx.season.create({
+		const result = await db.season.create({
 			data: {
 				name,
 				ruleCount,

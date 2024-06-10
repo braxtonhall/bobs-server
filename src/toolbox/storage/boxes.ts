@@ -1,4 +1,4 @@
-import { db } from "../../db";
+import { db, transaction } from "../../db";
 import { match } from "ts-pattern";
 import { None, Option, Some } from "../../types/option";
 import { Err, Ok, Result } from "../../types/result";
@@ -193,20 +193,15 @@ const list = async (userId: string, deleted: boolean, count: number, cursor?: st
 };
 
 const ifCanEditBox =
-	<
-		Callback extends (
-			tx: Pick<typeof db, "box" | "email" | "permission">,
-			box: { ownerId: string },
-		) => Promise<Result<unknown, unknown>>,
-	>(
+	<Callback extends (box: { ownerId: string }) => Promise<Result<unknown, unknown>>>(
 		ids: { userId: string; boxId: string },
 		permissionNeeded: PermissionKey,
 		callback: Callback,
 	) =>
-	async (
-		tx: Pick<typeof db, "box" | "email" | "permission">,
-	): Promise<Result<never, Failure.MISSING_DEPENDENCY | Failure.FORBIDDEN> | Awaited<ReturnType<Callback>>> => {
-		const box = await tx.box.findUnique({
+	async (): Promise<
+		Result<never, Failure.MISSING_DEPENDENCY | Failure.FORBIDDEN> | Awaited<ReturnType<Callback>>
+	> => {
+		const box = await db.box.findUnique({
 			where: { id: ids.boxId },
 			select: {
 				ownerId: true,
@@ -223,7 +218,7 @@ const ifCanEditBox =
 		} else if (box.ownerId !== ids.userId && box.permissions.length === 0) {
 			return Err(Failure.FORBIDDEN);
 		} else {
-			return (await callback(tx, box)) as Awaited<ReturnType<Callback>>;
+			return (await callback(box)) as Awaited<ReturnType<Callback>>;
 		}
 	};
 
@@ -232,9 +227,9 @@ const setBoxDeletion = async (
 	userId: string,
 	deleted: boolean,
 ): Promise<Result<undefined, Failure.MISSING_DEPENDENCY | Failure.FORBIDDEN>> =>
-	db.$transaction(
-		ifCanEditBox({ boxId: id, userId }, "canDelete", async (tx) => {
-			await tx.box.update({ where: { id }, data: { deleted }, select: { deleted: true } });
+	transaction(
+		ifCanEditBox({ boxId: id, userId }, "canDelete", async () => {
+			await db.box.update({ where: { id }, data: { deleted }, select: { deleted: true } });
 			return Ok();
 		}),
 	);
@@ -256,9 +251,9 @@ const setMaintainer = async ({
 }: MaintainerEnv): Promise<
 	Result<undefined, Failure.MISSING_DEPENDENCY | Failure.FORBIDDEN | Failure.PRECONDITION_FAILED>
 > =>
-	db.$transaction(
-		ifCanEditBox({ userId, boxId }, "canSetPermissions", async (tx, { ownerId }) => {
-			const { id: emailId } = await tx.email.upsert({
+	transaction(
+		ifCanEditBox({ userId, boxId }, "canSetPermissions", async ({ ownerId }) => {
+			const { id: emailId } = await db.email.upsert({
 				where: { address },
 				create: { address },
 				update: {},
@@ -267,7 +262,7 @@ const setMaintainer = async ({
 			if (emailId === ownerId) {
 				return Err(Failure.PRECONDITION_FAILED);
 			}
-			await tx.permission.upsert({
+			await db.permission.upsert({
 				where: {
 					id: { emailId, boxId },
 				},
@@ -287,9 +282,9 @@ const removeMaintainer = async ({
 	boxId,
 	address,
 }: Omit<MaintainerEnv, "permissions">): Promise<Result<undefined, Failure.MISSING_DEPENDENCY | Failure.FORBIDDEN>> =>
-	db.$transaction(
-		ifCanEditBox({ userId, boxId }, "canSetPermissions", async (tx) => {
-			const result = await tx.permission.deleteMany({
+	transaction(
+		ifCanEditBox({ userId, boxId }, "canSetPermissions", async () => {
+			const result = await db.permission.deleteMany({
 				where: {
 					boxId,
 					email: {
@@ -302,13 +297,13 @@ const removeMaintainer = async ({
 	);
 
 const getMaintainers = async ({ userId, boxId }: Omit<MaintainerEnv, "permissions" | "address">) =>
-	db.$transaction(
+	transaction(
 		ifCanEditBox(
 			{ userId, boxId },
 			"canSetPermissions",
-			async (tx): Promise<Result<(Permission & { email: Email })[], never>> =>
+			async (): Promise<Result<(Permission & { email: Email })[], never>> =>
 				Ok(
-					await tx.permission.findMany({
+					await db.permission.findMany({
 						where: { boxId },
 						include: {
 							email: true,

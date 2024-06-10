@@ -1,4 +1,4 @@
-import { db } from "../../db";
+import { db, transaction } from "../../db";
 import { SeasonState } from "../SeasonState";
 import { EmailPersona, enqueue, Message, sendQueuedMessages } from "../../email";
 import Config from "../../Config";
@@ -43,16 +43,12 @@ type UpdatedEntry = {
 	};
 };
 
-const toMessages = (
-	tx: Pick<typeof db, "message" | "token">,
-	seasonId: string,
-	entries: UpdatedEntry[],
-): Promise<Message[]> => {
+const toMessages = (seasonId: string, entries: UpdatedEntry[]): Promise<Message[]> => {
 	const link = `https://${Config.HOST}/login?redirect=${encodeURIComponent(`/secret-dj/games/${seasonId}`)}`;
 	const futureMessages = entries
 		.filter(({ recipient }) => recipient.email.subscribed)
 		.map(async ({ recipient }) => {
-			const { link: unsub } = await getUnsubLink(tx, recipient.email.address);
+			const { link: unsub } = await getUnsubLink(recipient.email.address);
 			return {
 				persona: EmailPersona.SECRET_DJ,
 				address: recipient.email.address,
@@ -66,8 +62,8 @@ to unsubscribe from all emails from bob's server, <a href="${unsub.toString()}">
 };
 
 export const startGame = async ({ ownerId, seasonId }: Environment): Promise<Entry[]> => {
-	const updates = await db.$transaction(async (tx) => {
-		const season = await tx.season.update({
+	const updates = await transaction(async () => {
+		const season = await db.season.update({
 			where: { id: seasonId, ownerId, state: SeasonState.SIGN_UP },
 			select: { entries: true, id: true },
 			data: { state: SeasonState.IN_PROGRESS },
@@ -75,7 +71,7 @@ export const startGame = async ({ ownerId, seasonId }: Environment): Promise<Ent
 		if (season && season.entries.length > 0) {
 			const pairs = pairEntries(season.entries);
 			const futureUpdates = pairs.map((pair) =>
-				tx.entry.update({
+				db.entry.update({
 					where: { id: pair.recipient.id },
 					data: { djId: pair.dj.recipientId },
 					include: {
@@ -90,7 +86,7 @@ export const startGame = async ({ ownerId, seasonId }: Environment): Promise<Ent
 			);
 			const updates = (await Promise.all(futureUpdates)) satisfies UpdatedEntry[];
 			// TODO should be a way to opt out of these emails
-			await enqueue(tx, ...(await toMessages(tx, season.id, updates)));
+			await enqueue(...(await toMessages(season.id, updates)));
 			return updates;
 		} else {
 			throw new Error(`Could not find eligible season ${seasonId}`);

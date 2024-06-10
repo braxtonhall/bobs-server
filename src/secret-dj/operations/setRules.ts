@@ -1,4 +1,4 @@
-import { db } from "../../db";
+import { db, transaction } from "../../db";
 import { SeasonState } from "../SeasonState";
 import Config from "../../Config";
 
@@ -9,8 +9,8 @@ type Environment = {
 };
 
 export const setRules = ({ seasonId, recipientId, rules }: Environment) =>
-	db.$transaction(async (tx) => {
-		const season = await tx.season.findUnique({
+	transaction(async () => {
+		const season = await db.season.findUnique({
 			where: {
 				id: seasonId,
 				state: SeasonState.SIGN_UP,
@@ -35,14 +35,14 @@ export const setRules = ({ seasonId, recipientId, rules }: Environment) =>
 			throw new Error(`Should have provided ${season.ruleCount} rules`);
 		}
 
-		const maybeEntry = await tx.entry.findFirst({
+		const maybeEntry = await db.entry.findFirst({
 			where: {
 				seasonId,
 				recipientId,
 			},
 		});
 		if (maybeEntry === null) {
-			const recipient = await tx.participant.findUniqueOrThrow({
+			const recipient = await db.participant.findUniqueOrThrow({
 				where: {
 					id: recipientId,
 				},
@@ -51,7 +51,7 @@ export const setRules = ({ seasonId, recipientId, rules }: Environment) =>
 				},
 			});
 			// https://github.com/prisma/prisma/issues/7093 this is *really* annoying
-			const box = await tx.box.create({
+			const box = await db.box.create({
 				data: {
 					name: `secret dj/${season.name}/${recipient.name}`,
 					ownerId: season.owner.email.id,
@@ -61,7 +61,7 @@ export const setRules = ({ seasonId, recipientId, rules }: Environment) =>
 					id: true,
 				},
 			});
-			await tx.entry.create({
+			await db.entry.create({
 				data: {
 					seasonId,
 					recipientId,
@@ -77,7 +77,7 @@ export const setRules = ({ seasonId, recipientId, rules }: Environment) =>
 				},
 			});
 		} else {
-			await tx.entry.update({
+			await db.entry.update({
 				where: {
 					id: maybeEntry.id,
 				},

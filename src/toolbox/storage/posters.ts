@@ -1,4 +1,4 @@
-import { db } from "../../db";
+import { db, transaction } from "../../db";
 import { HashedString } from "../../types/hashed";
 
 const getId = async (ip: HashedString): Promise<number> =>
@@ -18,14 +18,14 @@ const getId = async (ip: HashedString): Promise<number> =>
 		.then(({ id }) => id);
 
 const updateKarma = async (id: number): Promise<void> =>
-	db.$transaction(async (tx) => {
-		const deadCount = await tx.post.count({
+	transaction(async () => {
+		const deadCount = await db.post.count({
 			where: {
 				posterId: id,
 				dead: true,
 			},
 		});
-		await tx.poster.update({
+		await db.poster.update({
 			where: {
 				id,
 			},

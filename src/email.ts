@@ -14,8 +14,8 @@ export enum EmailPersona {
 export type Message = Omit<PrismaMessage, "id" | "expiration" | "persona"> &
 	Partial<Pick<PrismaMessage, "expiration">> & { persona: EmailPersona };
 
-export const enqueue = async (client: Pick<typeof db, "message">, ...messages: Message[]): Promise<void> => {
-	await client.message.createMany({ data: messages });
+export const enqueue = async (...messages: Message[]): Promise<void> => {
+	await db.message.createMany({ data: messages });
 };
 
 const locks = new Set<number>();
