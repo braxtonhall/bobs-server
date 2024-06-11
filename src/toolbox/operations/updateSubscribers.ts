@@ -8,54 +8,54 @@ import AsyncPool from "../../util/AsyncPool";
 
 const MAX_CONCURRENT_PROMISES = 10;
 
-const updateSubscribers = async () => {
-	const now = DateTime.now();
-	const subscriptions = await db.subscription.findMany({
-		where: {
-			email: {
-				confirmed: true,
-			},
-			box: {
-				posts: {
-					some: {
-						createdAt: {
-							// This is an unsound optimisation (built around prisma restrictions).
-							// If the server was off for a long time,
-							// we will miss messages.
-							// In the future, we should replace this with SQL, so we do not miss messages
-							gt: now
-								// Add one in case it's configured as zero
-								.minus({ hour: (Config.SUBSCRIPTION_DIGEST_INTERVAL_HOURS + 1) * 2 })
-								.minus({ minute: Config.DELETION_TIME_MIN }) // in case this is larger than above
-								.toJSDate(),
+const updateSubscribers = () =>
+	transaction(async () => {
+		const now = DateTime.now();
+		const subscriptions = await db.subscription.findMany({
+			where: {
+				email: {
+					confirmed: true,
+				},
+				box: {
+					posts: {
+						some: {
+							createdAt: {
+								// This is an unsound optimisation (built around prisma restrictions).
+								// If the server was off for a long time,
+								// we will miss messages.
+								// In the future, we should replace this with SQL, so we do not miss messages
+								gt: now
+									// Add one in case it's configured as zero
+									.minus({ hour: (Config.SUBSCRIPTION_DIGEST_INTERVAL_HOURS + 1) * 2 })
+									.minus({ minute: Config.DELETION_TIME_MIN }) // in case this is larger than above
+									.toJSDate(),
+							},
 						},
 					},
 				},
-			},
-			updatedAt: {
-				lt: now.minus({ hour: Config.SUBSCRIPTION_DIGEST_INTERVAL_HOURS }).toJSDate(),
-			},
-		},
-		select: {
-			updatedAt: true,
-			box: {
-				select: {
-					id: true,
-					name: true,
+				updatedAt: {
+					lt: now.minus({ hour: Config.SUBSCRIPTION_DIGEST_INTERVAL_HOURS }).toJSDate(),
 				},
 			},
-			email: {
-				select: {
-					id: true,
-					address: true,
+			select: {
+				updatedAt: true,
+				box: {
+					select: {
+						id: true,
+						name: true,
+					},
+				},
+				email: {
+					select: {
+						id: true,
+						address: true,
+					},
 				},
 			},
-		},
-	});
-	await AsyncPool.mapToSettled(
-		subscriptions,
-		({ email, updatedAt, box }) =>
-			transaction(async () => {
+		});
+		await AsyncPool.mapToSettled(
+			subscriptions,
+			async ({ email, updatedAt, box }) => {
 				const count = await db.post.count({
 					where: {
 						AND: [
@@ -105,8 +105,7 @@ const updateSubscribers = async () => {
 					where: { id: { boxId: box.id, emailId: email.id } },
 					data: { updatedAt: now.toJSDate() },
 				});
-			}),
-		MAX_CONCURRENT_PROMISES,
-	);
-	void sendQueuedMessages();
-};
+			},
+			MAX_CONCURRENT_PROMISES,
+		);
+	}).finally(sendQueuedMessages);
