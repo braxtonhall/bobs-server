@@ -8,7 +8,7 @@ type Client = Omit<PrismaClient, ITXClientDenyList>;
 
 const storage = new AsyncLocalStorage<Client>();
 
-export const db = new Proxy(prisma as Client, {
+export const db: Client = new Proxy(prisma, {
 	get(_, key: keyof Client) {
 		// if a store exists in dynamic scope use it, else default to global client
 		const client = storage.getStore() ?? prisma;

@@ -24,7 +24,7 @@ const sendNotificationEmail = async (env: {
 }) => {
 	const { link: unsubLink } = await getUnsubLink(env.address);
 	const html = await ejs.renderFile("views/emails/reply.ejs", {
-		manageLink: new URL(`https://${Config.HOST}/toolbox/posts`).toString(),
+		manageLink: new URL(`https://${Config.HOST}/toolbox/subscriptions`).toString(),
 		replyLink: new URL(`https://${Config.HOST}/boxes/${env.boxId}?cursor=${env.childId}`).toString(),
 		replyContent: env.childContent,
 		originalLink: new URL(`https://${Config.HOST}/boxes/${env.boxId}?cursor=${env.parentId}`).toString(),

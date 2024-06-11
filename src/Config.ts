@@ -19,7 +19,7 @@ const environmentSchema = z.object({
 	DEFAULT_PAGE_SIZE: z.coerce.number().default(20),
 	MINIMUM_PAGE_SIZE: z.coerce.number().default(1),
 	MAXIMUM_PAGE_SIZE: z.coerce.number().default(100),
-	DELETION_TIME_MS: z.coerce.number().default(1000 * 60 * 10),
+	DELETION_TIME_MIN: z.coerce.number().default(10),
 	KARMA_KILL_THRESHOLD: z.coerce.number().default(5),
 	EMAIL_DISABLED: z
 		.string()
@@ -28,6 +28,7 @@ const environmentSchema = z.object({
 	DEFAULT_MAX_LENGTH: z.coerce.number().int().default(100),
 	DESCRIPTION_MAX_LENGTH: z.coerce.number().int().default(500),
 	COMMENT_MAX_LENGTH: z.coerce.number().int().default(2000),
+	SUBSCRIPTION_DIGEST_INTERVAL_HOURS: z.coerce.number().int().default(12),
 });
 
 const Config = environmentSchema.parse(process.env);

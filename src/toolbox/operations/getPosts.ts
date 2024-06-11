@@ -5,11 +5,12 @@ import { Post } from "../schema/post";
 import { Ok, Result } from "../../types/result";
 import { Failure } from "../../types/failure";
 import { match, P } from "ts-pattern";
+import { DateTime } from "luxon";
 
-const getEarliestDeletableTime = () => Date.now() - Config.DELETION_TIME_MS;
+const getEarliestDeletableTime = (): Date => DateTime.now().minus({ minute: Config.DELETION_TIME_MIN }).toJSDate();
 
 export const toPostMember =
-	(requestor: HashedString, earliestDeletableTime: number) =>
+	(requestor: HashedString, earliestDeletableTime: Date) =>
 	(post: InternalPost): Post => ({
 		id: post.id,
 		createdAt: post.createdAt,
@@ -24,7 +25,7 @@ export const toPostMember =
 		deletable:
 			post.box.deleted === false &&
 			post.poster.ip === requestor &&
-			post.createdAt.valueOf() > earliestDeletableTime &&
+			post.createdAt > earliestDeletableTime &&
 			post._count.children === 0,
 	});
 
