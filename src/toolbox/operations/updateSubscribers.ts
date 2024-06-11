@@ -15,6 +15,23 @@ const updateSubscribers = async () => {
 			email: {
 				confirmed: true,
 			},
+			box: {
+				posts: {
+					some: {
+						createdAt: {
+							// This is an unsound optimisation (built around prisma restrictions).
+							// If the server was off for a long time,
+							// we will miss messages.
+							// In the future, we should replace this with SQL, so we do not miss messages
+							gt: now
+								// Add one in case it's configured as zero
+								.minus({ hour: (Config.SUBSCRIPTION_DIGEST_INTERVAL_HOURS + 1) * 2 })
+								.minus({ minute: Config.DELETION_TIME_MIN }) // in case this is larger than above
+								.toJSDate(),
+						},
+					},
+				},
+			},
 			updatedAt: {
 				lt: now.minus({ hour: Config.SUBSCRIPTION_DIGEST_INTERVAL_HOURS }).toJSDate(),
 			},
