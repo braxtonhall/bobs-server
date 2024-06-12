@@ -39,6 +39,7 @@ export const views = express()
 					query: req.query,
 					replyId: false,
 					Config,
+					address: res.locals.email?.address ?? "",
 				}),
 			)
 			.otherwise(() => res.sendStatus(404)),
