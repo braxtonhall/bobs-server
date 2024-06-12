@@ -1,9 +1,10 @@
 import { archiveSeasons } from "./secret-dj/jobs/archiveSeasons";
 import { removeTokens } from "./auth/jobs";
+import { sendBoxUpdates } from "./toolbox/jobs/sendBoxUpdates";
 
 export type Job = { callback: () => unknown; interval: number };
 
-const jobs: Job[] = [archiveSeasons, removeTokens];
+const jobs: Job[] = [archiveSeasons, removeTokens, sendBoxUpdates];
 const runningJobs = new Set<NodeJS.Timeout>();
 
 const stop = () => runningJobs.forEach((interval) => clearInterval(interval));

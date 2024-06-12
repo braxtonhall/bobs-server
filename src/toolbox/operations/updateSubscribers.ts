@@ -8,7 +8,7 @@ import AsyncPool from "../../util/AsyncPool";
 
 const MAX_CONCURRENT_PROMISES = 10;
 
-const updateSubscribers = () =>
+export const updateSubscribers = () =>
 	transaction(async () => {
 		const now = DateTime.now();
 		const subscriptions = await db.subscription.findMany({
@@ -26,7 +26,7 @@ const updateSubscribers = () =>
 								// In the future, we should replace this with SQL, so we do not miss messages
 								gt: now
 									// Add one in case it's configured as zero
-									.minus({ hour: (Config.SUBSCRIPTION_DIGEST_INTERVAL_HOURS + 1) * 2 })
+									.minus({ hour: (Config.SUBSCRIPTION_DIGEST_DELAY_HOURS + 1) * 2 })
 									.minus({ minute: Config.DELETION_TIME_MIN }) // in case this is larger than above
 									.toJSDate(),
 							},
@@ -34,7 +34,7 @@ const updateSubscribers = () =>
 					},
 				},
 				updatedAt: {
-					lt: now.minus({ hour: Config.SUBSCRIPTION_DIGEST_INTERVAL_HOURS }).toJSDate(),
+					lt: now.minus({ hour: Config.SUBSCRIPTION_DIGEST_DELAY_HOURS }).toJSDate(),
 				},
 			},
 			select: {
@@ -64,19 +64,25 @@ const updateSubscribers = () =>
 								boxId: box.id,
 							},
 							{
-								NOT: {
-									OR: [
-										// Don't notify because of MY posts
-										{ emailId: email.id },
-										// These get their own special notifications
-										{ parent: { emailId: email.id, subscribed: true } },
-									],
-								},
+								// Don't notify because of MY posts
+								OR: [{ emailId: null }, { NOT: { emailId: email.id } }],
+							},
+							{
+								// These get their own special notifications
+								OR: [
+									{ parent: null },
+									{ parent: { emailId: null } },
+									{ NOT: { parent: { emailId: email.id, subscribed: true } } },
+								],
 							},
 							{
 								createdAt: {
 									// No longer can be deleted
 									lte: now.minus({ minute: Config.DELETION_TIME_MIN }).toJSDate(),
+								},
+							},
+							{
+								createdAt: {
 									// Outside the range of the last scan
 									gt: DateTime.fromJSDate(updatedAt)
 										.minus({ minute: Config.DELETION_TIME_MIN })
