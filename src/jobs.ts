@@ -4,7 +4,9 @@ import { sendBoxUpdates } from "./toolbox/jobs/sendBoxUpdates";
 import { sendReplyUpdates } from "./toolbox/jobs/sendReplyUpdates";
 import AsyncPool from "./util/AsyncPool";
 
-const MAX_CONCURRENT_JOBS = 4;
+// https://github.com/prisma/prisma/issues/22947
+// https://github.com/prisma/prisma-engines/pull/4907
+const MAX_CONCURRENT_JOBS = 1;
 
 export type Job = { callback: () => unknown; interval: number };
 
