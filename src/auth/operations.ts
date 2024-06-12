@@ -62,11 +62,8 @@ To unsubscribe from all emails from bob's server, <a href="${unsubscribeLink.toS
 	});
 };
 
-const isValid = (
-	token: (Token & { email: { address: string } }) | null,
-	address: string,
-): token is NonNullable<typeof token> =>
-	token !== null && token.valid && token.expiration >= new Date() && token.email.address === address;
+const isValid = (token: Token | null): token is Token =>
+	token !== null && token.valid && token.expiration >= new Date();
 
 export const getVerificationToken = async (address: string): Promise<{ expiration: Date; temporaryToken: string }> => {
 	const expiration = DateTime.now().plus({ day: Config.VERIFY_TOKEN_EXPIRATION_DAYS }).toJSDate();
@@ -130,6 +127,9 @@ export const completeVerification = async ({
 			where: {
 				type: TokenType.VERIFY,
 				temporaryToken,
+				email: {
+					address,
+				},
 			},
 			include: {
 				email: {
@@ -141,7 +141,7 @@ export const completeVerification = async ({
 			},
 		});
 
-		if (!isValid(token, address)) {
+		if (!isValid(token)) {
 			throw new Error("Token is not valid");
 		}
 
@@ -205,6 +205,9 @@ export const authorize = ({
 			where: {
 				type: TokenType.LOGIN,
 				temporaryToken,
+				email: {
+					address,
+				},
 			},
 			include: {
 				email: {
@@ -216,7 +219,7 @@ export const authorize = ({
 			},
 		});
 
-		if (!isValid(token, address)) {
+		if (!isValid(token)) {
 			throw new Error("Token is not valid");
 		}
 
