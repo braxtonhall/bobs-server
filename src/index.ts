@@ -6,6 +6,11 @@ import { sendQueuedMessages } from "./email";
 
 const prisma = new PrismaClient();
 
+const shutdown = async () => {
+	await prisma.$disconnect();
+	await jobs.stop();
+};
+
 const main = async () => {
 	const { http, https } = await getServers();
 	http.listen(Config.HTTP_PORT, () => console.log(`http server started on ${Config.HTTP_PORT}`));
@@ -14,8 +19,11 @@ const main = async () => {
 	void sendQueuedMessages();
 };
 
-main().catch(async (error) => {
+process.on("SIGTERM", shutdown);
+process.on("SIGINT", shutdown);
+
+main().catch(async (error?) => {
 	console.error(error);
-	await prisma.$disconnect();
+	await shutdown();
 	process.exit(1);
 });

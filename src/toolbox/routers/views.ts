@@ -24,8 +24,6 @@ import { deleteSubscription } from "../operations/deleteSubscription";
 
 // TODO there is WAY too much repetition here... There must be a good way to get reuse a lot of code
 
-// TODO these will probably all be embeds
-
 export const views = express()
 	.get("/boxes/:box", async (req, res) =>
 		match([

@@ -108,6 +108,7 @@ model Post {
   children   Post[]   @relation("PostChildren")
   parent     Post?    @relation("PostChildren", fields: [parentId], references: [id])
   parentId   String?
+  notified   Boolean  @default(false)
 }
 
 model Season {
