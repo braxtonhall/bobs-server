@@ -149,19 +149,22 @@ hr {
 	background-color: #ffd1d1;
 }
 
-/* ********** BEGIN EXPERIMENTAL COMMENT BOX STYLING ********** */
-
 iframe.comments {
 	height: 50vh;
 	border: 1px dashed;
 	resize: both;
 }
 
+@media only screen and (max-width: 550px) {
+	.box-name {
+		display: none;
+	}
+}
+
 .more-controls-details,
 .new-post-poster-label,
 .new-post-email,
 .new-post-email-label,
-.box-name,
 .post-header {
 	display: none;
 }
@@ -244,5 +247,3 @@ blockquote.post-parent-content {
 blockquote.post-parent-content > a {
 	color: #858a8f;
 }
-
-/* ********** END EXPERIMENTAL COMMENT BOX STYLING ********** */
