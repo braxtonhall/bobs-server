@@ -140,7 +140,7 @@ model Participant {
   ownedSeasons     Season[] @relation("SeasonOwner")
   recipientEntries Entry[]  @relation("RecipientEntries")
   djEntries        Entry[]  @relation("DJEntries")
-  email            Email    @relation("ParticipantEmail", fields: [emailId], references: [id])
+  email            Email    @relation("ParticipantEmail", fields: [emailId], references: [id], onDelete: Cascade)
   emailId          String   @unique
   name             String
 }
