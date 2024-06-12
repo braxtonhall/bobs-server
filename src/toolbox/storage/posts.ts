@@ -43,6 +43,7 @@ const internalCreate = ({ emailId, content, posterId, boxId, from, parentId }: C
 				boxId,
 				from,
 				parentId,
+				notified: parentId === undefined,
 			},
 			select: {
 				id: true,
