@@ -6,9 +6,10 @@ import { sendQueuedMessages } from "./email";
 
 const prisma = new PrismaClient();
 
-const shutdown = async () => {
+const shutdown = async (code?: 0 | 1) => {
 	await prisma.$disconnect();
 	await jobs.stop();
+	process.exit(code);
 };
 
 const main = async () => {
@@ -24,6 +25,5 @@ process.on("SIGINT", shutdown);
 
 main().catch(async (error?) => {
 	console.error(error);
-	await shutdown();
-	process.exit(1);
+	await shutdown(1);
 });
