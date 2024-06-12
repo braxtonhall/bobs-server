@@ -54,6 +54,7 @@ export const informParents = () =>
 				boxId: true,
 				id: true,
 				content: true,
+				emailId: true,
 				parent: {
 					select: {
 						id: true,
@@ -61,6 +62,7 @@ export const informParents = () =>
 						content: true,
 						email: {
 							select: {
+								id: true,
 								confirmed: true,
 								subscribed: true,
 								address: true,
@@ -72,8 +74,14 @@ export const informParents = () =>
 		});
 		await AsyncPool.mapToSettled(
 			replies,
-			async ({ boxId, id, parent, content }) => {
-				if (parent && parent.subscribed && parent.email?.confirmed && parent.email.subscribed) {
+			async ({ boxId, id, parent, content, emailId }) => {
+				if (
+					parent &&
+					parent.subscribed &&
+					parent.email?.confirmed &&
+					parent.email.subscribed &&
+					parent.email.id !== emailId
+				) {
 					await sendNotificationEmail({
 						boxId,
 						address: parent.email.address,
