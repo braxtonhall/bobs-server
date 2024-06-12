@@ -41,8 +41,8 @@ model Box {
   id            String         @unique @default(cuid())
   name          String
   origin        String?
-  owner         Email          @relation(fields: [ownerId], references: [id])
-  ownerId       String
+  owner         Email?         @relation(fields: [ownerId], references: [id])
+  ownerId       String?
   posts         Post[]
   deleted       Boolean        @default(false)
   stylesheet    String?
