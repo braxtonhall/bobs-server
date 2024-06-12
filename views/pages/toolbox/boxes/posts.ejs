@@ -26,7 +26,7 @@
 						<form
 							class="hide-form"
 							method="POST"
-							action="/toolbox/boxes/subscriptions/posts/<%=post.id%>/unsubscribe"
+							action="/toolbox/subscriptions/posts/<%=post.id%>/unsubscribe"
 						>
 							<button class="hide-submit">unsubscribe</button>
 							<%- include('../../../partials/util/query-passthrough', {query, params: ['take', 'cursor']}); %>
@@ -35,7 +35,7 @@
 						<form
 							class="hide-form"
 							method="POST"
-							action="/toolbox/boxes/subscriptions/posts/<%=post.id%>/subscribe"
+							action="/toolbox/subscriptions/posts/<%=post.id%>/subscribe"
 						>
 							<button class="hide-submit">subscribe</button>
 							<%- include('../../../partials/util/query-passthrough', {query, params: ['take', 'cursor']}); %>

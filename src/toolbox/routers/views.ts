@@ -100,7 +100,7 @@ const deleteProcedure = (deleted: boolean) => async (req: Request<{ id: string }
 
 const subscribedProcedure = (subscribed: boolean) => async (req: Request<{ id: string }>, res: Response) =>
 	match(await posts.setSubscription(req.params.id, res.locals.email.id, subscribed))
-		.with(Ok(P._), () => res.redirect(`/toolbox/boxes/posts?${new URLSearchParams(req.body).toString()}`))
+		.with(Ok(P._), () => res.redirect(`/toolbox/subscriptions?${new URLSearchParams(req.body).toString()}`))
 		.with(Err(Failure.FORBIDDEN), () => res.sendStatus(403))
 		.with(Err(Failure.MISSING_DEPENDENCY), () => res.sendStatus(404))
 		.exhaustive();
