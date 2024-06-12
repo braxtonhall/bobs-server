@@ -27,7 +27,6 @@ export const createGame = async ({
 		const box = await db.box.create({
 			data: {
 				name: `secret dj/${name}`,
-				ownerId: emailId,
 				stylesheet: `https://${Config.HOST}/public/secret-dj/styles.css`,
 			},
 			select: {
@@ -35,27 +34,27 @@ export const createGame = async ({
 			},
 		});
 
-		await db.subscription.create({
-			data: { boxId: box.id, emailId },
-		});
+		const [, , result] = await Promise.all([
+			db.subscription.create({
+				data: { boxId: box.id, emailId },
+			}),
+			db.permission.create({
+				data: { boxId: box.id, emailId, canDelete: true, canKill: true },
+			}),
+			db.season.create({
+				data: {
+					name,
+					ruleCount,
+					ownerId,
+					description,
+					boxId: box.id,
+					unlisted,
+				},
+				select: {
+					id: true,
+				},
+			}),
+		]);
 
-		const result = await db.season.create({
-			data: {
-				name,
-				ruleCount,
-				ownerId,
-				description,
-				boxId: box.id,
-				unlisted,
-			},
-			select: {
-				id: true,
-			},
-		});
-
-		if (result) {
-			return result.id;
-		} else {
-			throw new Error("Could not create");
-		}
+		return result.id;
 	});

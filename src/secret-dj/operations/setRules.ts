@@ -59,34 +59,46 @@ export const setRules = ({ seasonId, recipientId, rules }: Environment) =>
 			const box = await db.box.create({
 				data: {
 					name: `secret dj/${season.name}/${recipient.name}`,
-					ownerId: season.owner.email.id,
 					stylesheet: `https://${Config.HOST}/public/secret-dj/styles.css`,
 				},
 				select: {
 					id: true,
 				},
 			});
-			await db.subscription.create({
-				data: {
-					boxId: box.id,
-					emailId: recipient.email.id,
-				},
-			});
-			await db.entry.create({
-				data: {
-					seasonId,
-					recipientId,
-					rules: {
-						createMany: {
-							data: rules.map((text) => ({ text })),
-						},
+			await Promise.all([
+				db.permission
+					.create({
+						data: { boxId: box.id, emailId: season.owner.email.id, canDelete: true, canKill: true },
+					})
+					.then(() =>
+						db.permission.upsert({
+							where: { id: { boxId: box.id, emailId: recipient.email.id } },
+							create: { boxId: box.id, emailId: recipient.email.id, canKill: true },
+							update: {},
+						}),
+					),
+				db.subscription.create({
+					data: {
+						boxId: box.id,
+						emailId: recipient.email.id,
 					},
-					boxId: box.id,
-				},
-				select: {
-					id: true,
-				},
-			});
+				}),
+				db.entry.create({
+					data: {
+						seasonId,
+						recipientId,
+						rules: {
+							createMany: {
+								data: rules.map((text) => ({ text })),
+							},
+						},
+						boxId: box.id,
+					},
+					select: {
+						id: true,
+					},
+				}),
+			]);
 		} else {
 			await db.entry.update({
 				where: {
