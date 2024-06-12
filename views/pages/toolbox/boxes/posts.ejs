@@ -23,12 +23,20 @@
 				<tr data-id="<%=post.id%>" class="<%= post.dead ? 'dead' : ''%>">
 					<td>
 						<% if (post.subscribed) { %>
-						<form class="hide-form" method="POST" action="/toolbox/boxes/posts/<%=post.id%>/unsubscribe">
+						<form
+							class="hide-form"
+							method="POST"
+							action="/toolbox/boxes/subscriptions/posts/<%=post.id%>/unsubscribe"
+						>
 							<button class="hide-submit">unsubscribe</button>
 							<%- include('../../../partials/util/query-passthrough', {query, params: ['take', 'cursor']}); %>
 						</form>
 						<% } else {%>
-						<form class="hide-form" method="POST" action="/toolbox/boxes/posts/<%=post.id%>/subscribe">
+						<form
+							class="hide-form"
+							method="POST"
+							action="/toolbox/boxes/subscriptions/posts/<%=post.id%>/subscribe"
+						>
 							<button class="hide-submit">subscribe</button>
 							<%- include('../../../partials/util/query-passthrough', {query, params: ['take', 'cursor']}); %>
 						</form>
