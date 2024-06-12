@@ -9,7 +9,7 @@
 		</header>
 
 		<main>
-			<div>hello! these are posts by you</div>
+			<p>hello! these are posts by you</p>
 
 			<table>
 				<tr>
@@ -25,7 +25,7 @@
 						<% if (post.subscribed) { %>
 						<form
 							class="hide-form"
-							method="POST"
+							method="post"
 							action="/toolbox/subscriptions/posts/<%=post.id%>/unsubscribe"
 						>
 							<button class="hide-submit">unsubscribe</button>
@@ -34,7 +34,7 @@
 						<% } else {%>
 						<form
 							class="hide-form"
-							method="POST"
+							method="post"
 							action="/toolbox/subscriptions/posts/<%=post.id%>/subscribe"
 						>
 							<button class="hide-submit">subscribe</button>
@@ -49,6 +49,32 @@
 				<% } %>
 			</table>
 			<%- include('../../../partials/boxes/page-controls', {query, params: ['take'], cursor, cursorName: 'cursor'}); %>
+
+			<p>and these are your subscriptions</p>
+			<table>
+				<tr>
+					<th>name</th>
+					<th>view</th>
+					<th>unsubscribe</th>
+				</tr>
+
+				<% for (const box of boxes) { %>
+				<tr>
+					<td><%=box.name%></td>
+					<td><a href="/boxes/<%= box.id %>">view</a></td>
+					<td>
+						<form
+							class="unsub-form"
+							method="post"
+							action="/toolbox/subscriptions/boxes/<%=box.id%>/unsubscribe"
+						>
+							<button class="hide-submit">unsubscribe</button>
+							<%- include('../../../partials/util/query-passthrough', {query, params: ['take', 'cursor']}); %>
+						</form>
+					</td>
+				</tr>
+				<% } %>
+			</table>
 		</main>
 	</body>
 </html>

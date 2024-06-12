@@ -19,6 +19,8 @@ import { getEmailPosts } from "../operations/getEmailPosts";
 import { addMaintainerPayloadSchema, removeMaintainerPayloadSchema } from "../schema/maintainers";
 import { subscribeSchema } from "../schema/subscribe";
 import { addSubscriber } from "../operations/addSubscriber";
+import { getSubscriptions } from "../operations/getSubscriptions";
+import { deleteSubscription } from "../operations/deleteSubscription";
 
 // TODO there is WAY too much repetition here... There must be a good way to get reuse a lot of code
 
@@ -241,6 +243,14 @@ const counterAdminViews = express().get("/", (req, res) => res.render("pages/too
 const postsAdminViews = express()
 	.post("/posts/:id/unsubscribe", subscribedProcedure(false))
 	.post("/posts/:id/subscribe", subscribedProcedure(true))
+	.post("/boxes/:id/unsubscribe", async (req, res) => {
+		try {
+			await deleteSubscription({ boxId: req.params.id, emailId: res.locals.email.id });
+			return res.redirect(`/toolbox/subscriptions?${new URLSearchParams(req.body).toString()}`);
+		} catch {
+			return res.sendStatus(404);
+		}
+	})
 	.get("/", async (req, res) => {
 		const { posts, cursor } = await getEmailPosts({
 			address: res.locals.email.address,
@@ -250,7 +260,8 @@ const postsAdminViews = express()
 			),
 			cursor: typeof req.query.cursor === "string" ? req.query.cursor : undefined,
 		});
-		return res.render("pages/toolbox/boxes/posts", { posts, cursor, query: req.query, Config });
+		const boxes = await getSubscriptions(res.locals.email.id);
+		return res.render("pages/toolbox/boxes/subscriptions", { posts, cursor, query: req.query, Config, boxes });
 	});
 
 export const adminViews = express()
