@@ -6,6 +6,7 @@ import { match, P } from "ts-pattern";
 import { Failure } from "../../types/failure";
 import boxes from "./boxes";
 import { None, Option, Some } from "../../types/option";
+import { DateTime } from "luxon";
 
 type CreatePost = {
 	emailId?: string;
@@ -91,7 +92,7 @@ export const deletePost = async (query: DeletePostQuery): Promise<Result<undefin
 				id: query.postId,
 				posterId: query.posterId,
 				createdAt: {
-					gt: new Date(Date.now() - Config.DELETION_TIME_MS),
+					gt: DateTime.now().minus({ minute: Config.DELETION_TIME_MIN }).toJSDate(),
 				},
 				children: {
 					none: {},

@@ -8,6 +8,7 @@ import { Failure } from "../../src/types/failure";
 import Config from "../../src/Config";
 import { hashString } from "../../src/util";
 import { None, Some } from "../../src/types/option";
+import { Duration } from "luxon";
 
 describe("posts", () => {
 	const posterIp = "foo";
@@ -803,7 +804,7 @@ describe("posts", () => {
 					posterId: info.posterId,
 				}),
 			);
-			time.advanceBy(Config.DELETION_TIME_MS + 1);
+			time.advanceBy(Duration.fromObject({ minute: Config.DELETION_TIME_MIN }).toMillis() + 1);
 			const result = await posts.delete({
 				postId: post.id,
 				boxId: info.boxId,
