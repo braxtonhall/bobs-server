@@ -8,7 +8,7 @@ type Client = Omit<PrismaClient, ITXClientDenyList>;
 
 const storage = new AsyncLocalStorage<Client>();
 
-export const db = new Proxy(prisma as Client, {
+export const db: Client = new Proxy(prisma, {
 	get(_, key: keyof Client) {
 		// if a store exists in dynamic scope use it, else default to global client
 		const client = storage.getStore() ?? prisma;
@@ -16,8 +16,10 @@ export const db = new Proxy(prisma as Client, {
 	},
 });
 
-export const transaction = <Args extends any[], R>(
+export const transaction = async <Args extends any[], R>(
 	callback: (...args: Args) => R,
 	...args: Args
 ): Promise<Awaited<R>> =>
-	prisma.$transaction(async (tx): Promise<Awaited<R>> => await storage.run(tx, callback, ...args));
+	storage.getStore()
+		? await callback(...args)
+		: prisma.$transaction(async (tx): Promise<Awaited<R>> => await storage.run(tx, callback, ...args));

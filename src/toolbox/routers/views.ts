@@ -17,6 +17,9 @@ import posts from "../storage/posts";
 import posters from "../storage/posters";
 import { getEmailPosts } from "../operations/getEmailPosts";
 import { addMaintainerPayloadSchema, removeMaintainerPayloadSchema } from "../schema/maintainers";
+import { emailSchema } from "../schema/email";
+import { subscribeSchema } from "../schema/subscribe";
+import { addSubscriber } from "../operations/addSubscriber";
 
 // TODO there is WAY too much repetition here... There must be a good way to get reuse a lot of code
 
@@ -36,6 +39,7 @@ export const views = express()
 					query: req.query,
 					replyId: false,
 					Config,
+					address: res.locals.email?.address ?? "",
 				}),
 			)
 			.otherwise(() => res.sendStatus(404)),
@@ -56,10 +60,22 @@ export const views = express()
 		match(req.ip)
 			.with(P.string, async (ip) =>
 				match(await deletePost(hashString(ip), req.params.box, req.params.id))
-					.with(Ok(), () => res.redirect(`/boxes/${req.params.box}`))
+					.with(Ok(), () => res.redirect(`/boxes/${req.params.box}`)) // TODO capture query params
 					.with(Err(Failure.MISSING_DEPENDENCY), () => res.sendStatus(404))
 					.with(Err(Failure.FORBIDDEN), () => res.sendStatus(403))
 					.with(Err(Failure.PRECONDITION_FAILED), () => res.sendStatus(412))
+					.exhaustive(),
+			)
+			.otherwise(() => res.sendStatus(400)),
+	)
+	.post("/boxes/:box/subscribe", async (req, res) =>
+		match(parse(subscribeSchema, req.body))
+			.with(Ok(P.select()), async ({ email }) =>
+				match(await addSubscriber({ address: email, boxId: req.params.box }))
+					.with(Ok(), () =>
+						res.redirect(`/boxes/${req.params.box}?${new URLSearchParams(req.body).toString()}`),
+					)
+					.with(Err(Failure.MISSING_DEPENDENCY), () => res.sendStatus(404))
 					.exhaustive(),
 			)
 			.otherwise(() => res.sendStatus(400)),
@@ -70,7 +86,7 @@ const killProcedure = (dead: boolean) => async (req: Request<{ postId: string; b
 		.with(Ok(P.select()), async (posterId) => {
 			// this is a hack because prisma does not support querying based on relation
 			await posters.updateKarma(posterId);
-			return res.redirect(`/toolbox/boxes/admin/${req.params.boxId}`);
+			return res.redirect(`/toolbox/boxes/admin/${req.params.boxId}`); // TODO capture query params
 		})
 		.with(Err(Failure.MISSING_DEPENDENCY), () => res.sendStatus(404))
 		.with(Err(Failure.FORBIDDEN), () => res.sendStatus(403))
@@ -78,7 +94,7 @@ const killProcedure = (dead: boolean) => async (req: Request<{ postId: string; b
 
 const deleteProcedure = (deleted: boolean) => async (req: Request<{ id: string }>, res: Response) =>
 	match(await boxesClient.setBoxDeletion(req.params.id, res.locals.email.id, deleted))
-		.with(Ok(), () => res.redirect(`/toolbox/boxes/admin/${req.params.id}`))
+		.with(Ok(), () => res.redirect(`/toolbox/boxes/admin/${req.params.id}`)) // TODO capture query params
 		.with(Err(Failure.FORBIDDEN), () => res.sendStatus(403))
 		.with(Err(Failure.MISSING_DEPENDENCY), () => res.sendStatus(404))
 		.exhaustive();
@@ -224,8 +240,8 @@ const boxAdminViews = express()
 const counterAdminViews = express().get("/", (req, res) => res.render("pages/toolbox/counters/index"));
 
 const postsAdminViews = express()
-	.post("/:id/unsubscribe", subscribedProcedure(false))
-	.post("/:id/subscribe", subscribedProcedure(true))
+	.post("/posts/:id/unsubscribe", subscribedProcedure(false))
+	.post("/posts/:id/subscribe", subscribedProcedure(true))
 	.get("/", async (req, res) => {
 		const { posts, cursor } = await getEmailPosts({
 			address: res.locals.email.address,
@@ -241,5 +257,5 @@ const postsAdminViews = express()
 export const adminViews = express()
 	.use("/counters", counterAdminViews)
 	.use("/boxes", boxAdminViews)
-	.use("/posts", postsAdminViews)
+	.use("/subscriptions", postsAdminViews)
 	.get("/", (req, res) => res.render("pages/toolbox/index"));

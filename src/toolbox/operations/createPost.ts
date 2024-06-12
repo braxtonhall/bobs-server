@@ -8,7 +8,7 @@ import { HashedString } from "../../types/hashed";
 import { Some, unwrapOr } from "../../types/option";
 import { match, P } from "ts-pattern";
 import { Post } from "../schema/post";
-import { getUnsubLink, startVerification } from "../../auth/operations";
+import { getUnsubLink, startVerificationForReplies } from "../../auth/operations";
 import { EmailPersona, enqueue, sendQueuedMessages } from "../../email";
 import Config from "../../Config";
 import ejs from "ejs";
@@ -24,7 +24,7 @@ const sendNotificationEmail = async (env: {
 }) => {
 	const { link: unsubLink } = await getUnsubLink(env.address);
 	const html = await ejs.renderFile("views/emails/reply.ejs", {
-		manageLink: new URL(`https://${Config.HOST}/toolbox/posts`).toString(),
+		manageLink: new URL(`https://${Config.HOST}/toolbox/subscriptions`).toString(),
 		replyLink: new URL(`https://${Config.HOST}/boxes/${env.boxId}?cursor=${env.childId}`).toString(),
 		replyContent: env.childContent,
 		originalLink: new URL(`https://${Config.HOST}/boxes/${env.boxId}?cursor=${env.parentId}`).toString(),
@@ -60,9 +60,8 @@ export const createPost = async (
 					posterId: await posters.getId(ip),
 				});
 
-				// if we turn this into a transaction, update sendQueuedMessages call
 				if (email?.confirmed === false) {
-					await startVerification(email.address);
+					await startVerificationForReplies(email.address);
 				}
 
 				if (creationResult.type === "err") {

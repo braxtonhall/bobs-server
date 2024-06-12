@@ -20,6 +20,14 @@ describe("transactions", () => {
 		}).catch(() => {});
 		expect(await db.email.findUnique({ where: { address: "foo@bar.ca" } })).toBeNull();
 	});
+
+	it("should be able to transact within a transaction just fine", async () => {
+		await transaction(() =>
+			transaction(async () => {
+				await db.email.create({ data: { address: "foo@bar.ca" } });
+			}),
+		);
+	});
 });
 
 describe("email", () => {

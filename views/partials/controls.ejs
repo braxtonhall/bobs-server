@@ -2,10 +2,23 @@
 	<summary class="more-controls-summary">more controls</summary>
 	<form name="more-controls-form">
 		<% if (query.dead === 'true') { %>
-		<button class="more-controls-hide-dead more-controls-dead">hide dead</button>
+		<button class="dead-form-hide-dead dead-form-button">hide dead</button>
 		<% } else { %>
-		<button class="more-controls-show-dead more-controls-dead" name="dead" value="true">show dead</button>
+		<button class="dead-form-show-dead dead-form-button" name="dead" value="true">show dead</button>
 		<% } %>
 		<%- include('util/query-passthrough', {query, params: ['take', 'cursor']}); %>
+	</form>
+
+	<form class="subscribe-form more-controls-form" method="post" action="/boxes/<%=box.id%>/subscribe">
+		<input
+			placeholder="email"
+			name="email"
+			required
+			pattern="^\S+@\S+\.\S+$"
+			title="A valid email address"
+			maxlength="<%=Config.DEFAULT_MAX_LENGTH%>"
+		/>
+		<button class="subscribe-button">subscribe</button>
+		<%- include('util/query-passthrough', {query, params: ['take', 'cursor', 'dead']}); %>
 	</form>
 </details>

@@ -4,16 +4,17 @@ datasource db {
 }
 
 model Email {
-  id          String       @id @default(cuid())
-  address     String       @unique
-  confirmed   Boolean      @default(false)
-  subscribed  Boolean      @default(true)
-  posts       Post[]
-  participant Participant? @relation("ParticipantEmail")
-  tokens      Token[]
-  boxes       Box[]
-  counters    Counter[]
-  permissions Permission[]
+  id            String         @id @default(cuid())
+  address       String         @unique
+  confirmed     Boolean        @default(false)
+  subscribed    Boolean        @default(true)
+  posts         Post[]
+  participant   Participant?   @relation("ParticipantEmail")
+  tokens        Token[]
+  boxes         Box[]
+  counters      Counter[]
+  permissions   Permission[]
+  subscriptions Subscription[]
 }
 
 model Message {
@@ -36,18 +37,19 @@ model Token {
 }
 
 model Box {
-  sort        Int          @id @default(autoincrement())
-  id          String       @unique @default(cuid())
-  name        String
-  origin      String?
-  owner       Email        @relation(fields: [ownerId], references: [id])
-  ownerId     String
-  posts       Post[]
-  deleted     Boolean      @default(false)
-  stylesheet  String?
-  season      Season?
-  entry       Entry?
-  permissions Permission[]
+  sort          Int            @id @default(autoincrement())
+  id            String         @unique @default(cuid())
+  name          String
+  origin        String?
+  owner         Email          @relation(fields: [ownerId], references: [id])
+  ownerId       String
+  posts         Post[]
+  deleted       Boolean        @default(false)
+  stylesheet    String?
+  season        Season?
+  entry         Entry?
+  permissions   Permission[]
+  subscriptions Subscription[]
 }
 
 model Permission {
@@ -59,6 +61,16 @@ model Permission {
   canKill           Boolean @default(false)
   canDelete         Boolean @default(false)
   canSetPermissions Boolean @default(false)
+
+  @@id(name: "id", [boxId, emailId])
+}
+
+model Subscription {
+  boxId     String
+  box       Box      @relation(fields: [boxId], references: [id])
+  emailId   String
+  email     Email    @relation(fields: [emailId], references: [id])
+  updatedAt DateTime @default(now())
 
   @@id(name: "id", [boxId, emailId])
 }

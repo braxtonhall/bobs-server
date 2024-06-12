@@ -47,7 +47,7 @@ export const getUnsubLink = async (address: string) => {
 	return { link, expiration };
 };
 
-export const startVerification = async (address: string): Promise<void> => {
+export const startVerificationForReplies = async (address: string): Promise<void> => {
 	const { link: unsubscribeLink, expiration } = await getUnsubLink(address);
 	const verifyLink = new URL(`https://${Config.HOST}/verify?${unsubscribeLink.searchParams.toString()}`);
 	await enqueue({
@@ -57,6 +57,21 @@ export const startVerification = async (address: string): Promise<void> => {
 		html: `You are receiving this email because a comment has been posted using your email address.
 
 Verify your address by clicking <a href="${verifyLink.toString()}">this link</a> to get notified when someone replies to your message.
+To unsubscribe from all emails from bob's server, <a href="${unsubscribeLink.toString()}">click here</a>`,
+		expiration,
+	});
+};
+
+export const startVerificationForSubscription = async (address: string): Promise<void> => {
+	const { link: unsubscribeLink, expiration } = await getUnsubLink(address);
+	const verifyLink = new URL(`https://${Config.HOST}/verify?${unsubscribeLink.searchParams.toString()}`);
+	await enqueue({
+		address,
+		persona: EmailPersona.BOBS_MAILER,
+		subject: "Please verify your email address",
+		html: `You are receiving this email because this email has requested to subscribe to a comment box.
+
+Verify your address by clicking <a href="${verifyLink.toString()}">this link</a> to get notified when new posts are created.
 To unsubscribe from all emails from bob's server, <a href="${unsubscribeLink.toString()}">click here</a>`,
 		expiration,
 	});
@@ -168,7 +183,7 @@ export const login = async ({ email: address, redirect }: { email: string; redir
 	await transaction(async () => {
 		const temporaryToken = randomUUID();
 		const expiration = DateTime.now().plus({ minute: Config.LOGIN_TOKEN_EXPIRATION_MIN }).toJSDate();
-		await db.token.create({
+		const { email } = await db.token.create({
 			data: {
 				type: TokenType.LOGIN,
 				temporaryToken,
@@ -180,8 +195,15 @@ export const login = async ({ email: address, redirect }: { email: string; redir
 					},
 				},
 			},
+			select: {
+				email: {
+					select: {
+						address: true,
+					},
+				},
+			},
 		});
-		await sendConfirmationEmail({ address, temporaryToken, expiration, redirect }).catch(() => {});
+		await sendConfirmationEmail({ address: email.address, temporaryToken, expiration, redirect }).catch(() => {});
 	});
 	void sendQueuedMessages();
 };
