@@ -35,6 +35,10 @@ export const createGame = async ({
 			},
 		});
 
+		await db.subscription.create({
+			data: { boxId: box.id, emailId },
+		});
+
 		const result = await db.season.create({
 			data: {
 				name,

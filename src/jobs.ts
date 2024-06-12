@@ -7,6 +7,7 @@ export type Job = { callback: () => unknown; interval: number };
 const jobs: Job[] = [archiveSeasons, removeTokens, sendBoxUpdates];
 const runningJobs = new Set<NodeJS.Timeout>();
 
+// TODO stop should also drain all the currently running jobs...
 const stop = () => runningJobs.forEach((interval) => clearInterval(interval));
 
 const start = () => {
