@@ -48,6 +48,11 @@ export const setRules = ({ seasonId, recipientId, rules }: Environment) =>
 				},
 				select: {
 					name: true,
+					email: {
+						select: {
+							id: true,
+						},
+					},
 				},
 			});
 			// https://github.com/prisma/prisma/issues/7093 this is *really* annoying
@@ -59,6 +64,12 @@ export const setRules = ({ seasonId, recipientId, rules }: Environment) =>
 				},
 				select: {
 					id: true,
+				},
+			});
+			await db.subscription.create({
+				data: {
+					boxId: box.id,
+					emailId: recipient.email.id,
 				},
 			});
 			await db.entry.create({
