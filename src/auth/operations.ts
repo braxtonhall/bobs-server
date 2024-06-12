@@ -168,7 +168,7 @@ export const login = async ({ email: address, redirect }: { email: string; redir
 	await transaction(async () => {
 		const temporaryToken = randomUUID();
 		const expiration = DateTime.now().plus({ minute: Config.LOGIN_TOKEN_EXPIRATION_MIN }).toJSDate();
-		await db.token.create({
+		const { email } = await db.token.create({
 			data: {
 				type: TokenType.LOGIN,
 				temporaryToken,
@@ -180,8 +180,15 @@ export const login = async ({ email: address, redirect }: { email: string; redir
 					},
 				},
 			},
+			select: {
+				email: {
+					select: {
+						address: true,
+					},
+				},
+			},
 		});
-		await sendConfirmationEmail({ address, temporaryToken, expiration, redirect }).catch(() => {});
+		await sendConfirmationEmail({ address: email.address, temporaryToken, expiration, redirect }).catch(() => {});
 	});
 	void sendQueuedMessages();
 };
