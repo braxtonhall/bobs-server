@@ -17,7 +17,6 @@ import posts from "../storage/posts";
 import posters from "../storage/posters";
 import { getEmailPosts } from "../operations/getEmailPosts";
 import { addMaintainerPayloadSchema, removeMaintainerPayloadSchema } from "../schema/maintainers";
-import { emailSchema } from "../schema/email";
 import { subscribeSchema } from "../schema/subscribe";
 import { addSubscriber } from "../operations/addSubscriber";
 
