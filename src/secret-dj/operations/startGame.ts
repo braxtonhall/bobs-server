@@ -90,11 +90,14 @@ export const startGame = async ({ ownerId, seasonId }: Environment) =>
 						},
 					},
 				});
-				await db.subscription.create({
-					data: {
-						boxId: entry.box.id,
-						emailId: entry.dj!.email.id,
-					},
+				const subscriptionId = {
+					boxId: entry.box.id,
+					emailId: entry.dj!.email.id,
+				};
+				await db.subscription.upsert({
+					where: { id: subscriptionId },
+					create: subscriptionId,
+					update: {},
 				});
 				return entry;
 			});
