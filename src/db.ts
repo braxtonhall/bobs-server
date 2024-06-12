@@ -22,4 +22,4 @@ export const transaction = async <Args extends any[], R>(
 ): Promise<Awaited<R>> =>
 	storage.getStore()
 		? await callback(...args)
-		: prisma.$transaction(async (tx): Promise<Awaited<R>> => await storage.run(tx, callback, ...args));
+		: await prisma.$transaction(async (tx): Promise<R> => storage.run(tx, callback, ...args));

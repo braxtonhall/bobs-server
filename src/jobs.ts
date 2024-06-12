@@ -4,11 +4,13 @@ import { sendBoxUpdates } from "./toolbox/jobs/sendBoxUpdates";
 import { sendReplyUpdates } from "./toolbox/jobs/sendReplyUpdates";
 import AsyncPool from "./util/AsyncPool";
 
+const MAX_CONCURRENT_JOBS = 4;
+
 export type Job = { callback: () => unknown; interval: number };
 
 const jobs: Job[] = [archiveSeasons, removeTokens, sendBoxUpdates, sendReplyUpdates];
 const scheduledJobs = new Set<NodeJS.Timeout>();
-const pool = new AsyncPool(1);
+const pool = new AsyncPool(MAX_CONCURRENT_JOBS);
 
 const stop = async () => {
 	scheduledJobs.forEach((interval) => clearInterval(interval));
