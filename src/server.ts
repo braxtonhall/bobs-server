@@ -11,13 +11,12 @@ import { api as unauthenticatedApi, views as unauthenticatedViews } from "./tool
 import { views as secretDjViews } from "./secret-dj/routers/views";
 import subdomain from "express-subdomain";
 import { adminViews } from "./toolbox/routers/views";
-import { z } from "zod";
 import emails from "./toolbox/storage/emails";
 import { parse } from "./parse";
 import { match, P } from "ts-pattern";
 import { Ok } from "./types/result";
 import session from "express-session";
-import { checkboxSchema } from "./util/checkboxSchema";
+import { settingsSchema } from "./schema";
 
 // TODO would be great to also serve a javascript client
 // TODO this whole system is a mess...
@@ -43,12 +42,7 @@ const views = express()
 		}),
 	)
 	.post("/settings", async (req, res) => {
-		const result = parse(
-			z.object({
-				subscribed: checkboxSchema,
-			}),
-			req.body,
-		);
+		const result = parse(settingsSchema, req.body);
 		return match(result)
 			.with(Ok(P.select()), async ({ subscribed }) => {
 				await emails.updateSettings(res.locals.email.id, subscribed);

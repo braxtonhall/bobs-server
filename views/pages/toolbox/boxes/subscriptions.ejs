@@ -9,6 +9,11 @@
 		</header>
 
 		<main>
+			<%if (subscribed) {%>
+			<form name="settings-form" method="post" action="/toolbox/subscriptions/email">
+				<button class="settings-save">disable all email notifications</button>
+			</form>
+
 			<p>hello! these are posts by you</p>
 
 			<table>
@@ -75,6 +80,13 @@
 				</tr>
 				<% } %>
 			</table>
+			<% } else { %>
+			<p>you are currently unsubscribed from all email notifications</p>
+			<form name="settings-form" method="post" action="/toolbox/subscriptions/email">
+				<input type="hidden" class="subscribed-input" id="subscribed" name="subscribed" value="on" />
+				<button class="settings-save">enable email notifications</button>
+			</form>
+			<% } %>
 		</main>
 	</body>
 </html>
