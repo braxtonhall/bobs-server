@@ -24,6 +24,14 @@ import { settingsSchema } from "./schema";
 const views = express()
 	.set("view engine", "ejs")
 	.use("/public", express.static("public"))
+	.use((req, res, next) => {
+		try {
+			decodeURIComponent(req.path);
+			return next();
+		} catch {
+			return res.sendStatus(404);
+		}
+	})
 	.use(session({ secret: Config.SESSION_SECRET, cookie: { maxAge: 60000 }, resave: true, saveUninitialized: true }))
 	.post("/*", bodyParser.urlencoded({ extended: true }))
 	.use(cookieParser())
