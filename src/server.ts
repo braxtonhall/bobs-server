@@ -17,6 +17,7 @@ import { match, P } from "ts-pattern";
 import { Ok } from "./types/result";
 import session from "express-session";
 import { settingsSchema } from "./schema";
+import { gateKeepInvalidURIs } from "./common/middlewares/gateKeepInvalidURIs";
 
 // TODO would be great to also serve a javascript client
 // TODO this whole system is a mess...
@@ -24,14 +25,7 @@ import { settingsSchema } from "./schema";
 const views = express()
 	.set("view engine", "ejs")
 	.use("/public", express.static("public"))
-	.use((req, res, next) => {
-		try {
-			decodeURIComponent(req.path);
-			return next();
-		} catch {
-			return res.sendStatus(404);
-		}
-	})
+	.use(gateKeepInvalidURIs)
 	.use(session({ secret: Config.SESSION_SECRET, cookie: { maxAge: 60000 }, resave: true, saveUninitialized: true }))
 	.post("/*", bodyParser.urlencoded({ extended: true }))
 	.use(cookieParser())
