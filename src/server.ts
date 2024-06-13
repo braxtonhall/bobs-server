@@ -65,7 +65,8 @@ const views = express()
 				}),
 			);
 	})
-	.get("/", (req, res) => res.render("pages/index"));
+	.get("/", (req, res) => res.render("pages/index"))
+	.get("/*", (req, res) => res.sendStatus(404));
 
 const api = express().use(subdomain("api", unauthenticatedApi));
 
