@@ -39,7 +39,7 @@ export default class AsyncPool {
 	}
 
 	private readonly queue: Array<() => void> = [];
-	private running: number = 0;
+	private running: Set<Promise<unknown>> = new Set<Promise<unknown>>();
 	constructor(private readonly concurrency: number) {
 		if (!(concurrency > 0)) {
 			// Don't flip this! This also filters out NaN and null
@@ -48,7 +48,7 @@ export default class AsyncPool {
 	}
 
 	private next(): void {
-		if (this.running < this.concurrency) {
+		if (this.running.size < this.concurrency) {
 			this.queue.shift()?.();
 		}
 	}
@@ -56,22 +56,26 @@ export default class AsyncPool {
 	public run<T>(process: () => T): Promise<Awaited<T>> {
 		return new Promise((resolve, reject) => {
 			this.queue.push((): void => {
-				(async (): Promise<Awaited<T>> => await process())()
-					.finally(() => this.running--)
+				const promise: Promise<unknown> = (async (): Promise<Awaited<T>> => await process())()
+					.finally(() => this.running.delete(promise))
 					.finally(() => this.next())
 					.then(resolve)
 					.catch(reject);
-				this.running++;
+				this.running.add(promise);
 			});
 			return this.next();
 		});
 	}
 
 	public get executing(): number {
-		return this.running;
+		return this.running.size;
 	}
 
 	public get queued(): number {
 		return this.queue.length;
+	}
+
+	public async drain(): Promise<void> {
+		await Promise.all(this.running);
 	}
 }

@@ -8,38 +8,9 @@ import { HashedString } from "../../types/hashed";
 import { Some, unwrapOr } from "../../types/option";
 import { match, P } from "ts-pattern";
 import { Post } from "../schema/post";
-import { getUnsubLink, startVerificationForReplies } from "../../auth/operations";
-import { EmailPersona, enqueue, sendQueuedMessages } from "../../email";
-import Config from "../../Config";
-import ejs from "ejs";
+import { startVerificationForReplies } from "../../auth/operations";
+import { sendQueuedMessages } from "../../email";
 import { transaction } from "../../db";
-
-const sendNotificationEmail = async (env: {
-	address: string;
-	boxId: string;
-	childId: string;
-	parentId: string;
-	childContent: string;
-	parentContent: string;
-}) => {
-	const { link: unsubLink } = await getUnsubLink(env.address);
-	const html = await ejs.renderFile("views/emails/reply.ejs", {
-		manageLink: new URL(`https://${Config.HOST}/toolbox/subscriptions`).toString(),
-		replyLink: new URL(`https://${Config.HOST}/boxes/${env.boxId}?cursor=${env.childId}`).toString(),
-		replyContent: env.childContent,
-		originalLink: new URL(`https://${Config.HOST}/boxes/${env.boxId}?cursor=${env.parentId}`).toString(),
-		originalContent: env.parentContent,
-		unsubscribeLink: unsubLink.toString(),
-	});
-	await enqueue({
-		persona: EmailPersona.BOBS_MAILER,
-		address: env.address,
-		subject: "You received a new reply",
-		html,
-	}).catch(() => {});
-	// Note: not part of a transaction
-	void sendQueuedMessages();
-};
 
 export const createPost = async (
 	boxId: string,
@@ -69,17 +40,6 @@ export const createPost = async (
 				}
 
 				const post = creationResult.value;
-				if (parent && parent.subscribed && parent.email?.confirmed && parent.email.subscribed) {
-					// TODO notification should not go out until deletable has become false
-					await sendNotificationEmail({
-						address: parent.email.address,
-						boxId,
-						childId: post.id,
-						parentId: parent.id,
-						parentContent: parent.content,
-						childContent: content,
-					});
-				}
 				return Ok({
 					id: post.id,
 					createdAt: post.createdAt,

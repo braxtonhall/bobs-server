@@ -193,7 +193,7 @@ const list = async (userId: string, deleted: boolean, count: number, cursor?: st
 };
 
 const ifCanEditBox =
-	<Callback extends (box: { ownerId: string }) => Promise<Result<unknown, unknown>>>(
+	<Callback extends (box: { ownerId: string | null }) => Promise<Result<unknown, unknown>>>(
 		ids: { userId: string; boxId: string },
 		permissionNeeded: PermissionKey,
 		callback: Callback,

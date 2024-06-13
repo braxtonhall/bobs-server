@@ -17,6 +17,7 @@
 			pattern="^\S+@\S+\.\S+$"
 			title="A valid email address"
 			maxlength="<%=Config.DEFAULT_MAX_LENGTH%>"
+			value="<%=address%>"
 		/>
 		<button class="subscribe-button">subscribe</button>
 		<%- include('util/query-passthrough', {query, params: ['take', 'cursor', 'dead']}); %>

@@ -21,10 +21,10 @@ import { subscribeSchema } from "../schema/subscribe";
 import { addSubscriber } from "../operations/addSubscriber";
 import { getSubscriptions } from "../operations/getSubscriptions";
 import { deleteSubscription } from "../operations/deleteSubscription";
+import { settingsSchema } from "../../schema";
+import emails from "../storage/emails";
 
 // TODO there is WAY too much repetition here... There must be a good way to get reuse a lot of code
-
-// TODO these will probably all be embeds
 
 export const views = express()
 	.get("/boxes/:box", async (req, res) =>
@@ -251,6 +251,15 @@ const postsAdminViews = express()
 			return res.sendStatus(404);
 		}
 	})
+	.post("/email", async (req, res) => {
+		try {
+			const { subscribed } = settingsSchema.pick({ subscribed: true }).parse(req.body);
+			await emails.updateSettings(res.locals.email.id, subscribed);
+			return res.redirect(`/toolbox/subscriptions?${new URLSearchParams(req.body).toString()}`);
+		} catch {
+			return res.sendStatus(400);
+		}
+	})
 	.get("/", async (req, res) => {
 		const { posts, cursor } = await getEmailPosts({
 			address: res.locals.email.address,
@@ -260,8 +269,15 @@ const postsAdminViews = express()
 			),
 			cursor: typeof req.query.cursor === "string" ? req.query.cursor : undefined,
 		});
-		const boxes = await getSubscriptions(res.locals.email.id);
-		return res.render("pages/toolbox/boxes/subscriptions", { posts, cursor, query: req.query, Config, boxes });
+		const { subscribed, subscriptions } = await getSubscriptions(res.locals.email.id);
+		return res.render("pages/toolbox/boxes/subscriptions", {
+			posts,
+			cursor,
+			query: req.query,
+			Config,
+			subscribed,
+			boxes: subscriptions.map(({ box }) => box),
+		});
 	});
 
 export const adminViews = express()

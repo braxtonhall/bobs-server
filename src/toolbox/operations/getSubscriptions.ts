@@ -1,9 +1,14 @@
 import { db } from "../../db";
 
 export const getSubscriptions = async (emailId: string) =>
-	db.subscription
-		.findMany({
-			where: { emailId },
-			select: { box: { select: { id: true, name: true } } },
-		})
-		.then((subs) => subs.map(({ box }) => box));
+	db.email.findUniqueOrThrow({
+		where: { id: emailId },
+		select: {
+			subscribed: true,
+			subscriptions: {
+				select: {
+					box: { select: { id: true, name: true } },
+				},
+			},
+		},
+	});
