@@ -1,6 +1,13 @@
 import { PrismaClient } from "@prisma/client";
 import { AsyncLocalStorage } from "node:async_hooks";
 import { ITXClientDenyList } from "@prisma/client/runtime/library";
+import AsyncPool from "./util/AsyncPool";
+
+// https://github.com/prisma/prisma/issues/22947
+// https://github.com/prisma/prisma-engines/pull/4907
+// when these get resolved, we should be able to just remove this code
+const MAX_CONCURRENT_TRANSACTIONS = 1;
+const pool = new AsyncPool(MAX_CONCURRENT_TRANSACTIONS);
 
 const prisma = new PrismaClient();
 
@@ -22,4 +29,4 @@ export const transaction = async <Args extends any[], R>(
 ): Promise<Awaited<R>> =>
 	storage.getStore()
 		? await callback(...args)
-		: await prisma.$transaction(async (tx): Promise<R> => storage.run(tx, callback, ...args));
+		: await pool.run(() => prisma.$transaction(async (tx): Promise<R> => storage.run(tx, callback, ...args)));
