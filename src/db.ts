@@ -26,7 +26,11 @@ export const db: Client = new Proxy(prisma, {
 export const transaction = async <Args extends any[], R>(
 	callback: (...args: Args) => R,
 	...args: Args
-): Promise<Awaited<R>> =>
-	storage.getStore()
-		? await callback(...args)
-		: await pool.run(() => prisma.$transaction(async (tx): Promise<R> => storage.run(tx, callback, ...args)));
+): Promise<Awaited<R>> => {
+	if (storage.getStore()) {
+		return await callback(...args);
+	} else {
+		const procedure = async (tx: Client): Promise<R> => storage.run(tx, callback, ...args);
+		return await pool.run(() => prisma.$transaction(procedure));
+	}
+};

@@ -3,10 +3,11 @@ import { removeTokens } from "./auth/jobs";
 import { sendBoxUpdates } from "./toolbox/jobs/sendBoxUpdates";
 import { sendReplyUpdates } from "./toolbox/jobs/sendReplyUpdates";
 import AsyncPool from "./util/AsyncPool";
+import { sendReminders } from "./secret-dj/jobs/sendReminders";
 
 export type Job = { callback: () => unknown; interval: number };
 
-const jobs: Job[] = [archiveSeasons, removeTokens, sendBoxUpdates, sendReplyUpdates];
+const jobs: Job[] = [archiveSeasons, removeTokens, sendBoxUpdates, sendReplyUpdates, sendReminders];
 const scheduledJobs = new Set<NodeJS.Timeout>();
 const pool = new AsyncPool(jobs.length);
 

@@ -30,6 +30,8 @@ const environmentSchema = z.object({
 	COMMENT_MAX_LENGTH: z.coerce.number().int().positive().default(2000),
 	SUBSCRIPTION_DIGEST_INTERVAL_HOURS: z.coerce.number().nonnegative().default(4),
 	SUBSCRIPTION_DIGEST_DELAY_HOURS: z.coerce.number().nonnegative().default(12),
+	REMINDER_INTERVAL_HOURS: z.coerce.number().nonnegative().default(4),
+	REMINDER_DELAY_HOURS: z.coerce.number().nonnegative().default(48),
 });
 
 const Config = environmentSchema.parse(process.env);

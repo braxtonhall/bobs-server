@@ -4,6 +4,7 @@ import { EmailPersona, enqueue, Message, sendQueuedMessages } from "../../email"
 import Config from "../../Config";
 import { getUnsubLink } from "../../auth/operations";
 import { Entry } from "@prisma/client";
+import ejs from "ejs";
 
 type Pair = { recipient: Entry; dj: Entry };
 
@@ -48,12 +49,15 @@ const toMessages = (seasonId: string, entries: UpdatedEntry[]): Promise<Message[
 		.filter(({ recipient }) => recipient.email.subscribed)
 		.map(async ({ recipient }) => {
 			const { link: unsub } = await getUnsubLink(recipient.email.address);
+			const html = await ejs.renderFile("views/emails/started.ejs", {
+				name: recipient.name,
+				gameLink: link,
+				unsubLink: unsub.toString(),
+			});
 			return {
 				persona: EmailPersona.SECRET_DJ,
 				address: recipient.email.address,
-				html: `${recipient.name}, it's time to start making a playlist. <a href="${link}">click here to see your rules</a>.
-<br/>
-to unsubscribe from all emails from bob's server, <a href="${unsub.toString()}">click here</a>`,
+				html: html,
 				subject: "a new season of secret dj has started",
 			};
 		});
