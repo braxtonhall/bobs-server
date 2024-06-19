@@ -1,3 +1,12 @@
+<hr />
+<h3>owner controls 👑</h3>
+
+<form class="update-deadline-form" method="post" action="/secret-dj/games/<%=season.id%>/deadline">
+	<%- include('../deadlines.ejs') %>
+
+	<button type="submit">update deadline</button>
+</form>
+
 <% if (dj) { %>
 <hr />
 <h3>a playlist for <a href="/secret-dj/djs/<%= dj.recipient.id %>"><%= dj.recipient.name %></a></h3>
@@ -7,6 +16,15 @@
 	<li><%=rule.text%></li>
 	<% } %>
 </ol>
+<% if (season.softDeadline && !dj.submissionUrl) { %>
+<h4>
+	due
+	<%= season.softDeadline.toUTCString().toLowerCase() %>
+	<% if (season.softDeadline < new Date()) {%>
+	(overdue)
+	<% }%>
+</h4>
+<% } %>
 <details>
 	<summary>comments</summary>
 	<iframe class="comments embed" src="/boxes/<%=dj.boxId%>"></iframe>

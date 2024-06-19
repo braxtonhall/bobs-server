@@ -5,8 +5,9 @@ import Config from "../../Config";
 import { EmailPersona, enqueue, Message, sendQueuedMessages } from "../../email";
 import { getUnsubLink } from "../../auth/operations";
 import ejs from "ejs";
+import { Deadlines } from "../schemas";
 
-type ReminderEntry = { season: { id: string }; dj: { name: string; email: { address: string } } };
+type ReminderEntry = { season: { id: string } & Deadlines; dj: { name: string; email: { address: string } } };
 
 const toMessages = async (entries: ReminderEntry[]): Promise<Message[]> => {
 	const futureMessages = entries.map(async ({ dj, season }) => {
@@ -16,6 +17,8 @@ const toMessages = async (entries: ReminderEntry[]): Promise<Message[]> => {
 			name: dj!.name,
 			gameLink: link,
 			unsubLink: unsub.toString(),
+			softDeadline: season.softDeadline,
+			hardDeadline: season.hardDeadline,
 		});
 		return {
 			persona: EmailPersona.SECRET_DJ,

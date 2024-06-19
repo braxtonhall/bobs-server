@@ -5,6 +5,8 @@ import Config from "../../Config";
 import { getUnsubLink } from "../../auth/operations";
 import { Entry } from "@prisma/client";
 import ejs from "ejs";
+import { Deadlines } from "../schemas";
+import { assertDeadlinesAreReasonable } from "../util/assertDeadlinesAreReasonable";
 
 type Pair = { recipient: Entry; dj: Entry };
 
@@ -31,6 +33,7 @@ const pairEntries = (users: Entry[]): Pair[] => {
 type Environment = {
 	ownerId: string;
 	seasonId: string;
+	deadlines: Deadlines;
 };
 
 type UpdatedEntry = {
@@ -43,7 +46,7 @@ type UpdatedEntry = {
 	};
 };
 
-const toMessages = (seasonId: string, entries: UpdatedEntry[]): Promise<Message[]> => {
+const toMessages = (seasonId: string, entries: UpdatedEntry[], softDeadline: Date | null): Promise<Message[]> => {
 	const link = `https://${Config.HOST}/login?next=${encodeURIComponent(`/secret-dj/games/${seasonId}`)}`;
 	const futureMessages = entries
 		.filter(({ recipient }) => recipient.email.subscribed)
@@ -53,6 +56,7 @@ const toMessages = (seasonId: string, entries: UpdatedEntry[]): Promise<Message[
 				name: recipient.name,
 				gameLink: link,
 				unsubLink: unsub.toString(),
+				softDeadline,
 			});
 			return {
 				persona: EmailPersona.SECRET_DJ,
@@ -64,12 +68,17 @@ const toMessages = (seasonId: string, entries: UpdatedEntry[]): Promise<Message[
 	return Promise.all(futureMessages);
 };
 
-export const startGame = async ({ ownerId, seasonId }: Environment) =>
+export const startGame = async ({ ownerId, seasonId, deadlines }: Environment) =>
 	transaction(async () => {
+		assertDeadlinesAreReasonable(deadlines);
+
 		const season = await db.season.update({
 			where: { id: seasonId, ownerId, state: SeasonState.SIGN_UP },
 			select: { entries: true, id: true },
-			data: { state: SeasonState.IN_PROGRESS },
+			data: {
+				state: SeasonState.IN_PROGRESS,
+				...deadlines,
+			},
 		});
 		if (season && season.entries.length > 0) {
 			const pairs = pairEntries(season.entries);
@@ -106,8 +115,7 @@ export const startGame = async ({ ownerId, seasonId }: Environment) =>
 				return entry;
 			});
 			const updates = (await Promise.all(futureUpdates)) satisfies UpdatedEntry[];
-			// TODO should be a way to opt out of these emails
-			await enqueue(...(await toMessages(season.id, updates)));
+			await enqueue(...(await toMessages(season.id, updates, deadlines.softDeadline)));
 			return updates;
 		} else {
 			throw new Error(`Could not find eligible season ${seasonId}`);

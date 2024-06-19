@@ -1,3 +1,10 @@
+<% if (season.state === 'in-progress') { %>
+<p>
+	<%= season.entries.filter(({submissionUrl}) => submissionUrl).length %>/<%=season.entries.length%>
+	playlists have been submitted
+</p>
+<% } %>
+
 <% if (season.entries.length) { %>
 <table class="entry-table">
 	<tr>

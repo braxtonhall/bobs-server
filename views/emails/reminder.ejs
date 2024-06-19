@@ -1,4 +1,12 @@
 <%= name %>, your playlist is overdue.
+<% if (softDeadline) { %>
+it was due before
+<%= softDeadline.toUTCString() %>.
+<% } %>
+<% if (hardDeadline) { %>
+if you do not submit before
+<%= hardDeadline.toUTCString() %>, you will not be able to submit at all.
+<% } %>
 <a href="<%= gameLink %>">click here to see your rules and submit your playlist</a>.
 <br />
 to unsubscribe from all emails from bob's server, <a href="<%= unsubLink %>">click here</a>

@@ -88,7 +88,7 @@ form {
 	box-sizing: border-box;
 }
 
-input:not([type="checkbox"]):not([type="number"]) {
+input:not([type="checkbox"]):not([type="number"]):not([type="date"]) {
 	width: 62%;
 	box-sizing: border-box;
 }
