@@ -25,23 +25,21 @@ type Entry = {
 
 const toMessages = (seasonId: string, entries: Entry[], softDeadline: Date | null): Promise<Message[]> => {
 	const link = `https://${Config.HOST}/login?next=${encodeURIComponent(`/secret-dj/games/${seasonId}`)}`;
-	const futureMessages = entries
-		.filter(({ recipient }) => recipient.email.subscribed)
-		.map(async ({ recipient }) => {
-			const { link: unsub } = await getUnsubLink(recipient.email.address);
-			const html = await ejs.renderFile("views/emails/deadline.ejs", {
-				name: recipient.name,
-				gameLink: link,
-				unsubLink: unsub.toString(),
-				softDeadline,
-			});
-			return {
-				persona: EmailPersona.SECRET_DJ,
-				address: recipient.email.address,
-				html: html,
-				subject: "secret dj deadline updated",
-			};
+	const futureMessages = entries.map(async ({ recipient }) => {
+		const { link: unsub } = await getUnsubLink(recipient.email.address);
+		const html = await ejs.renderFile("views/emails/deadline.ejs", {
+			name: recipient.name,
+			gameLink: link,
+			unsubLink: unsub.toString(),
+			softDeadline,
 		});
+		return {
+			persona: EmailPersona.SECRET_DJ,
+			address: recipient.email.address,
+			html: html,
+			subject: "secret dj deadline updated",
+		};
+	});
 	return Promise.all(futureMessages);
 };
 
@@ -66,6 +64,7 @@ export const updateDeadlines = ({ ownerId, seasonId, deadlines }: Environment) =
 			where: { id: seasonId, ownerId, state: SeasonState.IN_PROGRESS },
 			select: {
 				entries: {
+					where: { submissionUrl: { in: null }, recipient: { email: { subscribed: true } } },
 					select: {
 						recipient: {
 							select: {
@@ -97,7 +96,7 @@ export const updateDeadlines = ({ ownerId, seasonId, deadlines }: Environment) =
 				where: { id: seasonId },
 				data: deadlines,
 			});
-			if (season.softDeadline?.valueOf() !== deadlines.softDeadline?.valueOf()) {
+			if (season.softDeadline?.valueOf() !== deadlines.softDeadline?.valueOf() && season.entries.length) {
 				await enqueue(...(await toMessages(season.id, season.entries, deadlines.softDeadline)));
 			}
 		} else {
