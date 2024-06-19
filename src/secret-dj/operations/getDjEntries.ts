@@ -65,6 +65,7 @@ export const getDjEntries = async ({
 					season: {
 						state: SeasonState.ENDED,
 					},
+					submissionUrl: { notIn: null },
 				},
 				select: {
 					id: true,

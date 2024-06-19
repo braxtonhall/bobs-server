@@ -1,4 +1,4 @@
-<% if (recipient)  { %>
+<% if (recipient?.submissionUrl)  { %>
 <h3>your playlist has been curated by <a href="/secret-dj/djs/<%= recipient.dj.id %>"><%= recipient.dj.name %></a></h3>
 <h4>your rules</h4>
 <ol class="rule-list">
@@ -13,4 +13,7 @@
 	<summary>comments</summary>
 	<iframe class="comments embed" src="/boxes/<%=recipient.boxId%>"></iframe>
 </details>
+<% } else { %>
+<h4>no playlist was submitted for you. hopefully someone will provide one in the comments</h4>
+<iframe class="comments embed" src="/boxes/<%=recipient.boxId%>"></iframe>
 <% } %>
