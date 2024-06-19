@@ -50,10 +50,6 @@
 	<% } %>
 </table>
 
-<script>
-	for (const element of document.getElementsByClassName("date-time")) {
-		element.textContent = new Date(Number(element.dataset.ms)).toLocaleString();
-	}
-</script>
+<%- include('render-dates'); %>
 
 <%- include('boxes/page-controls', {query, params: ['take', 'dead'], cursor, cursorName: 'cursor'}); %>

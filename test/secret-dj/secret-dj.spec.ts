@@ -38,7 +38,13 @@ describe("Basic flow", () => {
 		}));
 
 	it("should not yet be possible to start a game", () =>
-		expect(startGame({ ownerId: participant.id, seasonId: "0" })).rejects.toThrow());
+		expect(
+			startGame({
+				ownerId: participant.id,
+				seasonId: "0",
+				deadlines: { softDeadline: null, hardDeadline: null },
+			}),
+		).rejects.toThrow());
 
 	it("should be able to create a game", async () => {
 		gameId = await createGame({
@@ -142,15 +148,31 @@ describe("Basic flow", () => {
 	});
 
 	it("should not be able to start the game if not the correct owner", () =>
-		expect(startGame({ ownerId: participant.id + 1, seasonId: gameId })).rejects.toThrow());
+		expect(
+			startGame({
+				ownerId: participant.id + 1,
+				seasonId: gameId,
+				deadlines: { softDeadline: null, hardDeadline: null },
+			}),
+		).rejects.toThrow());
 
 	it("should be able to start the game", async () => {
-		await startGame({ ownerId: participant.id, seasonId: gameId });
+		await startGame({
+			ownerId: participant.id,
+			seasonId: gameId,
+			deadlines: { softDeadline: null, hardDeadline: null },
+		});
 		expect(await getActiveGames()).toEqual([]);
 	});
 
 	it("should not be able to start the game again", () =>
-		expect(startGame({ ownerId: participant.id, seasonId: gameId })).rejects.toThrow());
+		expect(
+			startGame({
+				ownerId: participant.id,
+				seasonId: gameId,
+				deadlines: { softDeadline: null, hardDeadline: null },
+			}),
+		).rejects.toThrow());
 
 	it("should no longer be possible to edit rules", () =>
 		expect(setRules({ seasonId: gameId, recipientId: participant.id, rules: ["foo", "bar"] })).rejects.toThrow());
@@ -375,7 +397,11 @@ describe("multiple users flow", () => {
 	});
 
 	it("owner starts game, participants matched to one another, no participant left unmatched", async () => {
-		await startGame({ ownerId: ownerParticipant.id, seasonId });
+		await startGame({
+			ownerId: ownerParticipant.id,
+			seasonId,
+			deadlines: { softDeadline: null, hardDeadline: null },
+		});
 
 		// no more active games
 		const activeGames = await getActiveGames();

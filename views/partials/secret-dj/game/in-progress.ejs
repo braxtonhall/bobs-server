@@ -19,7 +19,9 @@
 <% if (season.softDeadline && !dj.submissionUrl) { %>
 <h4>
 	due
-	<%= season.softDeadline.toUTCString().toLowerCase() %>
+	<span class="date-time" data-ms="<%=season.softDeadline.valueOf()%>"
+		><%= season.softDeadline.toUTCString().toLowerCase() %></span
+	>
 	<% if (season.softDeadline < new Date()) {%>
 	(overdue)
 	<% }%>
