@@ -1,3 +1,5 @@
+<% if (participant && season.owner.id === participant.id) { %>
+<% if (season.softDeadline === null || season.softDeadline > new Date()) { %>
 <hr />
 <h3>owner controls 👑</h3>
 
@@ -6,6 +8,8 @@
 
 	<button type="submit">update deadline</button>
 </form>
+<% } %>
+<% } %>
 
 <% if (dj) { %>
 <hr />

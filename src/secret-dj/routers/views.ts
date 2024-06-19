@@ -173,10 +173,12 @@ export const views = express()
 				protocol: req.protocol,
 				logged: res.locals.logged ?? false,
 				Config,
-				minDeadline: DateTime.now()
-					// Add one so we don't deal with timezones
-					.plus({ day: Config.MINIMUM_GAME_DAYS + 1 })
-					.toJSDate(),
+				minDeadline:
+					season.softDeadline ??
+					DateTime.now()
+						// Add one so we don't deal with timezones
+						.plus({ day: Config.MINIMUM_GAME_DAYS + 1 })
+						.toJSDate(),
 			});
 		} catch {
 			return res.sendStatus(404);

@@ -2,7 +2,7 @@ import { Deadlines } from "../schemas";
 import { db, transaction } from "../../db";
 import { SeasonState } from "../SeasonState";
 import { EmailPersona, enqueue, Message, sendQueuedMessages } from "../../email";
-import { assertDeadlinesAreReasonable } from "../util/assertDeadlinesAreReasonable";
+import { assertDeadlinesAreReasonable, assertHardDeadlineIsReasonable } from "../util/assertDeadlinesAreReasonable";
 import Config from "../../Config";
 import { getUnsubLink } from "../../auth/operations";
 import ejs from "ejs";
@@ -49,7 +49,7 @@ const assertDeadlineIsIncreasing = (deadlines: { old: Date | null; new: Date | n
 	if (deadlines.old) {
 		if (!deadlines.new) {
 			throw new Error("cannot remove a deadline");
-		} else if (deadlines.old <= deadlines.new) {
+		} else if (deadlines.old > deadlines.new) {
 			throw new Error("new deadline must be greater than existing deadline");
 		}
 	}
@@ -84,13 +84,20 @@ export const updateDeadlines = ({ ownerId, seasonId, deadlines }: Environment) =
 			if (season.softDeadline && season.softDeadline < new Date()) {
 				throw new Error("Cannot update deadline after it has passed");
 			}
-			assertDeadlinesAreReasonable(deadlines);
 			assertDeadlinesAreIncreasing({ season, deadlines });
+			if (season.softDeadline) {
+				assertHardDeadlineIsReasonable({
+					softDeadline: deadlines.softDeadline ?? season.softDeadline,
+					hardDeadline: deadlines.hardDeadline,
+				});
+			} else {
+				assertDeadlinesAreReasonable(deadlines);
+			}
 			await db.season.update({
 				where: { id: seasonId },
 				data: deadlines,
 			});
-			if (season.softDeadline !== deadlines.softDeadline) {
+			if (season.softDeadline?.valueOf() !== deadlines.softDeadline?.valueOf()) {
 				await enqueue(...(await toMessages(season.id, season.entries, deadlines.softDeadline)));
 			}
 		} else {
