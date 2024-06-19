@@ -65,7 +65,6 @@ const views = express()
 const api = express().use(subdomain("api", unauthenticatedApi));
 
 export const getServers = async () => ({
-	// TODO if request is not secure, you need to REDIRECT!!
 	https: https.createServer(
 		{
 			cert: await fs.readFile(Config.SSL_CERT_PATH),

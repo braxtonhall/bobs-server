@@ -268,7 +268,6 @@ export const views = express()
 				playlistUrl: link,
 				djId: res.locals.participant.id,
 			});
-			await endFinishedSeasons();
 			clearMessagesAndSet({ req, success: "playlist submitted!" });
 			return res.redirect(`/secret-dj/games/${seasonId}`);
 		} catch {

@@ -3,21 +3,27 @@ import { SeasonState } from "../SeasonState";
 import Config from "../../Config";
 import { EmailPersona, enqueue, Message, sendQueuedMessages } from "../../email";
 import { getUnsubLink } from "../../auth/operations";
+import ejs from "ejs";
 
 type RecipientEntry = { recipient: { email: { address: string; subscribed: boolean }; name: string } };
 
+// TODO ejs!!!
+
 const toMessages = (seasonId: string, entries: RecipientEntry[]): Promise<Message[]> => {
-	const link = `https://${Config.HOST}/login?redirect=${encodeURIComponent(`/secret-dj/games/${seasonId}`)}`;
+	const link = `https://${Config.HOST}/login?next=${encodeURIComponent(`/secret-dj/games/${seasonId}`)}`;
 	const futureMessages = entries
 		.filter(({ recipient }) => recipient.email.subscribed)
 		.map(async ({ recipient }) => {
 			const { link: unsub } = await getUnsubLink(recipient.email.address);
+			const html = await ejs.renderFile("views/emails/finished.ejs", {
+				name: recipient.name,
+				gameLink: link,
+				unsubLink: unsub.toString(),
+			});
 			return {
 				persona: EmailPersona.SECRET_DJ,
 				address: recipient.email.address,
-				html: `${recipient.name}, your playlist is ready. <a href="${link}">click here to see your playlist</a>.
-<br/>
-to unsubscribe from all emails from bob's server, <a href="${unsub.toString()}">click here</a>`,
+				html,
 				subject: "a season of secret dj has ended",
 			};
 		});
@@ -28,13 +34,22 @@ export const endFinishedSeasons = async () => {
 	const finishedSeasons = await db.season.findMany({
 		where: {
 			state: SeasonState.IN_PROGRESS,
-			entries: {
-				every: {
-					submissionUrl: {
-						notIn: null,
+			OR: [
+				{
+					entries: {
+						every: {
+							submissionUrl: {
+								notIn: null,
+							},
+						},
 					},
 				},
-			},
+				{
+					hardDeadline: {
+						lt: new Date(),
+					},
+				},
+			],
 		},
 		select: {
 			entries: {

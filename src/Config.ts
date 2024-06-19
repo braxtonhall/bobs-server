@@ -32,6 +32,7 @@ const environmentSchema = z.object({
 	SUBSCRIPTION_DIGEST_DELAY_HOURS: z.coerce.number().nonnegative().default(12),
 	REMINDER_INTERVAL_HOURS: z.coerce.number().nonnegative().default(4),
 	REMINDER_DELAY_HOURS: z.coerce.number().nonnegative().default(48),
+	SEASON_ARCHIVE_INTERVAL_HOURS: z.coerce.number().nonnegative().default(4),
 });
 
 const Config = environmentSchema.parse(process.env);

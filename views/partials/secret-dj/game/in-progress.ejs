@@ -34,7 +34,7 @@
 you are not part of this game of secret dj. it is no longer accepting participants
 <% } else { %>
 are you supposed to be playing in this game of secret dj?
-<a href="/login?redirect=<%=encodeURIComponent(`/secret-dj/games/${season.id}`)%>">click here to log in!</a>
+<a href="/login?next=<%=encodeURIComponent(`/secret-dj/games/${season.id}`)%>">click here to log in!</a>
 <% } %>
 
 <% if (recipient) {%>

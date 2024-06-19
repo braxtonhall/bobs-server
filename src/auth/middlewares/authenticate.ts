@@ -17,8 +17,8 @@ export const authenticateCookie = async (req: Request, res: Response, next: Next
 
 export const checkLoggedIn = async (req: Request, res: Response, next: NextFunction) => {
 	if (res.locals.logged) {
-		if (req.query.redirect && typeof req.query.redirect === "string") {
-			return res.redirect(req.query.redirect);
+		if (req.query.next && typeof req.query.next === "string") {
+			return res.redirect(req.query.next);
 		} else {
 			return res.redirect("/");
 		}
@@ -33,6 +33,6 @@ export const enforceLoggedIn = (req: Request, res: Response, next: NextFunction)
 	} else if (req.originalUrl === "/") {
 		return res.redirect("/login");
 	} else {
-		return res.redirect(`/login?${new URLSearchParams({ redirect: req.originalUrl })}`);
+		return res.redirect(`/login?${new URLSearchParams({ next: req.originalUrl })}`);
 	}
 };

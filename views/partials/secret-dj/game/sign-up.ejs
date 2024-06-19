@@ -85,5 +85,5 @@
 </div>
 <% } else { %>
 this season of secret dj is still accepting new participants.
-<a href="/secret-dj/signup?redirect=<%=encodeURIComponent(`/secret-dj/games/${season.id}`)%>">click here to join!</a>
+<a href="/secret-dj/signup?next=<%=encodeURIComponent(`/secret-dj/games/${season.id}`)%>">click here to join!</a>
 <% }  %>

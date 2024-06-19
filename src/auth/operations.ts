@@ -12,14 +12,14 @@ type Confirmation = {
 	address: string;
 	temporaryToken: string;
 	expiration: Date;
-	redirect?: string;
+	next?: string;
 };
 
 const sendConfirmationEmail = async (confirmation: Confirmation): Promise<void> => {
 	const searchParams = new URLSearchParams({
 		email: confirmation.address,
 		token: confirmation.temporaryToken,
-		...(typeof confirmation.redirect === "string" && { redirect: confirmation.redirect }),
+		...(typeof confirmation.next === "string" && { next: confirmation.next }),
 	} satisfies AuthorizePayload);
 	const url = new URL(`https://${Config.HOST}/authorize?${searchParams}`);
 	await enqueue({
@@ -179,7 +179,7 @@ export const completeVerification = async ({
 		}
 	});
 
-export const login = async ({ email: address, redirect }: { email: string; redirect?: string }) => {
+export const login = async ({ email: address, next }: { email: string; next?: string }) => {
 	await transaction(async () => {
 		const temporaryToken = randomUUID();
 		const expiration = DateTime.now().plus({ minute: Config.LOGIN_TOKEN_EXPIRATION_MIN }).toJSDate();
@@ -203,7 +203,7 @@ export const login = async ({ email: address, redirect }: { email: string; redir
 				},
 			},
 		});
-		await sendConfirmationEmail({ address: email.address, temporaryToken, expiration, redirect }).catch(() => {});
+		await sendConfirmationEmail({ address: email.address, temporaryToken, expiration, next }).catch(() => {});
 	});
 	void sendQueuedMessages();
 };

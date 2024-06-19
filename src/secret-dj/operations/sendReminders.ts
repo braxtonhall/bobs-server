@@ -10,7 +10,7 @@ type ReminderEntry = { season: { id: string }; dj: { name: string; email: { addr
 
 const toMessages = async (entries: ReminderEntry[]): Promise<Message[]> => {
 	const futureMessages = entries.map(async ({ dj, season }) => {
-		const link = `https://${Config.HOST}/login?redirect=${encodeURIComponent(`/secret-dj/games/${season.id}`)}`;
+		const link = `https://${Config.HOST}/login?next=${encodeURIComponent(`/secret-dj/games/${season.id}`)}`;
 		const { link: unsub } = await getUnsubLink(dj!.email.address);
 		const html = await ejs.renderFile("views/emails/reminder.ejs", {
 			name: dj!.name,
@@ -33,7 +33,7 @@ export const sendReminders = () =>
 		const seasons = await db.season.findMany({
 			where: {
 				state: SeasonState.IN_PROGRESS,
-				deadline: { lt: now.toJSDate() },
+				softDeadline: { lt: now.toJSDate() },
 				remindedAt: { lt: now.minus({ hour: Config.REMINDER_DELAY_HOURS }).toJSDate() },
 				entries: {
 					some: {
@@ -48,6 +48,8 @@ export const sendReminders = () =>
 			},
 			select: {
 				id: true,
+				softDeadline: true,
+				hardDeadline: true,
 				entries: {
 					where: {
 						submissionUrl: { in: null },
