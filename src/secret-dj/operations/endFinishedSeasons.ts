@@ -7,8 +7,6 @@ import ejs from "ejs";
 
 type RecipientEntry = { recipient: { email: { address: string; subscribed: boolean }; name: string } };
 
-// TODO ejs!!!
-
 const toMessages = (seasonId: string, entries: RecipientEntry[]): Promise<Message[]> => {
 	const link = `https://${Config.HOST}/login?next=${encodeURIComponent(`/secret-dj/games/${seasonId}`)}`;
 	const futureMessages = entries
