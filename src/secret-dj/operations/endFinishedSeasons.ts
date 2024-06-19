@@ -28,59 +28,59 @@ const toMessages = (seasonId: string, entries: RecipientEntry[]): Promise<Messag
 	return Promise.all(futureMessages);
 };
 
-export const endFinishedSeasons = async () => {
-	const finishedSeasons = await db.season.findMany({
-		where: {
-			state: SeasonState.IN_PROGRESS,
-			OR: [
-				{
-					entries: {
-						every: {
-							submissionUrl: {
-								notIn: null,
+export const endFinishedSeasons = () =>
+	transaction(async () => {
+		const finishedSeasons = await db.season.findMany({
+			where: {
+				state: SeasonState.IN_PROGRESS,
+				OR: [
+					{
+						entries: {
+							every: {
+								submissionUrl: {
+									notIn: null,
+								},
 							},
 						},
 					},
-				},
-				{
-					hardDeadline: {
-						lt: new Date(),
+					{
+						hardDeadline: {
+							lt: new Date(),
+						},
 					},
-				},
-			],
-		},
-		select: {
-			entries: {
-				select: {
-					recipient: {
-						select: {
-							name: true,
-							email: {
-								select: {
-									address: true,
-									subscribed: true,
+				],
+			},
+			select: {
+				entries: {
+					select: {
+						recipient: {
+							select: {
+								name: true,
+								email: {
+									select: {
+										address: true,
+										subscribed: true,
+									},
 								},
 							},
 						},
 					},
 				},
+				id: true,
 			},
-			id: true,
-		},
-	});
-	const futureUpdates = finishedSeasons.map(async ({ id, entries }) => {
-		await transaction(async (): Promise<void> => {
-			await db.season.update({
-				where: { id },
+		});
+		const futureUpdates = finishedSeasons.map(async ({ id, entries }) => {
+			const { count } = await db.season.updateMany({
+				where: { id, state: SeasonState.IN_PROGRESS },
 				data: {
 					state: SeasonState.ENDED,
 					unlisted: false,
 				},
 			});
-			await enqueue(...(await toMessages(id, entries)));
+			if (count) {
+				await enqueue(...(await toMessages(id, entries)));
+			}
 		});
-		void sendQueuedMessages();
-	});
-	const updates = await Promise.all(futureUpdates);
-	return updates.length;
-};
+		const updates = await Promise.all(futureUpdates);
+		return updates.length;
+	}).finally(() => void sendQueuedMessages());
