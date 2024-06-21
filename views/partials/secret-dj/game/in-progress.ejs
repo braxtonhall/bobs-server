@@ -1,3 +1,16 @@
+<% if (participant && season.owner.id === participant.id) { %>
+<% if (season.softDeadline === null || season.softDeadline > new Date()) { %>
+<hr />
+<h3>owner controls 👑</h3>
+
+<form class="update-deadline-form" method="post" action="/secret-dj/games/<%=season.id%>/deadline">
+	<%- include('../deadlines.ejs') %>
+
+	<button type="submit">update deadline</button>
+</form>
+<% } %>
+<% } %>
+
 <% if (dj) { %>
 <hr />
 <h3>a playlist for <a href="/secret-dj/djs/<%= dj.recipient.id %>"><%= dj.recipient.name %></a></h3>
@@ -7,6 +20,17 @@
 	<li><%=rule.text%></li>
 	<% } %>
 </ol>
+<% if (season.softDeadline && !dj.submissionUrl) { %>
+<h4>
+	due
+	<span class="date-time" data-ms="<%=season.softDeadline.valueOf()%>"
+		><%= season.softDeadline.toUTCString().toLowerCase() %></span
+	>
+	<% if (season.softDeadline < new Date()) {%>
+	(overdue)
+	<% }%>
+</h4>
+<% } %>
 <details>
 	<summary>comments</summary>
 	<iframe class="comments embed" src="/boxes/<%=dj.boxId%>"></iframe>
@@ -34,7 +58,7 @@
 you are not part of this game of secret dj. it is no longer accepting participants
 <% } else { %>
 are you supposed to be playing in this game of secret dj?
-<a href="/login?redirect=<%=encodeURIComponent(`/secret-dj/games/${season.id}`)%>">click here to log in!</a>
+<a href="/login?next=<%=encodeURIComponent(`/secret-dj/games/${season.id}`)%>">click here to log in!</a>
 <% } %>
 
 <% if (recipient) {%>

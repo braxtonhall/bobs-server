@@ -4,7 +4,7 @@
 	<hr />
 	<h3>owner controls 👑</h3>
 	<% const editGameDetailsEndpoint = `/secret-dj/games/${season.id}/edit`%>
-	<form class="edit-game-form" method="POST" action="<%=editGameDetailsEndpoint%>">
+	<form class="edit-game-form" method="post" action="<%=editGameDetailsEndpoint%>">
 		<label for="name" class="name-label">name</label>
 		<input
 			class="name-input"
@@ -38,7 +38,8 @@
 	<% if (season.entries.length) { %>
 	<% const startGameEndpoint = `/secret-dj/games/${season.id}/start`%>
 	<p>when you feel like you have enough participants, start the game to assign everyone a playlist to make</p>
-	<form class="start-game-form" method="POST" action="<%=startGameEndpoint%>">
+	<form class="start-game-form" method="post" action="<%=startGameEndpoint%>">
+		<%- include('../deadlines.ejs') %>
 		<button type="submit">start game!</button>
 	</form>
 	<% } else { %>
@@ -85,5 +86,5 @@
 </div>
 <% } else { %>
 this season of secret dj is still accepting new participants.
-<a href="/secret-dj/signup?redirect=<%=encodeURIComponent(`/secret-dj/games/${season.id}`)%>">click here to join!</a>
+<a href="/secret-dj/signup?next=<%=encodeURIComponent(`/secret-dj/games/${season.id}`)%>">click here to join!</a>
 <% }  %>

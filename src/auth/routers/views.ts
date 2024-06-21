@@ -31,10 +31,10 @@ export const views = express()
 		const email: string = req.body.email;
 		await login({
 			email,
-			redirect: typeof req.body.redirect === "string" ? req.body.redirect : undefined,
+			next: typeof req.body.next === "string" ? req.body.next : undefined,
 		}).catch(console.error);
 		return res.redirect(
-			`/authorize?${new URLSearchParams({ email, ...(req.body.redirect && { redirect: req.body.redirect }) })}`,
+			`/authorize?${new URLSearchParams({ email, ...(req.body.next && { next: req.body.next }) })}`,
 		);
 	})
 	.get("/authorize", checkLoggedIn, async (req, res) => {

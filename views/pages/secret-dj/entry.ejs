@@ -27,11 +27,13 @@
 					<% } %>
 				</ol>
 				<% }  %>
-				<% if (entry.season.state === 'ended') { %>
+				<% if (entry.season.state === 'ended' && entry.submissionUrl) { %>
 				<%- include('../../partials/secret-dj/entry-embed', { link: entry.submissionUrl }); %>
+				<% }else if (entry.season.state === 'ended') { %>
+				no playlist was submitted on time for these rules
 				<% } else { %>
 				the playlist
-				<%=entry.submissionUrl ? 'is ready and' : ''%>
+				<%= entry.submissionUrl ? 'is ready and' : ''%>
 				will appear here when <a href="/secret-dj/games/<%=entry.season.id%>">this season</a> of secret dj is
 				completed
 				<% }  %>

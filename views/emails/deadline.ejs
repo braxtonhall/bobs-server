@@ -1,0 +1,8 @@
+<%= name %>, the deadline for your game of secret dj has been updated.
+<a href="<%= gameLink %>">click here to see your rules</a>.
+<% if (softDeadline) { %>
+your submission is due before
+<%= softDeadline.toUTCString() %>.
+<% } %>
+<br />
+to unsubscribe from all emails from bob's server, <a href="<%= unsubLink %>">click here</a>

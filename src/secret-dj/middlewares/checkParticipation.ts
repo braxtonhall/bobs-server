@@ -18,8 +18,8 @@ export const getParticipation = async (req: Request, res: Response, next: NextFu
 
 export const checkParticipation = async (req: Request, res: Response, next: NextFunction) => {
 	if (res.locals.participating) {
-		if (req.query.redirect && typeof req.query.redirect === "string") {
-			return res.redirect(req.query.redirect);
+		if (req.query.next && typeof req.query.next === "string") {
+			return res.redirect(req.query.next);
 		} else {
 			return res.redirect("/secret-dj");
 		}
@@ -34,6 +34,6 @@ export const enforceParticipation = async (req: Request, res: Response, next: Ne
 	} else if (req.originalUrl === "/secret-dj") {
 		return res.redirect("/secret-dj/signup");
 	} else {
-		return res.redirect(`/secret-dj/signup?${new URLSearchParams({ redirect: req.originalUrl })}`);
+		return res.redirect(`/secret-dj/signup?${new URLSearchParams({ next: req.originalUrl })}`);
 	}
 };

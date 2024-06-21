@@ -4,6 +4,7 @@ import { setParticipant } from "../operations/setParticipant";
 import { Email, Participant } from "@prisma/client";
 import {
 	createSeasonPayloadSchema,
+	deadlinesSchema,
 	editSeasonPayloadSchema,
 	settingsPayloadSchema,
 	signupPayloadSchema,
@@ -20,7 +21,6 @@ import { getEntry } from "../operations/getEntry";
 import { submitPlaylist } from "../operations/submitPlaylist";
 import { deleteGame } from "../operations/deleteGame";
 import { startGame } from "../operations/startGame";
-import { endFinishedSeasons } from "../operations/endFinishedSeasons";
 import { editGame } from "../operations/editGame";
 import Config from "../../Config";
 import { getDjEntries } from "../operations/getDjEntries";
@@ -28,6 +28,8 @@ import { setRules } from "../operations/setRules";
 import { leaveGame } from "../operations/leaveGame";
 import { enforceLoggedIn } from "../../auth/middlewares/authenticate";
 import { clearMessagesAndSet, getMessagesAndClear } from "./sessionUtils";
+import { DateTime } from "luxon";
+import { updateDeadlines } from "../operations/updateDeadlines";
 
 export const views = express()
 	.use(getParticipation)
@@ -171,6 +173,12 @@ export const views = express()
 				protocol: req.protocol,
 				logged: res.locals.logged ?? false,
 				Config,
+				minDeadline:
+					season.softDeadline ??
+					DateTime.now()
+						// Add one so we don't deal with timezones
+						.plus({ day: Config.MINIMUM_GAME_DAYS + 1 })
+						.toJSDate(),
 			});
 		} catch {
 			return res.sendStatus(404);
@@ -181,12 +189,30 @@ export const views = express()
 	.post("/games/:id/start", async (req, res) => {
 		const seasonId = req.params.id;
 		try {
-			const ownerId = res.locals.participant.id;
-			await startGame({ seasonId, ownerId });
+			const deadlines = deadlinesSchema.parse(req.body);
+			await startGame({ seasonId, ownerId: res.locals.participant.id, deadlines });
 			clearMessagesAndSet({ req, success: "new game started!" });
 			return res.redirect(`/secret-dj/games/${seasonId}`);
-		} catch {
-			clearMessagesAndSet({ req, error: "sorry, that didn't quite work" });
+		} catch (error) {
+			clearMessagesAndSet({
+				req,
+				error: error instanceof Error ? error.message : "sorry, that didn't quite work",
+			});
+			return res.redirect(`/secret-dj/games/${seasonId}`);
+		}
+	})
+	.post("/games/:id/deadline", async (req, res) => {
+		const seasonId = req.params.id;
+		try {
+			const deadlines = deadlinesSchema.parse(req.body);
+			await updateDeadlines({ seasonId, ownerId: res.locals.participant.id, deadlines });
+			clearMessagesAndSet({ req, success: "deadline updated" });
+			return res.redirect(`/secret-dj/games/${seasonId}`);
+		} catch (error) {
+			clearMessagesAndSet({
+				req,
+				error: error instanceof Error ? error.message : "sorry, that didn't quite work",
+			});
 			return res.redirect(`/secret-dj/games/${seasonId}`);
 		}
 	})
@@ -201,13 +227,13 @@ export const views = express()
 	.post("/games/:id/delete", async (req, res) => {
 		const seasonId = req.params.id;
 		try {
-			const ownerId = res.locals.participant.id;
-			await deleteGame({ seasonId, ownerId });
+			await deleteGame({ seasonId, ownerId: res.locals.participant.id });
 			return res.redirect("/secret-dj");
 		} catch {
 			// TODO if the game has ALREADY been deleted... really we should be checking if this is a...
-			//  404 -> go back to /secret-dj
-			//  403 -> go back to /secret-dj/games/seasonId
+			//  404 -> go back to /secret-dj (game does not exist)
+			//  403 -> go back to /secret-dj/games/seasonId (game is not owned by user)
+			//  412 -> go back to /secret-dj/games/seasonId (game is not deletable)
 			clearMessagesAndSet({ req, error: "sorry, that didn't quite work" });
 			return res.redirect(`/secret-dj/games/${seasonId}`);
 		}
@@ -268,7 +294,6 @@ export const views = express()
 				playlistUrl: link,
 				djId: res.locals.participant.id,
 			});
-			await endFinishedSeasons();
 			clearMessagesAndSet({ req, success: "playlist submitted!" });
 			return res.redirect(`/secret-dj/games/${seasonId}`);
 		} catch {

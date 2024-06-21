@@ -25,7 +25,7 @@
 						maxlength="<%=Config.DEFAULT_MAX_LENGTH%>"
 					/>
 
-					<input type="hidden" name="redirect" value="<%= query.redirect ?? '' %>" readonly />
+					<input type="hidden" name="next" value="<%= query.next ?? '' %>" readonly />
 					<button class="login-submit">submit</button>
 				</form>
 				<% if (error) { %>

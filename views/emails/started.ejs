@@ -1,0 +1,7 @@
+<%= name %>, it's time to start making a playlist. <a href="<%= gameLink %>">click here to see your rules</a>.
+<% if (softDeadline) { %>
+your submission is due before
+<%= softDeadline.toUTCString() %>.
+<% } %>
+<br />
+to unsubscribe from all emails from bob's server, <a href="<%= unsubLink %>">click here</a>

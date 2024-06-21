@@ -112,18 +112,21 @@ model Post {
 }
 
 model Season {
-  sort        Int         @id @default(autoincrement())
-  id          String      @unique @default(cuid())
-  owner       Participant @relation("SeasonOwner", fields: [ownerId], references: [id])
-  ownerId     String
-  name        String
-  description String
-  entries     Entry[]     @relation("SeasonEntries")
-  ruleCount   Int
-  state       String      @default("sign-up")
-  unlisted    Boolean     @default(false)
-  box         Box         @relation(fields: [boxId], references: [id])
-  boxId       String      @unique
+  sort         Int         @id @default(autoincrement())
+  id           String      @unique @default(cuid())
+  owner        Participant @relation("SeasonOwner", fields: [ownerId], references: [id])
+  ownerId      String
+  name         String
+  description  String
+  entries      Entry[]     @relation("SeasonEntries")
+  ruleCount    Int
+  state        String      @default("sign-up")
+  softDeadline DateTime?
+  hardDeadline DateTime?
+  remindedAt   DateTime    @default(now())
+  unlisted     Boolean     @default(false)
+  box          Box         @relation(fields: [boxId], references: [id])
+  boxId        String      @unique
 }
 
 model Rule {

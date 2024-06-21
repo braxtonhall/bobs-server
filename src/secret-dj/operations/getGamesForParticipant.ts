@@ -20,7 +20,7 @@ export const getGamesForParticipant = async ({ participantId }: Environment) => 
 							state: true,
 						},
 					},
-					submissionUrl: true, // TODO we don't want this if the game is IN_PROGRESS
+					submissionUrl: true,
 					rules: {
 						select: {
 							text: true,

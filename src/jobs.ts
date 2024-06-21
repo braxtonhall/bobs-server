@@ -3,16 +3,13 @@ import { removeTokens } from "./auth/jobs";
 import { sendBoxUpdates } from "./toolbox/jobs/sendBoxUpdates";
 import { sendReplyUpdates } from "./toolbox/jobs/sendReplyUpdates";
 import AsyncPool from "./util/AsyncPool";
-
-// https://github.com/prisma/prisma/issues/22947
-// https://github.com/prisma/prisma-engines/pull/4907
-const MAX_CONCURRENT_JOBS = 1;
+import { sendReminders } from "./secret-dj/jobs/sendReminders";
 
 export type Job = { callback: () => unknown; interval: number };
 
-const jobs: Job[] = [archiveSeasons, removeTokens, sendBoxUpdates, sendReplyUpdates];
+const jobs: Job[] = [archiveSeasons, removeTokens, sendBoxUpdates, sendReplyUpdates, sendReminders];
 const scheduledJobs = new Set<NodeJS.Timeout>();
-const pool = new AsyncPool(MAX_CONCURRENT_JOBS);
+const pool = new AsyncPool(jobs.length);
 
 const stop = async () => {
 	scheduledJobs.forEach((interval) => clearInterval(interval));
