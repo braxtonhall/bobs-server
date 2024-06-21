@@ -36,6 +36,6 @@ export default z
 		SEASON_ARCHIVE_INTERVAL_HOURS: z.coerce.number().nonnegative().default(4),
 		MINIMUM_GAME_DAYS: z.coerce.number().nonnegative().default(7),
 		MINIMUM_GRACE_DAYS: z.coerce.number().nonnegative().default(7),
-		NODE_ENV: z.enum(["development", "production"]),
+		NODE_ENV: z.enum(["development", "production", "test"]),
 	})
 	.parse(process.env);
