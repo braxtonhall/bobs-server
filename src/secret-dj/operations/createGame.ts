@@ -44,8 +44,8 @@ export const createGame = async ({
 					emailId,
 					canDelete: true,
 					canKill: true,
-					canSetDetails: true,
-					canSetPermissions: true,
+					canSetDetails: !!(process.env.NODE_ENV === "development"),
+					canSetPermissions: !!(process.env.NODE_ENV === "development"),
 				},
 			}),
 			db.season.create({

@@ -68,7 +68,8 @@
 	},
 	"nodemonConfig": {
 		"watch": [
-			"src"
+			"src",
+			".env"
 		],
 		"exec": "yarn start:dev",
 		"ext": ".ts"
