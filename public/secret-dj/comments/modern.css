@@ -1,0 +1,146 @@
+html {
+	font-weight: normal;
+	text-shadow: 0 0 0.1px rgba(0, 0, 0, 0.5);
+	text-rendering: optimizeLegibility;
+	font-family: Georgia, serif;
+	-webkit-font-smoothing: subpixel-antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+table,
+th,
+td {
+	border: 1px solid;
+	text-align: center;
+	vertical-align: middle;
+}
+
+th,
+td {
+	padding: 4px;
+}
+
+tr {
+	display: flex;
+	flex-direction: column;
+}
+
+form {
+	margin: 8px 0;
+	padding: 8px;
+	border: 1px dashed;
+}
+
+form.new-post-form {
+	display: flex;
+	flex-direction: column;
+}
+
+form.new-post-form > * {
+	margin-right: auto;
+}
+
+form > * {
+	margin: 4px 0;
+}
+
+form button:not(:first-child) {
+	margin-top: 1em;
+}
+
+form > button {
+	font-family: inherit;
+	border: 1px solid black;
+}
+
+form > button:hover {
+	cursor: pointer;
+}
+
+.more-controls-details,
+.box-name,
+.new-post-poster-label,
+.new-post-email,
+.new-post-email-label,
+.post-header {
+	display: none;
+}
+
+a.post-date-link {
+	color: unset;
+}
+
+tr.post-row {
+	display: block;
+	padding-bottom: 1em;
+}
+
+tr.post-row td {
+	text-align: left;
+}
+
+tr.post-row > td.post-delete {
+	padding: 0;
+}
+
+td.post-delete:not(:has(> form)) {
+	display: none;
+}
+
+tr.post-row td.post-delete > form {
+	padding: 0;
+	margin: 0;
+	width: unset;
+	border: none;
+}
+
+tr.post-row td.post-delete > form > button {
+	margin: 0;
+	background: none;
+	border: none;
+}
+
+tr.post-row > td.post-message {
+	display: block;
+}
+
+td.post-message > .post-message-content,
+td.post-poster {
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+	word-break: normal;
+}
+
+table.post-table {
+	border: none;
+	width: 100%;
+}
+
+td.post-poster {
+	font-size: 14px;
+}
+
+td.post-date {
+	font-size: 12px;
+}
+
+td.post-reply {
+	font-size: 12px;
+}
+
+td.post-reply:has(> details[open]) {
+	display: block;
+}
+
+blockquote.post-parent-content {
+	font-size: 14px;
+	font-style: italic;
+	border: dotted;
+	padding: 0.5em;
+	margin: 0.5em;
+	color: #858a8f;
+}
+
+blockquote.post-parent-content > a {
+	color: #858a8f;
+}
