@@ -33,11 +33,13 @@ const toMessages = async (entries: ReminderEntry[]): Promise<Message[]> => {
 export const sendReminders = () =>
 	transaction(async () => {
 		const now = DateTime.now();
+		const remindedAtCutoff = now.minus({ hour: Config.REMINDER_DELAY_HOURS }).toJSDate();
 		const seasons = await db.season.findMany({
 			where: {
 				state: SeasonState.IN_PROGRESS,
 				softDeadline: { lt: now.toJSDate() },
-				remindedAt: { lt: now.minus({ hour: Config.REMINDER_DELAY_HOURS }).toJSDate() },
+				// prisma is broken... this query will not work if you uncomment this line
+				// remindedAt: { lt: now.minus({ hour: Config.REMINDER_DELAY_HOURS }).toJSDate() },
 				entries: {
 					some: {
 						submissionUrl: { in: null },
@@ -53,6 +55,7 @@ export const sendReminders = () =>
 				id: true,
 				softDeadline: true,
 				hardDeadline: true,
+				remindedAt: true,
 				entries: {
 					where: {
 						submissionUrl: { in: null },
@@ -78,7 +81,17 @@ export const sendReminders = () =>
 			},
 		});
 		const entries: ReminderEntry[] = seasons
+			// prisma is broken so we are forced to do this in code instead of in query
+			.filter(({ remindedAt }) => remindedAt < remindedAtCutoff)
 			.flatMap((season) => season.entries.map(({ dj }) => ({ season, dj })))
 			.filter((entry): entry is typeof entry & ReminderEntry => !!entry.dj);
 		await enqueue(...(await toMessages(entries)));
+		await db.season.updateMany({
+			where: {
+				id: { in: seasons.map(({ id }) => id) },
+			},
+			data: {
+				remindedAt: now.toJSDate(),
+			},
+		});
 	}).finally(sendQueuedMessages);
