@@ -1,6 +1,6 @@
 <% if (recipient?.submissionUrl)  { %>
 <h3>your playlist has been curated by <a href="/secret-dj/djs/<%= recipient.dj.id %>"><%= recipient.dj.name %></a></h3>
-<% if (recipient.rules.length) {%>
+<% if (recipient?.rules.length) {%>
 <h4>your rules</h4>
 <ol class="rule-list">
 	<% for (const rule of recipient.rules) { %>
@@ -8,14 +8,18 @@
 	<% } %>
 </ol>
 <% } %>
-<% if (recipient.dj) { %>
+<% if (recipient?.dj) { %>
 <%- include('../entry-embed', {link: recipient.submissionUrl}); %>
 <% } %>
+<% if (recipient?.boxId) { %>
 <details>
 	<summary>comments</summary>
 	<iframe class="comments embed" src="/boxes/<%=recipient.boxId%>"></iframe>
 </details>
+<% } %>
 <% } else { %>
 <h4>no playlist was submitted for you. hopefully someone will provide one in the comments</h4>
+<% if (recipient?.boxId) { %>
 <iframe class="comments embed" src="/boxes/<%=recipient.boxId%>"></iframe>
+<% } %>
 <% } %>
