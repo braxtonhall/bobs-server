@@ -1,0 +1,83 @@
+model Message {
+  id         Int       @id @default(autoincrement())
+  address    String
+  subject    String
+  html       String
+  persona    String
+  expiration DateTime?
+}
+
+model Box {
+  sort          Int            @id @default(autoincrement())
+  id            String         @unique @default(cuid())
+  name          String
+  origin        String?
+  owner         Email?         @relation(fields: [ownerId], references: [id])
+  ownerId       String?
+  posts         Post[]
+  deleted       Boolean        @default(false)
+  stylesheet    String?
+  season        Season?
+  entry         Entry?
+  permissions   Permission[]
+  subscriptions Subscription[]
+}
+
+model Permission {
+  boxId             String
+  box               Box     @relation(fields: [boxId], references: [id])
+  emailId           String
+  email             Email   @relation(fields: [emailId], references: [id])
+  canSetDetails     Boolean @default(false)
+  canKill           Boolean @default(false)
+  canDelete         Boolean @default(false)
+  canSetPermissions Boolean @default(false)
+
+  @@id(name: "id", [boxId, emailId])
+}
+
+model Subscription {
+  boxId     String
+  box       Box      @relation(fields: [boxId], references: [id])
+  emailId   String
+  email     Email    @relation(fields: [emailId], references: [id])
+  updatedAt DateTime @default(now())
+
+  @@id(name: "id", [boxId, emailId])
+}
+
+model Counter {
+  id      String  @id @default(cuid())
+  name    String
+  origin  String?
+  owner   Email   @relation(fields: [ownerId], references: [id])
+  ownerId String
+  count   Int     @default(0)
+}
+
+model Poster {
+  id    Int    @id @default(autoincrement())
+  ip    String @unique
+  posts Post[]
+  karma Int    @default(0)
+}
+
+model Post {
+  sort       Int      @id @default(autoincrement())
+  id         String   @unique @default(cuid())
+  createdAt  DateTime @default(now())
+  from       String
+  dead       Boolean  @default(false)
+  content    String
+  subscribed Boolean  @default(true)
+  poster     Poster   @relation(fields: [posterId], references: [id])
+  posterId   Int
+  email      Email?   @relation(fields: [emailId], references: [id])
+  emailId    String?
+  box        Box      @relation(fields: [boxId], references: [id])
+  boxId      String
+  children   Post[]   @relation("PostChildren")
+  parent     Post?    @relation("PostChildren", fields: [parentId], references: [id])
+  parentId   String?
+  notified   Boolean  @default(false)
+}

@@ -1,0 +1,79 @@
+model Language {
+  id         String      @id
+  movies     Movie[]
+  screenings Screening[]
+}
+
+model Movie {
+  tmdbId    String     @id
+  languages Language[]
+  screeners Screener[]
+}
+
+model Screener {
+  id String @id @default(cuid())
+
+  name    String
+  year    Int
+  runtime Int
+
+  screenings Screening[]
+
+  tmdbId String?
+  movie  Movie?  @relation(fields: [tmdbId], references: [tmdbId])
+
+  @@unique([name, year, runtime])
+}
+
+model Screening {
+  id String @id @default(cuid())
+
+  eventId    String
+  event      Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  screenerId String
+  screener   Screener @relation(fields: [screenerId], references: [id])
+
+  format    String?
+  subtitles Language[]
+
+  @@unique([eventId, screenerId])
+}
+
+model Event {
+  id String @id @default(cuid())
+
+  url          String?
+  time         DateTime
+  productionId String
+  production   Production @relation(fields: [productionId], references: [id], onDelete: Cascade)
+
+  screenings Screening[]
+
+  @@unique([productionId, time])
+}
+
+model Production {
+  id        String  @id @default(cuid())
+  url       String
+  name      String
+  events    Event[]
+  theatreId String
+  theatre   Theatre @relation(fields: [theatreId], references: [id])
+
+  @@unique([theatreId, name, url])
+}
+
+model Theatre {
+  id          String       @id @default(cuid())
+  url         String       @unique
+  name        String
+  logoUrl     String
+  cityId      String
+  city        City         @relation(fields: [cityId], references: [name])
+  productions Production[]
+}
+
+model City {
+  name     String    @id
+  theatres Theatre[]
+}
