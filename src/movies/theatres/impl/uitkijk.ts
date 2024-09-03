@@ -108,6 +108,7 @@ const movieToProduction = (movie: UitkijkProduction): ScrapedProduction | null =
 						name: movie.title,
 						year: selectYear(metadata),
 						runtime: selectRuntime(metadata),
+						director: metadata.Director ?? null,
 					},
 					metadata,
 				),

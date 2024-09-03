@@ -6,8 +6,6 @@ import {
 	Theatre as InternalTheatre,
 } from "../theatres/Theatre";
 import AsyncPool from "../../util/AsyncPool";
-import fs from "fs/promises";
-import path from "path";
 import { db } from "../../db";
 import { Event, Production, Theatre } from "@prisma/client";
 import { DateTime } from "luxon";
@@ -26,10 +24,11 @@ const saveScreenings = async (event: Event, screenings: ScrapedScreening[]) => {
 		};
 		const screener = await db.screener.upsert({
 			where: {
-				name_year_runtime: {
+				name_year_runtime_director: {
 					name: screening.screener.name,
 					year: screening.screener.year ?? -1,
 					runtime: screening.screener.runtime ?? -1,
+					director: screening.screener.director ?? "",
 				},
 			},
 			update: {},
@@ -37,6 +36,7 @@ const saveScreenings = async (event: Event, screenings: ScrapedScreening[]) => {
 				name: screening.screener.name,
 				year: screening.screener.year ?? -1,
 				runtime: screening.screener.runtime ?? -1,
+				director: screening.screener.director ?? "",
 			},
 			select: {
 				id: true,
@@ -161,31 +161,6 @@ export const scrapeAndSave = async () => {
 
 	console.log(
 		{
-			englishSubs: await db.production.findMany({
-				where: {
-					events: {
-						some: {
-							screenings: {
-								some: {
-									OR: [
-										{
-											subtitles: {
-												some: {
-													id: "en",
-												},
-											},
-										},
-									],
-								},
-							},
-						},
-					},
-				},
-				select: {
-					name: true,
-					url: true,
-				},
-			}),
 			productions: await db.production.count(),
 			events: await db.event.count(),
 			screenings: await db.screening.count(),
@@ -199,9 +174,6 @@ export const scrapeAndSave = async () => {
 if (require.main === module) {
 	process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
 	scrapeAndSave()
-		.then((results) => JSON.stringify(results, null, "\t"))
-		.then(console.log)
-		// .then((json) => fs.writeFile(path.join(__dirname, "screenings.json"), json))
 		.catch(console.error)
 		.finally(() => process.exit(0));
 }

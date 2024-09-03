@@ -14,6 +14,7 @@ CREATE TABLE "Screener" (
     "name" TEXT NOT NULL,
     "year" INTEGER NOT NULL,
     "runtime" INTEGER NOT NULL,
+    "director" TEXT NOT NULL,
     "tmdbId" TEXT,
     CONSTRAINT "Screener_tmdbId_fkey" FOREIGN KEY ("tmdbId") REFERENCES "Movie" ("tmdbId") ON DELETE SET NULL ON UPDATE CASCADE
 );
@@ -78,7 +79,7 @@ CREATE TABLE "_LanguageToScreening" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Screener_name_year_runtime_key" ON "Screener"("name", "year", "runtime");
+CREATE UNIQUE INDEX "Screener_name_year_runtime_director_key" ON "Screener"("name", "year", "runtime", "director");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Screening_eventId_screenerId_key" ON "Screening"("eventId", "screenerId");

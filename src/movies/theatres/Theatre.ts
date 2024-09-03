@@ -14,6 +14,7 @@ export interface Theatre {
 export interface ScrapedScreener {
 	name: string;
 	year: number | null;
+	director: string | null;
 	runtime: number;
 }
 

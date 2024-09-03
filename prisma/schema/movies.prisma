@@ -13,16 +13,17 @@ model Movie {
 model Screener {
   id String @id @default(cuid())
 
-  name    String
-  year    Int
-  runtime Int
+  name     String
+  year     Int
+  runtime  Int
+  director String
 
   screenings Screening[]
 
   tmdbId String?
   movie  Movie?  @relation(fields: [tmdbId], references: [tmdbId])
 
-  @@unique([name, year, runtime])
+  @@unique([name, year, runtime, director])
 }
 
 model Screening {
