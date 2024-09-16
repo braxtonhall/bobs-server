@@ -1,12 +1,26 @@
 model Language {
-  id         String      @id
-  movies     Movie[]
-  screenings Screening[]
+  id            String      @id
+  spokenMovies  Movie[]
+  primaryMovies Movie[]     @relation(name: "primaryLanguage")
+  screenings    Screening[]
 }
 
 model Movie {
-  tmdbId    String     @id
-  languages Language[]
+  tmdbId Int @id
+
+  title           String
+  spokenLanguages Language[]
+  collectionId    Int?
+  imdbId          String?
+  posterPath      String?
+  tagline         String?
+  backdropPath    String?
+
+  updatedAt DateTime
+
+  languageId      String
+  primaryLanguage Language @relation(name: "primaryLanguage", fields: [languageId], references: [id])
+
   screeners Screener[]
 }
 
@@ -17,13 +31,16 @@ model Screener {
   year     Int
   runtime  Int
   director String
+  language String
 
   screenings Screening[]
 
-  tmdbId String?
-  movie  Movie?  @relation(fields: [tmdbId], references: [tmdbId])
+  tmdbId      Int?
+  movie       Movie?    @relation(fields: [tmdbId], references: [tmdbId])
+  searchedAt  DateTime?
+  searchCount Int       @default(0)
 
-  @@unique([name, year, runtime, director])
+  @@unique([name, year, runtime, director, language])
 }
 
 model Screening {
@@ -47,6 +64,7 @@ model Event {
   time         DateTime
   productionId String
   production   Production @relation(fields: [productionId], references: [id], onDelete: Cascade)
+  metadata     String
 
   screenings Screening[]
 

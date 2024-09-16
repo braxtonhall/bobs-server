@@ -16,6 +16,7 @@ export interface ScrapedScreener {
 	year: number | null;
 	director: string | null;
 	runtime: number;
+	language: string | null;
 }
 
 export interface ScrapedScreening {
@@ -28,6 +29,7 @@ export interface ScrapedEvent {
 	url: string | null;
 	time: DateTime;
 	screenings: ScrapedScreening[];
+	metadata: Record<string, string>;
 }
 
 export interface ScrapedProduction {

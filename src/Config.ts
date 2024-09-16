@@ -36,5 +36,6 @@ export default z
 		SEASON_ARCHIVE_INTERVAL_HOURS: z.coerce.number().nonnegative().default(4),
 		MINIMUM_GAME_DAYS: z.coerce.number().nonnegative().default(7),
 		MINIMUM_GRACE_DAYS: z.coerce.number().nonnegative().default(7),
+		TMDB_API_KEY: z.string(),
 	})
 	.parse(process.env);

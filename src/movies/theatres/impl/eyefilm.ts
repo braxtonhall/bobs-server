@@ -7,6 +7,7 @@ const DATE_FORMAT = "yyyy-MM-dd HH:mm";
 const MONTHS_TO_QUERY = 1;
 const LIMIT = 1000;
 const METADATA_REGEX = /\(([^)]*)([0-9]{4}),\s+([0-9]+)['’]\)/;
+const EXTRA_PARENS_REGEX = /\s*(\([^)]*\)\s*)?$/;
 
 type EyeCompositionEntry = { mainTitle: string };
 
@@ -159,6 +160,7 @@ const showToScreenings = (show: EyeShow): ScrapedScreening[] => [
 			year: Number(show.production[0].year) || null,
 			runtime: show.production[0].length,
 			director: show.production[0].director,
+			language: null, // TODO get the language!!!
 		},
 	},
 ];
@@ -173,6 +175,7 @@ const showToEvent = (show: EyeShow): ScrapedEvent => {
 		time: DateTime.fromISO(show.startDateTime),
 		url: show.url,
 		screenings,
+		metadata: {}, // TODO get more metadata like the screening room!
 	};
 };
 
@@ -187,7 +190,7 @@ const compositeEntryToScreening =
 	({ mainTitle }: EyeCompositionEntry): ScrapedScreening | null => {
 		const metadataMatch = mainTitle.match(METADATA_REGEX);
 		if (metadataMatch) {
-			const title = mainTitle.replace(METADATA_REGEX, "").replace(/\s*(\([^)]*\)\s*)?$/, "");
+			const title = mainTitle.replace(METADATA_REGEX, "").replace(EXTRA_PARENS_REGEX, "");
 			const year = Number(metadataMatch[2]);
 			const runtime = Number(metadataMatch[3]);
 			const remainder = metadataMatch[1];
@@ -200,6 +203,7 @@ const compositeEntryToScreening =
 					name: title,
 					year,
 					runtime,
+					language: null, // TODO what language is it???
 				},
 			};
 		} else {

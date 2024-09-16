@@ -6,9 +6,10 @@ import {
 	Theatre as InternalTheatre,
 } from "../theatres/Theatre";
 import AsyncPool from "../../util/AsyncPool";
-import { db } from "../../db";
+import { db, transaction } from "../../db";
 import { Event, Production, Theatre } from "@prisma/client";
-import { DateTime } from "luxon";
+import { Duration } from "luxon";
+import { Job } from "../../jobs";
 
 const saveScreenings = async (event: Event, screenings: ScrapedScreening[]) => {
 	for (const screening of screenings) {
@@ -24,11 +25,12 @@ const saveScreenings = async (event: Event, screenings: ScrapedScreening[]) => {
 		};
 		const screener = await db.screener.upsert({
 			where: {
-				name_year_runtime_director: {
+				name_year_runtime_director_language: {
 					name: screening.screener.name,
 					year: screening.screener.year ?? -1,
 					runtime: screening.screener.runtime ?? -1,
 					director: screening.screener.director ?? "",
+					language: screening.screener.language ?? "",
 				},
 			},
 			update: {},
@@ -37,6 +39,7 @@ const saveScreenings = async (event: Event, screenings: ScrapedScreening[]) => {
 				year: screening.screener.year ?? -1,
 				runtime: screening.screener.runtime ?? -1,
 				director: screening.screener.director ?? "",
+				language: screening.screener.language ?? "",
 			},
 			select: {
 				id: true,
@@ -66,6 +69,7 @@ const saveScreenings = async (event: Event, screenings: ScrapedScreening[]) => {
 const saveEvents = async (production: Production, events: ScrapedEvent[]) => {
 	for (const event of events) {
 		const time = event.time.toJSDate();
+		const metadata = JSON.stringify(event.metadata);
 		await saveScreenings(
 			await db.event.upsert({
 				where: {
@@ -76,11 +80,13 @@ const saveEvents = async (production: Production, events: ScrapedEvent[]) => {
 				},
 				update: {
 					url: event.url,
+					metadata,
 				},
 				create: {
 					time,
 					productionId: production.id,
 					url: event.url,
+					metadata,
 				},
 			}),
 			event.screenings,
@@ -152,28 +158,10 @@ const scrapeAndSaveTheatre = async (theatre: InternalTheatre) => {
 	);
 };
 
-export const scrapeAndSave = async () => {
-	const before = DateTime.now();
-	const theatres = await getTheatres();
-	await AsyncPool.map(theatres, scrapeAndSaveTheatre, 2);
-
-	const took = before.diffNow();
-
-	console.log(
-		{
-			productions: await db.production.count(),
-			events: await db.event.count(),
-			screenings: await db.screening.count(),
-			screeners: await db.screener.count(),
-			movie: await db.movie.count(),
-		},
-		took.as("milliseconds"),
-	);
-};
-
-if (require.main === module) {
-	process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
-	scrapeAndSave()
-		.catch(console.error)
-		.finally(() => process.exit(0));
-}
+export const scrapeAndSave = {
+	interval: Duration.fromObject({ days: 1 }).toMillis(),
+	callback: async () => {
+		const theatres = await getTheatres();
+		await AsyncPool.map(theatres, (theatre) => transaction(scrapeAndSaveTheatre, theatre), 2);
+	},
+} satisfies Job;

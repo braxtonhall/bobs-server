@@ -4,6 +4,8 @@ import xray from "../../util/x-ray";
 import AsyncPool from "../../../util/AsyncPool";
 import { DateTime } from "luxon";
 
+const EXTRA_PARENS_REGEX = /\s*(\([^)]*\)\s*)?$/;
+
 type HomepageEntry = {
 	url: string;
 	title: string;
@@ -94,6 +96,7 @@ const screeningToEvent =
 				screener: movie,
 			},
 		],
+		metadata: {}, // TODO any other metadata we care about?
 	});
 
 const movieToProduction = (movie: UitkijkProduction): ScrapedProduction | null => {
@@ -101,7 +104,8 @@ const movieToProduction = (movie: UitkijkProduction): ScrapedProduction | null =
 	try {
 		return {
 			url: movie.url,
-			name: movie.title,
+			// TODO not sure i am happy with this...
+			name: movie.title.replace(EXTRA_PARENS_REGEX, ""),
 			events: movie.screenings.map(
 				screeningToEvent(
 					{
@@ -109,6 +113,7 @@ const movieToProduction = (movie: UitkijkProduction): ScrapedProduction | null =
 						year: selectYear(metadata),
 						runtime: selectRuntime(metadata),
 						director: metadata.Director ?? null,
+						language: null, // TODO what language is it?
 					},
 					metadata,
 				),
