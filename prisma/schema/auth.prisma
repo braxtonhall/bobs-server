@@ -1,0 +1,9 @@
+model Token {
+  id             Int      @id @default(autoincrement())
+  email          Email    @relation(fields: [emailId], references: [id], onDelete: Cascade)
+  type           String
+  emailId        String
+  temporaryToken String?  @unique
+  valid          Boolean  @default(true)
+  expiration     DateTime
+}
