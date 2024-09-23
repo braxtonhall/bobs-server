@@ -72,67 +72,64 @@
 		<div class="tab-content">
 			<div id="watch" class="tab-pane fade in active">
 				<h3>Watch</h3>
-				<div class="card" id="last" style="display: none">last</div>
-				<div class="card" id="current" style="display: none">current</div>
-				<div class="card" id="next" style="display: none">next</div>
-				<div class="card" id="next-next" style="display: none">next next</div>
+				<div id="watch-content" class="after-load" style="display: none">
+					<div class="card" id="last" style="display: none">last</div>
+					<div class="card" id="current" style="display: none">current</div>
+					<div class="card" id="next" style="display: none">next</div>
+					<div class="card" id="next-next" style="display: none">next next</div>
+				</div>
 			</div>
 			<div id="random" class="tab-pane fade">
 				<h3>Random</h3>
-				<p>
-					Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium,
-					totam rem aperiam.
-				</p>
+				<p>Here is where you will see a random episode, and some buttons for "the pool"</p>
 			</div>
 			<div id="activity" class="tab-pane fade">
 				<h3>Activity</h3>
-				<p>
-					Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
-				</p>
+				<p>Here is where you will see views from you and everyone else</p>
 			</div>
 			<div id="list" class="tab-pane fade">
 				<h3>List</h3>
-				<div>
-					<button data-sort="bobs" class="episode-sort">sort by bob's sort</button>
-					<form id="series-filters"></form>
-					<table id="episodes" style="display: none">
-						<thead>
-							<tr>
-								<th>Series</th>
-								<th></th>
-								<th>Series</th>
-								<th>Season</th>
-								<th>Episode</th>
-								<th>Name</th>
-								<th>Stardate</th>
-								<th>Airdate</th>
-								<th>Sort</th>
-								<th>Count</th>
-							</tr>
-						</thead>
-						<tfoot>
-							<tr>
-								<th>Series</th>
-								<th>Abbr</th>
-								<th>Series</th>
-								<th>Season</th>
-								<th>Episode</th>
-								<th>Name</th>
-								<th>Stardate</th>
-								<th>Airdate</th>
-								<th>Sort</th>
-								<th>Count</th>
-							</tr>
-						</tfoot>
-						<tbody></tbody>
-					</table>
+				<div class="after-load" style="display: none">
+					<div>
+						<button data-sort="bobs" class="episode-sort">sort by bob's sort</button>
+						<form id="series-filters"></form>
+						<table id="episodes">
+							<thead>
+								<tr>
+									<th>Series</th>
+									<th></th>
+									<th>Series</th>
+									<th>Season</th>
+									<th>Episode</th>
+									<th>Name</th>
+									<th>Stardate</th>
+									<th>Airdate</th>
+									<th>Sort</th>
+									<th>Count</th>
+								</tr>
+							</thead>
+							<tfoot>
+								<tr>
+									<th>Series</th>
+									<th>Abbr</th>
+									<th>Series</th>
+									<th>Season</th>
+									<th>Episode</th>
+									<th>Name</th>
+									<th>Stardate</th>
+									<th>Airdate</th>
+									<th>Sort</th>
+									<th>Count</th>
+								</tr>
+							</tfoot>
+							<tbody></tbody>
+						</table>
+					</div>
 				</div>
 			</div>
 			<div id="settings" class="tab-pane fade">
 				<h3>Settings</h3>
-				<p>
-					Eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
-				</p>
+				<p>Here you can choose your settings, like what you consider a "spoiler" etc.</p>
 			</div>
 		</div>
 	</div>
@@ -246,7 +243,7 @@
 
 					table.on("draw", onDraw);
 					onDraw();
-					$table.show();
+					$(".after-load").show();
 				});
 		});
 	</script>

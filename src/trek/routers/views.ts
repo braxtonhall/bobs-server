@@ -1,5 +1,5 @@
 import express from "express";
-import { checkViewing, enforceViewing, getViewing } from "../middlewares/checkViewing";
+import { checkViewing, getViewing } from "../middlewares/checkViewing";
 import { enforceLoggedIn } from "../../auth/middlewares/authenticate";
 import Config from "../../Config";
 import { Email } from "@prisma/client";
@@ -21,5 +21,4 @@ export const views = express()
 			return res.render("pages/trek/signup", { error: "that didn't quite work", Config });
 		}
 	})
-	.use(enforceViewing)
-	.get("/", async (_req, res) => res.render("pages/trek/main", { locals: res.locals, Config }));
+	.use("/", express.static("public/trek"));
