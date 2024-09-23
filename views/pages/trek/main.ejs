@@ -142,7 +142,7 @@
 			const headers = {
 				Authorization: "Bearer <%=locals.token%>",
 			};
-			fetch("https://<%=Config.HOST%>/api/trek/episodes", { headers })
+			fetch("https://<%=Config.HOST%>/api/trek/content", { headers })
 				.then((response) => response.json())
 				.then(({ episodes, series }) => {
 					for (const row of episodes) {

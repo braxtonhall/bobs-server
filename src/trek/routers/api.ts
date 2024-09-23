@@ -1,7 +1,7 @@
 import express from "express";
 import { authenticateHeader } from "../../auth/middlewares/authenticate";
 import { getViewing } from "../middlewares/checkViewing";
-import { db } from "../../db";
+import { getContent } from "../operations/getContent";
 
 // TODO this is how you log an episode
 
@@ -17,17 +17,4 @@ export const api = express()
 			return next();
 		}
 	})
-	.get("/episodes", async (_req, res) => {
-		const series = await db.series.findMany();
-		const episodes = await db.episode.findMany({
-			include: {
-				views: {
-					where: {
-						viewer: res.locals.viewer,
-					},
-				},
-			},
-		});
-
-		return res.send({ episodes, series: Object.fromEntries(series.map((series) => [series.id, series])) });
-	});
+	.get("/content", async (_req, res) => res.send(await getContent(res.locals.viewer)));
