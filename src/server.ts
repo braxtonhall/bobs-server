@@ -9,7 +9,8 @@ import bodyParser from "body-parser";
 import { authenticateCookie, enforceLoggedIn } from "./auth/middlewares/authenticate";
 import { api as unauthenticatedApi, views as unauthenticatedViews } from "./toolbox/routers/unauthenticated";
 import { views as secretDjViews } from "./secret-dj/routers/views";
-import subdomain from "express-subdomain";
+import { views as trekViews } from "./trek/routers/views";
+import { api as trekApi } from "./trek/routers/api";
 import { adminViews } from "./toolbox/routers/views";
 import emails from "./toolbox/storage/emails";
 import { parse } from "./parse";
@@ -32,6 +33,7 @@ const views = express()
 	.use(authenticateCookie)
 	.use(authViews)
 	.use("/secret-dj", secretDjViews)
+	.use("/trek", trekViews)
 	.use(unauthenticatedViews)
 	.use("/toolbox", enforceLoggedIn, adminViews)
 	.use(enforceLoggedIn)
@@ -62,7 +64,13 @@ const views = express()
 	.get("/", (req, res) => res.render("pages/index"))
 	.get("/*", (req, res) => res.sendStatus(404));
 
-const api = express().use(subdomain("api", unauthenticatedApi));
+const api = express().use(
+	"/api",
+	express()
+		.use(unauthenticatedApi)
+		.use("/trek", trekApi)
+		.get("/", (req, res) => res.send("API")),
+);
 
 export const getServers = async () => ({
 	https: https.createServer(

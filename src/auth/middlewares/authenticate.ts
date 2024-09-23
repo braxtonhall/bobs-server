@@ -15,6 +15,12 @@ const authenticateToken = async (token: string, res: Response, next: NextFunctio
 export const authenticateCookie = async (req: Request, res: Response, next: NextFunction) =>
 	authenticateToken(req.cookies.token, res, next);
 
+export const authenticateHeader = async (req: Request, res: Response, next: NextFunction) => {
+	const authHeader = req.headers.authorization || "";
+	const match = authHeader.match(/Bearer (.*)/);
+	return authenticateToken(match?.[1] ?? "", res, next);
+};
+
 export const checkLoggedIn = async (req: Request, res: Response, next: NextFunction) => {
 	if (res.locals.logged) {
 		if (req.query.next && typeof req.query.next === "string") {

@@ -5,6 +5,7 @@ model Email {
   subscribed    Boolean        @default(true)
   posts         Post[]
   participant   Participant?   @relation("ParticipantEmail")
+  viewer        Viewer?        @relation("ViewerEmail")
   tokens        Token[]
   boxes         Box[]
   counters      Counter[]

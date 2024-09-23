@@ -1,0 +1,63 @@
+model Series {
+  id       String    @id
+  // memoryAlphaUrl String // TODO
+  name     String
+  episodes Episode[]
+}
+
+model Episode {
+  // memoryAlphaUrl String // TODO
+  name         String
+  abbreviation String?
+  runtime      Int
+  release      DateTime
+  starDate     Float?
+  season       Int
+  production   Int
+  description  String
+
+  seriesId String
+  series   Series @relation(fields: [seriesId], references: [id])
+  views    View[]
+
+  // The different ways to sort the episodes.
+  // Each is a unique int in that col.
+  // Not adding @unique tho becuase i want to easily update these
+  bobsSort Int
+  // memoryAlphaSort Int // TODO
+  // chronologySort  Int // TODO
+
+  @@id([seriesId, season, production])
+}
+
+model Viewer {
+  id      String @id @default(cuid())
+  email   Email  @relation("ViewerEmail", fields: [emailId], references: [id], onDelete: Cascade)
+  emailId String @unique
+  name    String
+  views   View[]
+}
+
+model View {
+  id Int @id @default(autoincrement())
+
+  viewerId String
+  viewer   Viewer @relation(fields: [viewerId], references: [id])
+
+  episode    Episode @relation(fields: [seriesId, season, production], references: [seriesId, season, production])
+  seriesId   String
+  season     Int
+  production Int
+
+  opinion   Boolean?
+  comment   String?
+  rewatch   Boolean
+  viewedOn  DateTime?
+  createdAt DateTime
+  tags      Tag[]
+}
+
+model Tag {
+  name  String @id
+  views View[]
+}
