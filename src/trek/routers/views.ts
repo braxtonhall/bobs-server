@@ -4,7 +4,7 @@ import { enforceLoggedIn } from "../../auth/middlewares/authenticate";
 import Config from "../../Config";
 import { Email } from "@prisma/client";
 import { signupPayloadSchema } from "../schemas";
-import { setViewing } from "../operations/operations";
+import { setViewing } from "../operations/setViewing";
 
 export const views = express()
 	.use(getViewing)
@@ -21,4 +21,5 @@ export const views = express()
 			return res.render("pages/trek/signup", { error: "that didn't quite work", Config });
 		}
 	})
-	.use("/", express.static("public/trek"));
+	.use(express.static("public/trek"))
+	.use("/", (_req, res) => res.sendFile("trek/index.html", { root: "public" }));
