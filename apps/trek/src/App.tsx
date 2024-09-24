@@ -20,8 +20,16 @@ const router = createBrowserRouter(
 			element: <Episode />,
 			loader: ({ params }) => params,
 		},
-		// TODO
-		//  we need... /viewers/:id /views/:id
+		// TODO fill these in ofc
+		{
+			path: "/viewers/:id",
+		},
+		{
+			path: "/views/:id",
+		},
+		{
+			path: "/signup",
+		},
 	],
 	{ basename: process.env.PUBLIC_URL },
 );

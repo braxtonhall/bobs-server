@@ -6,6 +6,8 @@ model Series {
 }
 
 model Episode {
+  id String @id @default(cuid())
+
   // memoryAlphaUrl String // TODO
   name         String
   abbreviation String?
@@ -16,9 +18,11 @@ model Episode {
   production   Int
   description  String
 
-  seriesId String
-  series   Series @relation(fields: [seriesId], references: [id])
-  views    View[]
+  seriesId   String
+  series     Series      @relation(fields: [seriesId], references: [id])
+  views      View[]
+  watchlists Watchlist[]
+  watchers   Viewer[]
 
   // The different ways to sort the episodes.
   // Each is a unique int in that col.
@@ -27,15 +31,32 @@ model Episode {
   // memoryAlphaSort Int // TODO
   // chronologySort  Int // TODO
 
-  @@id([seriesId, season, production])
+  @@unique([seriesId, season, production])
+}
+
+model Watchlist {
+  id          String    @id @default(cuid())
+  ownerId     String
+  owner       Viewer    @relation("Ownership", fields: [ownerId], references: [id])
+  watchers    Viewer[]  @relation("Watching")
+  name        String
+  description String
+  /// JSON formatted string for the filters used to create this watchlist
+  filters     String
+  episodes    Episode[]
 }
 
 model Viewer {
-  id      String @id @default(cuid())
-  email   Email  @relation("ViewerEmail", fields: [emailId], references: [id], onDelete: Cascade)
-  emailId String @unique
-  name    String
-  views   View[]
+  id         String      @id @default(cuid())
+  email      Email       @relation("ViewerEmail", fields: [emailId], references: [id], onDelete: Cascade)
+  emailId    String      @unique
+  name       String
+  views      View[]
+  watchingId String?
+  watching   Watchlist?  @relation("Watching", fields: [watchingId], references: [id], onDelete: SetNull)
+  currentId  String?
+  current    Episode?    @relation(fields: [currentId], references: [id], onDelete: SetNull)
+  watchlists Watchlist[] @relation("Ownership")
 }
 
 model View {

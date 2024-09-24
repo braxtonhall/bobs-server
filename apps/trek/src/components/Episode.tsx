@@ -1,8 +1,8 @@
 import { useLoaderData } from "react-router-dom";
 
 const Episode = () => {
-	const params = useLoaderData();
-	return <>{JSON.stringify(params)}</>;
+	const { id } = useLoaderData() as { id: string };
+	return <>Params: {id}</>;
 };
 
 export default Episode;
