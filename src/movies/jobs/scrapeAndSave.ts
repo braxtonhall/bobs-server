@@ -117,51 +117,54 @@ const saveProductions = async (theatre: Theatre, productions: ScrapedProduction[
 	}
 };
 
-const scrapeAndSaveTheatre = async (theatre: InternalTheatre) => {
-	const productions = await theatre.scrape();
-	await saveProductions(
-		await db.theatre.upsert({
-			where: {
-				url: theatre.url,
-			},
-			update: {
-				name: theatre.name,
-				logoUrl: theatre.logoUrl,
-				city: {
-					connectOrCreate: {
-						where: {
-							name: theatre.city,
-						},
-						create: {
-							name: theatre.city,
+const scrapeAndSaveTheatre = async (theatre: InternalTheatre) =>
+	transaction(
+		async (productions) => {
+			await saveProductions(
+				await db.theatre.upsert({
+					where: {
+						url: theatre.url,
+					},
+					update: {
+						name: theatre.name,
+						logoUrl: theatre.logoUrl,
+						city: {
+							connectOrCreate: {
+								where: {
+									name: theatre.city,
+								},
+								create: {
+									name: theatre.city,
+								},
+							},
 						},
 					},
-				},
-			},
-			create: {
-				name: theatre.name,
-				logoUrl: theatre.logoUrl,
-				url: theatre.url,
-				city: {
-					connectOrCreate: {
-						where: {
-							name: theatre.city,
-						},
-						create: {
-							name: theatre.city,
+					create: {
+						name: theatre.name,
+						logoUrl: theatre.logoUrl,
+						url: theatre.url,
+						city: {
+							connectOrCreate: {
+								where: {
+									name: theatre.city,
+								},
+								create: {
+									name: theatre.city,
+								},
+							},
 						},
 					},
-				},
-			},
-		}),
-		productions,
+				}),
+				productions,
+			);
+		},
+		await theatre.scrape(),
 	);
-};
 
 export const scrapeAndSave = {
 	interval: Duration.fromObject({ days: 1 }).toMillis(),
 	callback: async () => {
 		const theatres = await getTheatres();
-		await AsyncPool.map(theatres, (theatre) => transaction(scrapeAndSaveTheatre, theatre), 2);
+		await AsyncPool.map(theatres, scrapeAndSaveTheatre, 2);
 	},
 } satisfies Job;
