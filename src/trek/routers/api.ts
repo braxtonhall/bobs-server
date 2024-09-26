@@ -18,3 +18,8 @@ export const api = express()
 		}
 	})
 	.get("/content", async (_req, res) => res.send(await getContent(res.locals.viewer)));
+
+// TODO
+//  on WATCHING page, there are two buttons: skip, watched on. both update your watchlist pointer
+//  on EPISODE page, there are two buttons: seen, watched on. seen never updates your pointer. watched on
+//   does iff it's the episode you are currently watching
