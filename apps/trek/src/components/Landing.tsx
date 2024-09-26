@@ -30,6 +30,7 @@ const Landing = () => {
 				series: { TOS: { id: "TOS", name: "The Original Series" } },
 				episodes: [
 					{
+						id: "",
 						views: [],
 						name: "The Man Trap",
 						abbreviation: null,
@@ -53,9 +54,9 @@ const Landing = () => {
 				<Box sx={{ borderBottom: 1, borderColor: "divider" }}>
 					<TabList onChange={(_, newValue: string) => setTab(newValue)} aria-label="views" centered>
 						<Tab label={<PlayArrowRounded aria-label="play" titleAccess="play" />} value="watch" />
+						<Tab label={<ListRounded />} value="list" />
 						<Tab label={<ShuffleRounded />} value="random" />
 						<Tab label={<RssFeedRounded />} value="activity" />
-						<Tab label={<ListRounded />} value="list" />
 						<Tab label={<SettingsRounded />} value="settings" />
 					</TabList>
 				</Box>
