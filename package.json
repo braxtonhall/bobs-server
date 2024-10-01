@@ -89,7 +89,7 @@
 		"express-session": "^1.18.0",
 		"form-data": "^4.0.0",
 		"jsonwebtoken": "^9.0.2",
-		"luxon": "^3.4.4",
+		"luxon": "^3.5.0",
 		"prisma": "^5.19.0",
 		"ts-pattern": "^5.0.8",
 		"zod": "^3.22.4"

@@ -1,9 +1,9 @@
-import { Box, CircularProgress, Fade, Card, CardContent, CardMedia, Typography, Button, Collapse } from "@mui/material";
+import { Box, CircularProgress, Fade, Card, CardContent, CardMedia, Typography, Button, Stack } from "@mui/material";
 import { CurrentlyWatching, logEpisode, SeriesCollection } from "../../util/api";
-import { ReactElement, useState } from "react";
+import { ReactElement } from "react";
 import { Link } from "react-router-dom";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { InfoRounded, RedoRounded, UndoRounded, HistoryEduRounded } from "@mui/icons-material";
+import { InfoRounded, RedoRounded, UndoRounded } from "@mui/icons-material";
 import { LogForm } from "../LogForm";
 
 const NEXT_FEW_COUNT = 3;
@@ -112,28 +112,20 @@ const Upcoming = (props: {
 	following: Episode[];
 	setCursor: (id: string | null) => void;
 	logEpisode: typeof logEpisode;
-}) => {
-	const [expanded, setExpanded] = useState(false);
-	return (
-		<>
-			Upcoming
-			<EpisodeCard episode={props.episode} series={props.series} small={false}>
-				<Button variant="outlined" onClick={() => setExpanded(!expanded)}>
-					<HistoryEduRounded />
-				</Button>
-				<Collapse in={expanded} timeout="auto" unmountOnExit>
-					<LogForm episode={props.episode} logEpisode={props.logEpisode} />
-				</Collapse>
-				<Button variant="outlined" onClick={() => props.setCursor(props.following[0]?.id ?? null)}>
-					<RedoRounded />
-				</Button>
-			</EpisodeCard>
-			{props.following.map((episode) => (
-				<UpcomingEpisode episode={episode} series={props.series} />
-			))}
-		</>
-	);
-};
+}) => (
+	<>
+		Upcoming
+		<EpisodeCard episode={props.episode} series={props.series} small={false} key={props.episode.id}>
+			<LogForm episode={props.episode} logEpisode={props.logEpisode} />
+			<Button variant="outlined" onClick={() => props.setCursor(props.following[0]?.id ?? null)}>
+				<RedoRounded />
+			</Button>
+		</EpisodeCard>
+		{props.following.map((episode) => (
+			<UpcomingEpisode episode={episode} series={props.series} key={episode.id} />
+		))}
+	</>
+);
 
 const UpcomingEpisode = (props: { episode: Episode; series: SeriesCollection }) => (
 	<EpisodeCard episode={props.episode} series={props.series} small={true} />
@@ -196,22 +188,16 @@ const EpisodeCard = (props: {
 					display={mobile ? "flex" : "table-cell"}
 					justifyContent="center"
 					alignItems="center"
-					marginLeft="1em"
 					sx={{ float: "none", minWidth: mobile ? undefined : "220px", verticalAlign: "middle" }}
 				>
-					<Box
-						flexDirection={mobile ? "unset" : "column"}
-						display="flex"
-						width="100%"
-						justifyContent="center"
-					>
+					<Stack direction={mobile ? "row" : "column"}>
 						{props.children}
 						<Link to={`/episodes/${props.episode.id}`} style={mobile ? {} : { width: "100%" }}>
 							<Button variant="outlined" style={mobile ? {} : { width: "100%" }}>
 								<InfoRounded />
 							</Button>
 						</Link>
-					</Box>
+					</Stack>
 				</Box>
 			</CardContent>
 		</Card>

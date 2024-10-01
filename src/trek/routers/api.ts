@@ -5,6 +5,7 @@ import { getSeries } from "../operations/getSeries";
 import { getCurrentlyWatching } from "../operations/getCurrentlyWatching";
 import bodyParser from "body-parser";
 import { updateCursor } from "../operations/updateCursor";
+import { getViewerTags } from "../operations/getViewerTags";
 
 export const api = express()
 	.post("/*", bodyParser.urlencoded({ extended: true }))
@@ -21,6 +22,7 @@ export const api = express()
 	})
 	.get("/watching", async (_req, res) => res.send(await getCurrentlyWatching(res.locals.viewer.id)))
 	.get("/series", async (_req, res) => res.send(await getSeries()))
+	.get("/tags", async (_req, res) => res.send(await getViewerTags(res.locals.viewer.id)))
 	.post("/cursor", async (req, res) =>
 		updateCursor({ viewerId: res.locals.viewer.id, episodeId: req.body.id }).then(
 			() => res.sendStatus(200),

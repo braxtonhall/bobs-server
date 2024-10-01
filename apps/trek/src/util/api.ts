@@ -22,15 +22,18 @@ export const getSeries = (): Promise<SeriesCollection> => request("/api/trek/ser
 export const updateCursor = (id: string | null): Promise<void> =>
 	request("/api/trek/cursor", { payload: { id }, method: "POST" });
 
+export const getTags = () => request("/api/trek/tags");
+
 export const logEpisode = (environment: {
 	episodeId: string;
 	liked: boolean;
 	rating: number | null;
 	comment: string | null;
-	viewedOn: string | null;
+	viewedOn: number | null;
 	tags: string[];
 }) => {
 	// TODO
+	console.log(environment);
 };
 
 export type { CurrentlyWatching, SeriesCollection };
