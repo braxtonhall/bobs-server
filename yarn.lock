@@ -1902,11 +1902,6 @@ express-session@^1.18.0:
     safe-buffer "5.2.1"
     uid-safe "~2.1.5"
 
-express-subdomain@^1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/express-subdomain/-/express-subdomain-1.0.6.tgz#df9a0ba337482de302be25f88afefe05ba976a8c"
-  integrity sha512-A51MvQhk5L3aDV4s5XcKrn5I0bCFOk95xikJjlDWNUrtiAaCjy44RjvBz4uLRH0nCvt8Y3SKt1EvxUUmGJ5QRQ==
-
 express@^4.19.2:
   version "4.19.2"
   resolved "https://registry.yarnpkg.com/express/-/express-4.19.2.tgz#e25437827a3aa7f2a827bc8171bbbb664a356465"
