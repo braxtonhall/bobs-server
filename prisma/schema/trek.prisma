@@ -28,9 +28,7 @@ model Episode {
   // The different ways to sort the episodes.
   // Each is a unique int in that col.
   // Not adding @unique tho becuase i want to easily update these
-  bobsSort Int
-  // memoryAlphaSort Int // TODO
-  // chronologySort  Int // TODO
+  sort Int
 
   @@unique([seriesId, season, production])
 }
@@ -45,6 +43,7 @@ model Watchlist {
   /// JSON formatted string for the filters used to create this watchlist
   filters     String
   episodes    Episode[]
+  createdAt   DateTime  @default(now())
 }
 
 model Viewer {
@@ -84,7 +83,7 @@ model View {
   opinion   Boolean?
   comment   String?
   viewedOn  DateTime?
-  createdAt DateTime
+  createdAt DateTime  @default(now())
   tags      Tag[]
 }
 

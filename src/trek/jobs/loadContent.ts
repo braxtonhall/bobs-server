@@ -53,7 +53,7 @@ const loadEpisodes = async () => {
 			runtime: 0, // TODO
 			description: "", // TODO
 			starDate: Number(row.STAR_DATE) || null,
-			bobsSort: i,
+			sort: i,
 			release: new Date(Date.UTC(Number(row.YEAR), Number(row.MONTH) - 1, Number(row.DAY))),
 		};
 

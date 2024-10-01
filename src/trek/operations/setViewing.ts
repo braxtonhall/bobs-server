@@ -37,7 +37,7 @@ export const setViewing = async ({ emailId, name }: Environment) =>
 					id: true,
 				},
 				orderBy: {
-					bobsSort: "asc",
+					sort: "asc",
 				},
 			});
 			await db.viewer.update({

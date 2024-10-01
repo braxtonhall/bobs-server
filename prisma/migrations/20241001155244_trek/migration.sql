@@ -16,7 +16,7 @@ CREATE TABLE "Episode" (
     "production" INTEGER NOT NULL,
     "description" TEXT NOT NULL,
     "seriesId" TEXT NOT NULL,
-    "bobsSort" INTEGER NOT NULL,
+    "sort" INTEGER NOT NULL,
     CONSTRAINT "Episode_seriesId_fkey" FOREIGN KEY ("seriesId") REFERENCES "Series" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
@@ -27,6 +27,7 @@ CREATE TABLE "Watchlist" (
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "filters" TEXT NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "Watchlist_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "Viewer" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
@@ -43,19 +44,27 @@ CREATE TABLE "Viewer" (
 );
 
 -- CreateTable
+CREATE TABLE "Opinion" (
+    "viewerId" TEXT NOT NULL,
+    "episodeId" TEXT NOT NULL,
+    "opinion" BOOLEAN,
+
+    PRIMARY KEY ("viewerId", "episodeId"),
+    CONSTRAINT "Opinion_viewerId_fkey" FOREIGN KEY ("viewerId") REFERENCES "Viewer" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "Opinion_episodeId_fkey" FOREIGN KEY ("episodeId") REFERENCES "Episode" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+);
+
+-- CreateTable
 CREATE TABLE "View" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "viewerId" TEXT NOT NULL,
-    "seriesId" TEXT NOT NULL,
-    "season" INTEGER NOT NULL,
-    "production" INTEGER NOT NULL,
+    "episodeId" TEXT NOT NULL,
     "opinion" BOOLEAN,
     "comment" TEXT,
-    "rewatch" BOOLEAN NOT NULL,
     "viewedOn" DATETIME,
-    "createdAt" DATETIME NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "View_viewerId_fkey" FOREIGN KEY ("viewerId") REFERENCES "Viewer" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "View_seriesId_season_production_fkey" FOREIGN KEY ("seriesId", "season", "production") REFERENCES "Episode" ("seriesId", "season", "production") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "View_episodeId_fkey" FOREIGN KEY ("episodeId") REFERENCES "Episode" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
