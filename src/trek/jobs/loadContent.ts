@@ -1,6 +1,7 @@
 import { parse } from "csv-parse";
 import { db } from "../../db";
 import { loadResource } from "../../util/loadResource";
+import { Job } from "../../jobs";
 
 type Show = { ID: string; NAME: string };
 
@@ -74,6 +75,11 @@ const load = async () => {
 	await loadShows();
 	await loadEpisodes();
 };
+
+export const loadContent = {
+	callback: load,
+	interval: Infinity,
+} satisfies Job;
 
 if (require.main === module) {
 	load()

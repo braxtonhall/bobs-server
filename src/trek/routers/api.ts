@@ -1,11 +1,13 @@
 import express from "express";
 import { authenticateHeader } from "../../auth/middlewares/authenticate";
 import { getViewing } from "../middlewares/checkViewing";
-import { getContent } from "../operations/getContent";
-
-// TODO this is how you log an episode
+import { getSeries } from "../operations/getSeries";
+import { getCurrentlyWatching } from "../operations/getCurrentlyWatching";
+import bodyParser from "body-parser";
+import { updateCursor } from "../operations/updateCursor";
 
 export const api = express()
+	.post("/*", bodyParser.urlencoded({ extended: true }))
 	.use(authenticateHeader)
 	.use(getViewing)
 	.use((req, res, next) => {
@@ -17,8 +19,14 @@ export const api = express()
 			return next();
 		}
 	})
-	.get("/content", async (_req, res) => res.send(await getContent(res.locals.viewer)));
-
+	.get("/watching", async (_req, res) => res.send(await getCurrentlyWatching(res.locals.viewer.id)))
+	.get("/series", async (_req, res) => res.send(await getSeries()))
+	.post("/cursor", async (req, res) =>
+		updateCursor({ viewerId: res.locals.viewer.id, episodeId: req.body.id }).then(
+			() => res.sendStatus(200),
+			() => res.sendStatus(400),
+		),
+	);
 // TODO
 //  on WATCHING page, there are two buttons: skip, watched on. both update your watchlist pointer
 //  on EPISODE page, there are two buttons: seen, watched on. seen never updates your pointer. watched on
