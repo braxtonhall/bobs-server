@@ -58,6 +58,8 @@ model Viewer {
   currentId  String?
   current    Episode?    @relation(fields: [currentId], references: [id], onDelete: SetNull)
   watchlists Watchlist[] @relation("Ownership")
+  /// JSON formatted string for the user's settings
+  settings   String
 }
 
 model Opinion {
@@ -66,7 +68,8 @@ model Opinion {
   episodeId String
   episode   Episode @relation(fields: [episodeId], references: [id])
 
-  opinion Boolean?
+  liked  Boolean
+  rating Int?
 
   @@id([viewerId, episodeId])
 }
@@ -80,7 +83,8 @@ model View {
   episodeId String
   episode   Episode @relation(fields: [episodeId], references: [id])
 
-  opinion   Boolean?
+  liked     Boolean
+  rating    Int?
   comment   String?
   viewedOn  DateTime?
   createdAt DateTime  @default(now())

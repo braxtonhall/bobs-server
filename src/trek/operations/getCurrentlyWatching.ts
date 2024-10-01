@@ -10,7 +10,24 @@ export const getCurrentlyWatching = async (viewerId: string) =>
 		select: {
 			watching: {
 				include: {
-					episodes: true,
+					episodes: {
+						include: {
+							views: {
+								where: {
+									viewerId,
+								},
+								orderBy: {
+									createdAt: "desc",
+								},
+								take: 1,
+							},
+							opinions: {
+								where: {
+									viewerId,
+								},
+							},
+						},
+					},
 				},
 			},
 			current: {

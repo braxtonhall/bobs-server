@@ -18,6 +18,7 @@ export const setViewing = async ({ emailId, name }: Environment) =>
 					},
 				},
 				name,
+				settings: "{}",
 			},
 			update: {
 				emailId,

@@ -7,7 +7,14 @@ import Shuffle from "./Shuffle";
 import Activity from "./Activity";
 import List from "./List";
 import Settings from "./Settings";
-import { getCurrentlyWatching, SeriesCollection, getSeries, CurrentlyWatching, updateCursor } from "../../util/api";
+import {
+	getCurrentlyWatching,
+	SeriesCollection,
+	getSeries,
+	CurrentlyWatching,
+	updateCursor,
+	logEpisode,
+} from "../../util/api";
 
 const Landing = () => {
 	const [tab, setTab] = useState("watch");
@@ -33,11 +40,18 @@ const Landing = () => {
 		}
 	};
 
-	//
-	// const episodes = useMemo(
-	// 	(): Episode[] | null => (content && search ? resolveEpisodes(content.episodes, search) : null),
-	// 	[content, search],
-	// );
+	const logAndSetEpisode: typeof logEpisode = (env) => {
+		void logEpisode(env);
+		if (currently?.current?.id === env.episodeId) {
+			const currentIndex = currently.watching?.episodes.findIndex(({ id }) => id === env.episodeId);
+			const nextIndex = typeof currentIndex === "number" ? currentIndex + 1 : -1;
+			const next = currently.watching?.episodes[nextIndex];
+			setCurrently({
+				...currently,
+				current: next ? { id: next.id } : null,
+			});
+		}
+	};
 
 	return (
 		<Box sx={{ width: "100%", typography: "body1", boxSizing: "border-box" }}>
@@ -52,7 +66,7 @@ const Landing = () => {
 					</TabList>
 				</Box>
 				<TabPanel value="watch">
-					<Watch currently={currently} series={series} setCursor={setCursor} />
+					<Watch currently={currently} series={series} setCursor={setCursor} logEpisode={logAndSetEpisode} />
 				</TabPanel>
 				<TabPanel value="random">
 					<Shuffle></Shuffle>

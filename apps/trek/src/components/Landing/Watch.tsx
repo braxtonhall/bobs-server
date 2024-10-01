@@ -1,19 +1,10 @@
-import {
-	Box,
-	CircularProgress,
-	Fade,
-	Card,
-	CardContent,
-	CardMedia,
-	Typography,
-	Button,
-	CardActionArea,
-	CardActions,
-	Collapse,
-} from "@mui/material";
-import { CurrentlyWatching, SeriesCollection } from "../../util/api";
+import { Box, CircularProgress, Fade, Card, CardContent, CardMedia, Typography, Button, Collapse } from "@mui/material";
+import { CurrentlyWatching, logEpisode, SeriesCollection } from "../../util/api";
 import { ReactElement, useState } from "react";
 import { Link } from "react-router-dom";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { InfoRounded, RedoRounded, UndoRounded, HistoryEduRounded } from "@mui/icons-material";
+import { LogForm } from "../LogForm";
 
 const NEXT_FEW_COUNT = 3;
 
@@ -21,6 +12,7 @@ interface WatchProps {
 	currently: CurrentlyWatching | null;
 	series: SeriesCollection | null;
 	setCursor: (id: string | null) => void;
+	logEpisode: typeof logEpisode;
 }
 
 const Watch = (props: WatchProps) => {
@@ -48,6 +40,7 @@ const Watch = (props: WatchProps) => {
 							current={props.currently.current}
 							series={props.series}
 							setCursor={props.setCursor}
+							logEpisode={props.logEpisode}
 						/>
 					) : (
 						<WatchInactive />
@@ -65,6 +58,7 @@ type WatchContentProps = {
 	current: CurrentlyWatching["current"];
 	series: SeriesCollection;
 	setCursor: (id: string | null) => void;
+	logEpisode: typeof logEpisode;
 };
 
 const WatchContent = (props: WatchContentProps) => {
@@ -81,7 +75,13 @@ const WatchContent = (props: WatchContentProps) => {
 			<h2>{props.watchlist.description}</h2>
 			{last ? <LastEpisode episode={last} series={props.series} setCursor={props.setCursor} /> : <></>}
 			{current ? (
-				<Upcoming episode={current} series={props.series} following={following} setCursor={props.setCursor} />
+				<Upcoming
+					episode={current}
+					series={props.series}
+					following={following}
+					setCursor={props.setCursor}
+					logEpisode={props.logEpisode}
+				/>
 			) : (
 				<></>
 			)}
@@ -95,7 +95,9 @@ const LastEpisode = (props: { episode: Episode; series: SeriesCollection; setCur
 	<>
 		Last Episode
 		<EpisodeCard episode={props.episode} series={props.series} small={true}>
-			<Button onClick={() => props.setCursor(props.episode.id)}>Go Back</Button>
+			<Button variant="outlined" onClick={() => props.setCursor(props.episode.id)}>
+				<UndoRounded />
+			</Button>
 		</EpisodeCard>
 	</>
 );
@@ -109,18 +111,29 @@ const Upcoming = (props: {
 	series: SeriesCollection;
 	following: Episode[];
 	setCursor: (id: string | null) => void;
-}) => (
-	<>
-		Upcoming
-		<EpisodeCard episode={props.episode} series={props.series} small={false}>
-			<Button>Log</Button>
-			<Button onClick={() => props.setCursor(props.following[0]?.id ?? null)}>Skip</Button>
-		</EpisodeCard>
-		{props.following.map((episode) => (
-			<UpcomingEpisode episode={episode} series={props.series} />
-		))}
-	</>
-);
+	logEpisode: typeof logEpisode;
+}) => {
+	const [expanded, setExpanded] = useState(false);
+	return (
+		<>
+			Upcoming
+			<EpisodeCard episode={props.episode} series={props.series} small={false}>
+				<Button variant="outlined" onClick={() => setExpanded(!expanded)}>
+					<HistoryEduRounded />
+				</Button>
+				<Collapse in={expanded} timeout="auto" unmountOnExit>
+					<LogForm episode={props.episode} logEpisode={props.logEpisode} />
+				</Collapse>
+				<Button variant="outlined" onClick={() => props.setCursor(props.following[0]?.id ?? null)}>
+					<RedoRounded />
+				</Button>
+			</EpisodeCard>
+			{props.following.map((episode) => (
+				<UpcomingEpisode episode={episode} series={props.series} />
+			))}
+		</>
+	);
+};
 
 const UpcomingEpisode = (props: { episode: Episode; series: SeriesCollection }) => (
 	<EpisodeCard episode={props.episode} series={props.series} small={true} />
@@ -132,29 +145,32 @@ const EpisodeCard = (props: {
 	children?: ReactElement | ReactElement[];
 	small: boolean;
 }) => {
-	const [expanded, setExpanded] = useState(!props.small);
+	const mobile = useMediaQuery("(max-width:550px)");
 	return (
-		<Card style={{ margin: "1em" }}>
-			<CardActionArea style={{ position: "relative" }} onClick={() => setExpanded(!expanded)}>
-				<CardMedia
-					image={IMG_URL}
-					component="img"
-					alt={props.episode.name}
-					style={{
-						position: "absolute",
-						top: 0,
-						right: 0,
-						height: "100%",
-						width: "100%",
-					}}
-				/>
-				<CardContent
-					style={{
-						position: "relative",
-						backgroundColor: "transparent",
-						color: "white",
-					}}
-				>
+		<Card style={{ margin: "1em", position: "relative" }}>
+			<CardMedia
+				image={IMG_URL}
+				component="img"
+				alt={props.episode.name}
+				style={{
+					position: "absolute",
+					top: 0,
+					right: 0,
+					height: "100%",
+					width: "100%",
+				}}
+			/>
+			<CardContent
+				style={{
+					position: "relative",
+					backgroundColor: "transparent",
+					color: "white",
+					width: "100%",
+					boxSizing: "border-box",
+					borderSpacing: "0.5em",
+				}}
+			>
+				<Box sx={mobile ? {} : { display: "table-cell", width: "100%" }}>
 					<Typography variant="h5" component="h2" sx={{ fontSize: props.small ? 12 : undefined }}>
 						{props.episode.name}
 					</Typography>
@@ -170,19 +186,34 @@ const EpisodeCard = (props: {
 						{String(props.episode.release).slice(0, 10) /* TODO this is terrible */}
 					</Typography>
 
-					<Collapse in={expanded} timeout="auto" unmountOnExit>
-						{props.episode.description || DESCRIPTION}
-					</Collapse>
-				</CardContent>
-			</CardActionArea>
-			<Collapse in={expanded} timeout="auto" unmountOnExit>
-				<CardActions>
-					{props.children}
-					<Link to={`/episodes/${props.episode.id}`}>
-						<Button>Info</Button>
-					</Link>
-				</CardActions>
-			</Collapse>
+					{props.small ? (
+						<></>
+					) : (
+						<Typography sx={{ fontSize: 12 }}>{props.episode.description || DESCRIPTION}</Typography>
+					)}
+				</Box>
+				<Box
+					display={mobile ? "flex" : "table-cell"}
+					justifyContent="center"
+					alignItems="center"
+					marginLeft="1em"
+					sx={{ float: "none", minWidth: mobile ? undefined : "220px", verticalAlign: "middle" }}
+				>
+					<Box
+						flexDirection={mobile ? "unset" : "column"}
+						display="flex"
+						width="100%"
+						justifyContent="center"
+					>
+						{props.children}
+						<Link to={`/episodes/${props.episode.id}`} style={mobile ? {} : { width: "100%" }}>
+							<Button variant="outlined" style={mobile ? {} : { width: "100%" }}>
+								<InfoRounded />
+							</Button>
+						</Link>
+					</Box>
+				</Box>
+			</CardContent>
 		</Card>
 	);
 };
