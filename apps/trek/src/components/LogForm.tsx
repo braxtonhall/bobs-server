@@ -26,29 +26,24 @@ export const LogForm = (props: { episode: Episode; logEpisode: typeof logEpisode
 						event.preventDefault();
 						return props.logEpisode({
 							episodeId: props.episode.id,
-							tags,
 							viewedOn: date && Date.UTC(Number(date.year), Number(date.month) - 1, Number(date.day)),
+							comment: review || null,
+							tags,
 							liked,
 							rating,
-							comment: review || null,
 						});
 					}}
 				>
 					<FormGroup>
 						<FormControlLabel
-							control={<Checkbox name="liked" onChange={(_, liked) => setLiked(liked)} />}
+							control={<Checkbox onChange={(_, liked) => setLiked(liked)} />}
 							label="Liked"
 							labelPlacement="bottom"
 							value={liked}
 						/>
 						<FormControlLabel
 							control={
-								<Rating
-									name="rating"
-									value={rating}
-									precision={0.5}
-									onChange={(_, rating) => setRating(rating)}
-								/>
+								<Rating value={rating} precision={0.5} onChange={(_, rating) => setRating(rating)} />
 							}
 							label="Rating"
 							labelPlacement="bottom"
@@ -56,7 +51,7 @@ export const LogForm = (props: { episode: Episode; logEpisode: typeof logEpisode
 						<FormControlLabel
 							control={
 								<LocalizationProvider dateAdapter={AdapterLuxon}>
-									<DatePicker label="Watched on" name="date" value={date} onChange={setDate} />
+									<DatePicker label="Watched on" value={date} onChange={setDate} />
 								</LocalizationProvider>
 							}
 							label="Date"
@@ -67,7 +62,6 @@ export const LogForm = (props: { episode: Episode; logEpisode: typeof logEpisode
 								<TextField
 									label="Review"
 									multiline
-									name="review"
 									value={review}
 									onChange={(event) => setReview(event.target.value)}
 								/>
