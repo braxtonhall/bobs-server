@@ -6,6 +6,11 @@ import { getCurrentlyWatching } from "../operations/getCurrentlyWatching";
 import bodyParser from "body-parser";
 import { updateCursor } from "../operations/updateCursor";
 import { getViewerTags } from "../operations/getViewerTags";
+import { useSchema } from "../../common/middlewares/useSchema";
+import { z } from "zod";
+import { DateTime } from "luxon";
+import { db } from "../../db";
+import { logEpisode, logEpisodeSchema } from "../operations/logEpisode";
 
 export const api = express()
 	.post("/*", bodyParser.urlencoded({ extended: true }))
@@ -23,8 +28,14 @@ export const api = express()
 	.get("/watching", async (_req, res) => res.send(await getCurrentlyWatching(res.locals.viewer.id)))
 	.get("/series", async (_req, res) => res.send(await getSeries()))
 	.get("/tags", async (_req, res) => res.send(await getViewerTags(res.locals.viewer.id)))
-	.post("/cursor", async (req, res) =>
+	.post("/cursor", useSchema(z.object({ id: z.string() })), async (req, res) =>
 		updateCursor({ viewerId: res.locals.viewer.id, episodeId: req.body.id }).then(
+			() => res.sendStatus(200),
+			() => res.sendStatus(400),
+		),
+	)
+	.post("/views", useSchema(logEpisodeSchema), async (req, res) =>
+		logEpisode(res.locals.viewer.id, req.body).then(
 			() => res.sendStatus(200),
 			() => res.sendStatus(400),
 		),

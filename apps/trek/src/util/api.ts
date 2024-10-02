@@ -31,9 +31,6 @@ export const logEpisode = (environment: {
 	comment: string | null;
 	viewedOn: number | null;
 	tags: string[];
-}) => {
-	// TODO
-	console.log(environment);
-};
+}): void => void request("/api/trek/views", { payload: environment, method: "POST" });
 
 export type { CurrentlyWatching, SeriesCollection };

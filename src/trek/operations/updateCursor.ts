@@ -1,34 +1,30 @@
-import { db, transaction } from "../../db";
+import { db } from "../../db";
 
-export const updateCursor = (env: { viewerId: string; episodeId: string | null }) =>
-	transaction(async () => {
-		if (env.episodeId !== null) {
-			const { watching } = await db.viewer.findUniqueOrThrow({
-				where: {
-					id: env.viewerId,
-				},
-				select: {
-					watching: {
-						select: {
-							episodes: {
-								where: {
-									id: env.episodeId,
-								},
-							},
-						},
-					},
-				},
-			});
-			if (!watching?.episodes.length) {
-				throw new Error("Not currently watching this episode");
-			}
-		}
+export const updateCursor = async (env: { viewerId: string; episodeId: string | null }) => {
+	if (env.episodeId === null) {
 		await db.viewer.update({
 			where: {
 				id: env.viewerId,
 			},
 			data: {
+				currentId: null,
+			},
+		});
+	} else {
+		await db.viewer.update({
+			where: {
+				id: env.viewerId,
+				watching: {
+					episodes: {
+						some: {
+							id: env.episodeId,
+						},
+					},
+				},
+			},
+			data: {
 				currentId: env.episodeId,
 			},
 		});
-	});
+	}
+};
