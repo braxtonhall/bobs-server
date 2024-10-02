@@ -8,8 +8,6 @@ import { updateCursor } from "../operations/updateCursor";
 import { getViewerTags } from "../operations/getViewerTags";
 import { useSchema } from "../../common/middlewares/useSchema";
 import { z } from "zod";
-import { DateTime } from "luxon";
-import { db } from "../../db";
 import { logEpisode, logEpisodeSchema } from "../operations/logEpisode";
 
 export const api = express()

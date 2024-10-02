@@ -6,17 +6,18 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Form } from "react-router-dom";
 import { useState } from "react";
-import { HistoryEduRounded } from "@mui/icons-material";
+import { HistoryEduRounded, FavoriteBorderRounded, FavoriteRounded } from "@mui/icons-material";
 import { DateTime } from "luxon";
 
 type Episode = NonNullable<CurrentlyWatching["watching"]>["episodes"][number];
 
 export const LogForm = (props: { episode: Episode; logEpisode: typeof logEpisode }) => {
 	const [tags, setTags] = useState<string[]>([]);
-	const [date, setDate] = useState<DateTime | null>(null);
+	const [date, setDate] = useState<DateTime | null>(DateTime.now());
 	const [rating, setRating] = useState<number | null>(null);
 	const [liked, setLiked] = useState(false);
 	const [review, setReview] = useState("");
+	const [spoiler, setSpoiler] = useState(false);
 
 	return (
 		<>
@@ -31,12 +32,19 @@ export const LogForm = (props: { episode: Episode; logEpisode: typeof logEpisode
 							tags,
 							liked,
 							rating,
+							spoiler,
 						});
 					}}
 				>
 					<FormGroup>
 						<FormControlLabel
-							control={<Checkbox onChange={(_, liked) => setLiked(liked)} />}
+							control={
+								<Checkbox
+									icon={<FavoriteBorderRounded />}
+									checkedIcon={<FavoriteRounded />}
+									onChange={(_, liked) => setLiked(liked)}
+								/>
+							}
 							label="Liked"
 							labelPlacement="bottom"
 							value={liked}
@@ -68,6 +76,13 @@ export const LogForm = (props: { episode: Episode; logEpisode: typeof logEpisode
 							}
 							label="Review"
 							labelPlacement="bottom"
+						/>
+						<FormControlLabel
+							control={<Checkbox onChange={(_, spoiler) => setSpoiler(spoiler)} />}
+							label="Spoiler"
+							labelPlacement="bottom"
+							value={spoiler}
+							disabled={!review}
 						/>
 						<FormControlLabel
 							control={<Tags tags={tags} setTags={setTags} />}

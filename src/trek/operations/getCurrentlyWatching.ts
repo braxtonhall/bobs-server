@@ -12,18 +12,18 @@ export const getCurrentlyWatching = async (viewerId: string) =>
 				include: {
 					episodes: {
 						include: {
-							views: {
-								where: {
-									viewerId,
-								},
-								orderBy: {
-									createdAt: "desc",
-								},
-								take: 1,
-							},
 							opinions: {
 								where: {
 									viewerId,
+								},
+							},
+							_count: {
+								select: {
+									views: {
+										where: {
+											viewerId,
+										},
+									},
 								},
 							},
 						},

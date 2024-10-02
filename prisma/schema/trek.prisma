@@ -86,6 +86,7 @@ model View {
   liked     Boolean
   rating    Int?
   comment   String?
+  spoiler   Boolean
   viewedOn  DateTime?
   createdAt DateTime  @default(now())
   tags      Tag[]

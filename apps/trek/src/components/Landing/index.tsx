@@ -44,6 +44,9 @@ const Landing = () => {
 		void logEpisode(env);
 		if (currently?.current?.id === env.episodeId) {
 			const currentIndex = currently.watching?.episodes.findIndex(({ id }) => id === env.episodeId);
+			if (typeof currently.watching?.episodes[currentIndex ?? -1]?._count.views === "number") {
+				currently.watching.episodes[currentIndex ?? -1]._count.views++;
+			}
 			const nextIndex = typeof currentIndex === "number" ? currentIndex + 1 : -1;
 			const next = currently.watching?.episodes[nextIndex];
 			setCurrently({

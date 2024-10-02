@@ -5,6 +5,7 @@
   - You are about to drop the column `opinion` on the `View` table. All the data in the column will be lost.
   - Added the required column `liked` to the `Opinion` table without a default value. This is not possible if the table is not empty.
   - Added the required column `liked` to the `View` table without a default value. This is not possible if the table is not empty.
+  - Added the required column `spoiler` to the `View` table without a default value. This is not possible if the table is not empty.
   - Added the required column `settings` to the `Viewer` table without a default value. This is not possible if the table is not empty.
 
 */
@@ -31,6 +32,7 @@ CREATE TABLE "new_View" (
     "liked" BOOLEAN NOT NULL,
     "rating" INTEGER,
     "comment" TEXT,
+    "spoiler" BOOLEAN NOT NULL,
     "viewedOn" DATETIME,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "View_viewerId_fkey" FOREIGN KEY ("viewerId") REFERENCES "Viewer" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,

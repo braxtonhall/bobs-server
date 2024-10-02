@@ -1,10 +1,12 @@
-import { DateTime } from "luxon";
 import { z } from "zod";
 import { db, transaction } from "../../db";
 import { updateCursor } from "./updateCursor";
+import { DateTime } from "luxon";
+
+export type LogEpisodePayload = z.infer<typeof logEpisodeSchema>;
 
 export const logEpisodeSchema = z.object({
-	viewedOn: z.null().or(z.number().transform((number) => DateTime.fromMillis(number))),
+	viewedOn: z.null().or(z.number()),
 	tags: z.array(z.string()),
 	liked: z.boolean(),
 	rating: z.null().or(
@@ -21,6 +23,7 @@ export const logEpisodeSchema = z.object({
 			.trim()
 			.transform((string) => string || null),
 	),
+	spoiler: z.boolean(),
 });
 
 export const logEpisode = async (viewerId: string, env: z.infer<typeof logEpisodeSchema>) =>
@@ -32,13 +35,18 @@ export const logEpisode = async (viewerId: string, env: z.infer<typeof logEpisod
 				liked: env.liked,
 				rating: env.rating,
 				comment: env.comment,
-				viewedOn: env.viewedOn?.toJSDate(),
 				tags: {
 					connectOrCreate: env.tags.map((name) => ({
 						where: { name },
 						create: { name },
 					})),
 				},
+				// TODO should set the viewed on to utc, start of day
+				viewedOn:
+					env.viewedOn === null
+						? null
+						: DateTime.fromMillis(env.viewedOn).setZone("utc").startOf("day").toJSDate(),
+				spoiler: env.comment === null ? false : env.spoiler,
 			},
 		});
 		const opinion = {

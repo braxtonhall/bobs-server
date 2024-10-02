@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { InfoRounded, RedoRounded, UndoRounded } from "@mui/icons-material";
 import { LogForm } from "../LogForm";
+import { DateTime } from "luxon";
 
 const NEXT_FEW_COUNT = 3;
 
@@ -138,6 +139,7 @@ const EpisodeCard = (props: {
 	small: boolean;
 }) => {
 	const mobile = useMediaQuery("(max-width:550px)");
+	const seen = !!props.episode._count.views || !!props.episode.opinions.length;
 	return (
 		<Card style={{ margin: "1em", position: "relative" }}>
 			<CardMedia
@@ -150,6 +152,7 @@ const EpisodeCard = (props: {
 					right: 0,
 					height: "100%",
 					width: "100%",
+					filter: seen ? "unset" : "blur(35px)",
 				}}
 			/>
 			<CardContent
@@ -175,7 +178,11 @@ const EpisodeCard = (props: {
 					</Typography>
 
 					<Typography sx={{ fontSize: props.small ? 12 : 14 }}>
-						{String(props.episode.release).slice(0, 10) /* TODO this is terrible */}
+						{DateTime.fromISO(props.episode.release as never as string, { zone: "utc" }).toLocaleString({
+							month: "2-digit",
+							year: "numeric",
+							day: "2-digit",
+						})}
 					</Typography>
 
 					{props.small ? (
