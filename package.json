@@ -90,7 +90,6 @@
 		"express": "^4.19.2",
 		"express-session": "^1.18.0",
 		"express-subdomain": "^1.0.6",
-		"fast-xml-parser": "^4.5.0",
 		"form-data": "^4.0.0",
 		"graphql": "^16.9.0",
 		"jsdom": "^25.0.0",

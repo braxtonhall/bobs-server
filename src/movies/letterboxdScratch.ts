@@ -1,62 +1,7 @@
 import { DateTime } from "luxon";
-import { XMLParser } from "fast-xml-parser";
-import { z } from "zod";
 import xray from "./util/x-ray";
 import Config from "../Config";
-import { List } from "@prisma/client";
-import { db } from "../db";
-
-const watchedMovieSchema = z
-	.object({
-		pubDate: z
-			.string()
-			.transform((date) => DateTime.fromRFC2822(date))
-			.transform((date, ctx) => {
-				if (date.isValid) {
-					return date;
-				} else {
-					ctx.addIssue({
-						code: z.ZodIssueCode.custom,
-						message: "Date format is incorrect",
-					});
-					return z.NEVER;
-				}
-			}),
-		link: z.string(),
-		"tmdb:movieId": z.number(),
-	})
-	.passthrough();
-
-const rssResponseSchema = z.object({
-	rss: z.object({
-		channel: z.object({
-			item: z.array(z.unknown()).transform((items) =>
-				items
-					.map((item) => watchedMovieSchema.safeParse(item))
-					.filter((item) => item.success)
-					.map((item) => item.data),
-			),
-		}),
-	}),
-});
-
-const getWatchedMovies = async (userName: string, since: DateTime): Promise<{ slug: string; tmdbId: number }[]> => {
-	try {
-		const response = await fetch(`https://letterboxd.com/${userName}/rss`);
-		const xml = await response.text();
-		const result = rssResponseSchema.parse(new XMLParser().parse(xml));
-		const moviesSince = result.rss.channel.item.filter((movie) => movie.pubDate > since);
-		return moviesSince.map((movie) => {
-			const slug = new URL(movie.link).pathname.split("/")[3] ?? "";
-			return {
-				slug,
-				tmdbId: movie["tmdb:movieId"],
-			};
-		});
-	} catch {
-		return [];
-	}
-};
+import { db, transaction } from "../db";
 
 type ScrapeResult = {
 	metadata: { count: number | null; watchlist: boolean; owner?: string; name?: string };
@@ -92,35 +37,62 @@ const getList = async (list: string): Promise<ScrapeResult> => {
 	return { metadata, movies };
 };
 
-const updateList = async (link: string) => {
+const selectName = (metadata: ScrapeResult["metadata"]): string => {
+	if (metadata.watchlist) {
+		const name = metadata.owner ?? "someone";
+		return `${name}'s watchlist`;
+	} else {
+		return metadata.name ?? "a list";
+	}
+};
+
+const putList = async (link: string) =>
+	updateList(
+		await db.list.upsert({
+			where: { link },
+			update: {},
+			create: {
+				link,
+				updatedAt: DateTime.now().minus({ day: Config.LETTERBOXD_LIST_UPDATE_INTERVAL_DAYS }).toJSDate(),
+				name: "loading...",
+			},
+			select: { link: true },
+		}),
+	);
+
+const updateList = async (list: { link: string }) => {
 	const now = DateTime.now();
-	const list = await db.list.upsert({
-		where: { link },
-		update: {},
-		create: {
-			link,
-			updatedAt: now.minus({ day: Config.LETTERBOXD_LIST_UPDATE_INTERVAL_DAYS }).toJSDate(),
-			name: "loading...",
-		},
-	});
+	const details = await getList(list.link);
+	// TODO if the details says it's not a list, maybe just delete it?
+	return transaction(async () => {
+		await db.listEntry.deleteMany({
+			where: { list },
+		});
 
-	// if (list.watchlist && list.owner) {
-	// 	const watched = await getWatchedMovies(list.owner, DateTime.fromJSDate(list.updatedAt));
-	// 	// TODO for each of these, we can freely attach a tmdbId
-	// 	await db.listEntry.deleteMany({
-	// 		where: { listLink: link, movieSlug: { in: watched.map(({ slug }) => slug) } },
-	// 	});
-	// }
+		await Promise.all(
+			details.movies.map(({ slug, index }) =>
+				db.listEntry.create({
+					data: {
+						movie: {
+							connectOrCreate: {
+								where: { slug },
+								create: { slug },
+							},
+						},
+						list: { connect: list },
+						index,
+					},
+				}),
+			),
+		);
 
-	const details = await getList(link);
-
-	await db.list.update({
-		where: {
-			link,
-		},
-		data: {
-			watchlist: details.metadata.watchlist,
-		},
+		await db.list.update({
+			where: list,
+			data: {
+				name: selectName(details.metadata),
+				updatedAt: now.toJSDate(),
+			},
+		});
 	});
 };
 
