@@ -5,6 +5,30 @@ model Language {
   screenings    Screening[]
 }
 
+model List {
+  link      String      @id
+  name      String
+  entries   ListEntry[]
+  updatedAt DateTime
+}
+
+model ListEntry {
+  listLink  String
+  list      List            @relation(fields: [listLink], references: [link])
+  movieSlug String
+  movie     LetterboxdMovie @relation(fields: [movieSlug], references: [slug])
+
+  index Int?
+
+  @@id([listLink, movieSlug])
+}
+
+model LetterboxdMovie {
+  slug    String      @id
+  tmdbId  Int?
+  entries ListEntry[]
+}
+
 model Movie {
   tmdbId Int @id
 
