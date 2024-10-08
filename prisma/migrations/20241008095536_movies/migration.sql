@@ -5,7 +5,16 @@ CREATE TABLE "Language" (
 
 -- CreateTable
 CREATE TABLE "Movie" (
-    "tmdbId" TEXT NOT NULL PRIMARY KEY
+    "tmdbId" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "title" TEXT NOT NULL,
+    "collectionId" INTEGER,
+    "imdbId" TEXT,
+    "posterPath" TEXT,
+    "tagline" TEXT,
+    "backdropPath" TEXT,
+    "updatedAt" DATETIME NOT NULL,
+    "languageId" TEXT NOT NULL,
+    CONSTRAINT "Movie_languageId_fkey" FOREIGN KEY ("languageId") REFERENCES "Language" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -15,7 +24,10 @@ CREATE TABLE "Screener" (
     "year" INTEGER NOT NULL,
     "runtime" INTEGER NOT NULL,
     "director" TEXT NOT NULL,
-    "tmdbId" TEXT,
+    "language" TEXT NOT NULL,
+    "tmdbId" INTEGER,
+    "searchedAt" DATETIME,
+    "searchCount" INTEGER NOT NULL DEFAULT 0,
     CONSTRAINT "Screener_tmdbId_fkey" FOREIGN KEY ("tmdbId") REFERENCES "Movie" ("tmdbId") ON DELETE SET NULL ON UPDATE CASCADE
 );
 
@@ -35,6 +47,7 @@ CREATE TABLE "Event" (
     "url" TEXT,
     "time" DATETIME NOT NULL,
     "productionId" TEXT NOT NULL,
+    "metadata" TEXT NOT NULL,
     CONSTRAINT "Event_productionId_fkey" FOREIGN KEY ("productionId") REFERENCES "Production" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -65,7 +78,7 @@ CREATE TABLE "City" (
 -- CreateTable
 CREATE TABLE "_LanguageToMovie" (
     "A" TEXT NOT NULL,
-    "B" TEXT NOT NULL,
+    "B" INTEGER NOT NULL,
     CONSTRAINT "_LanguageToMovie_A_fkey" FOREIGN KEY ("A") REFERENCES "Language" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "_LanguageToMovie_B_fkey" FOREIGN KEY ("B") REFERENCES "Movie" ("tmdbId") ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -79,7 +92,7 @@ CREATE TABLE "_LanguageToScreening" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Screener_name_year_runtime_director_key" ON "Screener"("name", "year", "runtime", "director");
+CREATE UNIQUE INDEX "Screener_name_year_runtime_director_language_key" ON "Screener"("name", "year", "runtime", "director", "language");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Screening_eventId_screenerId_key" ON "Screening"("eventId", "screenerId");
