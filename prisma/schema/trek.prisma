@@ -23,7 +23,7 @@ model Episode {
   views      View[]
   opinions   Opinion[]
   watchlists Watchlist[]
-  watchers   Viewer[]
+  viewings   Viewing[]
 
   // The different ways to sort the episodes.
   // Each is a unique int in that col.
@@ -34,16 +34,17 @@ model Episode {
 }
 
 model Watchlist {
-  id          String    @id @default(cuid())
+  id          String     @id @default(cuid())
   ownerId     String
-  owner       Viewer    @relation("Ownership", fields: [ownerId], references: [id])
-  watchers    Viewer[]  @relation("Watching")
+  owner       Viewer     @relation(fields: [ownerId], references: [id])
+  watchings   Viewing[]
+  bookmarks   Bookmark[]
   name        String
   description String
   /// JSON formatted string for the filters used to create this watchlist
   filters     String
   episodes    Episode[]
-  createdAt   DateTime  @default(now())
+  createdAt   DateTime   @default(now())
 }
 
 model Viewer {
@@ -53,13 +54,30 @@ model Viewer {
   name       String
   views      View[]
   opinions   Opinion[]
-  watchingId String?
-  watching   Watchlist?  @relation("Watching", fields: [watchingId], references: [id], onDelete: SetNull)
-  currentId  String?
-  current    Episode?    @relation(fields: [currentId], references: [id], onDelete: SetNull)
-  watchlists Watchlist[] @relation("Ownership")
+  watchlists Watchlist[]
+  viewings   Viewing[]
   /// JSON formatted string for the user's settings
   settings   String
+  bookmarks  Bookmark[]
+}
+
+model Viewing {
+  id          String    @id @default(cuid())
+  viewerId    String
+  viewer      Viewer    @relation(fields: [viewerId], references: [id])
+  cursor      String?
+  episode     Episode?  @relation(fields: [cursor], references: [id], onDelete: SetNull)
+  watchlistId String
+  watchlist   Watchlist @relation(fields: [watchlistId], references: [id], onDelete: Cascade)
+}
+
+model Bookmark {
+  viewerId    String
+  viewer      Viewer    @relation(fields: [viewerId], references: [id])
+  watchlistId String
+  watchlist   Watchlist @relation(fields: [viewerId], references: [id])
+
+  @@id([viewerId, watchlistId])
 }
 
 model Opinion {

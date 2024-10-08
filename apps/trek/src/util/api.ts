@@ -2,7 +2,7 @@ import type { CurrentlyWatching } from "../../../../src/trek/operations/getCurre
 import type { SeriesCollection } from "../../../../src/trek/operations/getSeries";
 import type { LogEpisodePayload } from "../../../../src/trek/operations/logEpisode";
 
-const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Mn0.hloW4K9TeFlUDNzNoHrvd9OWEKksZhmAI74F1aN3sGI";
+const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NH0.GYYWl8RRFw1OhMHbESEFNmFjVOlczO5gNlMxPmyRFF4";
 
 type Options = {
 	method?: string;

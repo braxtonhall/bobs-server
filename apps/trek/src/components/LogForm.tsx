@@ -21,7 +21,7 @@ export const LogForm = (props: { episode: Episode; logEpisode: typeof logEpisode
 
 	return (
 		<>
-			<Box>
+			<Box bgcolor="#ffffffbd">
 				<Form
 					onSubmit={(event) => {
 						event.preventDefault();
