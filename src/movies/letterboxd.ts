@@ -3,12 +3,12 @@ import xray from "./util/x-ray";
 import Config from "../Config";
 import { db, transaction } from "../db";
 
-type ScrapeResult = {
+type ListScrapeResult = {
 	metadata: { count: number | null; watchlist: boolean; owner?: string; name?: string };
 	movies: { slug: string; index?: number }[];
 };
 
-const scrapeList = async (list: string): Promise<ScrapeResult> =>
+const scrapeList = async (list: string): Promise<ListScrapeResult> =>
 	xray(list, {
 		metadata: {
 			count: ".js-watchlist-count | parseInt",
@@ -26,7 +26,15 @@ const scrapeList = async (list: string): Promise<ScrapeResult> =>
 			.limit(Config.LETTERBOXD_LIST_PAGE_LIMIT),
 	});
 
-const getList = async (list: string): Promise<ScrapeResult> => {
+export const getTmdbId = async (slug: string): Promise<number | null> => {
+	try {
+		return await xray(`https://letterboxd.com/film/${slug}/`, "body.film@data-tmdb-id | parseInt");
+	} catch {
+		return null;
+	}
+};
+
+const getList = async (list: string): Promise<ListScrapeResult> => {
 	// TODO get the first page. assess how many pages there are. get the remaining pages
 	//  if the number of films found matches the expected number of films, exit
 	//  else do a second search just in case :)
@@ -37,7 +45,7 @@ const getList = async (list: string): Promise<ScrapeResult> => {
 	return { metadata, movies };
 };
 
-const selectName = (metadata: ScrapeResult["metadata"]): string => {
+const selectName = (metadata: ListScrapeResult["metadata"]): string => {
 	if (metadata.watchlist) {
 		const name = metadata.owner ?? "someone";
 		return `${name}'s watchlist`;
@@ -46,21 +54,23 @@ const selectName = (metadata: ScrapeResult["metadata"]): string => {
 	}
 };
 
-const putList = async (link: string) =>
+export const putList = async (link: string) =>
+	// TODO this code goes into putList
 	updateList(
 		await db.list.upsert({
 			where: { link },
 			update: {},
 			create: {
 				link,
-				updatedAt: DateTime.now().minus({ day: Config.LETTERBOXD_LIST_UPDATE_INTERVAL_DAYS }).toJSDate(),
+				updatedAt: DateTime.now().minus({ day: Config.LETTERBOXD_LIST_UPDATE_DELAY_DAYS }).toJSDate(),
 				name: "loading...",
 			},
 			select: { link: true },
 		}),
 	);
 
-const updateList = async (list: { link: string }) => {
+export const updateList = async (list: { link: string }) => {
+	// TODO most of this code goes into updateLists.
 	const now = DateTime.now();
 	const details = await getList(list.link);
 	// TODO if the details says it's not a list, maybe just delete it?
@@ -96,11 +106,12 @@ const updateList = async (list: { link: string }) => {
 	});
 };
 
-const run = async () => scrapeList("https://letterboxd.com/journal/");
-
 if (require.main === module) {
-	run()
+	getTmdbId("fpppppp")
 		.then(console.log)
 		.then(() => process.exit(0))
-		.catch(() => process.exit(1));
+		.catch((error) => {
+			console.error(error);
+			process.exit(1);
+		});
 }

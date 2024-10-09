@@ -14,7 +14,7 @@ model List {
 
 model ListEntry {
   listLink  String
-  list      List            @relation(fields: [listLink], references: [link])
+  list      List            @relation(fields: [listLink], references: [link], onDelete: Cascade)
   movieSlug String
   movie     LetterboxdMovie @relation(fields: [movieSlug], references: [slug])
 
@@ -24,9 +24,11 @@ model ListEntry {
 }
 
 model LetterboxdMovie {
-  slug    String      @id
-  tmdbId  Int?
-  entries ListEntry[]
+  slug        String      @id
+  tmdbId      Int?
+  searchedAt  DateTime?
+  searchCount Int         @default(0)
+  entries     ListEntry[]
 }
 
 model Movie {

@@ -38,6 +38,7 @@ export default z
 		MINIMUM_GRACE_DAYS: z.coerce.number().nonnegative().default(7),
 		TMDB_API_KEY: z.string(),
 		LETTERBOXD_LIST_PAGE_LIMIT: z.coerce.number().positive().default(300),
-		LETTERBOXD_LIST_UPDATE_INTERVAL_DAYS: z.coerce.number().positive().default(7),
+		LETTERBOXD_LIST_UPDATE_INTERVAL_HOURS: z.coerce.number().nonnegative().default(4),
+		LETTERBOXD_LIST_UPDATE_DELAY_DAYS: z.coerce.number().nonnegative().default(7),
 	})
 	.parse(process.env);
