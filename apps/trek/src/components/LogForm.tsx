@@ -1,4 +1,3 @@
-import type { CurrentlyWatching, logEpisode } from "../util/api";
 import { Button, Box, Checkbox, FormGroup, FormControlLabel, Rating, TextField } from "@mui/material";
 import { Tags } from "./Tags";
 import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon";
@@ -8,10 +7,12 @@ import { Form } from "react-router-dom";
 import { useState } from "react";
 import { HistoryEduRounded, FavoriteBorderRounded, FavoriteRounded } from "@mui/icons-material";
 import { DateTime } from "luxon";
+import { API } from "../util/api";
 
-type Episode = NonNullable<CurrentlyWatching["watching"]>["episodes"][number];
+type Viewing = Awaited<ReturnType<API["getCurrentlyWatching"]["query"]>>["viewings"][number];
+type Episode = Viewing["watchlist"]["episodes"][number];
 
-export const LogForm = (props: { episode: Episode; logEpisode: typeof logEpisode }) => {
+export const LogForm = (props: { episode: Episode; logEpisode: API["logEpisode"]["mutate"] }) => {
 	const [tags, setTags] = useState<string[]>([]);
 	const [date, setDate] = useState<DateTime | null>(DateTime.now());
 	const [rating, setRating] = useState<number | null>(null);

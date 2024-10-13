@@ -1,12 +1,13 @@
 import { useState, useMemo } from "react";
 import { TextField, Autocomplete } from "@mui/material";
-import { getTags } from "../util/api";
+import { api } from "../util/api";
 
 export const Tags = (props: { tags: string[]; setTags: (tags: string[]) => void }) => {
 	const [options, setOptions] = useState<string[]>([]);
 	const [inputString, setInputString] = useState("");
+	// TODO save last used tags and have them set as default values????
 
-	useMemo(() => void getTags().then(setOptions), []);
+	useMemo(() => void api.getViewerTags.query().then(setOptions), []);
 
 	return (
 		<Autocomplete

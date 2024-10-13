@@ -1,5 +1,5 @@
 import { Box, CircularProgress, Fade, Card, CardContent, CardMedia, Typography, Button, Stack } from "@mui/material";
-import { CurrentlyWatching, logEpisode, SeriesCollection } from "../../util/api";
+import { API } from "../../util/api";
 import { ReactElement } from "react";
 import { Link } from "react-router-dom";
 import useMediaQuery from "@mui/material/useMediaQuery";
@@ -7,20 +7,22 @@ import { InfoRounded, RedoRounded, UndoRounded } from "@mui/icons-material";
 import { LogForm } from "../LogForm";
 import { DateTime } from "luxon";
 
-const NEXT_FEW_COUNT = 3;
+const NEXT_FEW_COUNT = 2;
+
+type SeriesCollection = Awaited<ReturnType<API["getSeries"]["query"]>>;
 
 interface WatchProps {
-	currently: CurrentlyWatching | null;
+	viewings: Awaited<ReturnType<API["getCurrentlyWatching"]["query"]>>["viewings"];
 	series: SeriesCollection | null;
-	setCursor: (id: string | null) => void;
-	logEpisode: typeof logEpisode;
+	setCursor: API["updateCursor"]["mutate"];
+	logEpisode: API["logEpisode"]["mutate"];
 }
 
 const Watch = (props: WatchProps) => {
 	return (
 		<>
 			<Box position="relative" width="100%" boxSizing="border-box">
-				<Fade in={props.currently === null} unmountOnExit>
+				<Fade in={props.viewings.length === 0} unmountOnExit>
 					<Box
 						position="absolute"
 						height="100%"
@@ -34,20 +36,18 @@ const Watch = (props: WatchProps) => {
 						<CircularProgress />
 					</Box>
 				</Fade>
-				{props.currently && props.series ? (
-					props.currently.watching ? (
+				{props.viewings.length && props.series ? (
+					props.viewings.map((viewing) => (
 						<WatchContent
-							watchlist={props.currently.watching}
-							current={props.currently.current}
-							series={props.series}
+							key={viewing.id}
+							viewing={viewing}
+							series={props.series! /* TODO ??? */}
 							setCursor={props.setCursor}
 							logEpisode={props.logEpisode}
 						/>
-					) : (
-						<WatchInactive />
-					)
+					))
 				) : (
-					<></>
+					<WatchInactive />
 				)}
 			</Box>
 		</>
@@ -55,48 +55,59 @@ const Watch = (props: WatchProps) => {
 };
 
 type WatchContentProps = {
-	watchlist: NonNullable<CurrentlyWatching["watching"]>;
-	current: CurrentlyWatching["current"];
+	viewing: WatchProps["viewings"][number];
 	series: SeriesCollection;
-	setCursor: (id: string | null) => void;
-	logEpisode: typeof logEpisode;
+	setCursor: API["updateCursor"]["mutate"];
+	logEpisode: API["logEpisode"]["mutate"];
 };
 
-const WatchContent = (props: WatchContentProps) => {
+const WatchContent = ({ viewing, series, setCursor, logEpisode }: WatchContentProps) => {
 	// TODO what should happen if you are DONE???
 
-	const index = props.watchlist.episodes.findIndex(({ id }) => id === props.current?.id);
-	const last = props.watchlist.episodes[index - 1];
-	const current = props.watchlist.episodes[index];
-	const following = props.watchlist.episodes.slice(index + 1, index + 1 + NEXT_FEW_COUNT);
+	const index = viewing.watchlist.episodes.findIndex(({ id }) => id === viewing.cursor);
+	const last = viewing.watchlist.episodes[index - 1];
+	const current = viewing.watchlist.episodes[index];
+	const following = viewing.watchlist.episodes.slice(index + 1, index + 1 + NEXT_FEW_COUNT);
 
 	return (
 		<>
-			<h1>{props.watchlist.name}</h1>
-			<h2>{props.watchlist.description}</h2>
-			{last ? <LastEpisode episode={last} series={props.series} setCursor={props.setCursor} /> : <></>}
+			<h1>{viewing.watchlist.name}</h1>
+			<h2>{viewing.watchlist.description}</h2>
+			{last ? <LastEpisode viewingId={viewing.id} episode={last} series={series} setCursor={setCursor} /> : <></>}
 			{current ? (
 				<Upcoming
+					viewingId={viewing.id}
 					episode={current}
-					series={props.series}
-					following={following}
-					setCursor={props.setCursor}
-					logEpisode={props.logEpisode}
+					series={series}
+					setCursor={setCursor}
+					logEpisode={logEpisode}
+					next={following[0]?.id ?? null}
 				/>
 			) : (
 				<></>
 			)}
+			{following.map((episode) => (
+				<UpcomingEpisode episode={episode} series={series} key={episode.id} />
+			))}
 		</>
 	);
 };
 
-type Episode = WatchContentProps["watchlist"]["episodes"][number];
+type Episode = WatchContentProps["viewing"]["watchlist"]["episodes"][number];
 
-const LastEpisode = (props: { episode: Episode; series: SeriesCollection; setCursor: (id: string | null) => void }) => (
+const LastEpisode = (props: {
+	episode: Episode;
+	viewingId: string;
+	series: SeriesCollection;
+	setCursor: API["updateCursor"]["mutate"];
+}) => (
 	<>
 		Last Episode
 		<EpisodeCard episode={props.episode} series={props.series} small={true}>
-			<Button variant="outlined" onClick={() => props.setCursor(props.episode.id)}>
+			<Button
+				variant="outlined"
+				onClick={() => props.setCursor({ viewingId: props.viewingId, episodeId: props.episode.id })}
+			>
 				<UndoRounded />
 			</Button>
 		</EpisodeCard>
@@ -108,23 +119,29 @@ const DESCRIPTION =
 	"Kirk and his crew are at deadly risk from an alien creature that feeds on the salt in a human body and can take on any form.";
 
 const Upcoming = (props: {
+	viewingId: string;
 	episode: Episode;
+	next: string | null;
 	series: SeriesCollection;
-	following: Episode[];
-	setCursor: (id: string | null) => void;
-	logEpisode: typeof logEpisode;
+	setCursor: API["updateCursor"]["mutate"];
+	logEpisode: API["logEpisode"]["mutate"];
 }) => (
 	<>
 		Upcoming
 		<EpisodeCard episode={props.episode} series={props.series} small={false} key={props.episode.id}>
 			<LogForm episode={props.episode} logEpisode={props.logEpisode} />
-			<Button variant="outlined" onClick={() => props.setCursor(props.following[0]?.id ?? null)}>
+			<Button
+				variant="outlined"
+				onClick={() =>
+					props.setCursor({
+						viewingId: props.viewingId,
+						episodeId: props.next,
+					})
+				}
+			>
 				<RedoRounded />
 			</Button>
 		</EpisodeCard>
-		{props.following.map((episode) => (
-			<UpcomingEpisode episode={episode} series={props.series} key={episode.id} />
-		))}
 	</>
 );
 

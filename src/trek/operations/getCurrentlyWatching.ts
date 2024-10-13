@@ -1,7 +1,5 @@
 import { db } from "../../db";
 
-export type CurrentlyWatching = Awaited<ReturnType<typeof getCurrentlyWatching>>;
-
 const PAGE_SIZE = 10;
 
 export const getCurrentlyWatching = async (viewerId: string, cursor: string | undefined) => {
@@ -20,7 +18,7 @@ export const getCurrentlyWatching = async (viewerId: string, cursor: string | un
 			watchlist: {
 				include: {
 					episodes: {
-						select: {
+						include: {
 							opinions: {
 								where: {
 									viewerId,
@@ -44,9 +42,12 @@ export const getCurrentlyWatching = async (viewerId: string, cursor: string | un
 	if (viewings.length > PAGE_SIZE) {
 		return {
 			viewings: viewings.slice(0, -1),
-			cursor: viewings[viewings.length - 1].id,
+			cursor: viewings[viewings.length - 1].id as string | undefined,
 		};
 	} else {
-		return { viewings };
+		return {
+			viewings,
+			cursor: undefined as string | undefined,
+		};
 	}
 };

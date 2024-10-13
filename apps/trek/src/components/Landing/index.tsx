@@ -7,53 +7,58 @@ import Shuffle from "./Shuffle";
 import Activity from "./Activity";
 import List from "./List";
 import Settings from "./Settings";
-import {
-	getCurrentlyWatching,
-	SeriesCollection,
-	getSeries,
-	CurrentlyWatching,
-	updateCursor,
-	logEpisode,
-} from "../../util/api";
+import { API, api } from "../../util/api";
 
 const Landing = () => {
 	const [tab, setTab] = useState("watch");
-	const [series, setSeries] = useState<SeriesCollection | null>(null);
-	const [currently, setCurrently] = useState<CurrentlyWatching | null>(null);
+	const [series, setSeries] = useState<Awaited<ReturnType<API["getSeries"]["query"]>> | null>(null);
+	const [viewings, setViewings] = useState<Awaited<ReturnType<API["getCurrentlyWatching"]["query"]>>["viewings"]>([]);
 
-	useEffect(
-		() =>
-			void Promise.all([getCurrentlyWatching(), getSeries()]).then(([watching, series]) => {
-				setSeries(series);
-				setCurrently(watching);
-			}),
-		[],
-	);
-
-	const setCursor = (id: string | null) => {
-		if (currently) {
-			void updateCursor(id);
-			setCurrently({
-				...currently,
-				current: id ? { id } : null,
+	useEffect(() => void api.getSeries.query().then(setSeries), []);
+	useEffect(() => {
+		void api.getCurrentlyWatching.query().then(function getRemainingSeries({ cursor, viewings }) {
+			setViewings((existing) => {
+				const newViewings = [...existing, ...viewings];
+				const viewingsById = Object.fromEntries(newViewings.map((viewing) => [viewing.id, viewing]));
+				return Object.values(viewingsById);
 			});
-		}
+			if (cursor) {
+				void api.getCurrentlyWatching.query(cursor).then(getRemainingSeries);
+			}
+		});
+	}, []);
+
+	const setCursor: API["updateCursor"]["mutate"] = (env) => {
+		const promise = api.updateCursor.mutate(env);
+		const updated = viewings.map((viewing) => {
+			if (viewing.id === env.viewingId) {
+				return {
+					...viewing,
+					cursor: env.episodeId,
+				};
+			} else {
+				return viewing;
+			}
+		});
+		setViewings(updated);
+		return promise;
 	};
 
-	const logAndSetEpisode: typeof logEpisode = (env) => {
-		void logEpisode(env);
-		if (currently?.current?.id === env.episodeId) {
-			const currentIndex = currently.watching?.episodes.findIndex(({ id }) => id === env.episodeId);
-			if (typeof currently.watching?.episodes[currentIndex ?? -1]?._count.views === "number") {
-				currently.watching.episodes[currentIndex ?? -1]._count.views++;
+	const logAndSetEpisode: API["logEpisode"]["mutate"] = (env) => {
+		const promise = api.logEpisode.mutate(env);
+		const updated = viewings.map((viewing) => {
+			if (viewing.cursor === env.episodeId) {
+				const currentIndex = viewing.watchlist.episodes.findIndex(({ id }) => id === env.episodeId);
+				if (currentIndex >= 0) {
+					viewing.watchlist.episodes[currentIndex]._count.views++;
+					const next = viewing.watchlist.episodes[currentIndex + 1];
+					viewing.cursor = next?.id ?? null;
+				}
 			}
-			const nextIndex = typeof currentIndex === "number" ? currentIndex + 1 : -1;
-			const next = currently.watching?.episodes[nextIndex];
-			setCurrently({
-				...currently,
-				current: next ? { id: next.id } : null,
-			});
-		}
+			return viewing;
+		});
+		setViewings(updated);
+		return promise;
 	};
 
 	return (
@@ -69,7 +74,7 @@ const Landing = () => {
 					</TabList>
 				</Box>
 				<TabPanel value="watch">
-					<Watch currently={currently} series={series} setCursor={setCursor} logEpisode={logAndSetEpisode} />
+					<Watch viewings={viewings} series={series} setCursor={setCursor} logEpisode={logAndSetEpisode} />
 				</TabPanel>
 				<TabPanel value="random">
 					<Shuffle></Shuffle>
