@@ -1,0 +1,3521 @@
+[
+	{
+		"theatre": {
+			"url": "https://www.eyefilm.nl/",
+			"name": "Eye Filmmuseum",
+			"logoUrl": "https://www.eyefilm.nl/images/loader-eye.gif",
+			"city": "amsterdam"
+		},
+		"productions": [
+			{
+				"name": "Tatami",
+				"url": "https://www.eyefilm.nl/en/whats-on/tatami/1319230",
+				"events": [
+					{
+						"time": "2024-09-02T10:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/tatami/1319230?show=1338039",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Tatami",
+									"year": 2023,
+									"runtime": 104
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-02T18:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/tatami/1319230?show=1338076",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Tatami",
+									"year": 2023,
+									"runtime": 104
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-03T20:45:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/tatami/1319230?show=1337558",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Tatami",
+									"year": 2023,
+									"runtime": 104
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-04T19:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/tatami/1319230?show=1337609",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Tatami",
+									"year": 2023,
+									"runtime": 104
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Fremont",
+				"url": "https://www.eyefilm.nl/en/whats-on/fremont/1286679",
+				"events": [
+					{
+						"time": "2024-09-02T10:45:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/fremont/1286679?show=1338042",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": "dcp",
+								"screener": {
+									"name": "Fremont",
+									"year": 2023,
+									"runtime": 88
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-03T10:45:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/fremont/1286679?show=1338091",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Fremont",
+									"year": 2023,
+									"runtime": 88
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-04T21:45:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/fremont/1286679?show=1337618",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": "dcp",
+								"screener": {
+									"name": "Fremont",
+									"year": 2023,
+									"runtime": 88
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Mal Viver",
+				"url": "https://www.eyefilm.nl/en/whats-on/mal-viver/1266503",
+				"events": [
+					{
+						"time": "2024-09-02T11:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/mal-viver/1266503?show=1338045",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Mal Viver",
+									"year": 2023,
+									"runtime": 127
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-03T11:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/mal-viver/1266503?show=1338102",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Mal Viver",
+									"year": 2023,
+									"runtime": 127
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-04T18:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/mal-viver/1266503?show=1337606",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": "dcp",
+								"screener": {
+									"name": "Mal Viver",
+									"year": 2023,
+									"runtime": 127
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Trailblazing Taiwan 360°",
+				"url": "https://www.eyefilm.nl/en/whats-on/trailblazing-taiwan-360deg/1310535",
+				"events": [
+					{
+						"time": "2024-09-02T12:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/trailblazing-taiwan-360deg/1310535?show=1310778",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": null,
+								"screener": {
+									"name": "Trailblazing Taiwan 360°",
+									"year": null,
+									"runtime": 37
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-04T12:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/trailblazing-taiwan-360deg/1310535?show=1310781",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": null,
+								"screener": {
+									"name": "Trailblazing Taiwan 360°",
+									"year": null,
+									"runtime": 37
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-05T12:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/trailblazing-taiwan-360deg/1310535?show=1310784",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": null,
+								"screener": {
+									"name": "Trailblazing Taiwan 360°",
+									"year": null,
+									"runtime": 37
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-09T12:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/trailblazing-taiwan-360deg/1310535?show=1310787",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": null,
+								"screener": {
+									"name": "Trailblazing Taiwan 360°",
+									"year": null,
+									"runtime": 37
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-11T12:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/trailblazing-taiwan-360deg/1310535?show=1310790",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": null,
+								"screener": {
+									"name": "Trailblazing Taiwan 360°",
+									"year": null,
+									"runtime": 37
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-12T12:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/trailblazing-taiwan-360deg/1310535?show=1310793",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": null,
+								"screener": {
+									"name": "Trailblazing Taiwan 360°",
+									"year": null,
+									"runtime": 37
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-14T12:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/trailblazing-taiwan-360deg/1310535?show=1310796",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": null,
+								"screener": {
+									"name": "Trailblazing Taiwan 360°",
+									"year": null,
+									"runtime": 37
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-16T12:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/trailblazing-taiwan-360deg/1310535?show=1310799",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": null,
+								"screener": {
+									"name": "Trailblazing Taiwan 360°",
+									"year": null,
+									"runtime": 37
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Mantagheye bohrani",
+				"url": "https://www.eyefilm.nl/en/whats-on/critical-zone/1310865",
+				"events": [
+					{
+						"time": "2024-09-02T12:45:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/critical-zone/1310865?show=1338048",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Mantagheye bohrani",
+									"year": 2023,
+									"runtime": 99
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-03T21:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/critical-zone/1310865?show=1337564",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Mantagheye bohrani",
+									"year": 2023,
+									"runtime": 99
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-04T10:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/critical-zone/1310865?show=1337567",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Mantagheye bohrani",
+									"year": 2023,
+									"runtime": 99
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Peak Season",
+				"url": "https://www.eyefilm.nl/en/whats-on/peak-season/1266506",
+				"events": [
+					{
+						"time": "2024-09-02T13:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/peak-season/1266506?show=1338051",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Peak Season",
+									"year": 2023,
+									"runtime": 82
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-02T19:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/peak-season/1266506?show=1338079",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Peak Season",
+									"year": 2023,
+									"runtime": 82
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-03T16:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/peak-season/1266506?show=1338121",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Peak Season",
+									"year": 2023,
+									"runtime": 82
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-03T21:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/peak-season/1266506?show=1337561",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Peak Season",
+									"year": 2023,
+									"runtime": 82
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-04T17:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/peak-season/1266506?show=1337603",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Peak Season",
+									"year": 2023,
+									"runtime": 82
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Animal",
+				"url": "https://www.eyefilm.nl/en/whats-on/animal/1266535",
+				"events": [
+					{
+						"time": "2024-09-02T13:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/animal/1266535?show=1338054",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Animal",
+									"year": 2023,
+									"runtime": 116
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-03T13:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/animal/1266535?show=1338106",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Animal",
+									"year": 2023,
+									"runtime": 116
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Memory",
+				"url": "https://www.eyefilm.nl/en/whats-on/memory/1310868",
+				"events": [
+					{
+						"time": "2024-09-02T14:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/memory/1310868?show=1338057",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Memory",
+									"year": 2023,
+									"runtime": 103
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-03T11:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/memory/1310868?show=1338095",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Memory",
+									"year": 2023,
+									"runtime": 103
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-04T15:45:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/memory/1310868?show=1337594",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Memory",
+									"year": 2023,
+									"runtime": 103
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Bên trong vo kén vàng",
+				"url": "https://www.eyefilm.nl/en/whats-on/inside-the-yellow-cocoon-shell/1266500",
+				"events": [
+					{
+						"time": "2024-09-02T14:45:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/inside-the-yellow-cocoon-shell/1266500?show=1338060",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": "dcp",
+								"screener": {
+									"name": "Bên trong vo kén vàng",
+									"year": 2023,
+									"runtime": 179
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-03T13:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/inside-the-yellow-cocoon-shell/1266500?show=1338110",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Bên trong vo kén vàng",
+									"year": 2023,
+									"runtime": 179
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Ser ser salhi",
+				"url": "https://www.eyefilm.nl/en/whats-on/city-of-wind/1310862",
+				"events": [
+					{
+						"time": "2024-09-02T15:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/city-of-wind/1310862?show=1338063",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Ser ser salhi",
+									"year": 2023,
+									"runtime": 104
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-03T18:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/city-of-wind/1310862?show=1338134",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Ser ser salhi",
+									"year": 2023,
+									"runtime": 104
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-04T11:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/city-of-wind/1310862?show=1337573",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Ser ser salhi",
+									"year": 2023,
+									"runtime": 104
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "The Ladykillers (2004)",
+				"url": "https://www.eyefilm.nl/en/whats-on/the-ladykillers-2004/1270020",
+				"events": [
+					{
+						"time": "2024-09-02T16:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/the-ladykillers-2004/1270020?show=1270345",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "35mm",
+								"screener": {
+									"name": "The Ladykillers (2004)",
+									"year": 2004,
+									"runtime": 104
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Los reyes del mundo",
+				"url": "https://www.eyefilm.nl/en/whats-on/los-reyes-del-mundo/1331955",
+				"events": [
+					{
+						"time": "2024-09-02T16:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/los-reyes-del-mundo/1331955?show=1338066",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": "dcp",
+								"screener": {
+									"name": "Los reyes del mundo",
+									"year": 2022,
+									"runtime": 111
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-02T20:45:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/los-reyes-del-mundo/1331955?show=1338082",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": "dcp",
+								"screener": {
+									"name": "Los reyes del mundo",
+									"year": 2022,
+									"runtime": 111
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-03T17:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/los-reyes-del-mundo/1331955?show=1338125",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": "dcp",
+								"screener": {
+									"name": "Los reyes del mundo",
+									"year": 2022,
+									"runtime": 111
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-04T21:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/los-reyes-del-mundo/1331955?show=1337612",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": "dcp",
+								"screener": {
+									"name": "Los reyes del mundo",
+									"year": 2022,
+									"runtime": 111
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Daaaaaalí",
+				"url": "https://www.eyefilm.nl/en/whats-on/daaaaaali/1319213",
+				"events": [
+					{
+						"time": "2024-09-02T17:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/daaaaaali/1319213?show=1338070",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Daaaaaalí",
+									"year": 2023,
+									"runtime": 78
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-02T21:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/daaaaaali/1319213?show=1338088",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": "dcp",
+								"screener": {
+									"name": "Daaaaaalí",
+									"year": 2023,
+									"runtime": 78
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-03T14:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/daaaaaali/1319213?show=1338118",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Daaaaaalí",
+									"year": 2023,
+									"runtime": 78
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-03T19:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/daaaaaali/1319213?show=1338137",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": "dcp",
+								"screener": {
+									"name": "Daaaaaalí",
+									"year": 2023,
+									"runtime": 78
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-04T16:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/daaaaaali/1319213?show=1337597",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Daaaaaalí",
+									"year": 2023,
+									"runtime": 78
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Bulworth",
+				"url": "https://www.eyefilm.nl/en/whats-on/bulworth/1268665",
+				"events": [
+					{
+						"time": "2024-09-02T18:45:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/bulworth/1268665?show=1272532",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": "dcp",
+								"screener": {
+									"name": "Bulworth",
+									"year": 1998,
+									"runtime": 108
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Ukjent Landskap",
+				"url": "https://www.eyefilm.nl/en/whats-on/a-new-kind-of-wilderness/1323627",
+				"events": [
+					{
+						"time": "2024-09-02T19:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/a-new-kind-of-wilderness/1323627?show=1338275",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Ukjent Landskap",
+									"year": 2024,
+									"runtime": 84
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-03T11:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/a-new-kind-of-wilderness/1323627?show=1338278",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Ukjent Landskap",
+									"year": 2024,
+									"runtime": 84
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-03T17:45:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/a-new-kind-of-wilderness/1323627?show=1338281",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Ukjent Landskap",
+									"year": 2024,
+									"runtime": 84
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-04T10:05:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/a-new-kind-of-wilderness/1323627?show=1338284",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Ukjent Landskap",
+									"year": 2024,
+									"runtime": 84
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-04T14:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/a-new-kind-of-wilderness/1323627?show=1338287",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Ukjent Landskap",
+									"year": 2024,
+									"runtime": 84
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Viver Mal",
+				"url": "https://www.eyefilm.nl/en/whats-on/viver-mal/1267070",
+				"events": [
+					{
+						"time": "2024-09-02T21:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/viver-mal/1267070?show=1338085",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": "dcp",
+								"screener": {
+									"name": "Viver Mal",
+									"year": 2023,
+									"runtime": 124
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-03T18:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/viver-mal/1267070?show=1338131",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Viver Mal",
+									"year": 2023,
+									"runtime": 124
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-04T10:45:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/viver-mal/1267070?show=1337570",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Viver Mal",
+									"year": 2023,
+									"runtime": 124
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "The Man Who Wasn't There",
+				"url": "https://www.eyefilm.nl/en/whats-on/the-man-who-wasnt-there/1270023",
+				"events": [
+					{
+						"time": "2024-09-02T21:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/the-man-who-wasnt-there/1270023?show=1270348",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": "dcp",
+								"screener": {
+									"name": "The Man Who Wasn't There",
+									"year": 2001,
+									"runtime": 116
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Kinds of Kindness",
+				"url": "https://www.eyefilm.nl/en/whats-on/kinds-of-kindness/1288618",
+				"events": [
+					{
+						"time": "2024-09-03T14:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/kinds-of-kindness/1288618?show=1338114",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Kinds of Kindness",
+									"year": 2024,
+									"runtime": 164
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "True Grit",
+				"url": "https://www.eyefilm.nl/en/whats-on/true-grit/1282646",
+				"events": [
+					{
+						"time": "2024-09-03T16:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/true-grit/1282646?show=1282675",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": "dcp",
+								"screener": {
+									"name": "True Grit",
+									"year": 2010,
+									"runtime": 110
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Medea, Opera & Film",
+				"url": "https://www.eyefilm.nl/en/whats-on/medea-opera-film/1292727",
+				"events": [
+					{
+						"time": "2024-09-03T20:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/medea-opera-film/1292727?show=1292736",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": null,
+								"screener": {
+									"name": "Medea, Opera & Film",
+									"year": null,
+									"runtime": 208
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Il pleut dans la maison",
+				"url": "https://www.eyefilm.nl/en/whats-on/il-pleut-dans-la-maison/1289618",
+				"events": [
+					{
+						"time": "2024-09-04T12:45:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/il-pleut-dans-la-maison/1289618?show=1337576",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Il pleut dans la maison",
+									"year": 2023,
+									"runtime": 81
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Spoorloos",
+				"url": "https://www.eyefilm.nl/en/whats-on/spoorloos/1255889",
+				"events": [
+					{
+						"time": "2024-09-04T13:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/spoorloos/1255889?show=1337579",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Spoorloos",
+									"year": 1988,
+									"runtime": 106
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Inside Out - Binnenstebuiten 2",
+				"url": "https://www.eyefilm.nl/en/whats-on/inside-out-2/1305133",
+				"events": [
+					{
+						"time": "2024-09-04T13:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/inside-out-2/1305133?show=1337582",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Inside Out - Binnenstebuiten 2",
+									"year": 2024,
+									"runtime": 96
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "La piscine",
+				"url": "https://www.eyefilm.nl/en/whats-on/la-piscine/1324783",
+				"events": [
+					{
+						"time": "2024-09-04T14:45:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/la-piscine/1324783?show=1337588",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "La piscine",
+									"year": 1968,
+									"runtime": 120
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Dikkie Dik en de verdwenen knuffel",
+				"url": "https://www.eyefilm.nl/en/whats-on/dikkie-dik-en-de-verdwenen-knuffel/1283433",
+				"events": [
+					{
+						"time": "2024-09-04T15:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/dikkie-dik-en-de-verdwenen-knuffel/1283433?show=1337591",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": "dcp",
+								"screener": {
+									"name": "Dikkie Dik en de verdwenen knuffel",
+									"year": 2024,
+									"runtime": 62
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Le procès Goldman",
+				"url": "https://www.eyefilm.nl/en/whats-on/le-proces-goldman/1267082",
+				"events": [
+					{
+						"time": "2024-09-04T17:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/le-proces-goldman/1267082?show=1337600",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Le procès Goldman",
+									"year": 2023,
+									"runtime": 116
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Gloria",
+				"url": "https://www.eyefilm.nl/en/whats-on/gloria/1335199",
+				"events": [
+					{
+						"time": "2024-09-04T18:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/gloria/1335199?show=1335202",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "35mm",
+								"screener": {
+									"name": "Gloria",
+									"year": 1980,
+									"runtime": 123
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Inside Llewyn Davis",
+				"url": "https://www.eyefilm.nl/en/whats-on/inside-llewyn-davis/1270011",
+				"events": [
+					{
+						"time": "2024-09-04T19:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/inside-llewyn-davis/1270011?show=1270351",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Inside Llewyn Davis",
+									"year": 2013,
+									"runtime": 105
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Femme",
+				"url": "https://www.eyefilm.nl/en/whats-on/femme/1297478",
+				"events": [
+					{
+						"time": "2024-09-04T21:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/femme/1297478?show=1337615",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Femme",
+									"year": 2023,
+									"runtime": 99
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Hail, Caesar!",
+				"url": "https://www.eyefilm.nl/en/whats-on/hail-caesar/1270005",
+				"events": [
+					{
+						"time": "2024-09-04T21:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/hail-caesar/1270005?show=1270354",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": "dcp",
+								"screener": {
+									"name": "Hail, Caesar!",
+									"year": 2016,
+									"runtime": 106
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "The Hudsucker Proxy",
+				"url": "https://www.eyefilm.nl/en/whats-on/the-hudsucker-proxy/1268238",
+				"events": [
+					{
+						"time": "2024-09-05T16:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/the-hudsucker-proxy/1268238?show=1268378",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "35mm",
+								"screener": {
+									"name": "The Hudsucker Proxy",
+									"year": 1994,
+									"runtime": 111
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Miller's Crossing",
+				"url": "https://www.eyefilm.nl/en/whats-on/millers-crossing/1270085",
+				"events": [
+					{
+						"time": "2024-09-05T19:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/millers-crossing/1270085?show=1270357",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": null,
+								"screener": {
+									"name": "Miller's Crossing",
+									"year": 1990,
+									"runtime": 113
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "San qiang pai an jing qi",
+				"url": "https://www.eyefilm.nl/en/whats-on/a-woman-a-gun-and-a-noodle-shop/1297469",
+				"events": [
+					{
+						"time": "2024-09-05T21:45:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/a-woman-a-gun-and-a-noodle-shop/1297469?show=1298118",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": "dcp",
+								"screener": {
+									"name": "San qiang pai an jing qi",
+									"year": 2009,
+									"runtime": 95
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Christmas in July",
+				"url": "https://www.eyefilm.nl/en/whats-on/christmas-in-july/1268235",
+				"events": [
+					{
+						"time": "2024-09-06T16:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/christmas-in-july/1268235?show=1268381",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": "dcp",
+								"screener": {
+									"name": "Christmas in July",
+									"year": 1940,
+									"runtime": 67
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Zui Yu Fa",
+				"url": "https://www.eyefilm.nl/en/whats-on/crime-and-punishment/1266300",
+				"events": [
+					{
+						"time": "2024-09-06T18:45:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/crime-and-punishment/1266300?show=1272538",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": "dcp",
+								"screener": {
+									"name": "Zui Yu Fa",
+									"year": 2007,
+									"runtime": 122
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Peeping Tom",
+				"url": "https://www.eyefilm.nl/en/whats-on/peeping-tom/1329123",
+				"events": [
+					{
+						"time": "2024-09-06T19:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/peeping-tom/1329123?show=1329134",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Peeping Tom",
+									"year": 1960,
+									"runtime": 102
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-07T16:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/peeping-tom/1329123?show=1329140",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Peeping Tom",
+									"year": 1960,
+									"runtime": 102
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-08T10:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/peeping-tom/1329123?show=1329143",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Peeping Tom",
+									"year": 1960,
+									"runtime": 102
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-12T21:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/peeping-tom/1329123?show=1329149",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Peeping Tom",
+									"year": 1960,
+									"runtime": 102
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-13T16:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/peeping-tom/1329123?show=1329152",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Peeping Tom",
+									"year": 1960,
+									"runtime": 102
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-14T18:45:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/peeping-tom/1329123?show=1339843",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Peeping Tom",
+									"year": 1960,
+									"runtime": 102
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-15T21:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/peeping-tom/1329123?show=1329161",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Peeping Tom",
+									"year": 1960,
+									"runtime": 102
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-18T16:45:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/peeping-tom/1329123?show=1329173",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Peeping Tom",
+									"year": 1960,
+									"runtime": 102
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-23T10:45:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/peeping-tom/1329123?show=1329194",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Peeping Tom",
+									"year": 1960,
+									"runtime": 102
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-26T16:45:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/peeping-tom/1329123?show=1329206",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Peeping Tom",
+									"year": 1960,
+									"runtime": 102
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-10-01T21:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/peeping-tom/1329123?show=1329245",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Peeping Tom",
+									"year": 1960,
+									"runtime": 102
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Raising Arizona",
+				"url": "https://www.eyefilm.nl/en/whats-on/raising-arizona/1271169",
+				"events": [
+					{
+						"time": "2024-09-06T21:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/raising-arizona/1271169?show=1271392",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "35mm",
+								"screener": {
+									"name": "Raising Arizona",
+									"year": 1987,
+									"runtime": 94
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Made in England: The Films of Powell and Pressburger",
+				"url": "https://www.eyefilm.nl/en/whats-on/made-in-england-the-films-of-powell-and-pressburger/1329120",
+				"events": [
+					{
+						"time": "2024-09-07T13:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/made-in-england-the-films-of-powell-and-pressburger/1329120?show=1329137",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Made in England: The Films of Powell and Pressburger",
+									"year": 2024,
+									"runtime": 133
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-08T17:45:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/made-in-england-the-films-of-powell-and-pressburger/1329120?show=1340226",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Made in England: The Films of Powell and Pressburger",
+									"year": 2024,
+									"runtime": 133
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-13T21:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/made-in-england-the-films-of-powell-and-pressburger/1329120?show=1340229",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Made in England: The Films of Powell and Pressburger",
+									"year": 2024,
+									"runtime": 133
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-14T13:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/made-in-england-the-films-of-powell-and-pressburger/1329120?show=1329146",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Made in England: The Films of Powell and Pressburger",
+									"year": 2024,
+									"runtime": 133
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-17T13:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/made-in-england-the-films-of-powell-and-pressburger/1329120?show=1329167",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Made in England: The Films of Powell and Pressburger",
+									"year": 2024,
+									"runtime": 133
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-25T11:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/made-in-england-the-films-of-powell-and-pressburger/1329120?show=1340232",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Made in England: The Films of Powell and Pressburger",
+									"year": 2024,
+									"runtime": 133
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-10-01T16:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/made-in-england-the-films-of-powell-and-pressburger/1329120?show=1329242",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Made in England: The Films of Powell and Pressburger",
+									"year": 2024,
+									"runtime": 133
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Els noms de Crist",
+				"url": "https://www.eyefilm.nl/en/whats-on/the-names-of-christ/1270601",
+				"events": [
+					{
+						"time": "2024-09-07T15:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/the-names-of-christ/1270601?show=1271395",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": "dcp",
+								"screener": {
+									"name": "Els noms de Crist",
+									"year": 2010,
+									"runtime": 193
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "No Country for Old Men",
+				"url": "https://www.eyefilm.nl/en/whats-on/no-country-for-old-men/1271166",
+				"events": [
+					{
+						"time": "2024-09-07T19:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/no-country-for-old-men/1271166?show=1271399",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": "dcp",
+								"screener": {
+									"name": "No Country for Old Men",
+									"year": 2007,
+									"runtime": 122
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Crimewave",
+				"url": "https://www.eyefilm.nl/en/whats-on/crimewave/1271157",
+				"events": [
+					{
+						"time": "2024-09-07T21:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/crimewave/1271157?show=1271402",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": null,
+								"screener": {
+									"name": "Crimewave",
+									"year": 1985,
+									"runtime": 86
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Cinemini: Wie...?",
+				"url": "https://www.eyefilm.nl/en/whats-on/cinemini-wie/268567",
+				"events": [
+					{
+						"time": "2024-09-08T10:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/cinemini-wie/268567?show=1325415",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": "dcp",
+								"screener": {
+									"name": "Cinemini: Wie...?",
+									"year": null,
+									"runtime": 67
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-15T10:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/cinemini-wie/268567?show=1325421",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": "dcp",
+								"screener": {
+									"name": "Cinemini: Wie...?",
+									"year": null,
+									"runtime": 67
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-22T10:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/cinemini-wie/268567?show=1325427",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": "dcp",
+								"screener": {
+									"name": "Cinemini: Wie...?",
+									"year": null,
+									"runtime": 67
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-29T10:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/cinemini-wie/268567?show=1325433",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": "dcp",
+								"screener": {
+									"name": "Cinemini: Wie...?",
+									"year": null,
+									"runtime": 67
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Filmmagie: Dieren",
+				"url": "https://www.eyefilm.nl/en/whats-on/filmmagie-kijken-en-maken/878297",
+				"events": [
+					{
+						"time": "2024-09-08T13:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/filmmagie-kijken-en-maken/878297?show=1325418",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": "dcp",
+								"screener": {
+									"name": "Filmmagie: Dieren",
+									"year": null,
+									"runtime": 80
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-15T13:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/filmmagie-kijken-en-maken/878297?show=1325424",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": "dcp",
+								"screener": {
+									"name": "Filmmagie: Dieren",
+									"year": null,
+									"runtime": 80
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-22T13:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/filmmagie-kijken-en-maken/878297?show=1325430",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": "dcp",
+								"screener": {
+									"name": "Filmmagie: Dieren",
+									"year": null,
+									"runtime": 80
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-29T13:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/filmmagie-kijken-en-maken/878297?show=1325436",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": "dcp",
+								"screener": {
+									"name": "Filmmagie: Dieren",
+									"year": null,
+									"runtime": 80
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Le locataire (The Tenant)",
+				"url": "https://www.eyefilm.nl/en/whats-on/the-tenant/1289621",
+				"events": [
+					{
+						"time": "2024-09-08T16:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/the-tenant/1289621?show=1289608",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "35mm",
+								"screener": {
+									"name": "Le locataire (The Tenant)",
+									"year": 1976,
+									"runtime": 125
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "O Brother, Where Art Thou?",
+				"url": "https://www.eyefilm.nl/en/whats-on/o-brother-where-art-thou/1270073",
+				"events": [
+					{
+						"time": "2024-09-08T19:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/o-brother-where-art-thou/1270073?show=1270360",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "35mm",
+								"screener": {
+									"name": "O Brother, Where Art Thou?",
+									"year": 2000,
+									"runtime": 106
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Fargo",
+				"url": "https://www.eyefilm.nl/en/whats-on/fargo/1269999",
+				"events": [
+					{
+						"time": "2024-09-08T21:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/fargo/1269999?show=1270363",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": null,
+								"screener": {
+									"name": "Fargo",
+									"year": 1996,
+									"runtime": 98
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Ouwehoeren",
+				"url": "https://www.eyefilm.nl/en/whats-on/ouwehoeren/1323630",
+				"events": [
+					{
+						"time": "2024-09-09T18:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/ouwehoeren/1323630?show=1323661",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": "dcp",
+								"screener": {
+									"name": "Ouwehoeren",
+									"year": 2011,
+									"runtime": 81
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Barton Fink",
+				"url": "https://www.eyefilm.nl/en/whats-on/barton-fink/1269978",
+				"events": [
+					{
+						"time": "2024-09-09T18:45:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/barton-fink/1269978?show=1270366",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Barton Fink",
+									"year": 1991,
+									"runtime": 116
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "A Serious Man",
+				"url": "https://www.eyefilm.nl/en/whats-on/a-serious-man/1270078",
+				"events": [
+					{
+						"time": "2024-09-09T21:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/a-serious-man/1270078?show=1317565",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "35mm",
+								"screener": {
+									"name": "A Serious Man",
+									"year": 2009,
+									"runtime": 106
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Artist Talk: Ansuya Blom",
+				"url": "https://www.eyefilm.nl/en/whats-on/artist-talk-ansuya-blom/1316140",
+				"events": [
+					{
+						"time": "2024-09-10T19:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/artist-talk-ansuya-blom/1316140?show=1316145",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": "dcp",
+								"screener": {
+									"name": "Artist Talk: Ansuya Blom",
+									"year": null,
+									"runtime": 104
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Blood Simple",
+				"url": "https://www.eyefilm.nl/en/whats-on/blood-simple/1269987",
+				"events": [
+					{
+						"time": "2024-09-10T21:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/blood-simple/1269987?show=1270327",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Blood Simple",
+									"year": 1984,
+									"runtime": 97
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "The Big Lebowski",
+				"url": "https://www.eyefilm.nl/en/whats-on/the-big-lebowski/1269984",
+				"events": [
+					{
+						"time": "2024-09-11T13:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/the-big-lebowski/1269984?show=1270375",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "35mm",
+								"screener": {
+									"name": "The Big Lebowski",
+									"year": 1998,
+									"runtime": 115
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Problemista",
+				"url": "https://www.eyefilm.nl/en/whats-on/problemista/1336429",
+				"events": [
+					{
+						"time": "2024-09-11T18:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/problemista/1336429?show=1336449",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": null,
+								"screener": {
+									"name": "Problemista",
+									"year": 2023,
+									"runtime": 104
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "The Red Shoes",
+				"url": "https://www.eyefilm.nl/en/whats-on/the-red-shoes/1329103",
+				"events": [
+					{
+						"time": "2024-09-12T18:45:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/the-red-shoes/1329103?show=1331467",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "35mm",
+								"screener": {
+									"name": "The Red Shoes",
+									"year": 1948,
+									"runtime": 133
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-15T15:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/the-red-shoes/1329103?show=1331460",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "The Red Shoes",
+									"year": 1948,
+									"runtime": 133
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-17T16:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/the-red-shoes/1329103?show=1329170",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "35mm",
+								"screener": {
+									"name": "The Red Shoes",
+									"year": 1948,
+									"runtime": 133
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-19T18:45:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/the-red-shoes/1329103?show=1329179",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": "dcp",
+								"screener": {
+									"name": "The Red Shoes",
+									"year": 1948,
+									"runtime": 133
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-25T21:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/the-red-shoes/1329103?show=1329203",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "35mm",
+								"screener": {
+									"name": "The Red Shoes",
+									"year": 1948,
+									"runtime": 133
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-28T11:45:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/the-red-shoes/1329103?show=1329218",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": "dcp",
+								"screener": {
+									"name": "The Red Shoes",
+									"year": 1948,
+									"runtime": 133
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-29T18:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/the-red-shoes/1329103?show=1329230",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": "dcp",
+								"screener": {
+									"name": "The Red Shoes",
+									"year": 1948,
+									"runtime": 133
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "I Know Where I'm Going",
+				"url": "https://www.eyefilm.nl/en/whats-on/i-know-where-im-going/1329093",
+				"events": [
+					{
+						"time": "2024-09-13T19:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/i-know-where-im-going/1329093?show=1331492",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": "dcp",
+								"screener": {
+									"name": "I Know Where I'm Going",
+									"year": 1947,
+									"runtime": 91
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-21T14:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/i-know-where-im-going/1329093?show=1329185",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": "35mm",
+								"screener": {
+									"name": "I Know Where I'm Going",
+									"year": 1947,
+									"runtime": 91
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-30T21:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/i-know-where-im-going/1329093?show=1329239",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": "35mm",
+								"screener": {
+									"name": "I Know Where I'm Going",
+									"year": 1947,
+									"runtime": 91
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Yannick",
+				"url": "https://www.eyefilm.nl/en/whats-on/yannick/1323636",
+				"events": [
+					{
+						"time": "2024-09-13T19:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/yannick/1323636?show=1326606",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": "dcp",
+								"screener": {
+									"name": "Yannick",
+									"year": 2023,
+									"runtime": 67
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "A Matter of Life and Death",
+				"url": "https://www.eyefilm.nl/en/whats-on/a-matter-of-life-and-death/1329099",
+				"events": [
+					{
+						"time": "2024-09-14T16:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/a-matter-of-life-and-death/1329099?show=1329155",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "35mm",
+								"screener": {
+									"name": "A Matter of Life and Death",
+									"year": 1946,
+									"runtime": 103
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-28T19:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/a-matter-of-life-and-death/1329099?show=1329224",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "35mm",
+								"screener": {
+									"name": "A Matter of Life and Death",
+									"year": 1946,
+									"runtime": 103
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "El cant dels ocells",
+				"url": "https://www.eyefilm.nl/en/whats-on/birdsong/1266297",
+				"events": [
+					{
+						"time": "2024-09-14T19:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/birdsong/1266297?show=1271405",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": "35mm",
+								"screener": {
+									"name": "El cant dels ocells",
+									"year": 2008,
+									"runtime": 95
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "The Edge of the World",
+				"url": "https://www.eyefilm.nl/en/whats-on/the-edge-of-the-world/1329090",
+				"events": [
+					{
+						"time": "2024-09-15T13:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/the-edge-of-the-world/1329090?show=1331457",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": "35mm",
+								"screener": {
+									"name": "The Edge of the World",
+									"year": 1937,
+									"runtime": 74
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-26T19:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/the-edge-of-the-world/1329090?show=1329209",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": "35mm",
+								"screener": {
+									"name": "The Edge of the World",
+									"year": 1937,
+									"runtime": 74
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "A Canterbury Tale",
+				"url": "https://www.eyefilm.nl/en/whats-on/a-canterbury-tale/1329086",
+				"events": [
+					{
+						"time": "2024-09-15T18:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/a-canterbury-tale/1329086?show=1329158",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "35mm",
+								"screener": {
+									"name": "A Canterbury Tale",
+									"year": 1944,
+									"runtime": 123
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "The Spy in Black",
+				"url": "https://www.eyefilm.nl/en/whats-on/the-spy-in-black/1329109",
+				"events": [
+					{
+						"time": "2024-09-16T19:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/the-spy-in-black/1329109?show=1329164",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": null,
+								"screener": {
+									"name": "The Spy in Black",
+									"year": 1939,
+									"runtime": 83
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-21T16:45:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/the-spy-in-black/1329109?show=1329188",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": "35mm",
+								"screener": {
+									"name": "The Spy in Black",
+									"year": 1939,
+									"runtime": 83
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Film as a Subversive Art",
+				"url": "https://www.eyefilm.nl/en/whats-on/film-as-a-subversive-art/1315554",
+				"events": [
+					{
+						"time": "2024-09-17T19:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/film-as-a-subversive-art/1315554?show=1315582",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": null,
+								"screener": {
+									"name": "Film as a Subversive Art",
+									"year": null,
+									"runtime": 88
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Cuadecuc, vampir",
+				"url": "https://www.eyefilm.nl/en/whats-on/cuadecuc-vampir/1266538",
+				"events": [
+					{
+						"time": "2024-09-17T21:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/cuadecuc-vampir/1266538?show=1272541",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": "dcp",
+								"screener": {
+									"name": "Cuadecuc, vampir",
+									"year": 1971,
+									"runtime": 66
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Gone to Earth",
+				"url": "https://www.eyefilm.nl/en/whats-on/gone-to-earth/1266544",
+				"events": [
+					{
+						"time": "2024-09-18T19:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/gone-to-earth/1266544?show=1266616",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": "dcp",
+								"screener": {
+									"name": "Gone to Earth",
+									"year": 1950,
+									"runtime": 110
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-23T18:45:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/gone-to-earth/1266544?show=1266622",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": "dcp",
+								"screener": {
+									"name": "Gone to Earth",
+									"year": 1950,
+									"runtime": 110
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Electra Glide in Blue",
+				"url": "https://www.eyefilm.nl/en/whats-on/electra-glide-in-blue/1270598",
+				"events": [
+					{
+						"time": "2024-09-18T21:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/electra-glide-in-blue/1270598?show=1272544",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": null,
+								"screener": {
+									"name": "Electra Glide in Blue",
+									"year": 1973,
+									"runtime": 114
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Raging Bull",
+				"url": "https://www.eyefilm.nl/en/whats-on/raging-bull/1330152",
+				"events": [
+					{
+						"time": "2024-09-19T12:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/raging-bull/1330152?show=1330198",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "35mm",
+								"screener": {
+									"name": "Raging Bull",
+									"year": 1980,
+									"runtime": 127
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-22T21:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/raging-bull/1330152?show=1330201",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "35mm",
+								"screener": {
+									"name": "Raging Bull",
+									"year": 1980,
+									"runtime": 127
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "The Life and Death of Colonel Blimp",
+				"url": "https://www.eyefilm.nl/en/whats-on/the-life-and-death-of-colonel-blimp/1329096",
+				"events": [
+					{
+						"time": "2024-09-19T15:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/the-life-and-death-of-colonel-blimp/1329096?show=1329176",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "The Life and Death of Colonel Blimp",
+									"year": 1942,
+									"runtime": 163
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-27T19:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/the-life-and-death-of-colonel-blimp/1329096?show=1329215",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "The Life and Death of Colonel Blimp",
+									"year": 1942,
+									"runtime": 163
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "International Talk Like a Pirate Day Night",
+				"url": "https://www.eyefilm.nl/en/whats-on/international-talk-like-a-pirate-day-night/1290000",
+				"events": [
+					{
+						"time": "2024-09-19T19:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/international-talk-like-a-pirate-day-night/1290000?show=1290013",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": null,
+								"screener": {
+									"name": "International Talk Like a Pirate Day Night",
+									"year": null,
+									"runtime": 169
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Cameraman: The Life and Work of Jack Cardiff",
+				"url": "https://www.eyefilm.nl/en/whats-on/cameraman-the-life-and-work-of-jack-cardiff/1332063",
+				"events": [
+					{
+						"time": "2024-09-20T16:45:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/cameraman-the-life-and-work-of-jack-cardiff/1332063?show=1332068",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": "dcp",
+								"screener": {
+									"name": "Cameraman: The Life and Work of Jack Cardiff",
+									"year": 2010,
+									"runtime": 86
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Black Narcissus",
+				"url": "https://www.eyefilm.nl/en/whats-on/black-narcissus/1329083",
+				"events": [
+					{
+						"time": "2024-09-20T19:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/black-narcissus/1329083?show=1329182",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": null,
+								"screener": {
+									"name": "Black Narcissus",
+									"year": 1947,
+									"runtime": 99
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-24T16:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/black-narcissus/1329083?show=1329200",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": null,
+								"screener": {
+									"name": "Black Narcissus",
+									"year": 1947,
+									"runtime": 99
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-26T21:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/black-narcissus/1329083?show=1329212",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": null,
+								"screener": {
+									"name": "Black Narcissus",
+									"year": 1947,
+									"runtime": 99
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Pacifiction",
+				"url": "https://www.eyefilm.nl/en/whats-on/pacifiction/1266303",
+				"events": [
+					{
+						"time": "2024-09-20T21:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/pacifiction/1266303?show=1271408",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": "dcp",
+								"screener": {
+									"name": "Pacifiction",
+									"year": 2022,
+									"runtime": 165
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "49th Parallel",
+				"url": "https://www.eyefilm.nl/en/whats-on/49th-parallel/1329077",
+				"events": [
+					{
+						"time": "2024-09-21T19:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/49th-parallel/1329077?show=1329191",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "35mm",
+								"screener": {
+									"name": "49th Parallel",
+									"year": 1941,
+									"runtime": 123
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-28T16:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/49th-parallel/1329077?show=1329221",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "35mm",
+								"screener": {
+									"name": "49th Parallel",
+									"year": 1941,
+									"runtime": 123
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Història de la meva mort",
+				"url": "https://www.eyefilm.nl/en/whats-on/story-of-my-death/1267351",
+				"events": [
+					{
+						"time": "2024-09-21T21:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/story-of-my-death/1267351?show=1271412",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": "dcp",
+								"screener": {
+									"name": "Història de la meva mort",
+									"year": 2013,
+									"runtime": 145
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "The Tales of Hoffmann",
+				"url": "https://www.eyefilm.nl/en/whats-on/the-tales-of-hoffmann/1329590",
+				"events": [
+					{
+						"time": "2024-09-22T13:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/the-tales-of-hoffmann/1329590?show=1329598",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": "35mm",
+								"screener": {
+									"name": "The Tales of Hoffmann",
+									"year": 1951,
+									"runtime": 128
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-25T18:45:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/the-tales-of-hoffmann/1329590?show=1329595",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": "35mm",
+								"screener": {
+									"name": "The Tales of Hoffmann",
+									"year": 1951,
+									"runtime": 128
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Die Perücke",
+				"url": "https://www.eyefilm.nl/en/whats-on/die-perucke/1323536",
+				"events": [
+					{
+						"time": "2024-09-22T16:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/die-perucke/1323536?show=1323555",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": "35mm",
+								"screener": {
+									"name": "Die Perücke",
+									"year": 1924,
+									"runtime": 93
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Liberté",
+				"url": "https://www.eyefilm.nl/en/whats-on/liberte/1266553",
+				"events": [
+					{
+						"time": "2024-09-22T18:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/liberte/1266553?show=1266619",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": "dcp",
+								"screener": {
+									"name": "Liberté",
+									"year": 2019,
+									"runtime": 132
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "The Souvenir",
+				"url": "https://www.eyefilm.nl/en/whats-on/the-souvenir/1329106",
+				"events": [
+					{
+						"time": "2024-09-24T14:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/the-souvenir/1329106?show=1329197",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "The Souvenir",
+									"year": 2019,
+									"runtime": 120
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-29T13:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/the-souvenir/1329106?show=1329227",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "The Souvenir",
+									"year": 2019,
+									"runtime": 120
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Romance de Valentía",
+				"url": "https://www.eyefilm.nl/en/whats-on/romance-de-valentia/1327371",
+				"events": [
+					{
+						"time": "2024-09-24T19:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/romance-de-valentia/1327371?show=1327376",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "35mm",
+								"screener": {
+									"name": "Romance de Valentía",
+									"year": 1993,
+									"runtime": 88
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-28T14:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/romance-de-valentia/1327371?show=1327379",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "35mm",
+								"screener": {
+									"name": "Romance de Valentía",
+									"year": 1993,
+									"runtime": 88
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Mutiny in Heaven: The Birthday Party",
+				"url": "https://www.eyefilm.nl/en/whats-on/mutiny-in-heaven-the-birthday-party/1334651",
+				"events": [
+					{
+						"time": "2024-09-25T21:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/mutiny-in-heaven-the-birthday-party/1334651?show=1334670",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Mutiny in Heaven: The Birthday Party",
+									"year": 2024,
+									"runtime": 98
+								}
+							}
+						]
+					},
+					{
+						"time": "2024-09-29T17:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/mutiny-in-heaven-the-birthday-party/1334651?show=1334667",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "dcp",
+								"screener": {
+									"name": "Mutiny in Heaven: The Birthday Party",
+									"year": 2024,
+									"runtime": 98
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Nederland in 3D",
+				"url": "https://www.eyefilm.nl/en/whats-on/nederland-in-3d/1334612",
+				"events": [
+					{
+						"time": "2024-09-27T16:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/nederland-in-3d/1334612?show=1334615",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": null,
+								"screener": {
+									"name": "Nederland in 3D",
+									"year": null,
+									"runtime": 60
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Der letzte Mann",
+				"url": "https://www.eyefilm.nl/en/whats-on/der-letzte-mann/1289500",
+				"events": [
+					{
+						"time": "2024-09-27T20:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/der-letzte-mann/1289500?show=1289508",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": null,
+								"screener": {
+									"name": "Der letzte Mann",
+									"year": 1924,
+									"runtime": 105
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Go Go Tales",
+				"url": "https://www.eyefilm.nl/en/whats-on/go-go-tales/1266541",
+				"events": [
+					{
+						"time": "2024-09-28T21:15:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/go-go-tales/1266541?show=1272547",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": "dcp",
+								"screener": {
+									"name": "Go Go Tales",
+									"year": 2007,
+									"runtime": 105
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Sneak Preview: Albert Serra & Chris Dercon",
+				"url": "https://www.eyefilm.nl/en/whats-on/sneak-preview-albert-serra-chris-dercon/1294533",
+				"events": [
+					{
+						"time": "2024-09-29T15:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/sneak-preview-albert-serra-chris-dercon/1294533?show=1294536",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": "dcp",
+								"screener": {
+									"name": "Sneak Preview: Albert Serra & Chris Dercon",
+									"year": null,
+									"runtime": 125
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "The Age of Innocence",
+				"url": "https://www.eyefilm.nl/en/whats-on/the-age-of-innocence/1329080",
+				"events": [
+					{
+						"time": "2024-09-30T16:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/the-age-of-innocence/1329080?show=1329233",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": "35mm",
+								"screener": {
+									"name": "The Age of Innocence",
+									"year": 1993,
+									"runtime": 136
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "The Small Back Room",
+				"url": "https://www.eyefilm.nl/en/whats-on/the-small-back-room/1329131",
+				"events": [
+					{
+						"time": "2024-09-30T19:00:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/the-small-back-room/1329131?show=1329236",
+						"screenings": [
+							{
+								"subtitles": [],
+								"format": null,
+								"screener": {
+									"name": "The Small Back Room",
+									"year": 1948,
+									"runtime": 107
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "Glas, mijn onvervulde leven",
+				"url": "https://www.eyefilm.nl/en/whats-on/glas-mijn-onvervulde-leven/1334645",
+				"events": [
+					{
+						"time": "2024-10-01T20:30:00.000+02:00",
+						"url": "https://www.eyefilm.nl/en/whats-on/glas-mijn-onvervulde-leven/1334645?show=1334673",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": "dcp",
+								"screener": {
+									"name": "Glas, mijn onvervulde leven",
+									"year": 2023,
+									"runtime": 94
+								}
+							}
+						]
+					}
+				]
+			}
+		]
+	},
+	{
+		"theatre": {
+			"url": "https://uitkijk.nl/",
+			"name": "Filmtheater De Uitkijk",
+			"logoUrl": "https://uitkijk.nl/android-chrome-192x192.png",
+			"city": "amsterdam"
+		},
+		"productions": [
+			{
+				"url": "https://uitkijk.nl/en/film/chungking-express-30-jaar-jubileum",
+				"name": "Chungking Express (30 Jaar Jubileum)",
+				"events": [
+					{
+						"url": "https://api.uitkijk.nl/z-tickets/show/1058945",
+						"time": "2024-09-05T21:00:00.000+02:00",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": null,
+								"screener": {
+									"name": "Chungking Express (30 Jaar Jubileum)",
+									"year": 1994,
+									"runtime": 102
+								}
+							}
+						]
+					},
+					{
+						"url": "https://api.uitkijk.nl/z-tickets/show/1058946",
+						"time": "2024-09-11T21:00:00.000+02:00",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": null,
+								"screener": {
+									"name": "Chungking Express (30 Jaar Jubileum)",
+									"year": 1994,
+									"runtime": 102
+								}
+							}
+						]
+					},
+					{
+						"url": "https://api.uitkijk.nl/z-tickets/show/1059376",
+						"time": "2024-09-13T20:00:00.000+02:00",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": null,
+								"screener": {
+									"name": "Chungking Express (30 Jaar Jubileum)",
+									"year": 1994,
+									"runtime": 102
+								}
+							}
+						]
+					},
+					{
+						"url": "https://api.uitkijk.nl/z-tickets/show/1059375",
+						"time": "2024-09-17T19:00:00.000+02:00",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": null,
+								"screener": {
+									"name": "Chungking Express (30 Jaar Jubileum)",
+									"year": 1994,
+									"runtime": 102
+								}
+							}
+						]
+					},
+					{
+						"url": "https://api.uitkijk.nl/z-tickets/show/1059374",
+						"time": "2024-09-23T19:00:00.000+02:00",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": null,
+								"screener": {
+									"name": "Chungking Express (30 Jaar Jubileum)",
+									"year": 1994,
+									"runtime": 102
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"url": "https://uitkijk.nl/en/film/city-of-god-2002",
+				"name": "City of God (2002)",
+				"events": [
+					{
+						"url": "https://api.uitkijk.nl/z-tickets/show/1058649",
+						"time": "2024-09-04T21:00:00.000+02:00",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": null,
+								"screener": {
+									"name": "City of God (2002)",
+									"year": 2002,
+									"runtime": 133
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"url": "https://uitkijk.nl/en/film/coraline-15-jaar-jubileum",
+				"name": "Coraline (15 Jaar Jubileum)",
+				"events": [
+					{
+						"url": "https://api.uitkijk.nl/z-tickets/show/1058544",
+						"time": "2024-09-03T18:50:00.000+02:00",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": null,
+								"screener": {
+									"name": "Coraline (15 Jaar Jubileum)",
+									"year": 2009,
+									"runtime": 110
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"url": "https://uitkijk.nl/en/film/we-need-to-talk-about-kevin-2011",
+				"name": "We need to talk about Kevin (2011)",
+				"events": [
+					{
+						"url": "https://api.uitkijk.nl/z-tickets/show/1059099",
+						"time": "2024-09-02T21:00:00.000+02:00",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": null,
+								"screener": {
+									"name": "We need to talk about Kevin (2011)",
+									"year": 2011,
+									"runtime": 110
+								}
+							}
+						]
+					},
+					{
+						"url": "https://api.uitkijk.nl/z-tickets/show/1059100",
+						"time": "2024-09-10T18:50:00.000+02:00",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": null,
+								"screener": {
+									"name": "We need to talk about Kevin (2011)",
+									"year": 2011,
+									"runtime": 110
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"url": "https://uitkijk.nl/en/film/spoorloos",
+				"name": "Spoorloos",
+				"events": []
+			},
+			{
+				"url": "https://uitkijk.nl/en/film/woman-in-the-dunes-1964",
+				"name": "Woman in the Dunes (1964)",
+				"events": [
+					{
+						"url": "https://api.uitkijk.nl/z-tickets/show/1058857",
+						"time": "2024-09-08T21:00:00.000+02:00",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": null,
+								"screener": {
+									"name": "Woman in the Dunes (1964)",
+									"year": 1964,
+									"runtime": 147
+								}
+							}
+						]
+					},
+					{
+						"url": "https://api.uitkijk.nl/z-tickets/show/1058858",
+						"time": "2024-09-15T21:00:00.000+02:00",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": null,
+								"screener": {
+									"name": "Woman in the Dunes (1964)",
+									"year": 1964,
+									"runtime": 147
+								}
+							}
+						]
+					},
+					{
+						"url": "https://api.uitkijk.nl/z-tickets/show/1058861",
+						"time": "2024-09-22T21:00:00.000+02:00",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": null,
+								"screener": {
+									"name": "Woman in the Dunes (1964)",
+									"year": 1964,
+									"runtime": 147
+								}
+							}
+						]
+					},
+					{
+						"url": "https://api.uitkijk.nl/z-tickets/show/1058863",
+						"time": "2024-09-29T21:00:00.000+02:00",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": null,
+								"screener": {
+									"name": "Woman in the Dunes (1964)",
+									"year": 1964,
+									"runtime": 147
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"url": "https://uitkijk.nl/en/film/here",
+				"name": "Here",
+				"events": [
+					{
+						"url": "https://api.uitkijk.nl/z-tickets/show/1058473",
+						"time": "2024-09-03T17:10:00.000+02:00",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": null,
+								"screener": {
+									"name": "Here",
+									"year": 2023,
+									"runtime": 82
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"url": "https://uitkijk.nl/en/film/stenen-and-pamfletten-in-samenwerking-met-paradiso",
+				"name": "Paradiso x De Uitkijk: Stenen & Pamfletten",
+				"events": [
+					{
+						"url": "https://api.uitkijk.nl/z-tickets/show/1053160",
+						"time": "2024-09-09T20:30:00.000+02:00",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": null,
+								"screener": {
+									"name": "Paradiso x De Uitkijk: Stenen & Pamfletten",
+									"year": null,
+									"runtime": 120
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"url": "https://uitkijk.nl/en/film/the-third-man-1949",
+				"name": "The Third Man (1949)",
+				"events": [
+					{
+						"url": "https://api.uitkijk.nl/z-tickets/show/1047813",
+						"time": "2024-09-19T19:00:00.000+02:00",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": null,
+								"screener": {
+									"name": "The Third Man (1949)",
+									"year": 1949,
+									"runtime": 104
+								}
+							}
+						]
+					},
+					{
+						"url": "https://api.uitkijk.nl/z-tickets/show/1058952",
+						"time": "2024-09-21T19:00:00.000+02:00",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": null,
+								"screener": {
+									"name": "The Third Man (1949)",
+									"year": 1949,
+									"runtime": 104
+								}
+							}
+						]
+					},
+					{
+						"url": "https://api.uitkijk.nl/z-tickets/show/1059479",
+						"time": "2024-09-24T19:00:00.000+02:00",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": null,
+								"screener": {
+									"name": "The Third Man (1949)",
+									"year": 1949,
+									"runtime": 104
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"url": "https://uitkijk.nl/en/film/la-chimera",
+				"name": "La Chimera",
+				"events": [
+					{
+						"url": "https://api.uitkijk.nl/z-tickets/show/1058768",
+						"time": "2024-09-04T16:30:00.000+02:00",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": null,
+								"screener": {
+									"name": "La Chimera",
+									"year": 2023,
+									"runtime": 132
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"url": "https://uitkijk.nl/en/film/beau-travail",
+				"name": "Beau Travail",
+				"events": [
+					{
+						"url": "https://api.uitkijk.nl/z-tickets/show/1058727",
+						"time": "2024-09-02T17:10:00.000+02:00",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": null,
+								"screener": {
+									"name": "Beau Travail",
+									"year": 1999,
+									"runtime": 92
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"url": "https://uitkijk.nl/en/film/zomergasten-op-het-witte-doek",
+				"name": "Zomergasten op het Witte Doek",
+				"events": []
+			},
+			{
+				"url": "https://uitkijk.nl/en/film/la-haine-1995",
+				"name": "La Haine (1995)",
+				"events": [
+					{
+						"url": "https://api.uitkijk.nl/z-tickets/show/1058713",
+						"time": "2024-09-04T19:00:00.000+02:00",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": null,
+								"screener": {
+									"name": "La Haine (1995)",
+									"year": 1995,
+									"runtime": 98
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"url": "https://uitkijk.nl/en/film/anatomy-of-a-fall",
+				"name": "Anatomy Of A Fall",
+				"events": []
+			},
+			{
+				"url": "https://uitkijk.nl/en/film/cleo-de-5-a-7-1962",
+				"name": "Cléo de 5 à 7 (1962)",
+				"events": []
+			},
+			{
+				"url": "https://uitkijk.nl/en/film/aftersun",
+				"name": "Aftersun",
+				"events": [
+					{
+						"url": "https://api.uitkijk.nl/z-tickets/show/1058732",
+						"time": "2024-09-02T19:00:00.000+02:00",
+						"screenings": [
+							{
+								"subtitles": ["nl"],
+								"format": null,
+								"screener": {
+									"name": "Aftersun",
+									"year": 2023,
+									"runtime": 102
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"url": "https://uitkijk.nl/en/film/y-tu-mama-tambien-2001",
+				"name": "Y Tu Mamá También (2001)",
+				"events": []
+			},
+			{
+				"url": "https://uitkijk.nl/en/film/klute-1971",
+				"name": "Klute (1971)",
+				"events": []
+			},
+			{
+				"url": "https://uitkijk.nl/en/film/salo-or-the-120-days-of-sodom-1975",
+				"name": "Salò, or the 120 Days of Sodom (1975)",
+				"events": []
+			},
+			{
+				"url": "https://uitkijk.nl/en/film/black-god-white-devil-1964",
+				"name": "Black God, White Devil (1964)",
+				"events": [
+					{
+						"url": "https://api.uitkijk.nl/z-tickets/show/1043747",
+						"time": "2024-09-08T18:45:00.000+02:00",
+						"screenings": [
+							{
+								"subtitles": ["en"],
+								"format": null,
+								"screener": {
+									"name": "Black God, White Devil (1964)",
+									"year": 1964,
+									"runtime": 120
+								}
+							}
+						]
+					}
+				]
+			},
+			{
+				"url": "https://uitkijk.nl/en/film/porco-rosso-1992",
+				"name": "Porco Rosso (1992)",
+				"events": []
+			}
+		]
+	}
+]
