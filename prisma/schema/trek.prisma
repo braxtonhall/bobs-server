@@ -69,6 +69,7 @@ model Viewing {
   episode     Episode?  @relation(fields: [cursor], references: [id], onDelete: SetNull)
   watchlistId String
   watchlist   Watchlist @relation(fields: [watchlistId], references: [id], onDelete: Cascade)
+  startedAt   DateTime  @default(now())
 }
 
 model Bookmark {

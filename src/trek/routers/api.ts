@@ -6,9 +6,33 @@ import { getCurrentlyWatching } from "../operations/getCurrentlyWatching";
 import bodyParser from "body-parser";
 import { updateCursor } from "../operations/updateCursor";
 import { getViewerTags } from "../operations/getViewerTags";
-import { useSchema } from "../../common/middlewares/useSchema";
 import { z } from "zod";
 import { logEpisode, logEpisodeSchema } from "../operations/logEpisode";
+import { initTRPC } from "@trpc/server";
+import * as trpcExpress from "@trpc/server/adapters/express";
+
+export const t = initTRPC.context<Context>().create();
+
+const createContext = ({ res }: trpcExpress.CreateExpressContextOptions) => ({
+	viewerId: res.locals.viewer.id as string,
+});
+type Context = Awaited<ReturnType<typeof createContext>>;
+
+const trekRouter = t.router({
+	getSeries: t.procedure.query(getSeries),
+	getViewerTags: t.procedure.query(({ ctx }) => getViewerTags(ctx.viewerId)),
+	getCurrentlyWatching: t.procedure
+		.input(z.string().optional())
+		.query(({ input: cursor, ctx }) => getCurrentlyWatching(ctx.viewerId, cursor)),
+	updateCursor: t.procedure
+		.input(z.object({ viewingId: z.string(), episodeId: z.string().or(z.null()) }))
+		.mutation(({ input: { viewingId, episodeId }, ctx: { viewerId } }) =>
+			updateCursor({ viewerId, episodeId, viewingId }),
+		),
+	logEpisode: t.procedure.input(logEpisodeSchema).mutation(({ input, ctx }) => logEpisode(ctx.viewerId, input)),
+});
+
+export type TrekRouter = typeof trekRouter;
 
 export const api = express()
 	.post("/*", bodyParser.urlencoded({ extended: true }))
@@ -23,20 +47,12 @@ export const api = express()
 			return next();
 		}
 	})
-	.get("/watching", async (_req, res) => res.send(await getCurrentlyWatching(res.locals.viewer.id)))
-	.get("/series", async (_req, res) => res.send(await getSeries()))
-	.get("/tags", async (_req, res) => res.send(await getViewerTags(res.locals.viewer.id)))
-	.post("/cursor", useSchema(z.object({ id: z.string() })), async (req, res) =>
-		updateCursor({ viewerId: res.locals.viewer.id, episodeId: req.body.id }).then(
-			() => res.sendStatus(200),
-			() => res.sendStatus(400),
-		),
-	)
-	.post("/views", useSchema(logEpisodeSchema), async (req, res) =>
-		logEpisode(res.locals.viewer.id, req.body).then(
-			() => res.sendStatus(200),
-			() => res.sendStatus(400),
-		),
+	.use(
+		"/trpc",
+		trpcExpress.createExpressMiddleware({
+			router: trekRouter,
+			createContext,
+		}),
 	);
 // TODO
 //  on WATCHING page, there are two buttons: skip, watched on. both update your watchlist pointer

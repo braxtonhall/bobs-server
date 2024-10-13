@@ -2,16 +2,25 @@ import { db } from "../../db";
 
 export type CurrentlyWatching = Awaited<ReturnType<typeof getCurrentlyWatching>>;
 
-export const getCurrentlyWatching = async (viewerId: string) =>
-	db.viewer.findUniqueOrThrow({
+const PAGE_SIZE = 10;
+
+export const getCurrentlyWatching = async (viewerId: string, cursor: string | undefined) => {
+	const viewings = await db.viewing.findMany({
 		where: {
-			id: viewerId,
+			viewerId,
+		},
+		cursor: cursor ? { id: cursor } : undefined,
+		take: PAGE_SIZE + 1,
+		orderBy: {
+			startedAt: "desc",
 		},
 		select: {
-			watching: {
+			id: true,
+			cursor: true,
+			watchlist: {
 				include: {
 					episodes: {
-						include: {
+						select: {
 							opinions: {
 								where: {
 									viewerId,
@@ -30,10 +39,14 @@ export const getCurrentlyWatching = async (viewerId: string) =>
 					},
 				},
 			},
-			current: {
-				select: {
-					id: true,
-				},
-			},
 		},
 	});
+	if (viewings.length > PAGE_SIZE) {
+		return {
+			viewings: viewings.slice(0, -1),
+			cursor: viewings[viewings.length - 1].id,
+		};
+	} else {
+		return { viewings };
+	}
+};

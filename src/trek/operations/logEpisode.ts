@@ -65,10 +65,14 @@ export const logEpisode = async (viewerId: string, env: z.infer<typeof logEpisod
 			create: opinion,
 			update: opinion,
 		});
-		const viewer = await db.viewer.findUniqueOrThrow({
-			where: { id: viewerId },
-			include: {
-				watching: {
+		const viewings = await db.viewing.findMany({
+			where: {
+				viewerId,
+				cursor: env.episodeId,
+			},
+			select: {
+				id: true,
+				watchlist: {
 					include: {
 						episodes: {
 							cursor: { id: env.episodeId },
@@ -79,7 +83,11 @@ export const logEpisode = async (viewerId: string, env: z.infer<typeof logEpisod
 				},
 			},
 		});
-		if (viewer.currentId === env.episodeId) {
-			await updateCursor({ viewerId, episodeId: viewer.watching?.episodes[0].id ?? null });
+		for (const viewing of viewings) {
+			await updateCursor({
+				viewerId,
+				episodeId: viewing.watchlist.episodes[0]?.id ?? null,
+				viewingId: viewing.id,
+			});
 		}
 	});

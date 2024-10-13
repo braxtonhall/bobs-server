@@ -1,20 +1,22 @@
 import { db } from "../../db";
 
-export const updateCursor = async (env: { viewerId: string; episodeId: string | null }) => {
+export const updateCursor = async (env: { viewerId: string; viewingId: string; episodeId: string | null }) => {
 	if (env.episodeId === null) {
-		await db.viewer.update({
+		await db.viewing.update({
 			where: {
-				id: env.viewerId,
+				viewerId: env.viewerId,
+				id: env.viewingId,
 			},
 			data: {
-				currentId: null,
+				cursor: null,
 			},
 		});
 	} else {
-		await db.viewer.update({
+		await db.viewing.update({
 			where: {
-				id: env.viewerId,
-				watching: {
+				viewerId: env.viewerId,
+				id: env.viewingId,
+				watchlist: {
 					episodes: {
 						some: {
 							id: env.episodeId,
@@ -23,7 +25,7 @@ export const updateCursor = async (env: { viewerId: string; episodeId: string | 
 				},
 			},
 			data: {
-				currentId: env.episodeId,
+				cursor: env.episodeId,
 			},
 		});
 	}
