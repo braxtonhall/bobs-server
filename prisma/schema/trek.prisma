@@ -34,17 +34,18 @@ model Episode {
 }
 
 model Watchlist {
-  id          String     @id @default(cuid())
+  id          String    @id @default(cuid())
   ownerId     String
-  owner       Viewer     @relation(fields: [ownerId], references: [id])
+  owner       Viewer    @relation(fields: [ownerId], references: [id])
   watchings   Viewing[]
-  bookmarks   Bookmark[]
   name        String
   description String
   /// JSON formatted string for the filters used to create this watchlist
   filters     String
   episodes    Episode[]
-  createdAt   DateTime   @default(now())
+  createdAt   DateTime  @default(now())
+
+  likes WatchlistLike[]
 }
 
 model Viewer {
@@ -58,7 +59,9 @@ model Viewer {
   viewings   Viewing[]
   /// JSON formatted string for the user's settings
   settings   String
-  bookmarks  Bookmark[]
+
+  watchlistLikes WatchlistLike[]
+  viewLikes      ViewLike[]
 }
 
 model Viewing {
@@ -72,11 +75,11 @@ model Viewing {
   startedAt   DateTime  @default(now())
 }
 
-model Bookmark {
+model WatchlistLike {
   viewerId    String
   viewer      Viewer    @relation(fields: [viewerId], references: [id])
   watchlistId String
-  watchlist   Watchlist @relation(fields: [viewerId], references: [id])
+  watchlist   Watchlist @relation(fields: [watchlistId], references: [id])
 
   @@id([viewerId, watchlistId])
 }
@@ -94,7 +97,7 @@ model Opinion {
 }
 
 model View {
-  id Int @id @default(autoincrement())
+  id String @id @default(cuid())
 
   viewerId String
   viewer   Viewer @relation(fields: [viewerId], references: [id])
@@ -109,6 +112,17 @@ model View {
   viewedOn  DateTime?
   createdAt DateTime  @default(now())
   tags      Tag[]
+
+  likes ViewLike[]
+}
+
+model ViewLike {
+  viewerId String
+  viewer   Viewer @relation(fields: [viewerId], references: [id])
+  viewId   String
+  view     View   @relation(fields: [viewId], references: [id])
+
+  @@id([viewerId, viewId])
 }
 
 model Tag {
