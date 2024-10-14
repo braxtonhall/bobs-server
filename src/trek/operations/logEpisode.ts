@@ -6,7 +6,22 @@ import { DateTime } from "luxon";
 export type LogEpisodePayload = z.infer<typeof logEpisodeSchema>;
 
 export const logEpisodeSchema = z.object({
-	viewedOn: z.null().or(z.number()),
+	viewedOn: z.null().or(
+		z
+			.string()
+			.regex(/\d\d\d\d-\d\d-\d\d/)
+			.transform((arg, ctx) => {
+				if (DateTime.fromFormat(arg, "yyyy-MM-dd").isValid) {
+					return arg;
+				} else {
+					ctx.addIssue({
+						code: z.ZodIssueCode.custom,
+						message: "viewed on should be of format yyyy-MM-dd",
+					});
+					return z.NEVER;
+				}
+			}),
+	),
 	tags: z.array(z.string()),
 	liked: z.boolean(),
 	rating: z.null().or(
@@ -41,11 +56,7 @@ export const logEpisode = async (viewerId: string, env: z.infer<typeof logEpisod
 						create: { name },
 					})),
 				},
-				// TODO should set the viewed on to utc, start of day
-				viewedOn:
-					env.viewedOn === null
-						? null
-						: DateTime.fromMillis(env.viewedOn).setZone("utc").startOf("day").toJSDate(),
+				viewedOn: env.viewedOn,
 				spoiler: env.comment === null ? false : env.spoiler,
 				createdAt: { create: {} },
 			},

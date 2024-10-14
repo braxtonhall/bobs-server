@@ -54,7 +54,7 @@ const loadEpisodes = async () => {
 			description: "", // TODO
 			starDate: Number(row.STAR_DATE) || null,
 			sort: i,
-			release: new Date(Date.UTC(Number(row.YEAR), Number(row.MONTH) - 1, Number(row.DAY))),
+			release: `${row.YEAR}-${row.MONTH}-${row.DAY}`,
 		};
 
 		await db.episode.upsert({

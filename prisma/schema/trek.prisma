@@ -12,7 +12,7 @@ model Episode {
   name         String
   abbreviation String?
   runtime      Int
-  release      DateTime
+  release      String
   starDate     Float?
   season       Int
   production   Int
@@ -120,7 +120,7 @@ model View {
   rating   Int?
   comment  String?
   spoiler  Boolean
-  viewedOn DateTime?
+  viewedOn String?
 
   createdAtId Int   @unique
   createdAt   Event @relation(fields: [createdAtId], references: [id])
@@ -151,6 +151,7 @@ model Event {
   id   Int      @id @default(autoincrement())
   time DateTime @default(now())
 
+  // TODO all of these should have an on delete cascade, right??? TEST THIS!!!
   view            View?
   watchlist       Watchlist?
   startedViewing  Viewing?       @relation("StartedViewing")
