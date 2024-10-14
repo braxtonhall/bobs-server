@@ -1,4 +1,5 @@
 import { db } from "../../db";
+import { ViewingState } from "../types";
 
 const PAGE_SIZE = 10;
 
@@ -6,6 +7,7 @@ export const getCurrentlyWatching = async (viewerId: string, cursor: string | un
 	const viewings = await db.viewing.findMany({
 		where: {
 			viewerId,
+			state: ViewingState.IN_PROGRESS,
 		},
 		cursor: cursor ? { id: cursor } : undefined,
 		take: PAGE_SIZE + 1,

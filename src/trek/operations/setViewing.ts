@@ -1,4 +1,5 @@
 import { db, transaction } from "../../db";
+import { ViewingState } from "../types";
 
 type Environment = {
 	emailId: string;
@@ -49,6 +50,7 @@ export const setViewing = async ({ emailId, name }: Environment) =>
 				data: {
 					watchlist: { connect: watchlist },
 					viewer: { connect: viewer },
+					state: ViewingState.IN_PROGRESS,
 					...(episodeIds.length ? { episode: { connect: { id: episodeIds[0].id } } } : {}),
 				},
 			});

@@ -1,6 +1,6 @@
 import { API } from "../../../util/api";
 import { Box, Button, Card, CardContent, Stack, Typography } from "@mui/material";
-import { InfoRounded, RedoRounded, UndoRounded, DeleteRounded } from "@mui/icons-material";
+import { InfoRounded, RedoRounded, UndoRounded, DeleteRounded, PauseRounded } from "@mui/icons-material";
 import { LogForm } from "../../LogForm";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { DateTime } from "luxon";
@@ -33,6 +33,9 @@ export const Viewing = ({ viewing, series, setCursor, logEpisode }: ViewingProps
 					<div style={{ width: "100%", marginRight: 1 }}>
 						<h1>{viewing.watchlist.name}</h1>
 					</div>
+					<Button variant="outlined" size="small">
+						<PauseRounded />
+					</Button>
 					<Button variant="outlined" color="error" size="small">
 						<DeleteRounded />
 					</Button>

@@ -66,6 +66,7 @@ model Viewer {
 
 model Viewing {
   id          String    @id @default(cuid())
+  state       String
   viewerId    String
   viewer      Viewer    @relation(fields: [viewerId], references: [id])
   cursor      String?
@@ -73,6 +74,7 @@ model Viewing {
   watchlistId String
   watchlist   Watchlist @relation(fields: [watchlistId], references: [id], onDelete: Cascade)
   startedAt   DateTime  @default(now())
+  finishedAt  DateTime?
 }
 
 model WatchlistLike {
