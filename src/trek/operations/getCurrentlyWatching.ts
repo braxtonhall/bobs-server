@@ -12,7 +12,9 @@ export const getCurrentlyWatching = async (viewerId: string, cursor: string | un
 		cursor: cursor ? { id: cursor } : undefined,
 		take: PAGE_SIZE + 1,
 		orderBy: {
-			startedAt: "desc",
+			startedAt: {
+				time: "desc",
+			},
 		},
 		select: {
 			id: true,

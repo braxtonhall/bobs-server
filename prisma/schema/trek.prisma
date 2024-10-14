@@ -43,7 +43,9 @@ model Watchlist {
   /// JSON formatted string for the filters used to create this watchlist
   filters     String
   episodes    Episode[]
-  createdAt   DateTime  @default(now())
+
+  createdAtId Int   @unique
+  createdAt   Event @relation(fields: [createdAtId], references: [id])
 
   likes WatchlistLike[]
 }
@@ -73,8 +75,12 @@ model Viewing {
   episode     Episode?  @relation(fields: [cursor], references: [id], onDelete: SetNull)
   watchlistId String
   watchlist   Watchlist @relation(fields: [watchlistId], references: [id], onDelete: Cascade)
-  startedAt   DateTime  @default(now())
-  finishedAt  DateTime?
+
+  startedAtId Int   @unique
+  startedAt   Event @relation("StartedViewing", fields: [startedAtId], references: [id])
+
+  finishedAtId Int?   @unique
+  finsishedAt  Event? @relation("FinishedViewing", fields: [finishedAtId], references: [id])
 }
 
 model WatchlistLike {
@@ -82,6 +88,9 @@ model WatchlistLike {
   viewer      Viewer    @relation(fields: [viewerId], references: [id])
   watchlistId String
   watchlist   Watchlist @relation(fields: [watchlistId], references: [id])
+
+  createdAtId Int   @unique
+  createdAt   Event @relation(fields: [createdAtId], references: [id])
 
   @@id([viewerId, watchlistId])
 }
@@ -107,13 +116,16 @@ model View {
   episodeId String
   episode   Episode @relation(fields: [episodeId], references: [id])
 
-  liked     Boolean
-  rating    Int?
-  comment   String?
-  spoiler   Boolean
-  viewedOn  DateTime?
-  createdAt DateTime  @default(now())
-  tags      Tag[]
+  liked    Boolean
+  rating   Int?
+  comment  String?
+  spoiler  Boolean
+  viewedOn DateTime?
+
+  createdAtId Int   @unique
+  createdAt   Event @relation(fields: [createdAtId], references: [id])
+
+  tags Tag[]
 
   likes ViewLike[]
 }
@@ -124,10 +136,25 @@ model ViewLike {
   viewId   String
   view     View   @relation(fields: [viewId], references: [id])
 
+  createdAtId Int   @unique
+  createdAt   Event @relation(fields: [createdAtId], references: [id])
+
   @@id([viewerId, viewId])
 }
 
 model Tag {
   name  String @id
   views View[]
+}
+
+model Event {
+  id   Int      @id @default(autoincrement())
+  time DateTime @default(now())
+
+  view            View?
+  watchlist       Watchlist?
+  startedViewing  Viewing?       @relation("StartedViewing")
+  finishedViewing Viewing?       @relation("FinishedViewing")
+  viewLike        ViewLike?
+  watchlistLike   WatchlistLike?
 }

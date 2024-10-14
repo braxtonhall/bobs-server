@@ -37,13 +37,14 @@ export const setViewing = async ({ emailId, name }: Environment) =>
 			});
 			const watchlist = await db.watchlist.create({
 				data: {
-					ownerId: viewer.id,
+					owner: { connect: viewer },
 					name: `${name}'s trek`,
 					description: "Where some have gone before",
 					filters: "{}",
 					episodes: {
 						connect: episodeIds,
 					},
+					createdAt: { create: {} },
 				},
 			});
 			await db.viewing.create({
@@ -52,6 +53,7 @@ export const setViewing = async ({ emailId, name }: Environment) =>
 					viewer: { connect: viewer },
 					state: ViewingState.IN_PROGRESS,
 					...(episodeIds.length ? { episode: { connect: { id: episodeIds[0].id } } } : {}),
+					startedAt: { create: {} },
 				},
 			});
 			return viewer.id;

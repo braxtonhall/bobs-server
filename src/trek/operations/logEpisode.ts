@@ -30,8 +30,8 @@ export const logEpisode = async (viewerId: string, env: z.infer<typeof logEpisod
 	transaction(async () => {
 		await db.view.create({
 			data: {
-				viewerId,
-				episodeId: env.episodeId,
+				viewer: { connect: { id: viewerId } },
+				episode: { connect: { id: env.episodeId } },
 				liked: env.liked,
 				rating: env.rating,
 				comment: env.comment,
@@ -47,6 +47,7 @@ export const logEpisode = async (viewerId: string, env: z.infer<typeof logEpisod
 						? null
 						: DateTime.fromMillis(env.viewedOn).setZone("utc").startOf("day").toJSDate(),
 				spoiler: env.comment === null ? false : env.spoiler,
+				createdAt: { create: {} },
 			},
 		});
 		const opinion = {
