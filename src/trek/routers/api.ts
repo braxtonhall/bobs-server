@@ -39,6 +39,9 @@ export const api = express()
 	.use(authenticateHeader)
 	.use(getViewing)
 	.use((req, res, next) => {
+		// TODO migrate this ... https://trpc.io/docs/server/procedures
+		//  getViewing should really just be part of createContext,
+		//  and this function should get rolled into t.procedure.use(..)
 		if (!res.locals.logged) {
 			return res.sendStatus(403);
 		} else if (!res.locals.viewing) {
