@@ -37,7 +37,7 @@ model Watchlist {
   id          String    @id @default(cuid())
   ownerId     String
   owner       Viewer    @relation(fields: [ownerId], references: [id])
-  watchings   Viewing[]
+  viewings    Viewing[]
   name        String
   description String
   /// JSON formatted string for the filters used to create this watchlist

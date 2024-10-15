@@ -45,8 +45,8 @@ export const getCurrentlyWatching = async (viewerId: string, cursor: string | un
 	});
 	if (viewings.length > PAGE_SIZE) {
 		return {
-			viewings: viewings.slice(0, -1),
-			cursor: viewings[viewings.length - 1].id as string | undefined,
+			viewings: viewings.slice(0, PAGE_SIZE),
+			cursor: viewings[PAGE_SIZE].id as string | undefined,
 		};
 	} else {
 		return {
