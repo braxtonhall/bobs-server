@@ -3,7 +3,6 @@ import { Box, Button, Card, CardContent, Stack, Typography } from "@mui/material
 import { InfoRounded, RedoRounded, UndoRounded, DeleteRounded, PauseRounded } from "@mui/icons-material";
 import { LogForm } from "../../LogForm";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { DateTime } from "luxon";
 import { Link } from "react-router-dom";
 import { SeriesCollection, Viewings } from "./types";
 import { Progress } from "../../misc/Progress";
@@ -56,6 +55,7 @@ export const Viewing = ({ viewing, series, setCursor, logEpisode }: ViewingProps
 						logEpisode={logEpisode}
 						next={following}
 						last={last?.id ?? null}
+						key={current.id}
 					/>
 				</>
 			) : (

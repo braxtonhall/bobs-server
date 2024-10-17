@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { TextField, Autocomplete } from "@mui/material";
 import { api } from "../util/api";
 
@@ -8,6 +8,21 @@ export const Tags = (props: { tags: string[]; setTags: (tags: string[]) => void 
 	// TODO save last used tags and have them set as default values????
 
 	useMemo(() => void api.getViewerTags.query().then(setOptions), []);
+	useEffect(() => {
+		try {
+			const tags = JSON.parse(localStorage.getItem("tags") ?? "[]");
+			if (Array.isArray(tags) && tags.every((element) => typeof element === "string")) {
+				setTags(tags);
+			}
+		} catch {
+			// Do nothing
+		}
+	}, []);
+
+	const setTags = (tags: string[]) => {
+		localStorage.setItem("tags", JSON.stringify(tags));
+		return props.setTags(tags);
+	};
 
 	return (
 		<Autocomplete
@@ -16,11 +31,11 @@ export const Tags = (props: { tags: string[]; setTags: (tags: string[]) => void 
 			options={options.filter((tag) => !props.tags.includes(tag))}
 			value={props.tags}
 			inputValue={inputString}
-			onChange={(_, newValue) => props.setTags(newValue)}
+			onChange={(_, newValue) => setTags(newValue)}
 			onInputChange={(_, newInputValue) => {
 				const tokens = newInputValue.split(",");
 				if (tokens.length > 1) {
-					props.setTags([
+					setTags([
 						...props.tags,
 						...tokens
 							.map((tag) => tag.trim().toLowerCase())

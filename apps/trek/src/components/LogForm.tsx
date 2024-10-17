@@ -29,7 +29,7 @@ export const LogForm = (props: { episode: Episode; logEpisode: API["logEpisode"]
 						return props.logEpisode({
 							episodeId: props.episode.id,
 							viewedOn: date && date.toFormat("yyyy-MM-dd"),
-							comment: review || null,
+							comment: review.trim() || null,
 							tags,
 							liked,
 							rating,
