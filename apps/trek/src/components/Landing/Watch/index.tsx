@@ -19,12 +19,14 @@ const Watch = (props: WatchProps) => {
 				const viewingsById = Object.fromEntries(newViewings.map((viewing) => [viewing.id, viewing]));
 				return Object.values(viewingsById);
 			});
+			// TODO this should only happen at the bottom of the page
 			if (cursor) {
 				void api.getCurrentlyWatching.query(cursor).then(getRemainingViewings);
 			}
 		});
 	}, []);
 
+	// TODO https://react.dev/reference/react/useCallback
 	const logAndSetEpisode: API["logEpisode"]["mutate"] = (env) => {
 		const promise = api.logEpisode.mutate(env);
 		const updated = viewings.map((viewing) => {
@@ -79,16 +81,18 @@ const Watch = (props: WatchProps) => {
 					</Box>
 				</Fade>
 				{viewings.length && props.series && props.episodes ? (
-					viewings.map((viewing) => (
-						<Viewing
-							key={viewing.id}
-							viewing={viewing}
-							series={props.series! /* TODO ??? */}
-							setCursor={setCursor}
-							logEpisode={logAndSetEpisode}
-							episodes={props.episodes! /* TODO ??? */}
-						/>
-					))
+					viewings.map(
+						((series, episodes) => (viewing) => (
+							<Viewing
+								key={viewing.id}
+								viewing={viewing}
+								series={series}
+								setCursor={setCursor}
+								logEpisode={logAndSetEpisode}
+								episodes={episodes}
+							/>
+						))(props.series, props.episodes),
+					)
 				) : (
 					<WatchInactive />
 				)}
