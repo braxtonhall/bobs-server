@@ -6,6 +6,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { Link } from "react-router-dom";
 import { SeriesCollection, Viewings } from "./types";
 import { Progress } from "../../misc/Progress";
+import "../../../fonts";
 
 const NEXT_FEW_COUNT = 3;
 
@@ -95,6 +96,7 @@ const CurrentEpisode = (props: {
 					<Card style={{ width: "100px", height: "100px", backgroundColor: "gainsboro" }}></Card>
 
 					<Box sx={mobile ? {} : { display: "table-cell", width: "100%" }} border="dotted">
+						{/*TODO it would be nice if this font changed based on the show https://github.com/wrstone/fonts-startrek*/}
 						<Typography variant="h5" component="h2">
 							{props.episode.name}
 						</Typography>
