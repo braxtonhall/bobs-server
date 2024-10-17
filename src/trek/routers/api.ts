@@ -12,6 +12,7 @@ import { initTRPC } from "@trpc/server";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { getLatestEvents } from "../operations/getLatestEvents";
 import { Scope } from "../types";
+import { getEpisodes } from "../operations/getEpisodes";
 
 export const t = initTRPC.context<Context>().create();
 
@@ -31,6 +32,7 @@ const trekRouter = t.router({
 		.mutation(({ input: { viewingId, episodeId }, ctx: { viewerId } }) =>
 			updateCursor({ viewerId, episodeId, viewingId }),
 		),
+	getEpisodes: t.procedure.query(({ ctx: { viewerId } }) => getEpisodes(viewerId)),
 	logEpisode: t.procedure.input(logEpisodeSchema).mutation(({ input, ctx }) => logEpisode(ctx.viewerId, input)),
 	getEvents: t.procedure
 		.input(

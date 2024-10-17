@@ -4,9 +4,8 @@ import { InfoRounded, RedoRounded, UndoRounded, DeleteRounded, PauseRounded } fr
 import { LogForm } from "../../LogForm";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { Link } from "react-router-dom";
-import { SeriesCollection, Viewings } from "./types";
+import { Episode, SeriesCollection, Viewings } from "./types";
 import { Progress } from "../../misc/Progress";
-import "../../../fonts";
 
 const NEXT_FEW_COUNT = 3;
 
@@ -15,16 +14,19 @@ type ViewingProps = {
 	series: SeriesCollection;
 	setCursor: API["updateCursor"]["mutate"];
 	logEpisode: API["logEpisode"]["mutate"];
+	episodes: Record<string, Episode>;
 };
 
-export const Viewing = ({ viewing, series, setCursor, logEpisode }: ViewingProps) => {
+export const Viewing = ({ viewing, series, setCursor, logEpisode, episodes }: ViewingProps) => {
 	// TODO what should happen if you are DONE???
 	// TODO needs a button to just give up...
 
 	const index = viewing.watchlist.episodes.findIndex(({ id }) => id === viewing.cursor);
 	const last = viewing.watchlist.episodes[index - 1];
 	const current = viewing.watchlist.episodes[index];
-	const following = viewing.watchlist.episodes.slice(index + 1, index + 1 + NEXT_FEW_COUNT);
+	const following = viewing.watchlist.episodes
+		.slice(index + 1, index + 1 + NEXT_FEW_COUNT)
+		.map(({ id }) => episodes[id]);
 
 	return (
 		<Card>
@@ -50,7 +52,7 @@ export const Viewing = ({ viewing, series, setCursor, logEpisode }: ViewingProps
 				<>
 					<CurrentEpisode
 						viewingId={viewing.id}
-						episode={current}
+						episode={episodes[current.id]}
 						series={series}
 						setCursor={setCursor}
 						logEpisode={logEpisode}
@@ -65,8 +67,6 @@ export const Viewing = ({ viewing, series, setCursor, logEpisode }: ViewingProps
 		</Card>
 	);
 };
-
-type Episode = ViewingProps["viewing"]["watchlist"]["episodes"][number];
 
 const IMG_URL = "https://media.themoviedb.org/t/p/w454_and_h254_bestv2/Asrl6u2tugWf9EJN24uhQ9zvyo6.jpg";
 
