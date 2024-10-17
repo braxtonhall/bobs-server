@@ -25,8 +25,7 @@ model Episode {
   watchlists Watchlist[]
   viewings   Viewing[]
 
-  // The different ways to sort the episodes.
-  // Each is a unique int in that col.
+  // Each is a unique int. This is the default episode order
   // Not adding @unique tho becuase i want to easily update these
   sort Int
 
@@ -59,11 +58,16 @@ model Viewer {
   opinions   Opinion[]
   watchlists Watchlist[]
   viewings   Viewing[]
+  following  Follow[]    @relation("Follower")
+  followers  Follow[]    @relation("Followed")
   /// JSON formatted string for the user's settings
   settings   String
 
   watchlistLikes WatchlistLike[]
   viewLikes      ViewLike[]
+
+  createdAtId Int   @unique
+  createdAt   Event @relation(fields: [createdAtId], references: [id])
 }
 
 model Viewing {
@@ -142,6 +146,19 @@ model ViewLike {
   @@id([viewerId, viewId])
 }
 
+model Follow {
+  followerId String
+  follower   Viewer @relation("Follower", fields: [followerId], references: [id])
+
+  followedId String
+  followed   Viewer @relation("Followed", fields: [followedId], references: [id])
+
+  createdAtId Int   @unique
+  createdAt   Event @relation(fields: [createdAtId], references: [id])
+
+  @@id([followerId, followedId])
+}
+
 model Tag {
   name  String @id
   views View[]
@@ -158,4 +175,6 @@ model Event {
   finishedViewing Viewing?       @relation("FinishedViewing")
   viewLike        ViewLike?
   watchlistLike   WatchlistLike?
+  follow          Follow?
+  viewer          Viewer?
 }

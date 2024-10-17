@@ -10,6 +10,8 @@ import { z } from "zod";
 import { logEpisode, logEpisodeSchema } from "../operations/logEpisode";
 import { initTRPC } from "@trpc/server";
 import * as trpcExpress from "@trpc/server/adapters/express";
+import { getLatestEvents } from "../operations/getLatestEvents";
+import { Scope } from "../types";
 
 export const t = initTRPC.context<Context>().create();
 
@@ -30,6 +32,14 @@ const trekRouter = t.router({
 			updateCursor({ viewerId, episodeId, viewingId }),
 		),
 	logEpisode: t.procedure.input(logEpisodeSchema).mutation(({ input, ctx }) => logEpisode(ctx.viewerId, input)),
+	getEvents: t.procedure
+		.input(
+			z.object({
+				cursor: z.number().optional(),
+				scope: z.nativeEnum(Scope),
+			}),
+		)
+		.query(({ input: { cursor, scope }, ctx: { viewerId } }) => getLatestEvents({ cursor, viewerId, scope })),
 });
 
 export type TrekRouter = typeof trekRouter;

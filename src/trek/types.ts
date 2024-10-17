@@ -3,3 +3,8 @@ export enum ViewingState {
 	PAUSED = "paused",
 	FINISHED = "finished",
 }
+
+export enum Scope {
+	FOLLOWING = "following",
+	EVERYONE = "everyone",
+}

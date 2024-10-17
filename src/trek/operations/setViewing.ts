@@ -25,6 +25,7 @@ export const setViewing = async ({ emailId, name }: Environment) =>
 					},
 					name,
 					settings: "{}",
+					createdAt: { create: {} },
 				},
 			});
 			const episodeIds = await db.episode.findMany({

@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import { SeriesCollection, Viewings } from "./types";
 import { Progress } from "../../misc/Progress";
 
-const NEXT_FEW_COUNT = 2;
+const NEXT_FEW_COUNT = 3;
 
 type ViewingProps = {
 	viewing: Viewings[number];
@@ -106,15 +106,7 @@ const CurrentEpisode = (props: {
 								: ""}
 						</Typography>
 
-						<Typography sx={{ fontSize: 14 }}>
-							{DateTime.fromISO(props.episode.release as never as string, { zone: "utc" }).toLocaleString(
-								{
-									month: "2-digit",
-									year: "numeric",
-									day: "2-digit",
-								},
-							)}
-						</Typography>
+						<Typography sx={{ fontSize: 14 }}>{props.episode.release}</Typography>
 					</Box>
 
 					<Box

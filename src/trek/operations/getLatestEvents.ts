@@ -1,8 +1,9 @@
 import { db } from "../../db";
+import { Scope } from "../types";
 
 const PAGE_SIZE = 100;
 
-export const getLatestEvents = async (cursor?: number) => {
+export const getLatestEvents = async ({ cursor }: { cursor?: number; viewerId: string; scope: Scope }) => {
 	const events = await db.event.findMany({
 		cursor: cursor ? { id: cursor } : undefined,
 		orderBy: { id: "desc" },
@@ -36,7 +37,11 @@ export const getLatestEvents = async (cursor?: number) => {
 			viewLike: {
 				select: {
 					viewer: true,
-					view: true,
+					view: {
+						select: {
+							viewer: true,
+						},
+					},
 				},
 			},
 			watchlistLike: {
@@ -45,6 +50,13 @@ export const getLatestEvents = async (cursor?: number) => {
 					watchlist: true,
 				},
 			},
+			follow: {
+				select: {
+					follower: true,
+					followed: true,
+				},
+			},
+			viewer: true,
 		},
 	});
 	if (events.length > PAGE_SIZE) {

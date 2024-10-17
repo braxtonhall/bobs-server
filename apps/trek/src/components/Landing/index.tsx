@@ -16,14 +16,14 @@ const Landing = () => {
 
 	useEffect(() => void api.getSeries.query().then(setSeries), []);
 	useEffect(() => {
-		void api.getCurrentlyWatching.query().then(function getRemainingSeries({ cursor, viewings }) {
+		void api.getCurrentlyWatching.query().then(function getRemainingViewings({ cursor, viewings }) {
 			setViewings((existing) => {
 				const newViewings = [...existing, ...viewings];
 				const viewingsById = Object.fromEntries(newViewings.map((viewing) => [viewing.id, viewing]));
 				return Object.values(viewingsById);
 			});
 			if (cursor) {
-				void api.getCurrentlyWatching.query(cursor).then(getRemainingSeries);
+				void api.getCurrentlyWatching.query(cursor).then(getRemainingViewings);
 			}
 		});
 	}, []);

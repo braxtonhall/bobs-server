@@ -21,6 +21,8 @@ export const getCurrentlyWatching = async (viewerId: string, cursor: string | un
 			cursor: true,
 			watchlist: {
 				include: {
+					// TODO maybe just have episode id
+					//  and get the episode list in a different request?
 					episodes: {
 						include: {
 							opinions: {

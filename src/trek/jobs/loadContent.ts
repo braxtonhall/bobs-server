@@ -2,6 +2,7 @@ import { parse } from "csv-parse";
 import { db } from "../../db";
 import { loadResource } from "../../util/loadResource";
 import { Job } from "../../jobs";
+import { DateTime } from "luxon";
 
 type Show = { ID: string; NAME: string };
 
@@ -54,7 +55,11 @@ const loadEpisodes = async () => {
 			description: "", // TODO
 			starDate: Number(row.STAR_DATE) || null,
 			sort: i,
-			release: `${row.YEAR}-${row.MONTH}-${row.DAY}`,
+			release: DateTime.fromObject({
+				year: Number(row.YEAR),
+				month: Number(row.MONTH),
+				day: Number(row.DAY),
+			}).toFormat("yyyy-MM-dd"),
 		};
 
 		await db.episode.upsert({
