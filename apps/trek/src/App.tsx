@@ -1,29 +1,14 @@
-import { Container, AppBar, Toolbar, IconButton } from "@mui/material";
-import { Outlet, Link, createBrowserRouter, RouterProvider } from "react-router-dom";
+import { Container, AppBar, Toolbar, IconButton, SwipeableDrawer } from "@mui/material";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Landing from "./components/Landing";
 import Episode from "./components/Episode";
-import React from "react";
+import { Window } from "./components/Window";
 
 const router = createBrowserRouter(
 	[
 		{
 			path: "/",
-			element: (
-				<>
-					<AppBar position="static">
-						<Toolbar variant="dense">
-							<Link to="/">
-								<IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
-									Bob's Trek
-								</IconButton>
-							</Link>
-						</Toolbar>
-					</AppBar>
-					<Container maxWidth="md">
-						<Outlet />
-					</Container>
-				</>
-			),
+			element: <Window />,
 			// errorElement: <ErrorPage />,
 			// loader: rootLoader,
 			// action: rootAction,
