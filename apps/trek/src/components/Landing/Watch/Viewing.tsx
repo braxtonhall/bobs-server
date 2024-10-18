@@ -68,7 +68,7 @@ export const Viewing = ({ viewing, series, setCursor, logEpisode, episodes }: Vi
 	);
 };
 
-const IMG_URL = "https://media.themoviedb.org/t/p/w454_and_h254_bestv2/Asrl6u2tugWf9EJN24uhQ9zvyo6.jpg";
+// const IMG_URL = "https://media.themoviedb.org/t/p/w454_and_h254_bestv2/Asrl6u2tugWf9EJN24uhQ9zvyo6.jpg";
 
 const CurrentEpisode = (props: {
 	viewingId: string;

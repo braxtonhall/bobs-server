@@ -1,6 +1,13 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { Box, Tab } from "@mui/material";
-import { PlayArrowRounded, ShuffleRounded, RssFeedRounded, ListRounded, SettingsRounded } from "@mui/icons-material";
+import {
+	PlayArrowRounded,
+	ShuffleRounded,
+	RssFeedRounded,
+	ListRounded,
+	SettingsRounded,
+	SearchRounded,
+} from "@mui/icons-material";
 import { TabPanel, TabList, TabContext } from "@mui/lab";
 import Watch from "./Watch";
 import Shuffle from "./Shuffle";
@@ -9,6 +16,10 @@ import List from "./List";
 import Settings from "./Settings";
 import { API, api } from "../../util/api";
 import { Episode } from "./Watch/types";
+import { Explore } from "./Explore";
+
+// TODO do we want a search???
+// TODO do we want... EXPLORE? most popular lists, users, reviews, episodes?????
 
 const Landing = () => {
 	const [tab, setTab] = useState("watch");
@@ -34,6 +45,7 @@ const Landing = () => {
 						<Tab label={<ListRounded />} value="list" />
 						<Tab label={<ShuffleRounded />} value="random" />
 						<Tab label={<RssFeedRounded />} value="activity" />
+						<Tab label={<SearchRounded />} value="explore" />
 						<Tab label={<SettingsRounded />} value="settings" />
 					</TabList>
 				</Box>
@@ -41,16 +53,19 @@ const Landing = () => {
 					<Watch episodes={episodes} series={series} setEpisodes={setEpisodes} />
 				</TabPanel>
 				<TabPanel value="random">
-					<Shuffle></Shuffle>
+					<Shuffle />
 				</TabPanel>
 				<TabPanel value="activity">
-					<Activity></Activity>
+					<Activity />
 				</TabPanel>
 				<TabPanel value="list">
-					<List></List>
+					<List />
+				</TabPanel>
+				<TabPanel value="explore">
+					<Explore />
 				</TabPanel>
 				<TabPanel value="settings">
-					<Settings></Settings>
+					<Settings />
 				</TabPanel>
 			</TabContext>
 		</Box>
