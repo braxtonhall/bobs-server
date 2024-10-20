@@ -34,17 +34,19 @@ model Episode {
 
 model Watchlist {
   id          String    @id @default(cuid())
-  ownerId     String
-  owner       Viewer    @relation(fields: [ownerId], references: [id])
+  // TODO There should be a default list that everyone gets!!!
+  ownerId     String?
+  owner       Viewer?   @relation(fields: [ownerId], references: [id], onDelete: SetNull)
   viewings    Viewing[]
   name        String
   description String
   /// JSON formatted string for the filters used to create this watchlist
   filters     String
   episodes    Episode[]
+  tags        Tag[]
 
-  createdAtId Int   @unique
-  createdAt   Event @relation(fields: [createdAtId], references: [id])
+  createdAtId Int?   @unique
+  createdAt   Event? @relation(fields: [createdAtId], references: [id])
 
   likes WatchlistLike[]
 }
@@ -160,8 +162,9 @@ model Follow {
 }
 
 model Tag {
-  name  String @id
-  views View[]
+  name       String      @id
+  views      View[]
+  watchlists Watchlist[]
 }
 
 model Event {

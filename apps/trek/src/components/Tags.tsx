@@ -30,6 +30,7 @@ export const Tags = ({ tags, setTags: outerSetTags }: { tags: string[]; setTags:
 		<Autocomplete
 			multiple
 			freeSolo
+			fullWidth
 			options={options.filter((tag) => !tags.includes(tag))}
 			value={tags}
 			inputValue={inputString}
@@ -46,7 +47,7 @@ export const Tags = ({ tags, setTags: outerSetTags }: { tags: string[]; setTags:
 					setInputString(newInputValue);
 				}
 			}}
-			renderInput={(params) => <TextField {...params} label="tags" />}
+			renderInput={(params) => <TextField {...params} label="Tags" />}
 		/>
 	);
 };

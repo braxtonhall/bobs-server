@@ -35,6 +35,7 @@ export const Viewing = ({ viewing, series, setCursor, logEpisode, episodes }: Vi
 					<div style={{ width: "100%", marginRight: 1 }}>
 						<h1>{viewing.watchlist.name}</h1>
 					</div>
+					{/* TODO https://mui.com/material-ui/react-menu/#customization */}
 					<Button variant="outlined" size="small">
 						<PauseRounded />
 					</Button>
@@ -86,14 +87,13 @@ const CurrentEpisode = (props: {
 				style={{
 					position: "relative",
 					backgroundColor: "transparent",
-					color: "white",
 					width: "100%",
 					boxSizing: "border-box",
 					borderSpacing: "0.5em",
 				}}
 			>
 				<Box border="dotted" display="flex" alignItems="center" position="relative">
-					<Card style={{ width: "100px", height: "100px", backgroundColor: "gainsboro" }}></Card>
+					<Card style={{ width: "100px", height: "100px" }}></Card>
 
 					<Box sx={mobile ? {} : { display: "table-cell", width: "100%" }} border="dotted">
 						{/*TODO it would be nice if this font changed based on the show https://github.com/wrstone/fonts-startrek*/}
@@ -154,7 +154,9 @@ const CurrentEpisode = (props: {
 					</Box>
 				</Box>
 
-				<LogForm episode={props.episode} logEpisode={props.logEpisode} />
+				<Box marginTop="1em">
+					<LogForm episode={props.episode} logEpisode={props.logEpisode} mobile={mobile} />
+				</Box>
 			</CardContent>
 		</Card>
 	);

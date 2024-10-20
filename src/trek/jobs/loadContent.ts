@@ -76,9 +76,43 @@ const loadEpisodes = async () => {
 	}
 };
 
+const setDefaultWatchlist = async () => {
+	const watchlist = await db.watchlist.findFirst({
+		where: {
+			ownerId: { in: null },
+		},
+	});
+	const data = {
+		name: "bob's trek",
+		description: "Where some have gone before",
+		filters: "{}",
+		episodes: {
+			connect: await db.episode.findMany({
+				select: {
+					id: true,
+				},
+				orderBy: {
+					sort: "asc",
+				},
+			}),
+		},
+	} as const;
+	if (watchlist) {
+		await db.watchlist.update({
+			where: {
+				id: watchlist.id,
+			},
+			data,
+		});
+	} else {
+		await db.watchlist.create({ data });
+	}
+};
+
 const load = async () => {
 	await loadShows();
 	await loadEpisodes();
+	await setDefaultWatchlist();
 };
 
 export const loadContent = {

@@ -28,35 +28,29 @@ export const setViewing = async ({ emailId, name }: Environment) =>
 					createdAt: { create: {} },
 				},
 			});
-			const episodeIds = await db.episode.findMany({
-				select: {
-					id: true,
+			const watchlist = await db.watchlist.findFirst({
+				where: {
+					ownerId: { in: null },
 				},
-				orderBy: {
-					sort: "asc",
-				},
-			});
-			const watchlist = await db.watchlist.create({
-				data: {
-					owner: { connect: viewer },
-					name: `${name}'s trek`,
-					description: "Where some have gone before",
-					filters: "{}",
+				include: {
 					episodes: {
-						connect: episodeIds,
+						take: 1,
+						select: { id: true },
 					},
-					createdAt: { create: {} },
 				},
 			});
-			await db.viewing.create({
-				data: {
-					watchlist: { connect: watchlist },
-					viewer: { connect: viewer },
-					state: ViewingState.IN_PROGRESS,
-					...(episodeIds.length ? { episode: { connect: { id: episodeIds[0].id } } } : {}),
-					startedAt: { create: {} },
-				},
-			});
+			if (watchlist) {
+				const [firstEpisode] = watchlist.episodes;
+				await db.viewing.create({
+					data: {
+						watchlist: { connect: { id: watchlist.id } },
+						viewer: { connect: viewer },
+						state: ViewingState.IN_PROGRESS,
+						...(firstEpisode ? { episode: { connect: firstEpisode } } : {}),
+						startedAt: { create: {} },
+					},
+				});
+			}
 			return viewer.id;
 		}
 	});

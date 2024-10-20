@@ -33,7 +33,7 @@ const Event = ({ event }: { event: EventTransport }) => {
 	if (event.watchlist) {
 		return (
 			<p>
-				{event.watchlist.owner.name} created the watchlist {event.watchlist.name}
+				{event.watchlist.owner?.name ?? "Someone"} created the watchlist {event.watchlist.name}
 			</p>
 		);
 	} else if (event.follow) {
