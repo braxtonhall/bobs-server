@@ -7,8 +7,12 @@ export const Progress = (props: { numerator: number; denominator: number }) => {
 			<Box sx={{ width: "100%", mr: 1 }}>
 				<LinearProgress variant="determinate" value={value} />
 			</Box>
-			<Box sx={{ minWidth: 35 }}>
-				<Typography variant="body2" sx={{ color: "text.secondary" }}>{`${Math.round(value)}%`}</Typography>
+			<Box sx={{ minWidth: 37 }}>
+				<Typography
+					variant="body2"
+					textAlign="right"
+					sx={{ color: "text.secondary" }}
+				>{`${Math.round(value)}%`}</Typography>
 			</Box>
 		</Box>
 	);

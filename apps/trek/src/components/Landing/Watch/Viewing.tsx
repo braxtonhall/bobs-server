@@ -1,9 +1,8 @@
 import { API } from "../../../util/api";
-import { Box, Button, Card, CardContent, Stack, Typography } from "@mui/material";
-import { InfoRounded, RedoRounded, UndoRounded, DeleteRounded, PauseRounded } from "@mui/icons-material";
+import { Box, Button, Card, CardContent } from "@mui/material";
+import { RedoRounded, UndoRounded, DeleteRounded, PauseRounded } from "@mui/icons-material";
 import { LogForm } from "../../LogForm";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { Link } from "react-router-dom";
 import { Episode, SeriesCollection, Viewings } from "./types";
 import { Progress } from "../../misc/Progress";
 
@@ -29,7 +28,7 @@ export const Viewing = ({ viewing, series, setCursor, logEpisode, episodes }: Vi
 		.map(({ id }) => episodes[id]);
 
 	return (
-		<Card>
+		<Card style={{ padding: "1em" }}>
 			<Box>
 				<Box display="flex" alignItems="center">
 					<div style={{ width: "100%", marginRight: 1 }}>
@@ -69,8 +68,6 @@ export const Viewing = ({ viewing, series, setCursor, logEpisode, episodes }: Vi
 	);
 };
 
-// const IMG_URL = "https://media.themoviedb.org/t/p/w454_and_h254_bestv2/Asrl6u2tugWf9EJN24uhQ9zvyo6.jpg";
-
 const CurrentEpisode = (props: {
 	viewingId: string;
 	episode: Episode;
@@ -82,82 +79,41 @@ const CurrentEpisode = (props: {
 }) => {
 	const mobile = useMediaQuery("(max-width:550px)");
 	return (
-		<Card style={{ margin: "1em", position: "relative", backgroundColor: "grey" }}>
-			<CardContent
-				style={{
-					position: "relative",
-					backgroundColor: "transparent",
-					width: "100%",
-					boxSizing: "border-box",
-					borderSpacing: "0.5em",
-				}}
-			>
-				<Box border="dotted" display="flex" alignItems="center" position="relative">
-					<Card style={{ width: "100px", height: "100px" }}></Card>
-
-					<Box sx={mobile ? {} : { display: "table-cell", width: "100%" }} border="dotted">
-						{/*TODO it would be nice if this font changed based on the show https://github.com/wrstone/fonts-startrek*/}
-						<Typography variant="h5" component="h2">
-							{props.episode.name}
-						</Typography>
-
-						<Typography variant="body2" component="p">
-							{props.episode.abbreviation ?? props.episode.seriesId}
-							{props.episode.abbreviation === null
-								? ` Season ${props.episode.season}, Episode ${props.episode.production}`
-								: ""}
-						</Typography>
-
-						<Typography sx={{ fontSize: 14 }}>{props.episode.release}</Typography>
-					</Box>
-
-					<Box
-						display={mobile ? "flex" : "table-cell"}
-						justifyContent="center"
-						alignItems="center"
-						sx={{ float: "none", minWidth: mobile ? undefined : "220px", verticalAlign: "middle" }}
+		<>
+			<Box marginBottom="1em" marginTop="1em">
+				<LogForm episode={props.episode} logEpisode={props.logEpisode} mobile={mobile} />
+			</Box>
+			<Box display="flex" alignItems="center" position="relative">
+				{props.last ? (
+					<Button
+						variant="outlined"
+						onClick={() =>
+							props.setCursor({
+								viewingId: props.viewingId,
+								episodeId: props.last,
+							})
+						}
+						sx={{ marginRight: "auto" }}
 					>
-						<Stack direction={mobile ? "row" : "column"}>
-							{props.last ? (
-								<Button
-									variant="outlined"
-									onClick={() =>
-										props.setCursor({
-											viewingId: props.viewingId,
-											episodeId: props.last,
-										})
-									}
-								>
-									<UndoRounded />
-								</Button>
-							) : (
-								<></>
-							)}
+						<UndoRounded /> Back
+					</Button>
+				) : (
+					<></>
+				)}
 
-							<Button
-								variant="outlined"
-								onClick={() =>
-									props.setCursor({
-										viewingId: props.viewingId,
-										episodeId: props.next[0]?.id ?? null,
-									})
-								}
-							>
-								<RedoRounded />
-							</Button>
-							<Link to={`/episodes/${props.episode.id}`} style={mobile ? {} : { width: "100%" }}>
-								<Button variant="outlined" style={mobile ? {} : { width: "100%" }}>
-									<InfoRounded />
-								</Button>
-							</Link>
-						</Stack>
-					</Box>
-				</Box>
-
-				<Box marginTop="1em">
-					<LogForm episode={props.episode} logEpisode={props.logEpisode} mobile={mobile} />
-				</Box>
-			</CardContent>
-		</Card>
+				<Button
+					variant="outlined"
+					onClick={() =>
+						props.setCursor({
+							viewingId: props.viewingId,
+							episodeId: props.next[0]?.id ?? null,
+						})
+					}
+					sx={{ marginLeft: "auto" }}
+				>
+					<RedoRounded /> Skip
+				</Button>
+			</Box>
+		</>
 	);
 };
