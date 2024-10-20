@@ -28,6 +28,7 @@ import { DateTime } from "luxon";
 import { API } from "../util/api";
 import { Episode } from "./Landing/Watch/types";
 
+// TODO remove this
 const IMG_URL = "https://media.themoviedb.org/t/p/w454_and_h254_bestv2/Asrl6u2tugWf9EJN24uhQ9zvyo6.jpg";
 
 const getStoredTags = () => {
