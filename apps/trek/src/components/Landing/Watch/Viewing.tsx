@@ -1,6 +1,6 @@
 import { API } from "../../../util/api";
 import { Box, Button, Card, CardMedia } from "@mui/material";
-import { DeleteRounded, PauseRounded, StopRounded, SkipPreviousRounded, SkipNextRounded } from "@mui/icons-material";
+import { PauseRounded, StopRounded, SkipPreviousRounded, SkipNextRounded } from "@mui/icons-material";
 import { LogForm } from "../../LogForm";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { Episode, SeriesCollection, Viewings } from "./types";

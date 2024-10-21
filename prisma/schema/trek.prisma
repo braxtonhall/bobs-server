@@ -86,7 +86,7 @@ model Viewing {
   startedAt   Event @relation("StartedViewing", fields: [startedAtId], references: [id])
 
   finishedAtId Int?   @unique
-  finsishedAt  Event? @relation("FinishedViewing", fields: [finishedAtId], references: [id])
+  finishedAt   Event? @relation("FinishedViewing", fields: [finishedAtId], references: [id])
 }
 
 model WatchlistLike {

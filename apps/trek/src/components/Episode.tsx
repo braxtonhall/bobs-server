@@ -1,10 +1,11 @@
 import { useLoaderData } from "react-router-dom";
+import { API } from "../util/api";
 
 const Episode = () => {
-	const { id } = useLoaderData() as { id: string };
+	const episode = useLoaderData() as NonNullable<Awaited<ReturnType<API["getEpisode"]["query"]>>>;
 	return (
 		<>
-			<p>Params: {id}</p>
+			<pre>Params: {JSON.stringify(episode, null, "\t")}</pre>
 		</>
 	);
 };
