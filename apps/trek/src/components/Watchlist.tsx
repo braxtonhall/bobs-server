@@ -7,8 +7,7 @@ import { Episode } from "./Landing/Watch/types";
 import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
 import { AgGridReact } from "ag-grid-react";
-import type { GridApi } from "ag-grid-community";
-import { updateWatchlist } from "../../../../src/trek/operations/updateWatchlist";
+import type { GridApi, ColDef, ColumnState } from "ag-grid-community";
 
 // TODO remove
 const IMG_URL = "https://media.themoviedb.org/t/p/w454_and_h254_bestv2/Asrl6u2tugWf9EJN24uhQ9zvyo6.jpg";
@@ -16,7 +15,65 @@ const IMG_URL = "https://media.themoviedb.org/t/p/w454_and_h254_bestv2/Asrl6u2tu
 const Watchlist = () => {
 	const { watchlist, owner } = useLoaderData() as NonNullable<Awaited<ReturnType<API["getWatchlist"]["query"]>>>;
 	const [episodes, setEpisodes] = useState<Episode[]>([]);
+	const definitions = useMemo(
+		() =>
+			[
+				{ field: "sort", hide: true, colId: "sort" },
+				{
+					colId: "drag",
+					rowDrag: true,
+					sortable: false,
+					width: 145,
+					cellRenderer: ({ data: episode }: { data: Episode }) => (
+						<Card
+							style={{
+								width: "77px",
+								height: "40px",
+								marginRight: "0.5em",
+								position: "relative",
+							}}
+						>
+							<CardMedia
+								alt={episode.name}
+								image={IMG_URL}
+								component="img"
+								sx={{
+									position: "absolute",
+									top: 0,
+									right: 0,
+									height: "100%",
+									width: "100%",
+								}}
+							/>
+						</Card>
+					),
+				},
+				{ field: "name", filter: true, colId: "name" },
+				{
+					headerName: "Series",
+					valueGetter: ({ data }) => data!.abbreviation ?? data!.seriesId,
+					filter: true,
+					colId: "series",
+				},
+			] satisfies ColDef<Episode>[],
+		[],
+	);
 	const settings = useMemo(() => JSON.parse(watchlist.filters), [watchlist]);
+	const columnDefs = useMemo<ColDef<Episode>[]>(() => {
+		const state: ColumnState[] = settings.state ?? [];
+		const savedColumns = Object.fromEntries(state.map((column) => [column.colId, column]));
+		const columnDefinitions = Object.fromEntries(definitions.map((definition) => [definition.colId, definition]));
+		return [
+			...state
+				.filter((column) => Object.hasOwn(columnDefinitions, column.colId))
+				.map((column) => ({
+					sort: column.sort,
+					sortIndex: column.sortIndex,
+					...columnDefinitions[column.colId],
+				})),
+			...definitions.filter((column) => !Object.hasOwn(savedColumns, column.colId)),
+		];
+	}, [settings, definitions]);
 
 	const rowsRef = useRef<Episode[]>([]);
 	const selectionRef = useRef<Episode[]>([]);
@@ -70,10 +127,12 @@ const Watchlist = () => {
 			</Button>
 			<Button
 				onClick={() => {
-					gridRef.current?.api.applyColumnState({
-						state: [{ colId: "sort", sort: "asc" }],
-						defaultState: { sort: null },
-					});
+					gridRef.current?.api.setGridOption("rowData", episodes);
+					gridRef.current?.api.setGridOption(
+						"columnDefs",
+						definitions.map((column) => ({ ...column, sort: null, sortIndex: null })),
+					);
+					rowsRef.current = episodes;
 				}}
 			>
 				Default Sort
@@ -94,58 +153,26 @@ const Watchlist = () => {
 							});
 							api.setFilterModel(settings.filters);
 						}}
-						columnDefs={[
-							{ field: "sort", hide: true, colId: "sort" },
-							{
-								colId: "drag",
-								rowDrag: true,
-								sortable: false,
-								width: 145,
-								cellRenderer: ({ data: episode }: { data: Episode }) => (
-									<Card
-										style={{
-											width: "77px",
-											height: "40px",
-											marginRight: "0.5em",
-											position: "relative",
-										}}
-									>
-										<CardMedia
-											alt={episode.name}
-											image={IMG_URL}
-											component="img"
-											sx={{
-												position: "absolute",
-												top: 0,
-												right: 0,
-												height: "100%",
-												width: "100%",
-											}}
-										/>
-									</Card>
-								),
-							},
-							{ field: "name", filter: true, colId: "name" },
-							{
-								headerName: "Series",
-								valueGetter: ({ data }) => data!.abbreviation ?? data!.seriesId,
-								filter: true,
-								colId: "series",
-							},
-						]}
+						columnDefs={columnDefs}
+						alwaysMultiSort
 						onSortChanged={({ api }) => saveSelection(api)}
 						onFilterChanged={({ api }) => saveSelection(api)}
 						onSelectionChanged={({ api }) => saveSelection(api)}
 						getRowId={(row) => row.data.id}
 						onDragStarted={(event) => {
-							if (event.api.getColumnState().some((column) => column.sort)) {
+							if (
+								event.target.classList.contains("ag-drag-handle") &&
+								event.api.getColumnState().some((column) => column.sort)
+							) {
 								const filterModel = event.api.getFilterModel();
 								event.api.setFilterModel(null);
 								const rows: Episode[] = [];
 								event.api.forEachNodeAfterFilterAndSort((row) => rows.push(row.data!));
 								event.api.setGridOption("rowData", rows);
 								event.api.setFilterModel(filterModel);
-								event.api.resetColumnState();
+								event.api.applyColumnState({
+									state: definitions.map((column) => ({ ...column, sort: null, sortIndex: null })),
+								});
 								rowsRef.current = rows;
 							}
 						}}
