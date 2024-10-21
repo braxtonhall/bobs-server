@@ -15,6 +15,7 @@ import { Scope } from "../types";
 import { getEpisodes } from "../operations/getEpisodes";
 import { getEpisode } from "../operations/getEpisode";
 import { getWatchlist } from "../operations/getWatchlist";
+import { updateWatchlist, updateWatchlistInputSchema } from "../operations/updateWatchlist";
 
 export const t = initTRPC.context<Context>().create();
 
@@ -41,6 +42,9 @@ const trekRouter = t.router({
 	getEpisode: t.procedure
 		.input(z.string())
 		.query(({ ctx: { viewerId }, input: episodeId }) => getEpisode({ viewerId, episodeId })),
+	updateWatchlist: t.procedure
+		.input(updateWatchlistInputSchema)
+		.mutation(({ ctx, input }) => updateWatchlist(ctx.viewerId, input)),
 	logEpisode: t.procedure.input(logEpisodeSchema).mutation(({ input, ctx }) => logEpisode(ctx.viewerId, input)),
 	getEvents: t.procedure
 		.input(

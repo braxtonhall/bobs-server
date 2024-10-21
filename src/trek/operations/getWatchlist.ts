@@ -12,6 +12,7 @@ export const getWatchlist = async ({ watchlistId, viewerId }: { watchlistId: str
 			owner: {
 				select: { name: true },
 			},
+			tags: true,
 			viewings: {
 				where: {
 					viewerId,

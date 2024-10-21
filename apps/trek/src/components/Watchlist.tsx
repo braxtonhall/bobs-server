@@ -1,39 +1,47 @@
 import { useLoaderData } from "react-router-dom";
 import { api, API } from "../util/api";
 import { Box, Button, Card, CardMedia, Typography } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Episode } from "./Landing/Watch/types";
 
 import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
-import { AgGridReact } from "ag-grid-react"; // React Data Grid Component
+import { AgGridReact } from "ag-grid-react";
+import type { GridApi } from "ag-grid-community";
+import { updateWatchlist } from "../../../../src/trek/operations/updateWatchlist";
 
 // TODO remove
 const IMG_URL = "https://media.themoviedb.org/t/p/w454_and_h254_bestv2/Asrl6u2tugWf9EJN24uhQ9zvyo6.jpg";
 
-function moveInArray(arr: any[], fromIndex: number, toIndex: number) {
-	var element = arr[fromIndex];
-	arr.splice(fromIndex, 1);
-	arr.splice(toIndex, 0, element);
-}
-
 const Watchlist = () => {
 	const { watchlist, owner } = useLoaderData() as NonNullable<Awaited<ReturnType<API["getWatchlist"]["query"]>>>;
 	const [episodes, setEpisodes] = useState<Episode[]>([]);
+	const settings = useMemo(() => JSON.parse(watchlist.filters), [watchlist]);
 
-	const [rows, setRows] = useState<Episode[]>([]);
-
-	// const rowsRef = useRef<Episode[]>([]);
+	const rowsRef = useRef<Episode[]>([]);
 	const selectionRef = useRef<Episode[]>([]);
+
+	const gridRef = useRef<{ api: GridApi<Episode> }>();
 
 	useEffect(
 		() =>
 			void api.getEpisodes.query().then((episodes) => {
-				setRows(episodes); // TODO update the sorting and what's in the watchlist or whatever
+				// setRows(episodes); // TODO update the sorting and what's in the watchlist or whatever
 				setEpisodes(episodes);
+				rowsRef.current = episodes;
 			}),
 		[watchlist],
 	);
+
+	const saveSelection = (api: GridApi<Episode>) => {
+		const selection: Episode[] = [];
+		api.forEachNodeAfterFilterAndSort((node) => {
+			if (node.isSelected()) {
+				selection.push(node.data!);
+			}
+		});
+		selectionRef.current = selection;
+	};
 
 	return (
 		<>
@@ -42,21 +50,54 @@ const Watchlist = () => {
 
 			<Button
 				onClick={() => {
-					console.log(selectionRef.current);
+					api.updateWatchlist
+						.mutate({
+							episodes: selectionRef.current.map(({ id }) => id),
+							watchlistId: watchlist.id,
+							filters: {
+								filters: gridRef.current?.api.getFilterModel(),
+								state: gridRef.current?.api.getColumnState(),
+							},
+							name: watchlist.name,
+							tags: [],
+							description: watchlist.description,
+						})
+						.then(() => alert("done"))
+						.catch(console.error);
 				}}
 			>
 				Save
 			</Button>
-			<Button onClick={() => setRows(episodes)}>Default Sort</Button>
+			<Button
+				onClick={() => {
+					gridRef.current?.api.applyColumnState({
+						state: [{ colId: "sort", sort: "asc" }],
+						defaultState: { sort: null },
+					});
+				}}
+			>
+				Default Sort
+			</Button>
 
-			{rows.length ? (
+			{episodes.length ? (
 				<Box className="ag-theme-quartz" style={{ width: "100%", marginBottom: "1em" }}>
 					<AgGridReact
+						ref={gridRef as any}
 						// 	Series	Episode	Name	Stardate	Airdate	Seen	Liked	Liked	Unseen Row	522	Last Seen Row	521	Next Unseen Row	523
 						domLayout="autoHeight"
-						rowData={rows}
+						rowData={rowsRef.current}
+						onFirstDataRendered={({ api }) => {
+							// TODO it would be nice to have this before the table renders
+							//   also the order of the state is the order of the columns
+							api.applyColumnState({
+								state: settings.state,
+							});
+							api.setFilterModel(settings.filters);
+						}}
 						columnDefs={[
+							{ field: "sort", hide: true, colId: "sort" },
 							{
+								colId: "drag",
 								rowDrag: true,
 								sortable: false,
 								width: 145,
@@ -84,43 +125,17 @@ const Watchlist = () => {
 									</Card>
 								),
 							},
-							{ field: "name", filter: true },
+							{ field: "name", filter: true, colId: "name" },
 							{
 								headerName: "Series",
 								valueGetter: ({ data }) => data!.abbreviation ?? data!.seriesId,
 								filter: true,
+								colId: "series",
 							},
 						]}
-						onSortChanged={(event) => {
-							console.log("sort");
-							const selection: Episode[] = [];
-							event.api.forEachNodeAfterFilterAndSort((node) => {
-								if (node.isSelected()) {
-									selection.push(node.data!);
-								}
-							});
-							selectionRef.current = selection;
-						}}
-						onFilterChanged={(event) => {
-							console.log("filter");
-							const selection: Episode[] = [];
-							event.api.forEachNodeAfterFilterAndSort((node) => {
-								if (node.isSelected()) {
-									selection.push(node.data!);
-								}
-							});
-							selectionRef.current = selection;
-						}}
-						onSelectionChanged={(event) => {
-							console.log("selection");
-							const selection: Episode[] = [];
-							event.api.forEachNodeAfterFilterAndSort((node) => {
-								if (node.isSelected()) {
-									selection.push(node.data!);
-								}
-							});
-							selectionRef.current = selection;
-						}}
+						onSortChanged={({ api }) => saveSelection(api)}
+						onFilterChanged={({ api }) => saveSelection(api)}
+						onSelectionChanged={({ api }) => saveSelection(api)}
 						getRowId={(row) => row.data.id}
 						onDragStarted={(event) => {
 							if (event.api.getColumnState().some((column) => column.sort)) {
@@ -128,34 +143,31 @@ const Watchlist = () => {
 								event.api.setFilterModel(null);
 								const rows: Episode[] = [];
 								event.api.forEachNodeAfterFilterAndSort((row) => rows.push(row.data!));
+								event.api.setGridOption("rowData", rows);
 								event.api.setFilterModel(filterModel);
 								event.api.resetColumnState();
-								setRows(rows);
+								rowsRef.current = rows;
 							}
 						}}
 						onRowDragMove={(event) => {
-							var movingNode = event.node;
-							var overNode = event.overNode;
+							const movingNode = event.node;
+							const overNode = event.overNode;
 
-							var rowNeedsToMove = movingNode !== overNode;
-
-							if (rowNeedsToMove) {
-								// the list of rows we have is data, not row nodes, so extract the data
-								var movingData = movingNode.data!;
-								var overData = overNode!.data!;
-
-								var fromIndex = rows.indexOf(movingData);
-								var toIndex = rows.indexOf(overData);
-
-								var newStore = rows.slice();
-								moveInArray(newStore, fromIndex, toIndex);
-								event.api.setGridOption("rowData", newStore);
+							if (movingNode !== overNode) {
+								const src = (rowsRef.current as unknown[]).indexOf(movingNode?.data);
+								const dst = (rowsRef.current as unknown[]).indexOf(overNode?.data);
+								rowsRef.current.splice(src, 1);
+								rowsRef.current.splice(dst, 0, movingNode!.data!);
+								event.api.setGridOption("rowData", rowsRef.current);
 								event.api.clearFocusedCell();
 							}
 						}}
-						onRowDragLeave={(event) => event.api.setGridOption("rowData", rows)}
-						onRowDragCancel={(event) => event.api.setGridOption("rowData", rows)}
-						onRowDragEnd={(event) => setRows(event.api.getGridOption("rowData")!)}
+						onRowDragLeave={(event) => event.api.setGridOption("rowData", rowsRef.current)}
+						onRowDragCancel={(event) => event.api.setGridOption("rowData", rowsRef.current)}
+						onRowDragEnd={({ api }) => {
+							rowsRef.current = api.getGridOption("rowData")!;
+							saveSelection(api);
+						}}
 						rowSelection={{ mode: "multiRow" }}
 					/>
 				</Box>
