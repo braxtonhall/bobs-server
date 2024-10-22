@@ -1,6 +1,7 @@
 import { useLoaderData } from "react-router-dom";
 import { api, API } from "../util/api";
 import { Box, Button, Card, CardMedia, Typography } from "@mui/material";
+import { VisibilityRounded } from "@mui/icons-material";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Episode } from "./Landing/Watch/types";
 
@@ -15,6 +16,13 @@ const IMG_URL = "https://media.themoviedb.org/t/p/w454_and_h254_bestv2/Asrl6u2tu
 const Watchlist = () => {
 	const { watchlist, owner } = useLoaderData() as NonNullable<Awaited<ReturnType<API["getWatchlist"]["query"]>>>;
 	const [episodes, setEpisodes] = useState<Episode[]>([]);
+	const storage = useMemo<{ widths?: Record<string, number>; order: string[] }>(() => {
+		try {
+			return JSON.parse(localStorage.getItem("columns") ?? "{}");
+		} catch {
+			return {};
+		}
+	}, []);
 	const definitions = useMemo(
 		() =>
 			[
@@ -23,11 +31,11 @@ const Watchlist = () => {
 					colId: "drag",
 					rowDrag: true,
 					sortable: false,
-					width: 145,
+					width: 102,
 					cellRenderer: ({ data: episode }: { data: Episode }) => (
 						<Card
 							style={{
-								width: "77px",
+								width: "40px",
 								height: "40px",
 								marginRight: "0.5em",
 								position: "relative",
@@ -55,7 +63,46 @@ const Watchlist = () => {
 					filter: true,
 					colId: "series",
 				},
-			] satisfies ColDef<Episode>[],
+				{
+					headerName: "Season",
+					filter: true,
+					colId: "season",
+					field: "season",
+				},
+				{
+					headerName: "Episode",
+					filter: true,
+					colId: "episode",
+					field: "production",
+				},
+				{
+					headerName: "Stardate",
+					filter: true,
+					colId: "stardate",
+					field: "starDate",
+				},
+				{
+					headerName: "Airdate",
+					filter: true,
+					colId: "airdate",
+					field: "release",
+				},
+				{
+					headerName: "Opinion",
+					sortable: false,
+					filter: false,
+					colId: "opinion",
+					// valueGetter: ({ data: episode }) => episode?.opinions[0]?.rating,
+					cellRenderer: ({ data: episode }: { data: Episode }) =>
+						episode.opinions.length ? (
+							<>
+								<VisibilityRounded /> {episode._count.views}
+							</>
+						) : (
+							<></>
+						),
+				},
+			] satisfies (ColDef<Episode> & { colId: string })[],
 		[],
 	);
 	const settings = useMemo(() => JSON.parse(watchlist.filters), [watchlist]);
@@ -63,17 +110,19 @@ const Watchlist = () => {
 		const state: ColumnState[] = settings.state ?? [];
 		const savedColumns = Object.fromEntries(state.map((column) => [column.colId, column]));
 		const columnDefinitions = Object.fromEntries(definitions.map((definition) => [definition.colId, definition]));
+		const storageColumns = storage.order ?? [];
 		return [
-			...state
-				.filter((column) => Object.hasOwn(columnDefinitions, column.colId))
-				.map((column) => ({
-					sort: column.sort,
-					sortIndex: column.sortIndex,
-					...columnDefinitions[column.colId],
+			...storageColumns
+				.filter((colId) => Object.hasOwn(columnDefinitions, colId))
+				.map((colId) => ({
+					sort: savedColumns[colId]?.sort,
+					sortIndex: savedColumns[colId]?.sortIndex,
+					width: storage.widths?.[colId],
+					...columnDefinitions[colId],
 				})),
-			...definitions.filter((column) => !Object.hasOwn(savedColumns, column.colId)),
+			...definitions.filter((column) => !storageColumns.includes(column.colId)),
 		];
-	}, [settings, definitions]);
+	}, [settings, definitions, storage]);
 
 	const rowsRef = useRef<Episode[]>([]);
 	const selectionRef = useRef<Episode[]>([]);
@@ -83,9 +132,12 @@ const Watchlist = () => {
 	useEffect(
 		() =>
 			void api.getEpisodes.query().then((episodes) => {
-				// setRows(episodes); // TODO update the sorting and what's in the watchlist or whatever
 				setEpisodes(episodes);
-				rowsRef.current = episodes;
+				const episodeMap = new Map(episodes.map((episode) => [episode.id, episode]));
+				const selection = watchlist.episodes.map(({ id }) => episodeMap.get(id)!);
+				const selectionMap = new Map(selection.map((episode) => [episode.id, episode]));
+				selectionRef.current = selection;
+				rowsRef.current = [...selection, ...episodes.filter((episode) => !selectionMap.has(episode.id))];
 			}),
 		[watchlist],
 	);
@@ -98,6 +150,13 @@ const Watchlist = () => {
 			}
 		});
 		selectionRef.current = selection;
+	};
+
+	const saveColumns = (api: GridApi<Episode>) => {
+		const columns = api.getColumnState();
+		const widths = Object.fromEntries(columns.map((column) => [column.colId, column.width]));
+		const order = columns.map((column) => column.colId);
+		localStorage.setItem("columns", JSON.stringify({ widths, order }));
 	};
 
 	return (
@@ -132,26 +191,44 @@ const Watchlist = () => {
 						"columnDefs",
 						definitions.map((column) => ({ ...column, sort: null, sortIndex: null })),
 					);
+					gridRef.current?.api.sizeColumnsToFit({
+						columnLimits: [
+							{
+								key: "drag",
+								minWidth: 102,
+								maxWidth: 102,
+							},
+							{
+								key: "airdate",
+								minWidth: 118,
+							},
+							{
+								key: "episode",
+								maxWidth: 100,
+							},
+							{
+								key: "season",
+								maxWidth: 100,
+							},
+						],
+					});
 					rowsRef.current = episodes;
 				}}
 			>
-				Default Sort
+				Reset Table
 			</Button>
 
 			{episodes.length ? (
 				<Box className="ag-theme-quartz" style={{ width: "100%", marginBottom: "1em" }}>
 					<AgGridReact
 						ref={gridRef as any}
-						// 	Series	Episode	Name	Stardate	Airdate	Seen	Liked	Liked	Unseen Row	522	Last Seen Row	521	Next Unseen Row	523
 						domLayout="autoHeight"
 						rowData={rowsRef.current}
-						onFirstDataRendered={({ api }) => {
-							// TODO it would be nice to have this before the table renders
-							//   also the order of the state is the order of the columns
-							api.applyColumnState({
-								state: settings.state,
-							});
-							api.setFilterModel(settings.filters);
+						initialState={{
+							filter: {
+								filterModel: settings.filters,
+							},
+							rowSelection: selectionRef.current.map(({ id }) => id),
 						}}
 						columnDefs={columnDefs}
 						alwaysMultiSort
@@ -195,7 +272,9 @@ const Watchlist = () => {
 							rowsRef.current = api.getGridOption("rowData")!;
 							saveSelection(api);
 						}}
-						rowSelection={{ mode: "multiRow" }}
+						onColumnResized={({ api }) => saveColumns(api)}
+						onColumnMoved={({ api }) => saveColumns(api)}
+						rowSelection={{ mode: "multiRow", selectAll: "filtered" }}
 					/>
 				</Box>
 			) : (
