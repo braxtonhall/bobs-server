@@ -34,7 +34,7 @@
 			}
 		}
 	],
-	"ignorePatterns": ["dist/**/*"],
+	"ignorePatterns": ["dist/**/*", "apps/**/*"],
 	"extends": ["eslint:recommended", "prettier"],
 	"env": {
 		"node": true,
