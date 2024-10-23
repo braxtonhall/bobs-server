@@ -1,8 +1,20 @@
 model Series {
-  id       String    @id
+  id       String       @id
   // memoryAlphaUrl String // TODO
   name     String
   episodes Episode[]
+  seasons  TrekSeason[]
+}
+
+model TrekSeason {
+  // memoryAlphaUrl String // TODO
+
+  seriesId String
+  series   Series    @relation(fields: [seriesId], references: [id])
+  number   Int
+  episodes Episode[]
+
+  @@id([seriesId, number])
 }
 
 model Episode {
@@ -20,6 +32,7 @@ model Episode {
 
   seriesId   String
   series     Series      @relation(fields: [seriesId], references: [id])
+  trekSeason TrekSeason  @relation(fields: [seriesId, season], references: [seriesId, number])
   views      View[]
   opinions   Opinion[]
   watchlists Watchlist[]

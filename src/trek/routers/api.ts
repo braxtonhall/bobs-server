@@ -40,8 +40,16 @@ const trekRouter = t.router({
 		.query(({ ctx: { viewerId }, input: watchlistId }) => getWatchlist({ viewerId, watchlistId })),
 	getEpisodes: t.procedure.query(({ ctx: { viewerId } }) => getEpisodes(viewerId)),
 	getEpisode: t.procedure
-		.input(z.string())
-		.query(({ ctx: { viewerId }, input: episodeId }) => getEpisode({ viewerId, episodeId })),
+		.input(z.object({ season: z.number(), show: z.string(), episode: z.number() }))
+		.query(({ ctx: { viewerId }, input: { season, show, episode } }) =>
+			getEpisode({ viewerId, seriesId: show, season, production: episode }),
+		),
+	getSeason: t.procedure.input(z.object({ season: z.number(), show: z.string() })).query(
+		({ ctx: { viewerId }, input: { season, show } }) => `TODO ${viewerId} ${show} ${season}`, // TODO
+	),
+	getShow: t.procedure
+		.input(z.object({ show: z.string() }))
+		.query(({ ctx: { viewerId }, input: { show } }) => `TODO ${viewerId} ${show}`), // TODO
 	updateWatchlist: t.procedure
 		.input(updateWatchlistInputSchema)
 		.mutation(({ ctx, input }) => updateWatchlist(ctx.viewerId, input)),
