@@ -5,6 +5,8 @@ import Watchlist from "./components/Watchlist";
 import { Window } from "./components/Window";
 import { api } from "./util/api";
 import { z } from "zod";
+import { MobileContext } from "./util/contexts";
+import { useMediaQuery } from "@mui/material";
 
 const router = createBrowserRouter(
 	[
@@ -105,6 +107,13 @@ const router = createBrowserRouter(
 	{ basename: process.env.PUBLIC_URL },
 );
 
-const App = () => <RouterProvider router={router} />;
+const App = () => {
+	const mobile = useMediaQuery("(max-width:550px)");
+	return (
+		<MobileContext.Provider value={mobile}>
+			<RouterProvider router={router} />
+		</MobileContext.Provider>
+	);
+};
 
 export default App;

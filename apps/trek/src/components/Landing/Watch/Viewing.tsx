@@ -2,10 +2,11 @@ import { API } from "../../../util/api";
 import { Box, Button, Card, CardMedia } from "@mui/material";
 import { PauseRounded, StopRounded, SkipPreviousRounded, SkipNextRounded } from "@mui/icons-material";
 import { LogForm } from "../../LogForm";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import { Episode, SeriesCollection, Viewings } from "./types";
 import { Progress } from "../../misc/Progress";
 import { Deck } from "../../misc/Deck";
+import { useContext } from "react";
+import { MobileContext } from "../../../util/contexts";
 
 const NEXT_FEW_COUNT = 3;
 
@@ -33,7 +34,7 @@ export const Viewing = ({ viewing, series, setCursor, logEpisode, episodes }: Vi
 		.map(({ id }) => episodes[id]);
 
 	return (
-		<Card style={{ padding: "1em" }}>
+		<Box style={{ border: "dotted" }}>
 			<Box>
 				<Box display="flex" alignItems="center">
 					<div style={{ width: "100%", marginRight: 1 }}>
@@ -62,7 +63,7 @@ export const Viewing = ({ viewing, series, setCursor, logEpisode, episodes }: Vi
 			) : (
 				<></>
 			)}
-		</Card>
+		</Box>
 	);
 };
 
@@ -78,7 +79,7 @@ const CurrentEpisode = (props: {
 	setCursor: API["updateCursor"]["mutate"];
 	logEpisode: API["logEpisode"]["mutate"];
 }) => {
-	const mobile = useMediaQuery("(max-width:550px)");
+	const mobile = useContext(MobileContext);
 	return (
 		<>
 			<Box marginBottom="1em" marginTop="1em">
