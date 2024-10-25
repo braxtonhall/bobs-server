@@ -108,9 +108,10 @@ const router = createBrowserRouter(
 );
 
 const App = () => {
-	const mobile = useMediaQuery("(max-width:550px)");
+	const smallScreen = useMediaQuery("(max-width:550px)");
+	const touchScreen = useMediaQuery("(hover: none)");
 	return (
-		<MobileContext.Provider value={mobile}>
+		<MobileContext.Provider value={{ smallScreen, touchScreen }}>
 			<RouterProvider router={router} />
 		</MobileContext.Provider>
 	);

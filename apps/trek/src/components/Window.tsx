@@ -106,6 +106,7 @@ export const Window = () => {
 				variant="temporary"
 				anchor="top"
 				open={drawer}
+				disableRestoreFocus
 				disableEnforceFocus
 				disableAutoFocus
 				onClose={toggleDrawer(false)}

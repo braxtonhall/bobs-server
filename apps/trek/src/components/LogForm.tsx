@@ -16,7 +16,7 @@ import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Form, Link } from "react-router-dom";
-import { ReactElement, useCallback, useState } from "react";
+import { ReactElement, useCallback, useContext, useState } from "react";
 import {
 	HistoryEduRounded,
 	FavoriteBorderRounded,
@@ -27,6 +27,8 @@ import {
 import { DateTime } from "luxon";
 import { API } from "../util/api";
 import { Episode } from "./Landing/Watch/types";
+import { SlidingRating } from "./misc/SlidingRating";
+import { MobileContext } from "../util/contexts";
 
 // TODO remove this
 const IMG_URL = "https://media.themoviedb.org/t/p/w454_and_h254_bestv2/Asrl6u2tugWf9EJN24uhQ9zvyo6.jpg";
@@ -50,6 +52,7 @@ export const LogForm = (props: { episode: Episode; logEpisode: API["logEpisode"]
 	const [liked, setLiked] = useState(false);
 	const [review, setReview] = useState("");
 	const [spoiler, setSpoiler] = useState(false);
+	const { touchScreen } = useContext(MobileContext);
 
 	const storeTags = useCallback((tags: string[]) => {
 		localStorage.setItem("tags", JSON.stringify(tags));
@@ -109,12 +112,16 @@ export const LogForm = (props: { episode: Episode; logEpisode: API["logEpisode"]
 							justifyContent={props.mobile ? "center" : "unset"}
 						>
 							<Labelled height="45px" valueLabel="Rated" label="Rate" value={rating}>
-								<Rating
-									value={rating}
-									precision={0.5}
-									onChange={(_, rating) => setRating(rating)}
-									size="large"
-								/>
+								{touchScreen ? (
+									<SlidingRating value={rating} onChange={setRating} precision={0.5} />
+								) : (
+									<Rating
+										value={rating}
+										precision={0.5}
+										onChange={(_, rating) => setRating(rating)}
+										size="large"
+									/>
+								)}
 							</Labelled>
 
 							<Labelled height="45px" valueLabel="Liked" label="Like" value={liked}>

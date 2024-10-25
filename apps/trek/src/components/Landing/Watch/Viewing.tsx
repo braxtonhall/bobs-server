@@ -79,11 +79,11 @@ const CurrentEpisode = (props: {
 	setCursor: API["updateCursor"]["mutate"];
 	logEpisode: API["logEpisode"]["mutate"];
 }) => {
-	const mobile = useContext(MobileContext);
+	const { smallScreen } = useContext(MobileContext);
 	return (
 		<>
 			<Box marginBottom="1em" marginTop="1em">
-				<LogForm episode={props.episode} logEpisode={props.logEpisode} mobile={mobile} />
+				<LogForm episode={props.episode} logEpisode={props.logEpisode} mobile={smallScreen} />
 			</Box>
 			<Box display="flex" alignItems="center" position="relative">
 				<Deck stackDirection="down" verticalPxIncrement={4} style={{ marginRight: "auto" }}>
