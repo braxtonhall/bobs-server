@@ -7,4 +7,5 @@ export enum ViewingState {
 export enum Scope {
 	FOLLOWING = "following",
 	EVERYONE = "everyone",
+	INDIVIDUAL = "individual",
 }

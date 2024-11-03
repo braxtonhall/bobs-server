@@ -8,6 +8,7 @@ import { z } from "zod";
 import { Explore } from "./components/Explore";
 import Activity from "./components/Activity";
 import { Profile } from "./components/Profile";
+import { Watchlists } from "./components/Profile/Watchlists";
 
 const router = createBrowserRouter(
 	[
@@ -34,7 +35,7 @@ const router = createBrowserRouter(
 				},
 				{
 					path: "/me",
-					loader: async ({ params: { id } }) => {
+					loader: async () => {
 						const viewer = await api.getSelf.query();
 						if (viewer) {
 							return viewer;
@@ -43,6 +44,19 @@ const router = createBrowserRouter(
 						}
 					},
 					element: <Profile />,
+				},
+				{
+					path: "/me/watchlists",
+					loader: async () => {
+						// TODO dedupe
+						const viewer = await api.getSelf.query();
+						if (viewer) {
+							return viewer;
+						} else {
+							throw new Response("Not Found", { status: 404 });
+						}
+					},
+					element: <Watchlists />,
 				},
 				{
 					path: "/shows/:show",
@@ -123,6 +137,19 @@ const router = createBrowserRouter(
 						}
 					},
 					element: <Profile />,
+				},
+				{
+					path: "/viewers/:id/watchlists",
+					loader: async ({ params: { id } }) => {
+						// TODO dedupe
+						const viewer = await api.getViewer.query(id ?? "");
+						if (viewer) {
+							return viewer;
+						} else {
+							throw new Response("Not Found", { status: 404 });
+						}
+					},
+					element: <Watchlists />,
 				},
 				{
 					path: "/views/:id",

@@ -1,22 +1,22 @@
 import { useEffect, useState } from "react";
 import { api, API } from "../util/api";
 import { Container } from "@mui/material";
-// import { Scope } from "../../../../../src/trek/types"; // TODO?
 
-type Events = Awaited<ReturnType<API["getEvents"]["query"]>>["events"];
+type Events = Awaited<ReturnType<API["getAllEvents"]["query"]>>["events"];
 type EventTransport = Events[number];
 
 const Activity = () => {
-	const [events, setEvents] = useState<Awaited<ReturnType<API["getEvents"]["query"]>>["events"]>([]);
+	const [events, setEvents] = useState<Awaited<ReturnType<API["getAllEvents"]["query"]>>["events"]>([]);
 	useEffect(() => {
-		void api.getEvents.query({ scope: "everyone" as any }).then(function getRemainingSeries({ cursor, events }) {
+		// TODO only at the bottom of the page!!!
+		void api.getAllEvents.query().then(function getRemainingSeries({ cursor, events }) {
 			setEvents((existing) => {
 				const newEvents = [...existing, ...events];
 				const eventsById = Object.fromEntries(newEvents.map((event) => [event.id, event]));
 				return Object.values(eventsById).sort((a, b) => b.id - a.id);
 			});
 			if (cursor) {
-				void api.getEvents.query({ cursor, scope: "everyone" as any }).then(getRemainingSeries);
+				void api.getAllEvents.query(cursor).then(getRemainingSeries);
 			}
 		});
 	}, []);

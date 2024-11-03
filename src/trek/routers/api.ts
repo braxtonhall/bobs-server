@@ -59,14 +59,20 @@ const trekRouter = t.router({
 		.input(updateWatchlistInputSchema)
 		.mutation(({ ctx, input }) => updateWatchlist(ctx.viewerId, input)),
 	logEpisode: t.procedure.input(logEpisodeSchema).mutation(({ input, ctx }) => logEpisode(ctx.viewerId, input)),
-	getEvents: t.procedure
+	getAllEvents: t.procedure
+		.input(z.number().optional())
+		.query(({ input: cursor, ctx: { viewerId } }) => getLatestEvents({ cursor, viewerId, scope: Scope.EVERYONE })),
+	getFollowingEvents: t.procedure
+		.input(z.number().optional())
+		.query(({ input: cursor, ctx: { viewerId } }) => getLatestEvents({ cursor, viewerId, scope: Scope.FOLLOWING })),
+	getIndividualEvents: t.procedure
 		.input(
 			z.object({
 				cursor: z.number().optional(),
-				scope: z.nativeEnum(Scope),
+				viewerId: z.string(),
 			}),
 		)
-		.query(({ input: { cursor, scope }, ctx: { viewerId } }) => getLatestEvents({ cursor, viewerId, scope })),
+		.query(({ input: { cursor, viewerId } }) => getLatestEvents({ cursor, viewerId, scope: Scope.INDIVIDUAL })),
 });
 
 export type TrekRouter = typeof trekRouter;

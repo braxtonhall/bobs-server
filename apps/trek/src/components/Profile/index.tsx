@@ -1,5 +1,5 @@
 import { useLoaderData } from "react-router-dom";
-import { API } from "../util/api";
+import { API } from "../../util/api";
 import { Box, Container, Grid2 as Grid, Paper, styled } from "@mui/material";
 
 // TODO: Need the following:
@@ -25,7 +25,7 @@ const Favourite = styled(Paper)(({ theme }) => ({
 	}),
 }));
 
-const Statistic = styled(Paper)(({ theme }) => ({
+const Statistic = styled(Box)(({ theme }) => ({
 	backgroundColor: "#fff",
 	...theme.typography.body2,
 	padding: theme.spacing(1),
@@ -49,6 +49,9 @@ const LatestEntry = styled(Paper)(({ theme }) => ({
 
 export const Profile = () => {
 	const { viewer, self } = useLoaderData() as NonNullable<Awaited<ReturnType<API["getViewer"]["query"]>>>;
+
+	console.log(viewer.views);
+
 	return (
 		<Container maxWidth="sm">
 			<Box>
@@ -88,44 +91,13 @@ export const Profile = () => {
 					</Grid>
 				</Box>
 				<Box>
-					recently
-					<Grid container spacing={1} columns={24}>
-						<Grid size={1}>
-							<LatestEntry></LatestEntry>
-						</Grid>
-						<Grid size={1}>
-							<LatestEntry></LatestEntry>
-						</Grid>
-						<Grid size={1}>
-							<LatestEntry></LatestEntry>
-						</Grid>
-						<Grid size={1}>
-							<LatestEntry></LatestEntry>
-						</Grid>
-						<Grid size={1}>
-							<LatestEntry></LatestEntry>
-						</Grid>
-						<Grid size={1}>
-							<LatestEntry></LatestEntry>
-						</Grid>
-						<Grid size={1}>
-							<LatestEntry></LatestEntry>
-						</Grid>
-						<Grid size={1}>
-							<LatestEntry></LatestEntry>
-						</Grid>
-						<Grid size={1}>
-							<LatestEntry></LatestEntry>
-						</Grid>
-						<Grid size={1}>
-							<LatestEntry></LatestEntry>
-						</Grid>
-						<Grid size={1}>
-							<LatestEntry></LatestEntry>
-						</Grid>
-						<Grid size={1}>
-							<LatestEntry></LatestEntry>
-						</Grid>
+					recently (mobile)
+					<Grid container spacing={1} columns={4}>
+						{viewer.views.slice(0, 4).map((view) => (
+							<Grid size={1} key={view.id}>
+								<LatestEntry>{view.episode.seriesId}</LatestEntry>
+							</Grid>
+						))}
 					</Grid>
 				</Box>
 			</Box>
