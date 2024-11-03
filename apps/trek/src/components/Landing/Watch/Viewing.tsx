@@ -5,8 +5,6 @@ import { LogForm } from "../../LogForm";
 import { Episode, SeriesCollection, Viewings } from "./types";
 import { Progress } from "../../misc/Progress";
 import { Deck } from "../../misc/Deck";
-import { useContext } from "react";
-import { MobileContext } from "../../../util/contexts";
 
 const NEXT_FEW_COUNT = 3;
 
@@ -34,7 +32,7 @@ export const Viewing = ({ viewing, series, setCursor, logEpisode, episodes }: Vi
 		.map(({ id }) => episodes[id]);
 
 	return (
-		<Box style={{ border: "dotted" }}>
+		<Box style={{ border: "dotted", overflow: "hidden" }}>
 			<Box>
 				<Box display="flex" alignItems="center">
 					<div style={{ width: "100%", marginRight: 1 }}>
@@ -79,11 +77,10 @@ const CurrentEpisode = (props: {
 	setCursor: API["updateCursor"]["mutate"];
 	logEpisode: API["logEpisode"]["mutate"];
 }) => {
-	const { smallScreen } = useContext(MobileContext);
 	return (
 		<>
 			<Box marginBottom="1em" marginTop="1em">
-				<LogForm episode={props.episode} logEpisode={props.logEpisode} mobile={smallScreen} />
+				<LogForm episode={props.episode} logEpisode={props.logEpisode} />
 			</Box>
 			<Box display="flex" alignItems="center" position="relative">
 				<Deck stackDirection="down" verticalPxIncrement={4} style={{ marginRight: "auto" }}>

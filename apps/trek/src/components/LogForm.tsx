@@ -10,13 +10,14 @@ import {
 	Card,
 	CardMedia,
 	Stack,
+	useMediaQuery,
 } from "@mui/material";
 import { Tags } from "./Tags";
 import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Form, Link } from "react-router-dom";
-import { ReactElement, useCallback, useContext, useState } from "react";
+import { ReactElement, useCallback, useState } from "react";
 import {
 	HistoryEduRounded,
 	FavoriteBorderRounded,
@@ -28,7 +29,6 @@ import { DateTime } from "luxon";
 import { API } from "../util/api";
 import { Episode } from "./Landing/Watch/types";
 import { SlidingRating } from "./misc/SlidingRating";
-import { MobileContext } from "../util/contexts";
 
 // TODO remove this
 const IMG_URL = "https://media.themoviedb.org/t/p/w454_and_h254_bestv2/Asrl6u2tugWf9EJN24uhQ9zvyo6.jpg";
@@ -45,14 +45,14 @@ const getStoredTags = () => {
 	return [];
 };
 
-export const LogForm = (props: { episode: Episode; logEpisode: API["logEpisode"]["mutate"]; mobile: boolean }) => {
+export const LogForm = (props: { episode: Episode; logEpisode: API["logEpisode"]["mutate"] }) => {
 	const [tags, setTags] = useState(getStoredTags());
 	const [date, setDate] = useState<DateTime | null>(DateTime.now());
 	const [rating, setRating] = useState<number | null>(null);
 	const [liked, setLiked] = useState(false);
 	const [review, setReview] = useState("");
 	const [spoiler, setSpoiler] = useState(false);
-	const { touchScreen } = useContext(MobileContext);
+	const touchScreen = useMediaQuery("(hover: none)");
 
 	const storeTags = useCallback((tags: string[]) => {
 		localStorage.setItem("tags", JSON.stringify(tags));
@@ -73,7 +73,7 @@ export const LogForm = (props: { episode: Episode; logEpisode: API["logEpisode"]
 					</Link>
 				</Card>
 
-				<Box sx={props.mobile ? {} : { display: "table-cell", width: "100%" }}>
+				<Box sx={{ display: { xs: "unset", sm: "table-cell" }, width: { xs: "unset", sm: "100%" } }}>
 					{/*TODO it would be nice if this font changed based on the show https://github.com/wrstone/fonts-startrek*/}
 					<Typography variant="h5" component="h2">
 						{props.episode.name}
@@ -105,11 +105,11 @@ export const LogForm = (props: { episode: Episode; logEpisode: API["logEpisode"]
 				}}
 			>
 				<FormGroup>
-					<Stack direction={props.mobile ? "column" : "row"}>
+					<Stack direction={{ xs: "column", sm: "row" }}>
 						<Stack
-							marginLeft={props.mobile ? "unset" : "auto"}
-							direction={props.mobile ? "row" : "column"}
-							justifyContent={props.mobile ? "center" : "unset"}
+							marginLeft={{ xs: "unset", sm: "auto" }}
+							direction={{ xs: "row", sm: "column" }}
+							justifyContent={{ xs: "center", sm: "unset" }}
 						>
 							<Labelled height="45px" valueLabel="Rated" label="Rate" value={rating}>
 								{touchScreen ? (
@@ -160,15 +160,15 @@ export const LogForm = (props: { episode: Episode; logEpisode: API["logEpisode"]
 						display="flex"
 						justifyContent="center"
 						alignItems="center"
-						flexDirection={props.mobile ? "column" : "row"}
+						flexDirection={{ xs: "column", sm: "row" }}
 					>
 						<Box
 							display="flex"
 							justifyContent="center"
 							alignItems="center"
-							flexDirection={props.mobile ? "row" : "row"}
+							flexDirection="row"
 							width="100%"
-							marginBottom={props.mobile ? "1em" : "unset"}
+							marginBottom={{ xs: "1em", sm: "unset" }}
 						>
 							<Tags tags={tags} setTags={storeTags} />
 						</Box>
@@ -176,7 +176,7 @@ export const LogForm = (props: { episode: Episode; logEpisode: API["logEpisode"]
 							display="flex"
 							justifyContent="center"
 							alignItems="center"
-							width={props.mobile ? "100%" : "unset"}
+							width={{ xs: "100%", sm: "unset" }}
 						>
 							<LocalizationProvider dateAdapter={AdapterLuxon}>
 								<DatePicker
@@ -185,8 +185,8 @@ export const LogForm = (props: { episode: Episode; logEpisode: API["logEpisode"]
 									value={date}
 									onChange={setDate}
 									sx={{
-										marginLeft: props.mobile ? "unset" : "1em",
-										width: props.mobile ? "100%" : "200px",
+										marginLeft: { xs: "unset", sm: "1em" },
+										width: { xs: "100%", sm: "200px" },
 										marginRight: "1em",
 									}}
 								/>

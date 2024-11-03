@@ -1,122 +1,146 @@
 import { useState } from "react";
-import { alpha, AppBar, Box, Container, IconButton, styled, SwipeableDrawer, Toolbar, useTheme } from "@mui/material";
+import {
+	BottomNavigation,
+	BottomNavigationAction,
+	Box,
+	Container,
+	Drawer,
+	List,
+	ListItem,
+	ListItemButton,
+	ListItemIcon,
+	ListItemText,
+	Paper,
+	Stack,
+} from "@mui/material";
 import { Link, Outlet } from "react-router-dom";
-import { SearchRounded, SettingsRounded, PersonRounded, HomeRounded } from "@mui/icons-material";
-import { Explore } from "./Explore";
-import { DebouncedTextField } from "./misc/DebouncedTextField";
+import { SearchRounded, PersonRounded, RssFeedRounded, PlayArrowRounded } from "@mui/icons-material";
 
-const DrawerHeader = styled("div")(({ theme }) => ({
-	display: "flex",
-	alignItems: "center",
-	justifyContent: "flex-end",
-	padding: theme.spacing(0, 1),
-	// necessary for content to be below app bar
-	...theme.mixins.toolbar,
-}));
-
-const Search = styled("div")(({ theme }) => ({
-	position: "relative",
-	borderRadius: theme.shape.borderRadius,
-	backgroundColor: alpha(theme.palette.common.white, 0.15),
-	"&:hover": {
-		backgroundColor: alpha(theme.palette.common.white, 0.25),
-	},
-	marginLeft: 0,
-	width: "100%",
-	[theme.breakpoints.up("sm")]: {
-		marginLeft: theme.spacing(1),
-		width: "auto",
-	},
-}));
-
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-	padding: theme.spacing(0, 2),
-	height: "100%",
-	position: "absolute",
-	pointerEvents: "none",
-	display: "flex",
-	alignItems: "center",
-	justifyContent: "center",
-}));
-
-const StyledInputBase = styled(DebouncedTextField)(({ theme }) => ({
-	color: "inherit",
-	width: "100%",
-	"& .MuiInputBase-input": {
-		padding: theme.spacing(1, 1, 1, 0),
-		// vertical padding + font size from searchIcon
-		paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-		transition: theme.transitions.create("width"),
-		[theme.breakpoints.up("sm")]: {
-			width: "12ch",
-			"&:focus": {
-				width: "20ch",
-			},
-		},
-	},
-}));
+const drawerWidth = 240;
 
 export const Window = () => {
-	const theme = useTheme();
-	const [drawer, setDrawer] = useState(false);
-	const [search, setSearch] = useState("");
-
-	const toggleDrawer = (open: boolean) => () => setDrawer(open);
+	const [value, setValue] = useState("watch");
 
 	return (
-		<>
-			<AppBar position="sticky" style={{ zIndex: theme.zIndex.drawer + 1 }}>
-				<Toolbar variant="dense">
-					<Link to="/">
-						<IconButton edge="start" aria-label="menu" sx={{ mr: 2 }} onClick={toggleDrawer(false)}>
-							<HomeRounded />
-						</IconButton>
-					</Link>
+		<Box display={{ xs: "unset", sm: "flex" }}>
+			<Box minWidth={drawerWidth} height="100vh" display={{ xs: "none", sm: "unset" }} style={{ float: "left" }}>
+				<Drawer
+					variant="permanent"
+					sx={{
+						display: "flex",
+						"& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
+					}}
+					open
+				>
+					<List component={Stack} direction="column">
+						<ListItem disablePadding>
+							<ListItemButton
+								component={Link}
+								to="/"
+								selected={value === "watch"}
+								onClick={() => setValue("watch")}
+							>
+								<ListItemIcon>
+									<PlayArrowRounded />
+								</ListItemIcon>
+								<ListItemText primary="Watch" />
+							</ListItemButton>
+						</ListItem>
 
-					<Search>
-						<SearchIconWrapper>
-							<SearchRounded />
-						</SearchIconWrapper>
-						<StyledInputBase
-							fullWidth
-							placeholder={"Search..."}
-							onInput={toggleDrawer(true)}
-							onClick={toggleDrawer(true)}
-							onChange={(search) => setSearch(search.target.value)}
-							autoComplete="off"
+						<ListItem disablePadding>
+							<ListItemButton
+								component={Link}
+								to="/explore"
+								selected={value === "explore"}
+								onClick={() => setValue("explore")}
+							>
+								<ListItemIcon>
+									<SearchRounded />
+								</ListItemIcon>
+								<ListItemText primary="Explore" />
+							</ListItemButton>
+						</ListItem>
+
+						<ListItem disablePadding>
+							<ListItemButton
+								component={Link}
+								to="/activity"
+								selected={value === "activity"}
+								onClick={() => setValue("activity")}
+							>
+								<ListItemIcon>
+									<RssFeedRounded />
+								</ListItemIcon>
+								<ListItemText primary="Activity" />
+							</ListItemButton>
+						</ListItem>
+
+						<ListItem disablePadding>
+							<ListItemButton
+								component={Link}
+								to="/me"
+								selected={value === "me"}
+								onClick={() => setValue("me")}
+							>
+								<ListItemIcon>
+									<PersonRounded />
+								</ListItemIcon>
+								<ListItemText primary="Me" />
+							</ListItemButton>
+						</ListItem>
+					</List>
+				</Drawer>
+			</Box>
+			<Box flexGrow="1">
+				<Container maxWidth="md">
+					<Outlet />
+				</Container>
+
+				<Paper
+					sx={{
+						position: "fixed",
+						bottom: 0,
+						left: 0,
+						right: 0,
+						display: {
+							xs: "unset",
+							sm: "none",
+						},
+					}}
+					elevation={3}
+				>
+					<BottomNavigation value={value} onChange={(_, newValue) => setValue(newValue)}>
+						<BottomNavigationAction
+							component={Link}
+							to="/"
+							label="Watch"
+							value="watch"
+							icon={<PlayArrowRounded />}
 						/>
-					</Search>
-
-					<Link to="/me">
-						<IconButton edge="end" aria-label="me">
-							<PersonRounded />
-						</IconButton>
-					</Link>
-					<Link to="/settings">
-						<IconButton edge="end" aria-label="settings">
-							<SettingsRounded />
-						</IconButton>
-					</Link>
-				</Toolbar>
-			</AppBar>
-			<Container maxWidth="md">
-				<Outlet />
-			</Container>
-			<SwipeableDrawer
-				variant="temporary"
-				anchor="top"
-				open={drawer}
-				disableRestoreFocus
-				disableEnforceFocus
-				disableAutoFocus
-				onClose={toggleDrawer(false)}
-				onOpen={toggleDrawer(true)}
-			>
-				<Box style={{ height: "95vh" }}>
-					<DrawerHeader />
-					<Explore search={search} />
-				</Box>
-			</SwipeableDrawer>
-		</>
+						<BottomNavigationAction
+							component={Link}
+							to="/explore"
+							label="Explore"
+							value="explore"
+							icon={<SearchRounded />}
+						/>
+						<BottomNavigationAction
+							component={Link}
+							to="/activity"
+							label="Activity"
+							value="activity"
+							icon={<RssFeedRounded />}
+						/>
+						<BottomNavigationAction
+							component={Link}
+							to="/me"
+							label="Me"
+							value="me"
+							icon={<PersonRounded />}
+						/>
+					</BottomNavigation>
+				</Paper>
+			</Box>
+		</Box>
 	);
 };

@@ -7,6 +7,7 @@ import Shuffle from "./Shuffle";
 import Activity from "./Activity";
 import { API, api } from "../../util/api";
 import { Episode } from "./Watch/types";
+import { Window } from "../Window";
 
 const Landing = () => {
 	const [tab, setTab] = useState("watch");
@@ -28,19 +29,15 @@ const Landing = () => {
 			<TabContext value={tab}>
 				<Box sx={{ borderBottom: 1, borderColor: "divider" }}>
 					<TabList onChange={(_, newValue: string) => setTab(newValue)} aria-label="views" centered>
-						<Tab label={<ShuffleRounded />} value="random" />
 						<Tab label={<PlayArrowRounded aria-label="play" titleAccess="play" />} value="watch" />
-						<Tab label={<RssFeedRounded />} value="activity" />
+						<Tab label={<ShuffleRounded />} value="random" />
 					</TabList>
 				</Box>
-				<TabPanel value="random">
-					<Shuffle />
-				</TabPanel>
 				<TabPanel value="watch">
 					<Watch episodes={episodes} series={series} setEpisodes={setEpisodes} />
 				</TabPanel>
-				<TabPanel value="activity">
-					<Activity />
+				<TabPanel value="random">
+					<Shuffle />
 				</TabPanel>
 			</TabContext>
 		</Box>
