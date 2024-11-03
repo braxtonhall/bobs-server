@@ -1,5 +1,5 @@
-import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
-import Landing from "./components/Watch";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Watch from "./components/Watch";
 import Episode from "./components/Episode";
 import Watchlist from "./components/Watchlist";
 import { Window } from "./components/Window";
@@ -17,7 +17,7 @@ const router = createBrowserRouter(
 			children: [
 				{
 					path: "/",
-					element: <Landing />,
+					element: <Watch />,
 					// errorElement: <ErrorPage />,
 					// loader: rootLoader,
 					// action: rootAction,
@@ -26,96 +26,7 @@ const router = createBrowserRouter(
 				},
 				{
 					path: "/explore",
-					element: <Outlet />,
-					children: [
-						{
-							path: "/explore",
-							element: <Explore />,
-						},
-						{
-							path: "/explore/shows/:show",
-							element: <></>,
-							loader: async ({ params }) => {
-								try {
-									const show = await api.getShow.query(
-										z.object({ show: z.string().toUpperCase() }).parse(params),
-									);
-									if (show) {
-										return show;
-									}
-								} catch {}
-								throw new Response("Not Found", { status: 404 });
-							},
-						},
-						{
-							path: "/explore/shows/:show/seasons/:season",
-							element: <></>,
-							loader: async ({ params }) => {
-								try {
-									const episode = await api.getSeason.query(
-										z
-											.object({
-												season: z.coerce.number(),
-												show: z.string().toUpperCase(),
-											})
-											.parse(params),
-									);
-									if (episode) {
-										return episode;
-									}
-								} catch {}
-								throw new Response("Not Found", { status: 404 });
-							},
-						},
-						{
-							path: "/explore/shows/:show/seasons/:season/episodes/:episode",
-							element: <Episode />,
-							loader: async ({ params }) => {
-								try {
-									const episode = await api.getEpisode.query(
-										z
-											.object({
-												season: z.coerce.number(),
-												show: z.string().toUpperCase(),
-												episode: z.coerce.number(),
-											})
-											.parse(params),
-									);
-									if (episode) {
-										return episode;
-									}
-								} catch {}
-								throw new Response("Not Found", { status: 404 });
-							},
-						},
-						{
-							path: "/explore/watchlists/:id",
-							element: <Watchlist />,
-							loader: async ({ params: { id } }) => {
-								const watchlist = await api.getWatchlist.query(id ?? "");
-								if (watchlist) {
-									return watchlist;
-								} else {
-									throw new Response("Not Found", { status: 404 });
-								}
-							},
-						},
-						{
-							path: "/explore/viewers/:id",
-							loader: async ({ params: { id } }) => {
-								const viewer = await api.getViewer.query(id ?? "");
-								if (viewer) {
-									return viewer;
-								} else {
-									throw new Response("Not Found", { status: 404 });
-								}
-							},
-							element: <Profile />,
-						},
-						{
-							path: "/explore/views/:id",
-						},
-					],
+					element: <Explore />,
 				},
 				{
 					path: "/activity",
@@ -132,6 +43,89 @@ const router = createBrowserRouter(
 						}
 					},
 					element: <Profile />,
+				},
+				{
+					path: "/shows/:show",
+					element: <></>,
+					loader: async ({ params }) => {
+						try {
+							const show = await api.getShow.query(
+								z.object({ show: z.string().toUpperCase() }).parse(params),
+							);
+							if (show) {
+								return show;
+							}
+						} catch {}
+						throw new Response("Not Found", { status: 404 });
+					},
+				},
+				{
+					path: "/shows/:show/seasons/:season",
+					element: <></>,
+					loader: async ({ params }) => {
+						try {
+							const episode = await api.getSeason.query(
+								z
+									.object({
+										season: z.coerce.number(),
+										show: z.string().toUpperCase(),
+									})
+									.parse(params),
+							);
+							if (episode) {
+								return episode;
+							}
+						} catch {}
+						throw new Response("Not Found", { status: 404 });
+					},
+				},
+				{
+					path: "/shows/:show/seasons/:season/episodes/:episode",
+					element: <Episode />,
+					loader: async ({ params }) => {
+						try {
+							const episode = await api.getEpisode.query(
+								z
+									.object({
+										season: z.coerce.number(),
+										show: z.string().toUpperCase(),
+										episode: z.coerce.number(),
+									})
+									.parse(params),
+							);
+							if (episode) {
+								return episode;
+							}
+						} catch {}
+						throw new Response("Not Found", { status: 404 });
+					},
+				},
+				{
+					path: "/watchlists/:id",
+					element: <Watchlist />,
+					loader: async ({ params: { id } }) => {
+						const watchlist = await api.getWatchlist.query(id ?? "");
+						if (watchlist) {
+							return watchlist;
+						} else {
+							throw new Response("Not Found", { status: 404 });
+						}
+					},
+				},
+				{
+					path: "/viewers/:id",
+					loader: async ({ params: { id } }) => {
+						const viewer = await api.getViewer.query(id ?? "");
+						if (viewer) {
+							return viewer;
+						} else {
+							throw new Response("Not Found", { status: 404 });
+						}
+					},
+					element: <Profile />,
+				},
+				{
+					path: "/views/:id",
 				},
 			],
 		},

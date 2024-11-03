@@ -161,8 +161,8 @@ const Watchlist = () => {
 
 	return (
 		<>
-			<Typography variant="h1">{watchlist.name}</Typography>
-			<Typography variant="body1">{watchlist.description}</Typography>
+			<Typography>{watchlist.name}</Typography>
+			<Typography>{watchlist.description}</Typography>
 
 			<Button
 				onClick={() => {

@@ -22,7 +22,7 @@ const Activity = () => {
 	}, []);
 
 	return (
-		<Container maxWidth="md" sx={{ typography: "body1" }}>
+		<Container maxWidth="md">
 			{events.map((event) => (
 				<Event event={event} key={event.id}></Event>
 			))}

@@ -28,7 +28,7 @@ const Landing = () => {
 	);
 
 	return (
-		<Container maxWidth="md" sx={{ typography: "body1" }}>
+		<Container maxWidth="md">
 			<TabContext value={tab}>
 				<Box sx={{ borderBottom: 1, borderColor: "divider" }}>
 					<TabList onChange={(_, newValue: string) => setTab(newValue)} aria-label="views" centered>

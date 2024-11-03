@@ -8,7 +8,7 @@ export const Explore = () => {
 	const [tab, setTab] = useState("episodes");
 
 	return (
-		<Container maxWidth="md" sx={{ typography: "body1" }}>
+		<Container maxWidth="md">
 			<DebouncedTextField
 				placeholder="Search..."
 				autoComplete="off"

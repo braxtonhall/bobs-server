@@ -64,7 +64,7 @@ export const LogForm = (props: { episode: Episode; logEpisode: API["logEpisode"]
 			<Box display="flex" alignItems="stretch" position="relative" marginBottom="1em">
 				<Card style={{ width: "4em", marginRight: "0.5em", minWidth: "50px", position: "relative" }}>
 					<Link
-						to={`/explore/shows/${props.episode.seriesId.toLowerCase()}/seasons/${props.episode.season}/episodes/${props.episode.production}`}
+						to={`/shows/${props.episode.seriesId.toLowerCase()}/seasons/${props.episode.season}/episodes/${props.episode.production}`}
 					>
 						<CardMedia
 							alt={props.episode.name}
