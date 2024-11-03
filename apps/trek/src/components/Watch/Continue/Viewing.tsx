@@ -2,7 +2,7 @@ import { API } from "../../../util/api";
 import { Box, Button, Card, CardMedia } from "@mui/material";
 import { PauseRounded, StopRounded, SkipPreviousRounded, SkipNextRounded } from "@mui/icons-material";
 import { LogForm } from "../../LogForm";
-import { Episode, SeriesCollection, Viewings } from "./types";
+import { Episode, SeriesCollection, Viewings } from "../types";
 import { Progress } from "../../misc/Progress";
 import { Deck } from "../../misc/Deck";
 

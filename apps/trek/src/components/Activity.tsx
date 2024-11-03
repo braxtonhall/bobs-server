@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { api, API } from "../../util/api";
+import { api, API } from "../util/api";
+import { Container } from "@mui/material";
 // import { Scope } from "../../../../../src/trek/types"; // TODO?
 
 type Events = Awaited<ReturnType<API["getEvents"]["query"]>>["events"];
@@ -21,11 +22,11 @@ const Activity = () => {
 	}, []);
 
 	return (
-		<>
+		<Container maxWidth="md" sx={{ typography: "body1" }}>
 			{events.map((event) => (
 				<Event event={event} key={event.id}></Event>
 			))}
-		</>
+		</Container>
 	);
 };
 

@@ -1,11 +1,12 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Landing from "./components/Landing";
+import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
+import Landing from "./components/Watch";
 import Episode from "./components/Episode";
 import Watchlist from "./components/Watchlist";
 import { Window } from "./components/Window";
 import { api } from "./util/api";
 import { z } from "zod";
 import { Explore } from "./components/Explore";
+import Activity from "./components/Activity";
 
 const router = createBrowserRouter(
 	[
@@ -24,11 +25,11 @@ const router = createBrowserRouter(
 				},
 				{
 					path: "/explore",
-					element: <Explore />,
+					element: <Outlet />,
 					children: [
 						{
-							path: "/explore/",
-							// TODO element: <Search />
+							path: "/explore",
+							element: <Explore />,
 						},
 						{
 							path: "/explore/shows/:show",
@@ -108,6 +109,7 @@ const router = createBrowserRouter(
 				},
 				{
 					path: "/activity",
+					element: <Activity />,
 				},
 				{
 					path: "/me",

@@ -1,16 +1,16 @@
 import { Box, CircularProgress, Fade } from "@mui/material";
 import { api, API } from "../../../util/api";
 import { Viewing } from "./Viewing";
-import { Episode, SeriesCollection } from "./types";
+import { Episode, SeriesCollection } from "../types";
 import { useEffect, useState } from "react";
 
-interface WatchProps {
+interface ContinueProps {
 	series: SeriesCollection | null;
 	episodes: Record<string, Episode> | null;
 	setEpisodes: (episodes: Record<string, Episode>) => void;
 }
 
-const Watch = (props: WatchProps) => {
+const Continue = (props: ContinueProps) => {
 	const [viewings, setViewings] = useState<Awaited<ReturnType<API["getCurrentlyWatching"]["query"]>>["viewings"]>([]);
 	useEffect(() => {
 		void api.getCurrentlyWatching.query().then(function getRemainingViewings({ cursor, viewings }) {
@@ -94,13 +94,13 @@ const Watch = (props: WatchProps) => {
 						))(props.series, props.episodes),
 					)
 				) : (
-					<WatchInactive />
+					<ContinueInactive />
 				)}
 			</Box>
 		</>
 	);
 };
 
-const WatchInactive = () => <p>You are not watching anything at the moment</p>; // TODO
+const ContinueInactive = () => <p>You are not watching anything at the moment</p>; // TODO
 
-export default Watch;
+export default Continue;

@@ -27,7 +27,7 @@ import {
 } from "@mui/icons-material";
 import { DateTime } from "luxon";
 import { API } from "../util/api";
-import { Episode } from "./Landing/Watch/types";
+import { Episode } from "./Watch/types";
 import { SlidingRating } from "./misc/SlidingRating";
 
 // TODO remove this
@@ -63,7 +63,9 @@ export const LogForm = (props: { episode: Episode; logEpisode: API["logEpisode"]
 		<Card style={{ backgroundColor: "antiquewhite", padding: "1em" }}>
 			<Box display="flex" alignItems="stretch" position="relative" marginBottom="1em">
 				<Card style={{ width: "4em", marginRight: "0.5em", minWidth: "50px", position: "relative" }}>
-					<Link to={`/episodes/${props.episode.id}`}>
+					<Link
+						to={`/explore/shows/${props.episode.seriesId.toLowerCase()}/seasons/${props.episode.season}/episodes/${props.episode.production}`}
+					>
 						<CardMedia
 							alt={props.episode.name}
 							image={IMG_URL}

@@ -3,7 +3,7 @@ import { api, API } from "../util/api";
 import { Box, Button, Card, CardMedia, Typography } from "@mui/material";
 import { VisibilityRounded } from "@mui/icons-material";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Episode } from "./Landing/Watch/types";
+import { Episode } from "./Watch/types";
 
 import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid

@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
-import { Box, Tab } from "@mui/material";
-import { PlayArrowRounded, ShuffleRounded, RssFeedRounded } from "@mui/icons-material";
+import { Box, Container, Tab } from "@mui/material";
+import { PlayArrowRounded, ShuffleRounded } from "@mui/icons-material";
 import { TabPanel, TabList, TabContext } from "@mui/lab";
-import Watch from "./Watch";
+import Continue from "./Continue";
 import Shuffle from "./Shuffle";
-import Activity from "./Activity";
 import { API, api } from "../../util/api";
-import { Episode } from "./Watch/types";
-import { Window } from "../Window";
+import { Episode } from "./types";
+import { Outlet } from "react-router-dom";
 
 const Landing = () => {
 	const [tab, setTab] = useState("watch");
@@ -25,7 +24,7 @@ const Landing = () => {
 	);
 
 	return (
-		<Box sx={{ width: "100%", typography: "body1", boxSizing: "border-box" }}>
+		<Container maxWidth="md" sx={{ typography: "body1" }}>
 			<TabContext value={tab}>
 				<Box sx={{ borderBottom: 1, borderColor: "divider" }}>
 					<TabList onChange={(_, newValue: string) => setTab(newValue)} aria-label="views" centered>
@@ -34,13 +33,13 @@ const Landing = () => {
 					</TabList>
 				</Box>
 				<TabPanel value="watch">
-					<Watch episodes={episodes} series={series} setEpisodes={setEpisodes} />
+					<Continue episodes={episodes} series={series} setEpisodes={setEpisodes} />
 				</TabPanel>
 				<TabPanel value="random">
 					<Shuffle />
 				</TabPanel>
 			</TabContext>
-		</Box>
+		</Container>
 	);
 };
 

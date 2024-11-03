@@ -92,9 +92,7 @@ export const Window = () => {
 				</Drawer>
 			</Box>
 			<Box flexGrow="1">
-				<Container maxWidth="md">
-					<Outlet />
-				</Container>
+				<Outlet />
 
 				<Paper
 					sx={{
