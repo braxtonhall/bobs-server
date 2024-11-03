@@ -1,12 +1,16 @@
 import { useState, useEffect } from "react";
-import { Box, Container, Tab } from "@mui/material";
+import { Box, Container, Tab, styled } from "@mui/material";
 import { PlayArrowRounded, ShuffleRounded } from "@mui/icons-material";
 import { TabPanel, TabList, TabContext } from "@mui/lab";
 import Continue from "./Continue";
 import Shuffle from "./Shuffle";
 import { API, api } from "../../util/api";
 import { Episode } from "./types";
-import { Outlet } from "react-router-dom";
+
+const StyledTabPanel = styled(TabPanel)(({ theme }) => ({
+	paddingLeft: 0,
+	paddingRight: 0,
+}));
 
 const Landing = () => {
 	const [tab, setTab] = useState("watch");
@@ -32,12 +36,12 @@ const Landing = () => {
 						<Tab label={<ShuffleRounded />} value="random" />
 					</TabList>
 				</Box>
-				<TabPanel value="watch">
+				<StyledTabPanel value="watch">
 					<Continue episodes={episodes} series={series} setEpisodes={setEpisodes} />
-				</TabPanel>
-				<TabPanel value="random">
+				</StyledTabPanel>
+				<StyledTabPanel value="random">
 					<Shuffle />
-				</TabPanel>
+				</StyledTabPanel>
 			</TabContext>
 		</Container>
 	);

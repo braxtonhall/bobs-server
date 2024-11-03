@@ -32,7 +32,7 @@ export const Viewing = ({ viewing, series, setCursor, logEpisode, episodes }: Vi
 		.map(({ id }) => episodes[id]);
 
 	return (
-		<Box style={{ border: "dotted", overflow: "hidden" }}>
+		<Box style={{ overflow: "hidden" }}>
 			<Box>
 				<Box display="flex" alignItems="center">
 					<div style={{ width: "100%", marginRight: 1 }}>

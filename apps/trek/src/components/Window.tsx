@@ -1,9 +1,7 @@
-import { useState } from "react";
 import {
 	BottomNavigation,
 	BottomNavigationAction,
 	Box,
-	Container,
 	Drawer,
 	List,
 	ListItem,
@@ -13,13 +11,19 @@ import {
 	Paper,
 	Stack,
 } from "@mui/material";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation, Location } from "react-router-dom";
 import { SearchRounded, PersonRounded, RssFeedRounded, PlayArrowRounded } from "@mui/icons-material";
+
+const selectValue = ({ pathname }: Location) => {
+	const slugs = pathname.split("/");
+	return `/${slugs[1]}`;
+};
 
 const drawerWidth = 240;
 
 export const Window = () => {
-	const [value, setValue] = useState("watch");
+	const location = useLocation();
+	const value: string = selectValue(location);
 
 	return (
 		<Box display={{ xs: "unset", sm: "flex" }}>
@@ -34,12 +38,7 @@ export const Window = () => {
 				>
 					<List component={Stack} direction="column">
 						<ListItem disablePadding>
-							<ListItemButton
-								component={Link}
-								to="/"
-								selected={value === "watch"}
-								onClick={() => setValue("watch")}
-							>
+							<ListItemButton component={Link} to="/" selected={value === "/"}>
 								<ListItemIcon>
 									<PlayArrowRounded />
 								</ListItemIcon>
@@ -48,12 +47,7 @@ export const Window = () => {
 						</ListItem>
 
 						<ListItem disablePadding>
-							<ListItemButton
-								component={Link}
-								to="/explore"
-								selected={value === "explore"}
-								onClick={() => setValue("explore")}
-							>
+							<ListItemButton component={Link} to="/explore" selected={value === "/explore"}>
 								<ListItemIcon>
 									<SearchRounded />
 								</ListItemIcon>
@@ -62,12 +56,7 @@ export const Window = () => {
 						</ListItem>
 
 						<ListItem disablePadding>
-							<ListItemButton
-								component={Link}
-								to="/activity"
-								selected={value === "activity"}
-								onClick={() => setValue("activity")}
-							>
+							<ListItemButton component={Link} to="/activity" selected={value === "/activity"}>
 								<ListItemIcon>
 									<RssFeedRounded />
 								</ListItemIcon>
@@ -76,12 +65,7 @@ export const Window = () => {
 						</ListItem>
 
 						<ListItem disablePadding>
-							<ListItemButton
-								component={Link}
-								to="/me"
-								selected={value === "me"}
-								onClick={() => setValue("me")}
-							>
+							<ListItemButton component={Link} to="/me" selected={value === "/me"}>
 								<ListItemIcon>
 									<PersonRounded />
 								</ListItemIcon>
@@ -107,33 +91,33 @@ export const Window = () => {
 					}}
 					elevation={3}
 				>
-					<BottomNavigation value={value} onChange={(_, newValue) => setValue(newValue)}>
+					<BottomNavigation value={value}>
 						<BottomNavigationAction
 							component={Link}
 							to="/"
 							label="Watch"
-							value="watch"
+							value="/"
 							icon={<PlayArrowRounded />}
 						/>
 						<BottomNavigationAction
 							component={Link}
 							to="/explore"
 							label="Explore"
-							value="explore"
+							value="/explore"
 							icon={<SearchRounded />}
 						/>
 						<BottomNavigationAction
 							component={Link}
 							to="/activity"
 							label="Activity"
-							value="activity"
+							value="/activity"
 							icon={<RssFeedRounded />}
 						/>
 						<BottomNavigationAction
 							component={Link}
 							to="/me"
 							label="Me"
-							value="me"
+							value="/me"
 							icon={<PersonRounded />}
 						/>
 					</BottomNavigation>

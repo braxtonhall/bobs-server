@@ -7,6 +7,7 @@ import { api } from "./util/api";
 import { z } from "zod";
 import { Explore } from "./components/Explore";
 import Activity from "./components/Activity";
+import { Profile } from "./components/Profile";
 
 const router = createBrowserRouter(
 	[
@@ -101,6 +102,15 @@ const router = createBrowserRouter(
 						},
 						{
 							path: "/explore/viewers/:id",
+							loader: async ({ params: { id } }) => {
+								const viewer = await api.getViewer.query(id ?? "");
+								if (viewer) {
+									return viewer;
+								} else {
+									throw new Response("Not Found", { status: 404 });
+								}
+							},
+							element: <Profile />,
 						},
 						{
 							path: "/explore/views/:id",
@@ -113,6 +123,15 @@ const router = createBrowserRouter(
 				},
 				{
 					path: "/me",
+					loader: async ({ params: { id } }) => {
+						const viewer = await api.getSelf.query();
+						if (viewer) {
+							return viewer;
+						} else {
+							throw new Response("Not Found", { status: 404 });
+						}
+					},
+					element: <Profile />,
 				},
 			],
 		},
