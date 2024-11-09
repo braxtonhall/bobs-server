@@ -99,9 +99,9 @@ export const LogForm = (props: { episode: Episode; logEpisode: API["logEpisode"]
 						episodeId: props.episode.id,
 						viewedOn: date && date.toFormat("yyyy-MM-dd"),
 						comment: review.trim() || null,
+						rating: rating && rating * 2,
 						tags,
 						liked,
-						rating,
 						spoiler,
 					});
 				}}

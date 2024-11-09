@@ -28,7 +28,7 @@ export const logEpisodeSchema = z.object({
 		z
 			.number()
 			.min(0)
-			.max(5)
+			.max(10)
 			.transform((number) => number || null),
 	),
 	episodeId: z.string(),
