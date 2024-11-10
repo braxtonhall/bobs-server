@@ -50,8 +50,6 @@ const LatestEntry = styled(Paper)(({ theme }) => ({
 export const Profile = () => {
 	const { viewer, self } = useLoaderData() as NonNullable<Awaited<ReturnType<API["getViewer"]["query"]>>>;
 
-	console.log(viewer.views);
-
 	return (
 		<Container maxWidth="sm">
 			<Box>
