@@ -12,7 +12,7 @@ export const Progress = (props: { numerator: number; denominator: number }) => {
 					variant="body2"
 					textAlign="right"
 					sx={{ color: "text.secondary" }}
-				>{`${Math.round(value)}%`}</Typography>
+				>{`${Math.floor(value)}%`}</Typography>
 			</Box>
 		</Box>
 	);
