@@ -1,107 +1,98 @@
 import { TabContext, TabList } from "@mui/lab";
 import { Box, Container, Tab } from "@mui/material";
-import { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { DebouncedTextField } from "../misc/DebouncedTextField";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Swiper as SwiperApi } from "swiper";
+import type { Swiper as SwiperClass } from "swiper/types";
 import "swiper/css";
+import { ListRounded, PeopleRounded, ReviewsRounded, VideoLibraryRounded } from "@mui/icons-material";
 
-const tabs = {
-	episodes: 0,
-	lists: 1,
-	reviews: 2,
-	viewers: 3,
-};
+const tabs = ["episodes", "lists", "reviews", "viewers"] as const;
 
 export const Explore = () => {
-	const [controlledSwiper, setControlledSwiper] = useState<SwiperApi | null>(null);
+	const [swiper, setSwiper] = useState<SwiperApi | null>(null);
 	const [search, setSearch] = useState("");
-	const [tab, setTab] = useState<keyof typeof tabs>("episodes");
+	const [tab, setTab] = useState<(typeof tabs)[number]>("episodes");
+
+	const onChange = useCallback(
+		(_: unknown, newValue: string) => swiper?.slideTo(tabs.indexOf(newValue as (typeof tabs)[number])),
+		[swiper],
+	);
 
 	return (
 		<Container maxWidth="md">
-			<DebouncedTextField
-				placeholder="Search..."
-				autoComplete="off"
-				variant="standard"
-				fullWidth
-				onChange={(search) => setSearch(search.target.value)}
-			/>
-			<TabContext value={tab}>
-				<Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-					<TabList
-						onChange={(_, newValue: string) => setTab(newValue as keyof typeof tabs)}
-						aria-label="views"
-						centered
-					>
-						<Tab
-							label={
-								<>
-									{/*<VideoLibraryRounded />*/}
-									Episodes
-								</>
-							}
-							value="episodes"
-						/>
-						<Tab
-							label={
-								<>
-									{/*<ListRounded />*/}
-									Lists
-								</>
-							}
-							value="lists"
-						/>
-						<Tab
-							label={
-								<>
-									{/*<ReviewsRounded />*/}
-									Reviews
-								</>
-							}
-							value="reviews"
-						/>
-						<Tab
-							label={
-								<>
-									{/*<PeopleRounded />*/}
-									Viewers
-								</>
-							}
-							value="viewers"
-						/>
-					</TabList>
-				</Box>
-
-				<Box sx={{ border: "dotted", width: "100%" }}>
+			<Box marginTop="1em" width="100%">
+				<DebouncedTextField
+					placeholder="Search..."
+					autoComplete="off"
+					variant="standard"
+					fullWidth
+					onChange={(search) => setSearch(search.target.value)}
+				/>
+				<TabContext value={tab}>
+					<Box width="100%" sx={{ borderBottom: 1, borderColor: "divider" }}>
+						<TabList onChange={onChange} aria-label="views" centered>
+							<Tab
+								label={
+									<>
+										<VideoLibraryRounded />
+										Episodes
+									</>
+								}
+								value="episodes"
+							/>
+							<Tab
+								label={
+									<>
+										<ListRounded />
+										Lists
+									</>
+								}
+								value="lists"
+							/>
+							<Tab
+								label={
+									<>
+										<ReviewsRounded />
+										Reviews
+									</>
+								}
+								value="reviews"
+							/>
+							<Tab
+								label={
+									<>
+										<PeopleRounded />
+										Viewers
+									</>
+								}
+								value="viewers"
+							/>
+						</TabList>
+					</Box>
+				</TabContext>
+				<Box sx={{ display: "grid", border: "dotted", width: "100%", boxSizing: "border-box" }}>
 					<Swiper
-						controller={{ control: controlledSwiper }}
 						spaceBetween={0}
 						slidesPerView={1}
-						defaultValue={2}
-						onSlideChange={(...args: any[]) => console.log("slide change", ...args)}
-						onSwiper={setControlledSwiper}
+						onSlideChange={(swiper: SwiperClass) => setTab(tabs[swiper.activeIndex])}
+						style={{ maxWidth: "100%" }}
+						onSwiper={setSwiper}
 					>
-						<SwiperSlide>Slide 1</SwiperSlide>
-						<SwiperSlide>Slide 2</SwiperSlide>
-						<SwiperSlide>Slide 3</SwiperSlide>
-						<SwiperSlide>Slide 4</SwiperSlide>
+						<SwiperSlide>
+							{search ? `SEARCHING FOR "${search}" IN EPISODES` : `EXPLORING EPISODES`}
+						</SwiperSlide>
+						<SwiperSlide>{search ? `SEARCHING FOR "${search}" IN LISTS` : `EXPLORING LISTS`}</SwiperSlide>
+						<SwiperSlide>
+							{search ? `SEARCHING FOR "${search}" IN REVIEWS` : `EXPLORING REVIEWS`}
+						</SwiperSlide>
+						<SwiperSlide>
+							{search ? `SEARCHING FOR "${search}" IN VIEWERS` : `EXPLORING VIEWERS`}
+						</SwiperSlide>
 					</Swiper>
 				</Box>
-				{search}
-				{/*<TabPanel value="episodes">*/}
-				{/*	<>episodes {search}</>*/}
-				{/*</TabPanel>*/}
-				{/*<TabPanel value="lists">*/}
-				{/*	<>lists {search}</>*/}
-				{/*</TabPanel>*/}
-				{/*<TabPanel value="reviews">*/}
-				{/*	<>reviews {search}</>*/}
-				{/*</TabPanel>*/}
-				{/*<TabPanel value="viewers">*/}
-				{/*	<>viewers {search}</>*/}
-				{/*</TabPanel>*/}
-			</TabContext>
+			</Box>
 		</Container>
 	);
 };
