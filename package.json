@@ -33,7 +33,7 @@
 		"start:dev": "ts-node src/index.ts",
 		"start:prod": "yarn run db:deploy && yarn run start",
 		"watch": "nodemon",
-		"db:generate": "prisma generate",
+		"db:generate": "prisma generate --sql",
 		"db:migrate": "prisma migrate dev",
 		"db:deploy": "prisma migrate deploy",
 		"prepare": "husky",

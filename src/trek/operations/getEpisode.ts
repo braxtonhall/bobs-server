@@ -17,17 +17,18 @@ export const getEpisode = async ({
 		const episode = results[0];
 		return {
 			...episode,
-			view_count: Number(episode.view_count),
-			count_0: Number(episode.count_0),
-			count_1: Number(episode.count_1),
-			count_2: Number(episode.count_2),
-			count_3: Number(episode.count_3),
-			count_4: Number(episode.count_4),
-			count_5: Number(episode.count_5),
-			count_6: Number(episode.count_6),
-			count_7: Number(episode.count_7),
-			count_8: Number(episode.count_8),
-			count_9: Number(episode.count_9),
+			reviewCount: Number(episode.reviewCount),
+			opinionCount: Number(episode.opinionCount),
+			oneCount: Number(episode.oneCount),
+			twoCount: Number(episode.twoCount),
+			threeCount: Number(episode.threeCount),
+			fourCount: Number(episode.fourCount),
+			fiveCount: Number(episode.fiveCount),
+			sixCount: Number(episode.sixCount),
+			sevenCount: Number(episode.sevenCount),
+			eightCount: Number(episode.eightCount),
+			nineCount: Number(episode.nineCount),
+			tenCount: Number(episode.tenCount),
 		};
 	} else {
 		return null;
