@@ -12,7 +12,7 @@ export const getEpisode = async ({
 	production: number;
 	season: number;
 }) => {
-	const results = await db.$queryRawTyped(getEpisodeQuery(viewerId, seriesId, season, production));
+	const results = await db.$queryRawTyped(getEpisodeQuery(seriesId, season, production));
 	if (results[0]) {
 		const episode = results[0];
 		return {

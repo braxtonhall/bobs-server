@@ -1,8 +1,8 @@
-import { TabContext, TabList, TabPanel } from "@mui/lab";
+import { TabContext, TabList } from "@mui/lab";
 import { Box, Container, Tab } from "@mui/material";
 import { useState } from "react";
 import { DebouncedTextField } from "../misc/DebouncedTextField";
-import { Swiper, SwiperSlide, useSwiper } from "swiper/react";
+import { Swiper, SwiperSlide } from "swiper/react";
 import { Swiper as SwiperApi } from "swiper";
 import "swiper/css";
 
@@ -88,7 +88,7 @@ export const Explore = () => {
 						<SwiperSlide>Slide 4</SwiperSlide>
 					</Swiper>
 				</Box>
-
+				{search}
 				{/*<TabPanel value="episodes">*/}
 				{/*	<>episodes {search}</>*/}
 				{/*</TabPanel>*/}
