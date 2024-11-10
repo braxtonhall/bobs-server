@@ -19,6 +19,7 @@ type ViewingProps = {
 export const Viewing = ({ viewing, series, setCursor, logEpisode, episodes }: ViewingProps) => {
 	// TODO what should happen if you are DONE???
 	// TODO needs a button to just give up...
+	// TODO there should be a button to link you to view the full list, scrolled down to cursor
 
 	const index = viewing.watchlist.episodes.findIndex(({ id }) => id === viewing.cursor);
 	const current = viewing.watchlist.episodes[index];
@@ -77,6 +78,7 @@ const CurrentEpisode = (props: {
 	setCursor: API["updateCursor"]["mutate"];
 	logEpisode: API["logEpisode"]["mutate"];
 }) => {
+	// TODO instead of a skip button, I want to be able to swipe to the next or last episode!!!
 	return (
 		<>
 			<Box marginBottom="1em" marginTop="1em">
