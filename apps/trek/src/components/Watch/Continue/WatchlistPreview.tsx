@@ -16,6 +16,7 @@ import { ExpandMoreRounded } from "@mui/icons-material";
 import { Progress } from "../../misc/Progress";
 import { DecoratedViewing } from "./mergeViewingWithContent";
 import { API } from "../../../util/api";
+import { useEffect } from "react";
 
 export const WatchlistPreview = ({
 	viewing,
@@ -68,23 +69,31 @@ const WatchlistPreviewContent = ({
 	viewing: DecoratedViewing;
 	index: number;
 	setCursor: API["updateCursor"]["mutate"];
-}) => (
-	<Box flex={1} overflow="auto" width="100%" maxHeight="500px">
-		<Box>
-			<nav>
-				<List>
-					{viewing.watchlist.episodes.map((episode, episodeIndex) => (
-						<ListItem disablePadding key={episode.id}>
-							<ListItemButton
-								onClick={() => setCursor({ viewingId: viewing.id, episodeId: episode.id })}
-								selected={cursorIndex === episodeIndex}
-							>
-								<ListItemText primary={episode.name} />
-							</ListItemButton>
-						</ListItem>
-					))}
-				</List>
-			</nav>
+}) => {
+	useEffect(() => {
+		// TODO scroll the current one into view if it is not currently in the view
+	}, [cursorIndex, viewing]);
+
+	// TODO each button should actually be TWO buttons. One to skip to, one to open the episode page
+
+	return (
+		<Box flex={1} overflow="auto" width="100%" maxHeight={{ xs: "400px", sm: "unset" }}>
+			<Box>
+				<nav>
+					<List>
+						{viewing.watchlist.episodes.map((episode, episodeIndex) => (
+							<ListItem disablePadding key={episode.id}>
+								<ListItemButton
+									onClick={() => setCursor({ viewingId: viewing.id, episodeId: episode.id })}
+									selected={cursorIndex === episodeIndex}
+								>
+									<ListItemText primary={episode.name} />
+								</ListItemButton>
+							</ListItem>
+						))}
+					</List>
+				</nav>
+			</Box>
 		</Box>
-	</Box>
-);
+	);
+};

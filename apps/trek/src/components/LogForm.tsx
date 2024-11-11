@@ -75,7 +75,7 @@ export const LogForm = (props: { episode: Episode; logEpisode: API["logEpisode"]
 					</Link>
 				</Card>
 
-				<Box sx={{ display: { xs: "unset", sm: "table-cell" }, width: { xs: "unset", sm: "100%" } }}>
+				<Box sx={{ display: { xs: "unset", md: "table-cell" }, width: { xs: "unset", md: "100%" } }}>
 					{/*TODO it would be nice if this font changed based on the show https://github.com/wrstone/fonts-startrek*/}
 					<Typography variant="h5" component="h2">
 						{props.episode.name}
@@ -107,11 +107,11 @@ export const LogForm = (props: { episode: Episode; logEpisode: API["logEpisode"]
 				}}
 			>
 				<FormGroup>
-					<Stack direction={{ xs: "column", sm: "row" }}>
+					<Stack direction={{ xs: "column", md: "row" }}>
 						<Stack
-							marginLeft={{ xs: "unset", sm: "auto" }}
-							direction={{ xs: "row", sm: "column" }}
-							justifyContent={{ xs: "center", sm: "unset" }}
+							marginLeft={{ xs: "unset", md: "auto" }}
+							direction={{ xs: "row", md: "column" }}
+							justifyContent={{ xs: "center", md: "unset" }}
 						>
 							<Labelled height="45px" valueLabel="Rated" label="Rate" value={rating}>
 								{touchScreen ? (
@@ -162,7 +162,7 @@ export const LogForm = (props: { episode: Episode; logEpisode: API["logEpisode"]
 						display="flex"
 						justifyContent="center"
 						alignItems="center"
-						flexDirection={{ xs: "column", sm: "row" }}
+						flexDirection={{ xs: "column", md: "row" }}
 					>
 						<Box
 							display="flex"
@@ -170,7 +170,7 @@ export const LogForm = (props: { episode: Episode; logEpisode: API["logEpisode"]
 							alignItems="center"
 							flexDirection="row"
 							width="100%"
-							marginBottom={{ xs: "1em", sm: "unset" }}
+							marginBottom={{ xs: "1em", md: "unset" }}
 						>
 							<Tags tags={tags} setTags={storeTags} />
 						</Box>
@@ -178,7 +178,7 @@ export const LogForm = (props: { episode: Episode; logEpisode: API["logEpisode"]
 							display="flex"
 							justifyContent="center"
 							alignItems="center"
-							width={{ xs: "100%", sm: "unset" }}
+							width={{ xs: "100%", md: "unset" }}
 						>
 							<LocalizationProvider dateAdapter={AdapterLuxon}>
 								<DatePicker
@@ -187,8 +187,8 @@ export const LogForm = (props: { episode: Episode; logEpisode: API["logEpisode"]
 									value={date}
 									onChange={setDate}
 									sx={{
-										marginLeft: { xs: "unset", sm: "1em" },
-										width: { xs: "100%", sm: "200px" },
+										marginLeft: { xs: "unset", md: "1em" },
+										width: { xs: "100%", md: "200px" },
 										marginRight: "1em",
 									}}
 								/>
