@@ -3,6 +3,7 @@ import { api, API } from "../../../util/api";
 import { Viewing } from "./Viewing";
 import { Episode, SeriesCollection } from "../types";
 import { useEffect, useState } from "react";
+import { mergeViewingWithContent } from "./mergeViewingWithContent";
 
 interface ContinueProps {
 	series: SeriesCollection | null;
@@ -64,40 +65,36 @@ const Continue = (props: ContinueProps) => {
 	};
 
 	return (
-		<>
-			<Box position="relative" width="100%" boxSizing="border-box">
-				<Fade in={viewings.length === 0} unmountOnExit>
-					<Box
-						position="absolute"
-						height="100%"
-						width="100%"
-						boxSizing="border-box"
-						display="flex"
-						justifyContent="center"
-						alignItems="center"
-						bgcolor="white"
-					>
-						<CircularProgress />
-					</Box>
-				</Fade>
-				{viewings.length && props.series && props.episodes ? (
-					viewings.map(
-						((series, episodes) => (viewing) => (
-							<Viewing
-								key={viewing.id}
-								viewing={viewing}
-								series={series}
-								setCursor={setCursor}
-								logEpisode={logAndSetEpisode}
-								episodes={episodes}
-							/>
-						))(props.series, props.episodes),
-					)
-				) : (
-					<ContinueInactive />
-				)}
-			</Box>
-		</>
+		<Box position="relative" width="100%" boxSizing="border-box">
+			<Fade in={viewings.length === 0} unmountOnExit>
+				<Box
+					position="absolute"
+					height="100%"
+					width="100%"
+					boxSizing="border-box"
+					display="flex"
+					justifyContent="center"
+					alignItems="center"
+					bgcolor="white"
+				>
+					<CircularProgress />
+				</Box>
+			</Fade>
+			{viewings.length && props.series && props.episodes ? (
+				viewings.map(
+					((series, episodes) => (viewing) => (
+						<Viewing
+							key={viewing.id}
+							viewing={mergeViewingWithContent({ viewing, series, episodes })}
+							setCursor={setCursor}
+							logEpisode={logAndSetEpisode}
+						/>
+					))(props.series, props.episodes),
+				)
+			) : (
+				<ContinueInactive />
+			)}
+		</Box>
 	);
 };
 

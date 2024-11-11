@@ -12,7 +12,7 @@ const StyledTabPanel = styled(TabPanel)(({ theme }) => ({
 	paddingRight: 0,
 }));
 
-const Landing = () => {
+const Watch = () => {
 	const [tab, setTab] = useState("watch");
 	const [episodes, setEpisodes] = useState<Record<string, Episode> | null>(null);
 	const [series, setSeries] = useState<Awaited<ReturnType<API["getSeries"]["query"]>> | null>(null);
@@ -47,4 +47,4 @@ const Landing = () => {
 	);
 };
 
-export default Landing;
+export default Watch;
