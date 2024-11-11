@@ -30,7 +30,15 @@ export const WatchlistPreview = ({
 }) =>
 	useMediaQuery(useTheme().breakpoints.up("sm")) ? (
 		<Box height="100%" width="100%" position="relative">
-			<Box padding="0.5em" height="100%" width="100%" display="flex" position="absolute" flexDirection="column">
+			<Box
+				padding="0.5em"
+				height="100%"
+				width="100%"
+				boxSizing="border-box"
+				display="flex"
+				position="absolute"
+				flexDirection="column"
+			>
 				<WatchlistPreviewHeader viewing={viewing} index={index} />
 				<Box display="flex" flex={1} minHeight="0px">
 					<WatchlistPreviewContent viewing={viewing} index={index} setCursor={setCursor} />
