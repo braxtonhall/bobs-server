@@ -4,6 +4,7 @@ import {
 	AccordionDetails,
 	AccordionSummary,
 	Box,
+	IconButton,
 	List,
 	ListItem,
 	ListItemButton,
@@ -12,11 +13,11 @@ import {
 	useMediaQuery,
 	useTheme,
 } from "@mui/material";
-import { ExpandMoreRounded } from "@mui/icons-material";
+import { ExpandMoreRounded, MoreVertRounded } from "@mui/icons-material";
 import { Progress } from "../../misc/Progress";
 import { DecoratedViewing } from "./mergeViewingWithContent";
 import { API } from "../../../util/api";
-import { useEffect } from "react";
+import { MutableRefObject, useEffect, useRef } from "react";
 
 export const WatchlistPreview = ({
 	viewing,
@@ -26,9 +27,8 @@ export const WatchlistPreview = ({
 	viewing: DecoratedViewing;
 	index: number;
 	setCursor: API["updateCursor"]["mutate"];
-}) => {
-	const desktop = useMediaQuery(useTheme().breakpoints.up("sm"));
-	return desktop ? (
+}) =>
+	useMediaQuery(useTheme().breakpoints.up("sm")) ? (
 		<Box height="100%" width="100%" position="relative">
 			<Box padding="0.5em" height="100%" width="100%" display="flex" position="absolute" flexDirection="column">
 				<WatchlistPreviewHeader viewing={viewing} index={index} />
@@ -47,7 +47,6 @@ export const WatchlistPreview = ({
 			</AccordionDetails>
 		</Accordion>
 	);
-};
 
 const WatchlistPreviewHeader = ({ viewing, index }: { viewing: Viewings[number]; index: number }) => (
 	<Box width="100%">
@@ -70,30 +69,76 @@ const WatchlistPreviewContent = ({
 	index: number;
 	setCursor: API["updateCursor"]["mutate"];
 }) => {
-	useEffect(() => {
-		// TODO scroll the current one into view if it is not currently in the view
-	}, [cursorIndex, viewing]);
-
-	// TODO each button should actually be TWO buttons. One to skip to, one to open the episode page
-
+	const ref = useRef<HTMLElement>(null);
 	return (
-		<Box flex={1} overflow="auto" width="100%" maxHeight={{ xs: "400px", sm: "unset" }}>
+		<Box ref={ref} flex={1} overflow="auto" width="100%" maxHeight={{ xs: "400px", sm: "unset" }}>
 			<Box>
 				<nav>
 					<List>
 						{viewing.watchlist.episodes.map((episode, episodeIndex) => (
-							<ListItem disablePadding key={episode.id}>
-								<ListItemButton
-									onClick={() => setCursor({ viewingId: viewing.id, episodeId: episode.id })}
-									selected={cursorIndex === episodeIndex}
-								>
-									<ListItemText primary={episode.name} />
-								</ListItemButton>
-							</ListItem>
+							<WatchlistPreviewEntry
+								episode={episode}
+								setCursor={setCursor}
+								viewingId={viewing.id}
+								selected={cursorIndex === episodeIndex}
+								containerRef={ref}
+								key={episode.id}
+							/>
 						))}
 					</List>
 				</nav>
 			</Box>
 		</Box>
+	);
+};
+
+type WatchlistPreviewEntryProps = {
+	episode: DecoratedViewing["watchlist"]["episodes"][number];
+	viewingId: string;
+	setCursor: API["updateCursor"]["mutate"];
+	selected: boolean;
+	containerRef: MutableRefObject<HTMLElement | null>;
+};
+
+const WatchlistPreviewEntry = ({
+	episode,
+	viewingId,
+	setCursor,
+	selected,
+	containerRef,
+}: WatchlistPreviewEntryProps) => {
+	const ref = useRef<HTMLLIElement>(null);
+	useEffect(() => {
+		// TODO this should only happen if not clicked...
+		if (selected && ref.current && containerRef.current) {
+			const top = ref.current.offsetTop;
+			const bottom = top + ref.current.clientHeight;
+			const containerTop = containerRef.current.scrollTop;
+			const containerBottom = containerTop + containerRef.current.clientHeight;
+			if (bottom >= containerBottom || top <= containerTop) {
+				ref.current.scrollIntoView({ behavior: "smooth" });
+			}
+		}
+	}, [selected, ref, containerRef]);
+	// TODO there should be a menu to go to the episode page
+	return (
+		<ListItem disablePadding ref={ref}>
+			<ListItemButton
+				onClick={() => setCursor({ viewingId, episodeId: episode.id })}
+				selected={selected}
+				style={{ paddingRight: "8px" }}
+			>
+				<ListItemText primary={episode.name} />
+				<IconButton
+					size="small"
+					onClick={(event) => {
+						event.stopPropagation();
+						// TODO this should open a menu!
+					}}
+				>
+					<MoreVertRounded />
+				</IconButton>
+			</ListItemButton>
+		</ListItem>
 	);
 };
