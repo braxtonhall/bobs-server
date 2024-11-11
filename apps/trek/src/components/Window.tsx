@@ -78,6 +78,10 @@ export const Window = () => {
 			<Box flexGrow="1">
 				<Outlet />
 
+				<Box display={{ sm: "none" }} style={{ opacity: 0 }}>
+					<BottomNavigation />
+				</Box>
+
 				<Paper
 					sx={{
 						position: "fixed",
