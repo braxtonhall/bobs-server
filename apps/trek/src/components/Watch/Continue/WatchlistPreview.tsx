@@ -9,6 +9,8 @@ import {
 	ListItem,
 	ListItemButton,
 	ListItemText,
+	Menu,
+	MenuItem,
 	Typography,
 	useMediaQuery,
 	useTheme,
@@ -17,7 +19,8 @@ import { ExpandMoreRounded, MoreVertRounded } from "@mui/icons-material";
 import { Progress } from "../../misc/Progress";
 import { DecoratedViewing } from "./mergeViewingWithContent";
 import { API } from "../../../util/api";
-import { MutableRefObject, useEffect, useRef } from "react";
+import { MutableRefObject, useEffect, useRef, useState, type MouseEvent } from "react";
+import { Link } from "react-router-dom";
 
 export const WatchlistPreview = ({
 	viewing,
@@ -117,7 +120,6 @@ const WatchlistPreviewEntry = ({
 }: WatchlistPreviewEntryProps) => {
 	const ref = useRef<HTMLLIElement>(null);
 	useEffect(() => {
-		// TODO this should only happen if not clicked...
 		if (selected && ref.current && containerRef.current) {
 			const top = ref.current.offsetTop;
 			const bottom = top + ref.current.clientHeight;
@@ -128,7 +130,6 @@ const WatchlistPreviewEntry = ({
 			}
 		}
 	}, [selected, ref, containerRef]);
-	// TODO there should be a menu to go to the episode page
 	return (
 		<ListItem disablePadding ref={ref}>
 			<ListItemButton
@@ -137,16 +138,60 @@ const WatchlistPreviewEntry = ({
 				style={{ paddingRight: "8px" }}
 			>
 				<ListItemText primary={episode.name} />
-				<IconButton
-					size="small"
-					onClick={(event) => {
-						event.stopPropagation();
-						// TODO this should open a menu!
-					}}
-				>
-					<MoreVertRounded />
-				</IconButton>
+				<WatchlistPreviewEntryOptions episode={episode} viewingId={viewingId} />
 			</ListItemButton>
 		</ListItem>
+	);
+};
+
+const WatchlistPreviewEntryOptions = ({
+	viewingId,
+	episode,
+}: {
+	viewingId: string;
+	episode: DecoratedViewing["watchlist"]["episodes"][number];
+}) => {
+	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+	const open = Boolean(anchorEl);
+	const handleClick = (event: MouseEvent<HTMLButtonElement>) => setAnchorEl(event.currentTarget);
+	const handleClose = () => setAnchorEl(null);
+
+	const iconButtonId = `${viewingId}-${episode.id}-context-button`;
+	const menuId = `${viewingId}-${episode.id}-context-menu`;
+
+	return (
+		<>
+			<IconButton
+				id={iconButtonId}
+				aria-controls={open ? menuId : undefined}
+				aria-haspopup
+				aria-expanded={open}
+				size="small"
+				onClick={(event) => {
+					event.stopPropagation();
+					handleClick(event);
+				}}
+			>
+				<MoreVertRounded />
+			</IconButton>
+			<Menu
+				id={menuId}
+				anchorEl={anchorEl}
+				open={open}
+				onClose={handleClose}
+				MenuListProps={{ "aria-labelledby": iconButtonId }}
+				onClick={(event) => event.stopPropagation()}
+			>
+				<MenuItem
+					component={Link}
+					to={`/shows/${episode.seriesId.toLowerCase()}/seasons/${episode.season}/episodes/${episode.production}`}
+				>
+					Go to episode
+				</MenuItem>
+				<MenuItem component={Link} to={`/shows/${episode.seriesId.toLowerCase()}`}>
+					Go to series
+				</MenuItem>
+			</Menu>
+		</>
 	);
 };
