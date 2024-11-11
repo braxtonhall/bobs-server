@@ -1,0 +1,124 @@
+model Language {
+  id            String      @id
+  spokenMovies  Movie[]
+  primaryMovies Movie[]     @relation(name: "primaryLanguage")
+  screenings    Screening[]
+}
+
+model List {
+  link      String      @id
+  name      String
+  entries   ListEntry[]
+  updatedAt DateTime
+}
+
+model ListEntry {
+  listLink  String
+  list      List            @relation(fields: [listLink], references: [link], onDelete: Cascade)
+  movieSlug String
+  movie     LetterboxdMovie @relation(fields: [movieSlug], references: [slug])
+
+  index Int?
+
+  @@id([listLink, movieSlug])
+}
+
+model LetterboxdMovie {
+  slug        String      @id
+  tmdbId      Int?
+  searchedAt  DateTime?
+  searchCount Int         @default(0)
+  entries     ListEntry[]
+}
+
+model Movie {
+  tmdbId Int @id
+
+  title           String
+  spokenLanguages Language[]
+  collectionId    Int?
+  imdbId          String?
+  posterPath      String?
+  tagline         String?
+  backdropPath    String?
+
+  updatedAt DateTime
+
+  languageId      String
+  primaryLanguage Language @relation(name: "primaryLanguage", fields: [languageId], references: [id])
+
+  screeners Screener[]
+}
+
+model Screener {
+  id String @id @default(cuid())
+
+  name     String
+  year     Int
+  runtime  Int
+  director String
+  language String
+
+  screenings Screening[]
+
+  tmdbId      Int?
+  movie       Movie?    @relation(fields: [tmdbId], references: [tmdbId])
+  searchedAt  DateTime?
+  searchCount Int       @default(0)
+
+  @@unique([name, year, runtime, director, language])
+}
+
+model Screening {
+  id String @id @default(cuid())
+
+  eventId    String
+  event      Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  screenerId String
+  screener   Screener @relation(fields: [screenerId], references: [id])
+
+  format    String?
+  subtitles Language[]
+
+  @@unique([eventId, screenerId])
+}
+
+model Event {
+  id String @id @default(cuid())
+
+  url          String?
+  time         DateTime
+  productionId String
+  production   Production @relation(fields: [productionId], references: [id], onDelete: Cascade)
+  metadata     String
+
+  screenings Screening[]
+
+  @@unique([productionId, time])
+}
+
+model Production {
+  id        String  @id @default(cuid())
+  url       String
+  name      String
+  events    Event[]
+  theatreId String
+  theatre   Theatre @relation(fields: [theatreId], references: [id])
+
+  @@unique([theatreId, name, url])
+}
+
+model Theatre {
+  id          String       @id @default(cuid())
+  url         String       @unique
+  name        String
+  logoUrl     String
+  cityId      String
+  city        City         @relation(fields: [cityId], references: [name])
+  productions Production[]
+}
+
+model City {
+  name     String    @id
+  theatres Theatre[]
+}
