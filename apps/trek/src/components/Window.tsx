@@ -86,8 +86,16 @@ export const Window = () => {
 				<Outlet />
 			</Box>
 
+			<Box display={{ sm: "none" }} style={{ opacity: 0 }}>
+				<BottomNavigation />
+			</Box>
+
 			<Paper
 				sx={{
+					position: "fixed",
+					bottom: 0,
+					left: 0,
+					right: 0,
 					display: {
 						xs: "unset",
 						sm: "none",

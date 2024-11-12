@@ -3,21 +3,24 @@ import { useState } from "react";
 import { DebouncedTextField } from "../misc/DebouncedTextField";
 import { ListRounded, PeopleRounded, ReviewsRounded, VideoLibraryRounded } from "@mui/icons-material";
 import { SwiperTabs } from "../misc/SwiperTabs";
+import { SpaceFillingBox } from "../misc/SpaceFillingBox";
 
 export const Explore = () => {
 	const [search, setSearch] = useState("");
 
 	return (
-		<Box marginTop="1em" width="100%">
-			<Container maxWidth="md">
-				<DebouncedTextField
-					placeholder="Search…"
-					autoComplete="off"
-					variant="standard"
-					fullWidth
-					onChange={(search) => setSearch(search.target.value)}
-				/>
-			</Container>
+		<SpaceFillingBox flexDirection="column">
+			<Box marginTop="1em">
+				<Container maxWidth="md">
+					<DebouncedTextField
+						placeholder="Search…"
+						autoComplete="off"
+						variant="standard"
+						fullWidth
+						onChange={(search) => setSearch(search.target.value)}
+					/>
+				</Container>
+			</Box>
 			<SwiperTabs
 				tabs={[
 					{
@@ -74,6 +77,6 @@ export const Explore = () => {
 					},
 				]}
 			/>
-		</Box>
+		</SpaceFillingBox>
 	);
 };
