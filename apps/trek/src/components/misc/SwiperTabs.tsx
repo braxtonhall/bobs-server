@@ -1,4 +1,4 @@
-import { useState, useCallback, JSX } from "react";
+import { useState, useCallback, JSX, useRef } from "react";
 import { Box, styled, Tab } from "@mui/material";
 import { TabList, TabContext } from "@mui/lab";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -19,9 +19,9 @@ export type TabTransport = {
 };
 
 export const SwiperTabs = (props: { tabs: TabTransport[] }) => {
-	const [swiper, setSwiper] = useState<SwiperApi | null>(null);
+	const swiper = useRef<SwiperApi | null>(null);
 	const [tab, setTab] = useState<number>(0);
-	const onChange = useCallback((_: unknown, newValue: number) => swiper?.slideTo(newValue), [swiper]);
+	const onChange = useCallback((_: unknown, newValue: number) => swiper.current?.slideTo(newValue), []);
 
 	return (
 		<Box width="100%">
@@ -40,7 +40,7 @@ export const SwiperTabs = (props: { tabs: TabTransport[] }) => {
 					slidesPerView={1}
 					onSlideChange={(swiper: SwiperClass) => setTab(swiper.activeIndex)}
 					style={{ maxWidth: "100%" }}
-					onSwiper={setSwiper}
+					onSwiper={(newSwiper: SwiperApi) => void (swiper.current = newSwiper)}
 				>
 					{props.tabs.map(({ content }, index) => (
 						<SwiperSlide key={index}>{content}</SwiperSlide>
