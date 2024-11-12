@@ -26,7 +26,13 @@ export const Window = () => {
 	const value: string = selectValue(location);
 
 	return (
-		<Box display={{ xs: "unset", sm: "flex" }}>
+		<Box
+			display="flex"
+			flexDirection={{ xs: "column", sm: "unset" }}
+			height="100vh"
+			width="100vw"
+			position="absolute"
+		>
 			<Box minWidth={drawerWidth} height="100vh" display={{ xs: "none", sm: "unset" }} style={{ float: "left" }}>
 				<Drawer
 					variant="permanent"
@@ -75,58 +81,45 @@ export const Window = () => {
 					</List>
 				</Drawer>
 			</Box>
-			<Box flexGrow="1">
+
+			<Box flex="1" overflow="auto">
 				<Outlet />
-
-				<Box display={{ sm: "none" }} style={{ opacity: 0 }}>
-					<BottomNavigation />
-				</Box>
-
-				<Paper
-					sx={{
-						position: "fixed",
-						bottom: 0,
-						left: 0,
-						right: 0,
-						display: {
-							xs: "unset",
-							sm: "none",
-						},
-					}}
-					elevation={3}
-				>
-					<BottomNavigation value={value}>
-						<BottomNavigationAction
-							component={Link}
-							to="/"
-							label="Watch"
-							value="/"
-							icon={<PlayArrowRounded />}
-						/>
-						<BottomNavigationAction
-							component={Link}
-							to="/explore"
-							label="Explore"
-							value="/explore"
-							icon={<SearchRounded />}
-						/>
-						<BottomNavigationAction
-							component={Link}
-							to="/activity"
-							label="Activity"
-							value="/activity"
-							icon={<RssFeedRounded />}
-						/>
-						<BottomNavigationAction
-							component={Link}
-							to="/me"
-							label="Me"
-							value="/me"
-							icon={<PersonRounded />}
-						/>
-					</BottomNavigation>
-				</Paper>
 			</Box>
+
+			<Paper
+				sx={{
+					display: {
+						xs: "unset",
+						sm: "none",
+					},
+				}}
+				elevation={3}
+			>
+				<BottomNavigation value={value}>
+					<BottomNavigationAction
+						component={Link}
+						to="/"
+						label="Watch"
+						value="/"
+						icon={<PlayArrowRounded />}
+					/>
+					<BottomNavigationAction
+						component={Link}
+						to="/explore"
+						label="Explore"
+						value="/explore"
+						icon={<SearchRounded />}
+					/>
+					<BottomNavigationAction
+						component={Link}
+						to="/activity"
+						label="Activity"
+						value="/activity"
+						icon={<RssFeedRounded />}
+					/>
+					<BottomNavigationAction component={Link} to="/me" label="Me" value="/me" icon={<PersonRounded />} />
+				</BottomNavigation>
+			</Paper>
 		</Box>
 	);
 };

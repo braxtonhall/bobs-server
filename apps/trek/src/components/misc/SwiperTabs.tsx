@@ -1,10 +1,17 @@
 import { useState, useCallback, JSX } from "react";
-import { Box, Tab } from "@mui/material";
+import { Box, styled, Tab } from "@mui/material";
 import { TabList, TabContext } from "@mui/lab";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Swiper as SwiperApi } from "swiper";
 import type { Swiper as SwiperClass } from "swiper/types";
 import "swiper/css";
+
+const StyledSwiper = styled(Swiper)(({ theme }) => ({
+	zIndex: "unset",
+	"& .swiper-wrapper": {
+		zIndex: "unset",
+	},
+}));
 
 export type TabTransport = {
 	label: JSX.Element;
@@ -28,7 +35,7 @@ export const SwiperTabs = (props: { tabs: TabTransport[] }) => {
 				</TabContext>
 			</Box>
 			<Box sx={{ width: "100%" }}>
-				<Swiper
+				<StyledSwiper
 					spaceBetween={"20px"}
 					slidesPerView={1}
 					onSlideChange={(swiper: SwiperClass) => setTab(swiper.activeIndex)}
@@ -38,7 +45,7 @@ export const SwiperTabs = (props: { tabs: TabTransport[] }) => {
 					{props.tabs.map(({ content }, index) => (
 						<SwiperSlide key={index}>{content}</SwiperSlide>
 					))}
-				</Swiper>
+				</StyledSwiper>
 			</Box>
 		</Box>
 	);

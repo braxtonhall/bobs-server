@@ -16,6 +16,7 @@ export const setViewing = async ({ emailId, name }: Environment) =>
 			});
 			return existing.id;
 		} else {
+			// TODO maybe you don't default to watching anything
 			const viewer = await db.viewer.create({
 				data: {
 					email: {
