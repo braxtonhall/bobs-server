@@ -11,7 +11,7 @@ export const Explore = () => {
 		<Container maxWidth="md">
 			<Box marginTop="1em" width="100%">
 				<DebouncedTextField
-					placeholder="Search..."
+					placeholder="Search…"
 					autoComplete="off"
 					variant="standard"
 					fullWidth
