@@ -126,7 +126,10 @@ const WatchlistPreviewEntry = ({
 			const containerTop = containerRef.current.scrollTop;
 			const containerBottom = containerTop + containerRef.current.clientHeight;
 			if (bottom >= containerBottom || top <= containerTop) {
-				ref.current.scrollIntoView({ behavior: "smooth" });
+				containerRef.current.scrollTo({
+					top,
+					behavior: "smooth",
+				});
 			}
 		}
 	}, [selected, ref, containerRef]);
