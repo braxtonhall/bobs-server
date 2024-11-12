@@ -80,9 +80,9 @@ const WatchlistPreviewContent = ({
 	index: number;
 	setCursor: API["updateCursor"]["mutate"];
 }) => {
-	const ref = useRef<HTMLElement>(null);
+	const containerRef = useRef<HTMLElement>(null);
 	return (
-		<Box ref={ref} flex={1} overflow="auto" width="100%" maxHeight={{ xs: "400px", sm: "unset" }}>
+		<Box ref={containerRef} flex={1} overflow="auto" width="100%" maxHeight={{ xs: "400px", sm: "unset" }}>
 			<Box>
 				<nav>
 					<List>
@@ -92,7 +92,7 @@ const WatchlistPreviewContent = ({
 								setCursor={setCursor}
 								viewingId={viewing.id}
 								selected={cursorIndex === episodeIndex}
-								containerRef={ref}
+								containerRef={containerRef}
 								key={episode.id}
 							/>
 						))}
@@ -118,23 +118,25 @@ const WatchlistPreviewEntry = ({
 	selected,
 	containerRef,
 }: WatchlistPreviewEntryProps) => {
-	const ref = useRef<HTMLLIElement>(null);
+	const initialRender = useRef(true);
+	const listItemRef = useRef<HTMLLIElement>(null);
 	useEffect(() => {
-		if (selected && ref.current && containerRef.current) {
-			const top = ref.current.offsetTop;
-			const bottom = top + ref.current.clientHeight;
+		if (selected && listItemRef.current && containerRef.current) {
+			const top = listItemRef.current.offsetTop;
+			const bottom = top + listItemRef.current.clientHeight;
 			const containerTop = containerRef.current.scrollTop;
 			const containerBottom = containerTop + containerRef.current.clientHeight;
 			if (bottom >= containerBottom || top <= containerTop) {
 				containerRef.current.scrollTo({
 					top,
-					behavior: "smooth",
+					behavior: initialRender.current ? undefined : "smooth",
 				});
 			}
 		}
-	}, [selected, ref, containerRef]);
+		initialRender.current = false;
+	}, [selected, listItemRef, containerRef]);
 	return (
-		<ListItem disablePadding ref={ref}>
+		<ListItem disablePadding ref={listItemRef}>
 			<ListItemButton
 				onClick={() => setCursor({ viewingId, episodeId: episode.id })}
 				selected={selected}
