@@ -33,15 +33,7 @@ export const WatchlistPreview = ({
 }) =>
 	useMediaQuery(useTheme().breakpoints.up("sm")) ? (
 		<Box height="100%" width="100%" position="relative">
-			<Box
-				padding="0 0.5em 0 0.5em"
-				height="100%"
-				width="100%"
-				boxSizing="border-box"
-				display="flex"
-				position="absolute"
-				flexDirection="column"
-			>
+			<Box height="100%" width="100%" display="flex" position="absolute" flexDirection="column">
 				<WatchlistPreviewHeader viewing={viewing} index={index} />
 				<Box display="flex" flex={1} minHeight="0px">
 					<WatchlistPreviewContent viewing={viewing} index={index} setCursor={setCursor} />
@@ -60,7 +52,7 @@ export const WatchlistPreview = ({
 	);
 
 const WatchlistPreviewHeader = ({ viewing, index }: { viewing: Viewings[number]; index: number }) => (
-	<Box width="100%">
+	<Box width="100%" padding="0.5em 0.5em 0 0.5em" boxSizing="border-box">
 		<Box display="flex" alignItems="center">
 			<Typography variant="h4">{viewing.watchlist.name}</Typography>
 		</Box>
