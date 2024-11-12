@@ -4,7 +4,7 @@ import Continue from "./Continue";
 import Shuffle from "./Shuffle";
 import { API, api } from "../../util/api";
 import { Episode } from "./types";
-import { SwiperTab, SwiperTabs } from "../misc/SwiperTabs";
+import { SwiperTabs } from "../misc/SwiperTabs";
 import { Container } from "@mui/material";
 
 const Watch = () => {
@@ -23,13 +23,18 @@ const Watch = () => {
 
 	return (
 		<Container maxWidth="md">
-			<SwiperTabs>
-				<SwiperTab
-					label={<PlayArrowRounded aria-label="play" titleAccess="play" />}
-					content={<Continue episodes={episodes} series={series} setEpisodes={setEpisodes} />}
-				/>
-				<SwiperTab label={<ShuffleRounded aria-label="random" titleAccess="random" />} content={<Shuffle />} />
-			</SwiperTabs>
+			<SwiperTabs
+				tabs={[
+					{
+						label: <PlayArrowRounded aria-label="play" titleAccess="play" />,
+						content: <Continue episodes={episodes} series={series} setEpisodes={setEpisodes} />,
+					},
+					{
+						label: <ShuffleRounded aria-label="random" titleAccess="random" />,
+						content: <Shuffle />,
+					},
+				]}
+			/>
 		</Container>
 	);
 };
