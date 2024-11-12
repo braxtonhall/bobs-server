@@ -21,6 +21,7 @@ import { DecoratedViewing } from "./mergeViewingWithContent";
 import { API } from "../../../util/api";
 import { MutableRefObject, useEffect, useRef, useState, type MouseEvent } from "react";
 import { Link } from "react-router-dom";
+import { SpaceFillingBox, SpaceFillingBoxContainer } from "../../misc/SpaceFillingBox";
 
 export const WatchlistPreview = ({
 	viewing,
@@ -32,14 +33,12 @@ export const WatchlistPreview = ({
 	setCursor: API["updateCursor"]["mutate"];
 }) =>
 	useMediaQuery(useTheme().breakpoints.up("sm")) ? (
-		<Box height="100%" width="100%" position="relative">
-			<Box height="100%" width="100%" display="flex" position="absolute" flexDirection="column">
-				<WatchlistPreviewHeader viewing={viewing} index={index} />
-				<Box display="flex" flex={1} minHeight="0px">
-					<WatchlistPreviewContent viewing={viewing} index={index} setCursor={setCursor} />
-				</Box>
-			</Box>
-		</Box>
+		<SpaceFillingBoxContainer flexDirection="column">
+			<WatchlistPreviewHeader viewing={viewing} index={index} />
+			<SpaceFillingBox>
+				<WatchlistPreviewContent viewing={viewing} index={index} setCursor={setCursor} />
+			</SpaceFillingBox>
+		</SpaceFillingBoxContainer>
 	) : (
 		<Accordion style={{ boxShadow: "none" }}>
 			<AccordionSummary expandIcon={<ExpandMoreRounded />} style={{ paddingLeft: 0, paddingRight: 0 }}>

@@ -5,7 +5,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Swiper as SwiperApi } from "swiper";
 import type { Swiper as SwiperClass } from "swiper/types";
 import "swiper/css";
-import { SpaceFillingBox } from "./SpaceFillingBox";
+import { SpaceFillingBox, SpaceFillingBoxContainer } from "./SpaceFillingBox";
 
 const StyledTabPanel = styled(TabPanel)(({ theme }) => ({
 	paddingLeft: 0,
@@ -13,6 +13,7 @@ const StyledTabPanel = styled(TabPanel)(({ theme }) => ({
 }));
 
 const StyledSwiper = styled(Swiper)(({ theme }) => ({
+	maxWidth: "100%",
 	zIndex: "unset",
 	"& .swiper-wrapper": {
 		zIndex: "unset",
@@ -36,7 +37,7 @@ export const SwiperTabs = (props: { tabs: [...TabTransport[], TabTransport] }) =
 	);
 
 	return (
-		<SpaceFillingBox flexDirection="column">
+		<SpaceFillingBoxContainer flexDirection="column">
 			<TabContext value={tab}>
 				<Box>
 					<TabList onChange={onChange} aria-label="views" centered>
@@ -45,21 +46,16 @@ export const SwiperTabs = (props: { tabs: [...TabTransport[], TabTransport] }) =
 						))}
 					</TabList>
 				</Box>
-				<Box
-					sx={{
-						width: "100%",
-						flex: 1,
-						display: touchScreen ? "flex" : "unset",
-						minHeight: "0px",
-					}}
-				>
+				<SpaceFillingBox width="100%" display={touchScreen ? "flex" : "unset"}>
 					{touchScreen ? (
 						<StyledSwiper
 							spaceBetween="1em"
 							slidesPerView={1}
 							onSlideChange={(swiper: SwiperClass) => setTab(swiper.activeIndex)}
-							style={{ maxWidth: "100%" }}
-							onSwiper={(newSwiper: SwiperApi) => void (swiper.current = newSwiper)}
+							onSwiper={(newSwiper: SwiperApi) => {
+								swiper.current = newSwiper;
+								onChange(void "unused", tab);
+							}}
 						>
 							{props.tabs.map(({ content }, index) => (
 								<SwiperSlide key={index}>
@@ -82,8 +78,8 @@ export const SwiperTabs = (props: { tabs: [...TabTransport[], TabTransport] }) =
 							</StyledTabPanel>
 						))
 					)}
-				</Box>
+				</SpaceFillingBox>
 			</TabContext>
-		</SpaceFillingBox>
+		</SpaceFillingBoxContainer>
 	);
 };

@@ -3,13 +3,13 @@ import { useState } from "react";
 import { DebouncedTextField } from "../misc/DebouncedTextField";
 import { ListRounded, PeopleRounded, ReviewsRounded, VideoLibraryRounded } from "@mui/icons-material";
 import { SwiperTabs } from "../misc/SwiperTabs";
-import { SpaceFillingBox } from "../misc/SpaceFillingBox";
+import { SpaceFillingBoxContainer } from "../misc/SpaceFillingBox";
 
 export const Explore = () => {
 	const [search, setSearch] = useState("");
 
 	return (
-		<SpaceFillingBox flexDirection="column">
+		<SpaceFillingBoxContainer flexDirection="column">
 			<Box marginTop="1em">
 				<Container maxWidth="md">
 					<DebouncedTextField
@@ -77,6 +77,6 @@ export const Explore = () => {
 					},
 				]}
 			/>
-		</SpaceFillingBox>
+		</SpaceFillingBoxContainer>
 	);
 };
