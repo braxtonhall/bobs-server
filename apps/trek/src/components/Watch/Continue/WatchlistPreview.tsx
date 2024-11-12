@@ -34,7 +34,7 @@ export const WatchlistPreview = ({
 	useMediaQuery(useTheme().breakpoints.up("sm")) ? (
 		<Box height="100%" width="100%" position="relative">
 			<Box
-				padding="0.5em"
+				padding="0 0.5em 0 0.5em"
 				height="100%"
 				width="100%"
 				boxSizing="border-box"
@@ -53,7 +53,7 @@ export const WatchlistPreview = ({
 			<AccordionSummary expandIcon={<ExpandMoreRounded />} style={{ paddingLeft: 0, paddingRight: 0 }}>
 				<WatchlistPreviewHeader viewing={viewing} index={index} />
 			</AccordionSummary>
-			<AccordionDetails style={{ paddingLeft: 0, paddingRight: 0 }}>
+			<AccordionDetails style={{ padding: 0 }}>
 				<WatchlistPreviewContent viewing={viewing} index={index} setCursor={setCursor} />
 			</AccordionDetails>
 		</Accordion>

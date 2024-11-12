@@ -65,7 +65,7 @@ export const LogForm = (props: { episode: Episode; logEpisode: API["logEpisode"]
 	}, []);
 
 	return (
-		<Card style={{ backgroundColor: "antiquewhite", padding: "1em", boxShadow: "none" }}>
+		<Box style={{ backgroundColor: "antiquewhite", padding: "1em" }}>
 			<Box display="flex" alignItems="stretch" position="relative" marginBottom="1em">
 				<Card style={{ width: "4em", marginRight: "0.5em", minWidth: "50px", position: "relative" }}>
 					<Link
@@ -208,7 +208,7 @@ export const LogForm = (props: { episode: Episode; logEpisode: API["logEpisode"]
 					</Box>
 				</FormGroup>
 			</Form>
-		</Card>
+		</Box>
 	);
 };
 
