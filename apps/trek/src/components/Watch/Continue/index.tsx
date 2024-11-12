@@ -21,6 +21,7 @@ const Continue = (props: ContinueProps) => {
 				return Object.values(viewingsById);
 			});
 			// TODO this should only happen at the bottom of the page
+			//  https://dev.to/surajondev/building-an-infinite-scroll-component-in-react-1ljb
 			if (cursor) {
 				void api.getCurrentlyWatching.query(cursor).then(getRemainingViewings);
 			}
