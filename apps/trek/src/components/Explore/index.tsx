@@ -30,48 +30,50 @@ export const Explore = () => {
 					fullWidth
 					onChange={(search) => setSearch(search.target.value)}
 				/>
-				<TabContext value={tab}>
-					<Box width="100%" sx={{ borderBottom: 1, borderColor: "divider" }}>
-						<TabList onChange={onChange} aria-label="views" centered>
-							<Tab
-								label={
-									<>
-										<VideoLibraryRounded />
-										Episodes
-									</>
-								}
-								value="episodes"
-							/>
-							<Tab
-								label={
-									<>
-										<ListRounded />
-										Lists
-									</>
-								}
-								value="lists"
-							/>
-							<Tab
-								label={
-									<>
-										<ReviewsRounded />
-										Reviews
-									</>
-								}
-								value="reviews"
-							/>
-							<Tab
-								label={
-									<>
-										<PeopleRounded />
-										Viewers
-									</>
-								}
-								value="viewers"
-							/>
-						</TabList>
-					</Box>
-				</TabContext>
+				<Box marginBottom="1em">
+					<TabContext value={tab}>
+						<Box width="100%" sx={{ borderBottom: 1, borderColor: "divider" }}>
+							<TabList onChange={onChange} aria-label="views" centered>
+								<Tab
+									label={
+										<>
+											<VideoLibraryRounded />
+											Episodes
+										</>
+									}
+									value="episodes"
+								/>
+								<Tab
+									label={
+										<>
+											<ListRounded />
+											Lists
+										</>
+									}
+									value="lists"
+								/>
+								<Tab
+									label={
+										<>
+											<ReviewsRounded />
+											Reviews
+										</>
+									}
+									value="reviews"
+								/>
+								<Tab
+									label={
+										<>
+											<PeopleRounded />
+											Viewers
+										</>
+									}
+									value="viewers"
+								/>
+							</TabList>
+						</Box>
+					</TabContext>
+				</Box>
 				<Box sx={{ display: "grid", border: "dotted", width: "100%", boxSizing: "border-box" }}>
 					<Swiper
 						spaceBetween={0}
