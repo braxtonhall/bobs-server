@@ -1,13 +1,6 @@
 import { TextField, TextFieldProps, useControlled } from "@mui/material";
 import { useMemo } from "react";
-
-function debounce<F extends (...arg: any) => void>(callback: F, waitMs: number) {
-	let timeout: ReturnType<typeof setTimeout>;
-	return (...args: Parameters<F>) => {
-		clearTimeout(timeout);
-		timeout = setTimeout(callback, waitMs, ...args);
-	};
-}
+import { debounce } from "../../util/debounce";
 
 type DebouncedTextFieldProps = TextFieldProps & Required<Pick<TextFieldProps, "onChange">>;
 

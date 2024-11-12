@@ -17,7 +17,7 @@ import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Form, Link } from "react-router-dom";
-import { ReactElement, useCallback, useState } from "react";
+import { ReactElement, useCallback, useEffect, useState } from "react";
 import {
 	HistoryEduRounded,
 	FavoriteBorderRounded,
@@ -53,6 +53,11 @@ export const LogForm = (props: { episode: Episode; logEpisode: API["logEpisode"]
 	const [review, setReview] = useState("");
 	const [spoiler, setSpoiler] = useState(false);
 	const touchScreen = useMediaQuery("(hover: none)");
+
+	useEffect(() => {
+		window.onbeforeunload = () => (review || rating || liked ? "Are you sure you want to exit?" : undefined);
+		return () => void (window.onbeforeunload = null);
+	}, [review, rating, liked]);
 
 	const storeTags = useCallback((tags: string[]) => {
 		localStorage.setItem("tags", JSON.stringify(tags));
