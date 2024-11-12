@@ -22,20 +22,26 @@ const Watch = () => {
 	);
 
 	return (
-		<Container maxWidth="md">
-			<SwiperTabs
-				tabs={[
-					{
-						label: <PlayArrowRounded aria-label="play" titleAccess="play" />,
-						content: <Continue episodes={episodes} series={series} setEpisodes={setEpisodes} />,
-					},
-					{
-						label: <ShuffleRounded aria-label="random" titleAccess="random" />,
-						content: <Shuffle />,
-					},
-				]}
-			/>
-		</Container>
+		<SwiperTabs
+			tabs={[
+				{
+					label: <PlayArrowRounded aria-label="play" titleAccess="play" />,
+					content: (
+						<Container maxWidth="md">
+							<Continue episodes={episodes} series={series} setEpisodes={setEpisodes} />
+						</Container>
+					),
+				},
+				{
+					label: <ShuffleRounded aria-label="random" titleAccess="random" />,
+					content: (
+						<Container maxWidth="md">
+							<Shuffle />
+						</Container>
+					),
+				},
+			]}
+		/>
 	);
 };
 

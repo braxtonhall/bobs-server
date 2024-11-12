@@ -8,8 +8,8 @@ export const Explore = () => {
 	const [search, setSearch] = useState("");
 
 	return (
-		<Container maxWidth="md">
-			<Box marginTop="1em" width="100%">
+		<Box marginTop="1em" width="100%">
+			<Container maxWidth="md">
 				<DebouncedTextField
 					placeholder="Search…"
 					autoComplete="off"
@@ -17,47 +17,63 @@ export const Explore = () => {
 					fullWidth
 					onChange={(search) => setSearch(search.target.value)}
 				/>
-				<SwiperTabs
-					tabs={[
-						{
-							label: (
-								<>
-									<VideoLibraryRounded />
-									Episodes
-								</>
-							),
-							content: <>{search ? `SEARCHING FOR "${search}" IN EPISODES` : `EXPLORING EPISODES`}</>,
-						},
-						{
-							label: (
-								<>
-									<ListRounded />
-									Lists
-								</>
-							),
-							content: <>{search ? `SEARCHING FOR "${search}" IN LISTS` : `EXPLORING LISTS`}</>,
-						},
-						{
-							label: (
-								<>
-									<ReviewsRounded />
-									Reviews
-								</>
-							),
-							content: <>{search ? `SEARCHING FOR "${search}" IN REVIEWS` : `EXPLORING REVIEWS`}</>,
-						},
-						{
-							label: (
-								<>
-									<PeopleRounded />
-									Viewers
-								</>
-							),
-							content: <>{search ? `SEARCHING FOR "${search}" IN VIEWERS` : `EXPLORING VIEWERS`}</>,
-						},
-					]}
-				/>
-			</Box>
-		</Container>
+			</Container>
+			<SwiperTabs
+				tabs={[
+					{
+						label: (
+							<>
+								<VideoLibraryRounded />
+								Episodes
+							</>
+						),
+						content: (
+							<Container maxWidth="md">
+								{search ? `SEARCHING FOR "${search}" IN EPISODES` : `EXPLORING EPISODES`}
+							</Container>
+						),
+					},
+					{
+						label: (
+							<>
+								<ListRounded />
+								Lists
+							</>
+						),
+						content: (
+							<Container maxWidth="md">
+								{search ? `SEARCHING FOR "${search}" IN LISTS` : `EXPLORING LISTS`}
+							</Container>
+						),
+					},
+					{
+						label: (
+							<>
+								<ReviewsRounded />
+								Reviews
+							</>
+						),
+						content: (
+							<Container maxWidth="md">
+								{search ? `SEARCHING FOR "${search}" IN REVIEWS` : `EXPLORING REVIEWS`}
+							</Container>
+						),
+					},
+					{
+						label: (
+							<>
+								<PeopleRounded />
+								Viewers
+							</>
+						),
+						content: (
+							<Container maxWidth="md">
+								{search ? `SEARCHING FOR "${search}" IN VIEWERS` : `EXPLORING VIEWERS`}
+							</Container>
+						),
+					},
+				]}
+			/>
+		</Box>
 	);
 };

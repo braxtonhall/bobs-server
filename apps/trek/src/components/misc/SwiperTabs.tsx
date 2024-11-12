@@ -24,7 +24,7 @@ export const SwiperTabs = (props: { tabs: TabTransport[] }) => {
 	const onChange = useCallback((_: unknown, newValue: number) => swiper?.slideTo(newValue), [swiper]);
 
 	return (
-		<Box marginTop="1em" width="100%">
+		<Box width="100%">
 			<Box marginBottom="1em">
 				<TabContext value={tab}>
 					<TabList onChange={onChange} aria-label="views" centered>
@@ -36,7 +36,7 @@ export const SwiperTabs = (props: { tabs: TabTransport[] }) => {
 			</Box>
 			<Box sx={{ width: "100%" }}>
 				<StyledSwiper
-					spaceBetween={"20px"}
+					spaceBetween="1em"
 					slidesPerView={1}
 					onSlideChange={(swiper: SwiperClass) => setTab(swiper.activeIndex)}
 					style={{ maxWidth: "100%" }}
