@@ -6,11 +6,12 @@ export const getSettings = (viewerId: string) =>
 			where: { id: viewerId },
 			select: {
 				colours: true,
-				isSpoilerEpisodeReview: true,
+				isSpoilerEpisodeReviewComment: true,
+				isSpoilerEpisodeReviewScore: true,
 				isSpoilerEpisodeDescription: true,
 				isSpoilerEpisodePicture: true,
 				isSpoilerEpisodeName: true,
-				isSpoilerEpisodeReviewSpoilerTag: true,
+				isSpoilerEpisodeReviewCommentSpoilerTag: true,
 				isSpoilerEpisodeRating: true,
 			},
 		})

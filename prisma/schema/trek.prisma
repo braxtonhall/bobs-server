@@ -84,13 +84,14 @@ model Viewer {
 
   // settings
   /// JSON formatted string for the user's colour settings
-  colours                          String  @default("{}")
-  isSpoilerEpisodeName             Boolean @default(false)
-  isSpoilerEpisodePicture          Boolean @default(false)
-  isSpoilerEpisodeDescription      Boolean @default(false)
-  isSpoilerEpisodeReview           Boolean @default(false)
-  isSpoilerEpisodeReviewSpoilerTag Boolean @default(true)
-  isSpoilerEpisodeRating           Boolean @default(false)
+  colours                                 String  @default("{}")
+  isSpoilerEpisodeName                    Boolean @default(false)
+  isSpoilerEpisodePicture                 Boolean @default(false)
+  isSpoilerEpisodeDescription             Boolean @default(false)
+  isSpoilerEpisodeReviewComment           Boolean @default(false)
+  isSpoilerEpisodeReviewScore             Boolean @default(false)
+  isSpoilerEpisodeReviewCommentSpoilerTag Boolean @default(true)
+  isSpoilerEpisodeRating                  Boolean @default(false)
 }
 
 model Viewing {

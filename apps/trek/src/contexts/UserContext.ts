@@ -10,11 +10,12 @@ type User = {
 
 export const defaultSettings: Settings = {
 	colours: {},
-	isSpoilerEpisodeReviewSpoilerTag: true,
+	isSpoilerEpisodeReviewCommentSpoilerTag: true,
 	isSpoilerEpisodeName: false,
 	isSpoilerEpisodePicture: false,
 	isSpoilerEpisodeDescription: false,
-	isSpoilerEpisodeReview: false,
+	isSpoilerEpisodeReviewComment: false,
+	isSpoilerEpisodeReviewScore: false,
 	isSpoilerEpisodeRating: false,
 };
 

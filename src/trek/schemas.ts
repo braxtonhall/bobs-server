@@ -9,10 +9,11 @@ export type SettingsPayload = z.infer<typeof settingsPayloadSchema>;
 
 export const settingsPayloadSchema = z.object({
 	colours: z.record(z.string(), z.string()).transform((colours) => JSON.stringify(colours)),
-	isSpoilerEpisodeReview: z.boolean(),
+	isSpoilerEpisodeReviewComment: z.boolean(),
+	isSpoilerEpisodeReviewScore: z.boolean(),
 	isSpoilerEpisodeDescription: z.boolean(),
 	isSpoilerEpisodePicture: z.boolean(),
 	isSpoilerEpisodeName: z.boolean(),
-	isSpoilerEpisodeReviewSpoilerTag: z.boolean(),
+	isSpoilerEpisodeReviewCommentSpoilerTag: z.boolean(),
 	isSpoilerEpisodeRating: z.boolean(),
 });
