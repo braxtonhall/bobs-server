@@ -74,19 +74,18 @@ const Star = (props: { index: number; rating: number }) => {
 	}
 };
 
-const Stars = (props: { rating: number }) => {
-	return (
-		<Box>
-			<Star rating={props.rating} index={0} />
-			<Star rating={props.rating} index={1} />
-			<Star rating={props.rating} index={2} />
-			<Star rating={props.rating} index={3} />
-			<Star rating={props.rating} index={4} />
-		</Box>
-	);
-};
+const Stars = (props: { rating: number }) => (
+	<Box>
+		<Star rating={props.rating} index={0} />
+		<Star rating={props.rating} index={1} />
+		<Star rating={props.rating} index={2} />
+		<Star rating={props.rating} index={3} />
+		<Star rating={props.rating} index={4} />
+	</Box>
+);
 
 export const RatingHistogram = ({ counts, ...props }: RatingHistogramProps) => {
+	// TODO this just does NOT work on mobile. Make this work on mobile!!!
 	const [hovering, setHovering] = useState<number | null>(null);
 	const max = Math.max(...counts);
 	const total = counts.reduce((a, b) => a + b);

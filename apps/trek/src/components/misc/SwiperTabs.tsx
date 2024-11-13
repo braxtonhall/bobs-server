@@ -26,7 +26,7 @@ export type TabTransport = {
 };
 
 export const SwiperTabs = (props: { tabs: [...TabTransport[], TabTransport] }) => {
-	const touchScreen = useMediaQuery("(hover: none)");
+	const touchScreen = useMediaQuery("(pointer:coarse)");
 	const swiper = useRef<SwiperApi | null>(null);
 	const [tab, setTab] = useState<number>(0);
 	const onChange = useCallback(
