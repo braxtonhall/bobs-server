@@ -23,7 +23,7 @@ export const logEpisodeSchema = z.object({
 				}
 			}),
 	),
-	tags: z.array(z.string()),
+	tags: z.array(z.string().max(Config.DEFAULT_MAX_LENGTH)),
 	liked: z.boolean(),
 	rating: z.null().or(
 		z

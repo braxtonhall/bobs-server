@@ -6,7 +6,7 @@ export const Tags = ({ tags, setTags }: { tags: string[]; setTags: (tags: string
 	const [options, setOptions] = useState<string[]>([]);
 	const [inputString, setInputString] = useState("");
 
-	useEffect(() => void api.getViewerTags.query().then(setOptions), []);
+	useEffect(() => void api.getViewerViewTags.query().then(setOptions), []);
 
 	return (
 		<Autocomplete

@@ -5,7 +5,7 @@ import { getSeries } from "../operations/getSeries";
 import { getCurrentlyWatching } from "../operations/getCurrentlyWatching";
 import bodyParser from "body-parser";
 import { updateCursor } from "../operations/updateCursor";
-import { getViewerTags } from "../operations/getViewerTags";
+import { getViewerViewTags } from "../operations/getViewerViewTags";
 import { z } from "zod";
 import { logEpisode, logEpisodeSchema } from "../operations/logEpisode";
 import { initTRPC } from "@trpc/server";
@@ -31,7 +31,7 @@ type Context = Awaited<ReturnType<typeof createContext>>;
 
 const trekRouter = t.router({
 	getSeries: t.procedure.query(getSeries),
-	getViewerTags: t.procedure.query(({ ctx }) => getViewerTags(ctx.viewerId)),
+	getViewerViewTags: t.procedure.query(({ ctx }) => getViewerViewTags(ctx.viewerId)),
 	getCurrentlyWatching: t.procedure
 		.input(z.string().optional())
 		.query(({ input: cursor, ctx }) => getCurrentlyWatching(ctx.viewerId, cursor)),

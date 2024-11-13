@@ -1,10 +1,10 @@
-import { db } from "../../db";
+import { db, transaction } from "../../db";
 
 const RECENTLY_LIMIT = 10;
 
 export const getViewer = ({ requestorId, targetId }: { requestorId?: string; targetId: string }) =>
-	db.viewer
-		.findFirstOrThrow({
+	transaction(async () => {
+		const futureBaseViewer = db.viewer.findUniqueOrThrow({
 			where: {
 				id: targetId,
 			},
@@ -36,9 +36,66 @@ export const getViewer = ({ requestorId, targetId }: { requestorId?: string; tar
 						following: {},
 						views: {},
 						opinions: {},
+						watchlistLikes: {},
+						viewLikes: {},
+						watchlists: {},
 					},
 				},
 			},
-		})
+		});
+		const futureAdditionalCounts = db.viewer.findUniqueOrThrow({
+			where: { id: targetId },
+			select: {
+				_count: {
+					select: {
+						views: {
+							where: {
+								comment: { notIn: null },
+							},
+						},
+						opinions: {
+							where: {
+								liked: true,
+							},
+						},
+					},
+				},
+			},
+		});
+		const futureTagsCount = db.tag.count({
+			where: {
+				OR: [
+					{
+						views: {
+							some: {
+								viewerId: targetId,
+							},
+						},
+					},
+					{
+						watchlists: {
+							some: {
+								ownerId: targetId,
+							},
+						},
+					},
+				],
+			},
+		});
+		const [baseViewer, additionalCounts, tagsCount] = await Promise.all([
+			futureBaseViewer,
+			futureAdditionalCounts,
+			futureTagsCount,
+		]);
+		return {
+			...baseViewer,
+			_count: {
+				...baseViewer._count,
+				reviews: additionalCounts._count.views,
+				episodeLikes: additionalCounts._count.opinions,
+				tags: tagsCount,
+			},
+		};
+	})
 		.then((viewer) => ({ viewer, self: requestorId === targetId }))
 		.catch(() => null);

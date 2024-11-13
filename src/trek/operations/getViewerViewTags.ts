@@ -1,6 +1,7 @@
 import { db } from "../../db";
 
-export const getViewerTags = async (viewerId: string) => {
+export const getViewerViewTags = async (viewerId: string) => {
+	// TODO this should be... paginated?
 	const tags = await db.tag.findMany({
 		where: {
 			views: {

@@ -1,6 +1,23 @@
-import { useLoaderData } from "react-router-dom";
-import { API } from "../../util/api";
-import { Box, Container, Grid2 as Grid, Paper, styled } from "@mui/material";
+import { Link } from "react-router-dom";
+import { api } from "../../util/api";
+import {
+	Box,
+	Container,
+	Grid2 as Grid,
+	Paper,
+	Divider,
+	styled,
+	Stack,
+	List,
+	ListItemButton,
+	ListItemIcon,
+	ListItemText,
+	ListItem,
+} from "@mui/material";
+import { FavoriteRounded, ListRounded, ReviewsRounded, TagRounded, ShowChartRounded } from "@mui/icons-material";
+import { ActivityList } from "../ActivityList";
+import { useContext, ReactNode } from "react";
+import { ProfileContext } from "../../contexts/ProfileContext";
 
 // TODO: Need the following:
 //  0. My favourite episodes
@@ -47,27 +64,53 @@ const LatestEntry = styled(Paper)(({ theme }) => ({
 	}),
 }));
 
+const DirectoryItem = (props: { href: string; icon: ReactNode; name: string; count?: number }) => (
+	<ListItem disablePadding>
+		<ListItemButton component={Link} to={props.href}>
+			<ListItemIcon>{props.icon}</ListItemIcon>
+			<ListItemText
+				primary={
+					<Box display="flex">
+						<Box flex={1}>{props.name}</Box>
+						<Box paddingRight="1em">{props.count}</Box>
+					</Box>
+				}
+			/>
+		</ListItemButton>
+	</ListItem>
+);
+
 export const Profile = () => {
-	const { viewer, self } = useLoaderData() as NonNullable<Awaited<ReturnType<API["getViewer"]["query"]>>>;
+	// TODO
+	// eslint-disable-next-line
+	const { viewer, self } = useContext(ProfileContext);
+
+	console.log(viewer._count);
 
 	return (
-		<Container maxWidth="sm">
-			<Box>
+		<Container maxWidth="md">
+			<Box width="100%">
 				<h2>{viewer.name}</h2>
 				<Box>
 					<Grid container spacing={2} columns={3}>
 						<Grid size={1}>
-							<Statistic>
-								{viewer._count.views} log{viewer._count.views === 1 ? "" : "s"}
-							</Statistic>
+							<Link to="diary">
+								<Statistic>
+									{viewer._count.views} log{viewer._count.views === 1 ? "" : "s"}
+								</Statistic>
+							</Link>
 						</Grid>
 						<Grid size={1}>
-							<Statistic>
-								{viewer._count.followers} follower{viewer._count.followers === 1 ? "" : "s"}
-							</Statistic>
+							<Link to="followers">
+								<Statistic>
+									{viewer._count.followers} follower{viewer._count.followers === 1 ? "" : "s"}
+								</Statistic>
+							</Link>
 						</Grid>
 						<Grid size={1}>
-							<Statistic>{viewer._count.following} following</Statistic>
+							<Link to="following">
+								<Statistic>{viewer._count.following} following</Statistic>
+							</Link>
 						</Grid>
 					</Grid>
 				</Box>
@@ -88,7 +131,7 @@ export const Profile = () => {
 						</Grid>
 					</Grid>
 				</Box>
-				<Box>
+				<Box marginBottom="1em">
 					recently (mobile)
 					<Grid container spacing={1} columns={4}>
 						{viewer.views.slice(0, 4).map((view) => (
@@ -97,6 +140,45 @@ export const Profile = () => {
 							</Grid>
 						))}
 					</Grid>
+				</Box>
+				<Divider />
+				<Box margin="1em">Here goes the ratings histogram</Box>
+				<Divider />
+				<Box marginBottom="1em">
+					<List component={Stack} direction="column">
+						<DirectoryItem
+							href="watchlists"
+							icon={<ListRounded />}
+							name="Watchlists"
+							count={viewer._count.watchlists}
+						/>
+
+						<DirectoryItem
+							href="reviews"
+							icon={<ReviewsRounded />}
+							name="Reviews"
+							count={viewer._count.reviews}
+						/>
+
+						<DirectoryItem
+							href="likes"
+							icon={<FavoriteRounded />}
+							name="Likes"
+							count={viewer._count.watchlistLikes + viewer._count.viewLikes + viewer._count.episodeLikes}
+						/>
+
+						<DirectoryItem href="tags" icon={<TagRounded />} name="Tags" count={viewer._count.tags} />
+
+						<DirectoryItem href="stats" icon={<ShowChartRounded />} name="Statistics" />
+					</List>
+					<Divider />
+					<Box>
+						<h3>Activity</h3>
+						<ActivityList
+							getActivity={(cursor) => api.getIndividualEvents.query({ cursor, viewerId: viewer.id })}
+							queryKey={["INDIVIDUAL", viewer.id]}
+						/>
+					</Box>
 				</Box>
 			</Box>
 		</Container>

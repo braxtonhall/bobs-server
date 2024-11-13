@@ -9,6 +9,7 @@ import { Explore } from "./components/Explore";
 import Activity from "./components/Activity";
 import { Profile } from "./components/Profile";
 import { Watchlists } from "./components/Profile/Watchlists";
+import { ProfileRoot } from "./components/Profile/ProfileRoot";
 
 const router = createBrowserRouter(
 	[
@@ -46,20 +47,17 @@ const router = createBrowserRouter(
 							throw new Response("Not Found", { status: 404 });
 						}
 					},
-					element: <Profile />,
-				},
-				{
-					path: "/me/watchlists",
-					loader: async () => {
-						// TODO dedupe
-						const viewer = await api.getSelf.query();
-						if (viewer) {
-							return viewer;
-						} else {
-							throw new Response("Not Found", { status: 404 });
-						}
-					},
-					element: <Watchlists />,
+					element: <ProfileRoot />,
+					children: [
+						{
+							path: "/me",
+							element: <Profile />,
+						},
+						{
+							path: "/me/watchlists",
+							element: <Watchlists />,
+						},
+					],
 				},
 				{
 					path: "/shows/:show",
