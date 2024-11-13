@@ -38,6 +38,7 @@ const Bar = ({
 	setHovering: (hovering: number | null) => void;
 }) => {
 	const theme = useTheme();
+	const percentage = max ? Math.round((value / max) * 100) : 0;
 	return (
 		<Box
 			width="10%"
@@ -57,7 +58,7 @@ const Bar = ({
 				marginTop="auto"
 				marginLeft="0.1em"
 				marginRight="0.1em"
-				height={`${(value / max) * 100}%`}
+				height={percentage ? `${percentage}%` : "1px"}
 			/>
 		</Box>
 	);
@@ -91,6 +92,26 @@ export const RatingHistogram = ({ counts, ...props }: RatingHistogramProps) => {
 	const total = counts.reduce((a, b) => a + b);
 	const average =
 		total === 0 ? null : counts.reduce((sum, count, index) => sum + count * ((index + 1) / 2), 0) / total;
+
+	// const activeTouch = useRef<Element | null>(null);
+	// const onTouchMove = useCallback((event: TouchEvent) => {
+	// 	const touch = event.touches[0];
+	// 	const element = document.elementFromPoint(touch.clientX, touch.clientY);
+	// 	console.log("touch move", element);
+	// 	if (element === null || element !== activeTouch.current) {
+	// 		console.log("dispactching mouse out", activeTouch.current);
+	// 		activeTouch.current?.dispatchEvent(new Event("mouseout"));
+	// 		activeTouch.current = element;
+	// 	} else if (activeTouch.current === element) {
+	// 		// Do nothing
+	// 		console.log("same element");
+	// 	} else {
+	// 		activeTouch.current = element;
+	// 		activeTouch.current.dispatchEvent(new Event("mouseover"));
+	// 		console.log("dispatched mouseover");
+	// 	}
+	// 	// TODO i BELIEVE IN THIS
+	// }, []);
 
 	return (
 		<Box {...props}>
