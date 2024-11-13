@@ -7,11 +7,12 @@ export const getEpisode = async ({
 	season,
 	production,
 }: {
-	viewerId: string;
+	viewerId?: string;
 	seriesId: string;
 	production: number;
 	season: number;
 }) => {
+	// TODO do we want to use the viewerId for anything here?
 	const results = await db.$queryRawTyped(getEpisodeQuery(seriesId, season, production));
 	if (results[0]) {
 		const episode = results[0];

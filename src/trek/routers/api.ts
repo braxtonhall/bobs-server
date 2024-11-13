@@ -22,6 +22,7 @@ import { getSettings } from "../operations/getSettings";
 import { settingsPayloadSchema } from "../schemas";
 import { setSettings } from "../operations/setSettings";
 import { getWatchlists } from "../operations/getWatchlists";
+import { getViewerRatings } from "../operations/getViewerRatings";
 
 export const t = initTRPC.context<Context>().create();
 
@@ -62,6 +63,7 @@ const trekRouter = t.router({
 	getViewer: t.procedure
 		.input(z.string())
 		.query(({ ctx: { viewerId }, input: targetId }) => getViewer({ requestorId: viewerId, targetId })),
+	getViewerRatings: t.procedure.input(z.string()).query(({ input: viewerId }) => getViewerRatings(viewerId)),
 	getSelf: t.procedure.query(({ ctx: { viewerId } }) => getViewer({ requestorId: viewerId, targetId: viewerId })),
 	getWatchlists: t.procedure
 		.input(z.object({ viewerId: z.string(), cursor: z.string().optional() }))

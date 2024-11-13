@@ -124,14 +124,16 @@ export const RatingHistogram = ({ counts, ...props }: RatingHistogramProps) => {
 						<Bar value={count} max={max} key={index} rating={index} setHovering={setHovering} />
 					))}
 				</Box>
-				<Box display="flex" height="100%" position="relative">
-					<Typography
-						variant="h3"
-						position="absolute"
-						sx={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}
-					>
-						{hovering ? toHumanNumber(counts[hovering]) : toAverage(average)}
-					</Typography>
+				<Box display="flex" height="100%" flexDirection="column">
+					<Box position="relative" flex={1}>
+						<Typography
+							variant="h4"
+							position="absolute"
+							sx={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}
+						>
+							{hovering ? toHumanNumber(counts[hovering]) : toAverage(average)}
+						</Typography>
+					</Box>
 					<Box marginTop="auto">
 						<Stars rating={hovering === null ? 10 : hovering + 1} />
 					</Box>

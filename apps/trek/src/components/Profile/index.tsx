@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { api } from "../../util/api";
+import { API, api } from "../../util/api";
 import {
 	Box,
 	Container,
@@ -16,8 +16,9 @@ import {
 } from "@mui/material";
 import { FavoriteRounded, ListRounded, ReviewsRounded, TagRounded, ShowChartRounded } from "@mui/icons-material";
 import { ActivityList } from "../ActivityList";
-import { useContext, ReactNode } from "react";
+import { useContext, ReactNode, useState, useEffect } from "react";
 import { ProfileContext } from "../../contexts/ProfileContext";
+import { RatingHistogram } from "../misc/RatingHistogram";
 
 // TODO: Need the following:
 //  0. My favourite episodes
@@ -80,12 +81,15 @@ const DirectoryItem = (props: { href: string; icon: ReactNode; name: string; cou
 	</ListItem>
 );
 
+type ViewerRatings = Awaited<ReturnType<API["getViewerRatings"]["query"]>>;
+
 export const Profile = () => {
 	// TODO
 	// eslint-disable-next-line
 	const { viewer, self } = useContext(ProfileContext);
+	const [ratings, setRatings] = useState<ViewerRatings>(null);
 
-	console.log(viewer._count);
+	useEffect(() => void api.getViewerRatings.query(viewer.id).then(setRatings), [viewer]);
 
 	return (
 		<Container maxWidth="md">
@@ -142,7 +146,28 @@ export const Profile = () => {
 					</Grid>
 				</Box>
 				<Divider />
-				<Box margin="1em">Here goes the ratings histogram</Box>
+				<Box margin="0.5em">
+					{ratings ? (
+						<RatingHistogram
+							width="100%"
+							height="60px"
+							counts={[
+								ratings.oneCount,
+								ratings.twoCount,
+								ratings.threeCount,
+								ratings.fourCount,
+								ratings.fiveCount,
+								ratings.sixCount,
+								ratings.sevenCount,
+								ratings.eightCount,
+								ratings.nineCount,
+								ratings.tenCount,
+							]}
+						/>
+					) : (
+						<Box width="100%" height="60px" />
+					)}
+				</Box>
 				<Divider />
 				<Box marginBottom="1em">
 					<List component={Stack} direction="column">
