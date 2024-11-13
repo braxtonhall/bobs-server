@@ -1,7 +1,7 @@
 import { db } from "../../db";
 import { Scope } from "../types";
 
-const PAGE_SIZE = 100;
+const PAGE_SIZE = 50;
 
 export const getLatestEvents = async ({ cursor }: { cursor?: number; viewerId: string; scope: Scope }) => {
 	const events = await db.event.findMany({

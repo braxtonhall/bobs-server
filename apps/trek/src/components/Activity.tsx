@@ -1,31 +1,29 @@
-import { useEffect, useState } from "react";
 import { api, API } from "../util/api";
-import { Container } from "@mui/material";
+import { Button, Container } from "@mui/material";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
 type Events = Awaited<ReturnType<API["getAllEvents"]["query"]>>["events"];
 type EventTransport = Events[number];
 
 const Activity = () => {
-	const [events, setEvents] = useState<Awaited<ReturnType<API["getAllEvents"]["query"]>>["events"]>([]);
-	useEffect(() => {
-		// TODO only at the bottom of the page!!!
-		void api.getAllEvents.query().then(function getRemainingSeries({ cursor, events }) {
-			setEvents((existing) => {
-				const newEvents = [...existing, ...events];
-				const eventsById = Object.fromEntries(newEvents.map((event) => [event.id, event]));
-				return Object.values(eventsById).sort((a, b) => b.id - a.id);
-			});
-			if (cursor) {
-				void api.getAllEvents.query(cursor).then(getRemainingSeries);
-			}
-		});
-	}, []);
+	// TODO are these useful? {error, isFetchingNextPage, status}
+	const { data, fetchNextPage, hasNextPage, isFetching } = useInfiniteQuery({
+		queryKey: ["events"],
+		queryFn: ({ pageParam }) => api.getAllEvents.query(pageParam),
+		initialPageParam: undefined as undefined | number,
+		getNextPageParam: (lastPage) => lastPage.cursor,
+	});
 
 	return (
 		<Container maxWidth="md">
-			{events.map((event) => (
-				<Event event={event} key={event.id}></Event>
-			))}
+			{data?.pages.flatMap((page) => page.events.map((event) => <Event event={event} key={event.id}></Event>))}
+			{hasNextPage ? (
+				<Button disabled={isFetching} onClick={() => fetchNextPage()}>
+					Load more
+				</Button>
+			) : (
+				<>You reached the beginning! Wow!</>
+			)}
 		</Container>
 	);
 };
