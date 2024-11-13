@@ -54,7 +54,9 @@ export const WatchlistPreview = ({
 const WatchlistPreviewHeader = ({ viewing, index }: { viewing: Viewings[number]; index: number }) => (
 	<Box width="100%" padding="0.5em 0.5em 0 0.5em" boxSizing="border-box">
 		<Box display="flex" alignItems="center">
-			<Typography variant="h4">{viewing.watchlist.name}</Typography>
+			<Link to={`/watchlists/${viewing.watchlist.id}`}>
+				<Typography variant="h4">{viewing.watchlist.name}</Typography>
+			</Link>
 		</Box>
 		<Progress
 			numerator={index < 0 ? viewing.watchlist.episodes.length : index}

@@ -11,6 +11,22 @@ import { Profile } from "./components/Profile";
 import { Watchlists } from "./components/Profile/Watchlists";
 import { ProfileRoot } from "./components/Profile/ProfileRoot";
 
+const createProfileTree = ({ root, loader }: { root: string; loader: (...args: any[]) => Promise<unknown> }) => ({
+	path: root,
+	loader,
+	element: <ProfileRoot />,
+	children: [
+		{
+			path: root,
+			element: <Profile />,
+		},
+		{
+			path: `${root}/watchlists`,
+			element: <Watchlists />,
+		},
+	],
+});
+
 const router = createBrowserRouter(
 	[
 		{
@@ -37,9 +53,9 @@ const router = createBrowserRouter(
 					path: "/activity",
 					element: <Activity />,
 				},
-				{
-					path: "/me",
-					loader: async (test) => {
+				createProfileTree({
+					root: "/me",
+					loader: async () => {
 						const viewer = await api.getSelf.query();
 						if (viewer) {
 							return viewer;
@@ -47,21 +63,21 @@ const router = createBrowserRouter(
 							throw new Response("Not Found", { status: 404 });
 						}
 					},
-					element: <ProfileRoot />,
-					children: [
-						{
-							path: "/me",
-							element: <Profile />,
-						},
-						{
-							path: "/me/watchlists",
-							element: <Watchlists />,
-						},
-					],
-				},
+				}),
+				createProfileTree({
+					root: "/viewers/:id",
+					loader: async ({ params: { id } }) => {
+						const viewer = await api.getViewer.query(id ?? "");
+						if (viewer) {
+							return viewer;
+						} else {
+							throw new Response("Not Found", { status: 404 });
+						}
+					},
+				}),
 				{
 					path: "/shows/:show",
-					element: <></>,
+					element: <>SHOW</>,
 					loader: async ({ params }) => {
 						try {
 							const show = await api.getShow.query(
@@ -76,7 +92,7 @@ const router = createBrowserRouter(
 				},
 				{
 					path: "/shows/:show/seasons/:season",
-					element: <></>,
+					element: <>SEASON</>,
 					loader: async ({ params }) => {
 						try {
 							const episode = await api.getSeason.query(
@@ -126,31 +142,6 @@ const router = createBrowserRouter(
 							throw new Response("Not Found", { status: 404 });
 						}
 					},
-				},
-				{
-					path: "/viewers/:id",
-					loader: async ({ params: { id } }) => {
-						const viewer = await api.getViewer.query(id ?? "");
-						if (viewer) {
-							return viewer;
-						} else {
-							throw new Response("Not Found", { status: 404 });
-						}
-					},
-					element: <Profile />,
-				},
-				{
-					path: "/viewers/:id/watchlists",
-					loader: async ({ params: { id } }) => {
-						// TODO dedupe
-						const viewer = await api.getViewer.query(id ?? "");
-						if (viewer) {
-							return viewer;
-						} else {
-							throw new Response("Not Found", { status: 404 });
-						}
-					},
-					element: <Watchlists />,
 				},
 				{
 					path: "/views/:id",

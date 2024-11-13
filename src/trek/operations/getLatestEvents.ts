@@ -1,14 +1,13 @@
 import { db } from "../../db";
 import { Scope } from "../types";
-
-const PAGE_SIZE = 50;
+import Config from "../../Config";
 
 // TODO use the scope!!!
 export const getLatestEvents = async ({ cursor }: { cursor?: number; viewerId: string; scope: Scope }) => {
 	const events = await db.event.findMany({
 		cursor: cursor ? { id: cursor } : undefined,
 		orderBy: { id: "desc" },
-		take: PAGE_SIZE + 1,
+		take: Config.DEFAULT_PAGE_SIZE + 1,
 		select: {
 			id: true,
 			time: true,
@@ -60,10 +59,10 @@ export const getLatestEvents = async ({ cursor }: { cursor?: number; viewerId: s
 			viewer: true,
 		},
 	});
-	if (events.length > PAGE_SIZE) {
+	if (events.length > Config.DEFAULT_PAGE_SIZE) {
 		return {
-			events: events.slice(0, PAGE_SIZE),
-			cursor: events[PAGE_SIZE].id as number | undefined,
+			events: events.slice(0, Config.DEFAULT_PAGE_SIZE),
+			cursor: events[Config.DEFAULT_PAGE_SIZE].id as number | undefined,
 		};
 	} else {
 		return {

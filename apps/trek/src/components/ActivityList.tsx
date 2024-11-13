@@ -12,7 +12,7 @@ type EventTransport = Events[number];
 export const ActivityList = (props: { getActivity: EventsProcedure; queryKey?: string[] }) => {
 	// TODO are these useful? {error, isFetchingNextPage, status}
 	const { data, fetchNextPage, hasNextPage, isFetching } = useInfiniteQuery({
-		queryKey: ["events", ...(props.queryKey ?? [])], // TODO if user filters, the filter goes here too
+		queryKey: ["events", ...(props.queryKey ?? [])],
 		queryFn: ({ pageParam }) => props.getActivity(pageParam),
 		initialPageParam: undefined as undefined | number,
 		getNextPageParam: (lastPage) => lastPage.cursor,
