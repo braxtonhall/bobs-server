@@ -8,7 +8,7 @@ type EventTransport = Events[number];
 const Activity = () => {
 	// TODO are these useful? {error, isFetchingNextPage, status}
 	const { data, fetchNextPage, hasNextPage, isFetching } = useInfiniteQuery({
-		queryKey: ["events"],
+		queryKey: ["events"], // TODO if user filters, the filter goes here too
 		queryFn: ({ pageParam }) => api.getAllEvents.query(pageParam),
 		initialPageParam: undefined as undefined | number,
 		getNextPageParam: (lastPage) => lastPage.cursor,

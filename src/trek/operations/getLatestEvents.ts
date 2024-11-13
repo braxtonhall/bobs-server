@@ -3,6 +3,7 @@ import { Scope } from "../types";
 
 const PAGE_SIZE = 50;
 
+// TODO use the scope!!!
 export const getLatestEvents = async ({ cursor }: { cursor?: number; viewerId: string; scope: Scope }) => {
 	const events = await db.event.findMany({
 		cursor: cursor ? { id: cursor } : undefined,
