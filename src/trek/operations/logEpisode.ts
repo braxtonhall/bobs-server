@@ -2,6 +2,7 @@ import { z } from "zod";
 import { db, transaction } from "../../db";
 import { updateCursor } from "./updateCursor";
 import { DateTime } from "luxon";
+import Config from "../../Config";
 
 export type LogEpisodePayload = z.infer<typeof logEpisodeSchema>;
 
@@ -36,6 +37,7 @@ export const logEpisodeSchema = z.object({
 		z
 			.string()
 			.trim()
+			.max(Config.COMMENT_MAX_LENGTH)
 			.transform((string) => string || null),
 	),
 	spoiler: z.boolean(),

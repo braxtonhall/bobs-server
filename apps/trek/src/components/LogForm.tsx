@@ -141,6 +141,7 @@ export const LogForm = (props: { episode: Episode; logEpisode: API["logEpisode"]
 						</Stack>
 
 						<Stack direction="column" sx={{ flex: "auto" }}>
+							{/* TODO need to have a maximum length come from the platform */}
 							<TextField
 								label="Review"
 								multiline

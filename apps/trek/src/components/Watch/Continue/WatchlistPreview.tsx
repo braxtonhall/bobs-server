@@ -19,9 +19,10 @@ import { ExpandMoreRounded, MoreVertRounded } from "@mui/icons-material";
 import { Progress } from "../../misc/Progress";
 import { DecoratedViewing } from "./mergeViewingWithContent";
 import { API } from "../../../util/api";
-import { MutableRefObject, useEffect, useRef, useState, type MouseEvent } from "react";
+import { MutableRefObject, useEffect, useRef, useState, type MouseEvent, useContext } from "react";
 import { Link } from "react-router-dom";
 import { SpaceFillingBox, SpaceFillingBoxContainer } from "../../misc/SpaceFillingBox";
+import { UserContext } from "../../../contexts/UserContext";
 
 export const WatchlistPreview = ({
 	viewing,
@@ -125,7 +126,8 @@ const WatchlistPreviewEntry = ({
 			}
 		}
 		initialRender.current = false;
-	}, [selected, listItemRef, containerRef]);
+	}, [selected, containerRef]);
+	const { settings } = useContext(UserContext);
 	return (
 		<ListItem disablePadding ref={listItemRef}>
 			<ListItemButton
@@ -133,7 +135,13 @@ const WatchlistPreviewEntry = ({
 				selected={selected}
 				style={{ paddingRight: "8px" }}
 			>
-				<ListItemText primary={episode.name} />
+				<ListItemText
+					primary={
+						selected || episode.opinions[0] || !settings.isSpoilerEpisodeName
+							? episode.name
+							: `${episode.seriesId} ${episode.season ? episode.season + "-" : ""}${episode.production}`
+					}
+				/>
 				<WatchlistPreviewEntryOptions episode={episode} viewingId={viewingId} />
 			</ListItemButton>
 		</ListItem>

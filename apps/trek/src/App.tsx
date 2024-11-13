@@ -14,7 +14,10 @@ const router = createBrowserRouter(
 	[
 		{
 			path: "/",
+			// TODO need to supply some platform settings
+			// TODO if not logged in, get a 401. The 401 error handler should give login page!
 			element: <Window />,
+			loader: () => api.getSettings.query(),
 			children: [
 				{
 					path: "/",
@@ -35,7 +38,7 @@ const router = createBrowserRouter(
 				},
 				{
 					path: "/me",
-					loader: async () => {
+					loader: async (test) => {
 						const viewer = await api.getSelf.query();
 						if (viewer) {
 							return viewer;

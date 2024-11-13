@@ -2,13 +2,27 @@ import { db } from "../../db";
 
 const RECENTLY_LIMIT = 10;
 
-export const getViewer = ({ requestorId, targetId }: { requestorId: string; targetId: string }) =>
+export const getViewer = ({ requestorId, targetId }: { requestorId?: string; targetId: string }) =>
 	db.viewer
 		.findFirstOrThrow({
 			where: {
 				id: targetId,
 			},
 			include: {
+				...(requestorId
+					? {
+							followers: {
+								where: {
+									followerId: requestorId,
+								},
+							},
+							following: {
+								where: {
+									followedId: requestorId,
+								},
+							},
+						}
+					: {}),
 				views: {
 					include: { episode: true },
 					orderBy: {

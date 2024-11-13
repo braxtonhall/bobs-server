@@ -44,6 +44,13 @@ const Continue = (props: ContinueProps) => {
 		setViewings(updated);
 		if (props.episodes) {
 			props.episodes[env.episodeId]._count.views++;
+			props.episodes[env.episodeId].opinions[0] = {
+				episodeId: env.episodeId,
+				liked: env.liked,
+				rating: env.rating,
+				// i am sure this will bite me in the butt one day
+				viewerId: "viewerId",
+			};
 			props.setEpisodes(props.episodes);
 		}
 		return promise;

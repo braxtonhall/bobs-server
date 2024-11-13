@@ -75,14 +75,22 @@ model Viewer {
   viewings   Viewing[]
   following  Follow[]    @relation("Follower")
   followers  Follow[]    @relation("Followed")
-  /// JSON formatted string for the user's settings
-  settings   String
 
   watchlistLikes WatchlistLike[]
   viewLikes      ViewLike[]
 
   createdAtId Int   @unique
   createdAt   Event @relation(fields: [createdAtId], references: [id])
+
+  // settings
+  /// JSON formatted string for the user's colour settings
+  colours                          String  @default("{}")
+  isSpoilerEpisodeName             Boolean @default(false)
+  isSpoilerEpisodePicture          Boolean @default(false)
+  isSpoilerEpisodeDescription      Boolean @default(false)
+  isSpoilerEpisodeReview           Boolean @default(false)
+  isSpoilerEpisodeReviewSpoilerTag Boolean @default(true)
+  isSpoilerEpisodeRating           Boolean @default(false)
 }
 
 model Viewing {
