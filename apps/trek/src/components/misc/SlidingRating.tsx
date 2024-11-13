@@ -41,6 +41,7 @@ export const SlidingRating = ({
 	precision?: number;
 }) => (
 	<Box
+		className="swiper-no-swiping"
 		style={{
 			position: "relative",
 			width: "fit-content",
