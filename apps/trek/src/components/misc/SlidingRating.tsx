@@ -31,6 +31,7 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 	},
 }));
 
+// TODO the slider and the rating are not lined up. FIX THIS!!!
 export const SlidingRating = ({
 	value,
 	onChange,
