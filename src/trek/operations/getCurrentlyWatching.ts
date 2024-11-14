@@ -1,7 +1,6 @@
 import { db } from "../../db";
 import { ViewingState } from "../types";
-
-const PAGE_SIZE = 10;
+import Config from "../../Config";
 
 export const getCurrentlyWatching = async (viewerId: string, cursor: string | undefined) => {
 	const viewings = await db.viewing.findMany({
@@ -10,11 +9,9 @@ export const getCurrentlyWatching = async (viewerId: string, cursor: string | un
 			state: ViewingState.IN_PROGRESS,
 		},
 		cursor: cursor ? { id: cursor } : undefined,
-		take: PAGE_SIZE + 1,
+		take: Config.DEFAULT_PAGE_SIZE + 1,
 		orderBy: {
-			startedAt: {
-				time: "desc",
-			},
+			startedAtId: "desc",
 		},
 		select: {
 			id: true,
@@ -30,10 +27,10 @@ export const getCurrentlyWatching = async (viewerId: string, cursor: string | un
 			},
 		},
 	});
-	if (viewings.length > PAGE_SIZE) {
+	if (viewings.length > Config.DEFAULT_PAGE_SIZE) {
 		return {
-			viewings: viewings.slice(0, PAGE_SIZE),
-			cursor: viewings[PAGE_SIZE].id as string | undefined,
+			viewings: viewings.slice(0, Config.DEFAULT_PAGE_SIZE),
+			cursor: viewings[Config.DEFAULT_PAGE_SIZE].id as string | undefined,
 		};
 	} else {
 		return {
