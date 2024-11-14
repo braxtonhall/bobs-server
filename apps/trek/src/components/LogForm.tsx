@@ -52,6 +52,7 @@ export const LogForm = (props: { episode: Episode; logEpisode: API["logEpisode"]
 	const [liked, setLiked] = useState(false);
 	const [review, setReview] = useState("");
 	const [spoiler, setSpoiler] = useState(false);
+	const touchScreen = useMediaQuery("(pointer:coarse)");
 
 	useEffect(() => {
 		window.onbeforeunload = () => (review || rating || liked ? "Are you sure you want to exit?" : undefined);
@@ -118,7 +119,16 @@ export const LogForm = (props: { episode: Episode; logEpisode: API["logEpisode"]
 							justifyContent={{ xs: "center", md: "unset" }}
 						>
 							<Labelled height="45px" valueLabel="Rated" label="Rate" value={rating}>
-								<SlidingRating value={rating} onChange={setRating} precision={0.5} />
+								{touchScreen ? (
+									<SlidingRating value={rating} onChange={setRating} precision={0.5} />
+								) : (
+									<Rating
+										value={rating}
+										precision={0.5}
+										onChange={(_, rating) => setRating(rating)}
+										size="large"
+									/>
+								)}
 							</Labelled>
 
 							<Labelled height="45px" valueLabel="Liked" label="Like" value={liked}>

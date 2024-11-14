@@ -32,6 +32,7 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 }));
 
 // TODO the slider and the rating are not lined up. FIX THIS!!!
+// TODO support hovering!!!
 export const SlidingRating = ({
 	value,
 	onChange,
@@ -59,6 +60,7 @@ export const SlidingRating = ({
 			min={0}
 			max={5 + precision}
 			onChange={(_, value) => onChange(value === null ? null : Math.min(value as number, 5))}
+			// TODO double click to unset is not supported
 			onDoubleClick={() => onChange(null)}
 		/>
 	</Box>
