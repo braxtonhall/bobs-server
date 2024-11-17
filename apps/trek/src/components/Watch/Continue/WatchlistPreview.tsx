@@ -31,7 +31,7 @@ export const WatchlistPreview = ({
 }: {
 	viewing: DecoratedViewing;
 	index: number;
-	setCursor: API["updateCursor"]["mutate"];
+	setCursor: (opts: Parameters<API["updateCursor"]["mutate"]>[0]) => void;
 }) =>
 	useMediaQuery(useTheme().breakpoints.up("sm")) ? (
 		<SpaceFillingBoxContainer flexDirection="column">
@@ -73,7 +73,7 @@ const WatchlistPreviewContent = ({
 }: {
 	viewing: DecoratedViewing;
 	index: number;
-	setCursor: API["updateCursor"]["mutate"];
+	setCursor: (opts: Parameters<API["updateCursor"]["mutate"]>[0]) => void;
 }) => {
 	const containerRef = useRef<HTMLElement>(null);
 	return (
@@ -101,7 +101,7 @@ const WatchlistPreviewContent = ({
 type WatchlistPreviewEntryProps = {
 	episode: DecoratedViewing["watchlist"]["episodes"][number];
 	viewingId: string;
-	setCursor: API["updateCursor"]["mutate"];
+	setCursor: (opts: Parameters<API["updateCursor"]["mutate"]>[0]) => void;
 	selected: boolean;
 	containerRef: MutableRefObject<HTMLElement | null>;
 };

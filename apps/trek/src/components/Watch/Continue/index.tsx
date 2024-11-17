@@ -1,18 +1,17 @@
 import { Box, Button } from "@mui/material";
-import { api, API } from "../../../util/api";
+import { api } from "../../../util/api";
 import { Viewing } from "./Viewing";
 import { Episode, SeriesCollection } from "../types";
-import { useCallback, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { mergeViewingWithContent } from "./mergeViewingWithContent";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 
 interface ContinueProps {
 	series: SeriesCollection | null;
 	episodes: Record<string, Episode> | null;
-	setEpisodes: (episodes: Record<string, Episode>) => void;
 }
 
-const Continue = ({ series, episodes, setEpisodes }: ContinueProps) => {
+const Continue = ({ series, episodes }: ContinueProps) => {
 	// TODO are these useful? {error, isFetchingNextPage, status}
 	const { data, fetchNextPage, hasNextPage, isFetching } = useInfiniteQuery({
 		queryKey: ["continue"],
@@ -20,11 +19,10 @@ const Continue = ({ series, episodes, setEpisodes }: ContinueProps) => {
 		initialPageParam: undefined as undefined | string,
 		getNextPageParam: (lastPage) => lastPage.cursor,
 	});
-	const [, updateState] = useState<unknown>();
-	const forceUpdate = useCallback(() => updateState({}), []);
 	const viewings = useMemo(() => data?.pages.flatMap((page) => page.viewings) ?? [], [data]);
-	const logAndSetEpisode: API["logEpisode"]["mutate"] = useCallback(
-		(env) => {
+	const { mutate: logEpisode } = useMutation({
+		mutationFn: api.logEpisode.mutate,
+		onMutate: (env) => {
 			viewings.forEach((viewing) => {
 				if (viewing.cursor === env.episodeId) {
 					const currentIndex = viewing.watchlist.episodes.findIndex(({ id }) => id === env.episodeId);
@@ -33,7 +31,6 @@ const Continue = ({ series, episodes, setEpisodes }: ContinueProps) => {
 						viewing.cursor = next?.id ?? null;
 					}
 				}
-				return viewing;
 			});
 			if (episodes) {
 				episodes[env.episodeId]._count.views++;
@@ -44,26 +41,19 @@ const Continue = ({ series, episodes, setEpisodes }: ContinueProps) => {
 					// i am sure this will bite me in the butt one day
 					viewerId: "viewerId",
 				};
-				setEpisodes(episodes);
 			}
-			forceUpdate();
-			return api.logEpisode.mutate(env);
 		},
-		[viewings, forceUpdate, episodes, setEpisodes],
-	);
+	});
 
-	const setCursor: API["updateCursor"]["mutate"] = useCallback(
-		(env) => {
+	const { mutate: setCursor } = useMutation({
+		mutationFn: api.updateCursor.mutate,
+		onMutate: (env) =>
 			viewings.forEach((viewing) => {
 				if (viewing.id === env.viewingId) {
 					viewing.cursor = env.episodeId;
 				}
-			});
-			forceUpdate();
-			return api.updateCursor.mutate(env);
-		},
-		[viewings, forceUpdate],
-	);
+			}),
+	});
 
 	return (
 		<Box position="relative" width="100%" boxSizing="border-box">
@@ -76,7 +66,7 @@ const Continue = ({ series, episodes, setEpisodes }: ContinueProps) => {
 							key={viewing.id}
 							viewing={mergeViewingWithContent({ viewing, series, episodes })}
 							setCursor={setCursor}
-							logEpisode={logAndSetEpisode}
+							logEpisode={logEpisode}
 						/>
 					))(series, episodes),
 				)

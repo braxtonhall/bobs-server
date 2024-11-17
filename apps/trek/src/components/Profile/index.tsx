@@ -19,6 +19,7 @@ import { ActivityList } from "../ActivityList";
 import { useContext, ReactNode, useState, useEffect } from "react";
 import { ProfileContext } from "../../contexts/ProfileContext";
 import { RatingHistogram } from "../misc/RatingHistogram";
+import { useQuery } from "@tanstack/react-query";
 
 // TODO: Need the following:
 //  0. My favourite episodes
@@ -87,9 +88,11 @@ export const Profile = () => {
 	// TODO
 	// eslint-disable-next-line
 	const { viewer, self } = useContext(ProfileContext);
-	const [ratings, setRatings] = useState<ViewerRatings>(null);
 
-	useEffect(() => void api.getViewerRatings.query(viewer.id).then(setRatings), [viewer]);
+	const { data: ratings } = useQuery({
+		queryKey: ["ratings", viewer.id],
+		queryFn: () => api.getViewerRatings.query(viewer.id),
+	});
 
 	return (
 		<Container maxWidth="md">

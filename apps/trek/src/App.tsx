@@ -10,6 +10,8 @@ import Activity from "./components/Activity";
 import { Profile } from "./components/Profile";
 import { Watchlists } from "./components/Profile/Watchlists";
 import { ProfileRoot } from "./components/Profile/ProfileRoot";
+import { useMemo } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const createProfileTree = ({ root, loader }: { root: string; loader: (...args: any[]) => Promise<unknown> }) => ({
 	path: root,
@@ -156,6 +158,10 @@ const router = createBrowserRouter(
 	{ basename: process.env.PUBLIC_URL },
 );
 
-const App = () => <RouterProvider router={router} />;
+const App = () => (
+	<QueryClientProvider client={useMemo(() => new QueryClient(), [])}>
+		<RouterProvider router={router} />
+	</QueryClientProvider>
+);
 
 export default App;

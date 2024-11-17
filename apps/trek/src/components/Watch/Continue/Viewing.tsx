@@ -1,6 +1,5 @@
 import { API } from "../../../util/api";
-import { Box, Button, Card, CardMedia, Typography } from "@mui/material";
-import { PauseRounded, StopRounded, SkipPreviousRounded, SkipNextRounded } from "@mui/icons-material";
+import { Box, Card, CardMedia, Typography } from "@mui/material";
 import { LogForm } from "../../LogForm";
 import { WatchlistPreview } from "./WatchlistPreview";
 import { DecoratedViewing } from "./mergeViewingWithContent";
@@ -8,8 +7,8 @@ import { Link } from "react-router-dom";
 
 type ViewingProps = {
 	viewing: DecoratedViewing;
-	setCursor: API["updateCursor"]["mutate"];
-	logEpisode: API["logEpisode"]["mutate"];
+	setCursor: (opts: Parameters<API["updateCursor"]["mutate"]>[0]) => void;
+	logEpisode: (opts: Parameters<API["logEpisode"]["mutate"]>[0]) => void;
 };
 
 // TODO remove this
@@ -21,8 +20,6 @@ export const Viewing = ({ viewing, setCursor, logEpisode }: ViewingProps) => {
 	const maybeIndex = viewing.watchlist.episodes.findIndex(({ id }) => id === viewing.cursor);
 	const index = maybeIndex >= 0 ? maybeIndex : viewing.watchlist.episodes.length;
 	const current = viewing.watchlist.episodes[index];
-	const last = viewing.watchlist.episodes[index - 1];
-	const next = viewing.watchlist.episodes[index + 1];
 
 	return (
 		<Card style={{ marginBottom: "1em" }}>

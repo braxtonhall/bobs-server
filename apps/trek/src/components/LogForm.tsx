@@ -40,7 +40,10 @@ const getStoredTags = () => {
 	return [];
 };
 
-export const LogForm = (props: { episode: Episode; logEpisode: API["logEpisode"]["mutate"] }) => {
+export const LogForm = (props: {
+	episode: Episode;
+	logEpisode: (opts: Parameters<API["logEpisode"]["mutate"]>[0]) => void;
+}) => {
 	const [tags, setTags] = useState(getStoredTags());
 	const [date, setDate] = useState<DateTime | null>(DateTime.now());
 	const [rating, setRating] = useState<number | null>(null);

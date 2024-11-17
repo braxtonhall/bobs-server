@@ -1,12 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { TextField, Autocomplete } from "@mui/material";
 import { api } from "../util/api";
+import { useQuery } from "@tanstack/react-query";
 
 export const Tags = ({ tags, setTags }: { tags: string[]; setTags: (tags: string[]) => void }) => {
-	const [options, setOptions] = useState<string[]>([]);
 	const [inputString, setInputString] = useState("");
 
-	useEffect(() => void api.getViewerViewTags.query().then(setOptions), []);
+	const { data: options = [] } = useQuery({
+		queryKey: ["tags"],
+		queryFn: () => api.getViewerViewTags.query(),
+	});
 
 	return (
 		<Autocomplete
