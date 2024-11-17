@@ -13,13 +13,13 @@ export const getWatchlist = async ({ watchlistId, viewerId }: { watchlistId: str
 				select: { name: true },
 			},
 			tags: true,
-			viewings: {
-				where: {
-					viewerId,
-				},
-				include: {
-					startedAt: true,
-					finishedAt: true,
+			_count: {
+				select: {
+					viewings: {
+						where: {
+							viewerId,
+						},
+					},
 				},
 			},
 		},

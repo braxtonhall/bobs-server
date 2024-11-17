@@ -1,15 +1,19 @@
 import { API } from "../../../util/api";
-import { Box, Button, Card } from "@mui/material";
+import { Box, Button, Card, CardMedia, Typography } from "@mui/material";
 import { PauseRounded, StopRounded, SkipPreviousRounded, SkipNextRounded } from "@mui/icons-material";
 import { LogForm } from "../../LogForm";
 import { WatchlistPreview } from "./WatchlistPreview";
 import { DecoratedViewing } from "./mergeViewingWithContent";
+import { Link } from "react-router-dom";
 
 type ViewingProps = {
 	viewing: DecoratedViewing;
 	setCursor: API["updateCursor"]["mutate"];
 	logEpisode: API["logEpisode"]["mutate"];
 };
+
+// TODO remove this
+const IMG_URL = "https://media.themoviedb.org/t/p/w454_and_h254_bestv2/Asrl6u2tugWf9EJN24uhQ9zvyo6.jpg";
 
 export const Viewing = ({ viewing, setCursor, logEpisode }: ViewingProps) => {
 	// TODO what should happen if you are DONE???
@@ -28,49 +32,65 @@ export const Viewing = ({ viewing, setCursor, logEpisode }: ViewingProps) => {
 				</Box>
 
 				<Box width={{ xs: "100%", sm: "75%" }}>
-					{current ? (
-						<Box marginBottom="1em" key={current.id}>
-							<LogForm episode={current} logEpisode={logEpisode} key={current.id} />
-						</Box>
-					) : (
-						<Box marginBottom="1em" marginTop="1em">
-							Looks like you're done!
-						</Box>
-					)}
+					<Box style={{ backgroundColor: "antiquewhite", padding: "1em" }}>
+						{current ? (
+							<Box key={current.id}>
+								<Box display="flex" alignItems="stretch" position="relative" marginBottom="1em">
+									<Card
+										style={{
+											width: "4em",
+											marginRight: "0.5em",
+											minWidth: "50px",
+											position: "relative",
+										}}
+									>
+										<Link
+											to={`/shows/${current.seriesId.toLowerCase()}/seasons/${current.season}/episodes/${current.production}`}
+										>
+											<CardMedia
+												alt={current.name}
+												image={IMG_URL}
+												component="img"
+												sx={{
+													position: "absolute",
+													top: 0,
+													right: 0,
+													height: "100%",
+													width: "100%",
+												}}
+											/>
+										</Link>
+									</Card>
 
-					<Box display="flex" alignItems="center" position="relative">
-						<Button
-							variant="outlined"
-							onClick={() =>
-								setCursor({
-									viewingId: viewing.id,
-									episodeId: last?.id ?? null,
-								})
-							}
-							style={{}}
-						>
-							<SkipPreviousRounded />
-						</Button>
+									<Box
+										sx={{
+											display: { xs: "unset", md: "table-cell" },
+											width: { xs: "unset", md: "100%" },
+										}}
+									>
+										{/*TODO it would be nice if this font changed based on the show https://github.com/wrstone/fonts-startrek*/}
+										<Typography variant="h5" component="h2">
+											{current.name}
+										</Typography>
 
-						<Button variant="outlined" size="small" color="info">
-							<PauseRounded />
-						</Button>
+										<Typography variant="body2" component="p">
+											{current.abbreviation ?? current.seriesId}
+											{current.abbreviation === null
+												? ` Season ${current.season}, Episode ${current.production}`
+												: ""}
+										</Typography>
 
-						<Button variant="outlined" size="small" color="error">
-							<StopRounded />
-						</Button>
+										<Typography sx={{ fontSize: 14 }}>{current.release}</Typography>
+									</Box>
+								</Box>
 
-						<Button
-							variant="outlined"
-							onClick={() =>
-								setCursor({
-									viewingId: viewing.id,
-									episodeId: next?.id ?? null,
-								})
-							}
-						>
-							<SkipNextRounded />
-						</Button>
+								<LogForm episode={current} logEpisode={logEpisode} key={current.id} />
+							</Box>
+						) : (
+							<Box width="200px" height="200px">
+								Looks like you're done! TODO mark as finished button
+							</Box>
+						)}
 					</Box>
 				</Box>
 			</Box>

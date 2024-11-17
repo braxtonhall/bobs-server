@@ -15,11 +15,11 @@ import {
 	useMediaQuery,
 	useTheme,
 } from "@mui/material";
-import { ExpandMoreRounded, MoreVertRounded } from "@mui/icons-material";
+import { ExpandMoreRounded, MoreVertRounded, PauseRounded, StopRounded } from "@mui/icons-material";
 import { Progress } from "../../misc/Progress";
 import { DecoratedViewing } from "./mergeViewingWithContent";
 import { API } from "../../../util/api";
-import { MutableRefObject, useEffect, useRef, useState, type MouseEvent, useContext } from "react";
+import { MutableRefObject, useEffect, useRef, useState, type MouseEvent, useContext, ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { SpaceFillingBox, SpaceFillingBoxContainer } from "../../misc/SpaceFillingBox";
 import { UserContext } from "../../../contexts/UserContext";
@@ -42,7 +42,7 @@ export const WatchlistPreview = ({
 		</SpaceFillingBoxContainer>
 	) : (
 		<Accordion style={{ boxShadow: "none" }}>
-			<AccordionSummary expandIcon={<ExpandMoreRounded />} style={{ paddingLeft: 0, paddingRight: 0 }}>
+			<AccordionSummary expandIcon={<ExpandMoreRounded />} style={{ paddingLeft: 0 }}>
 				<WatchlistPreviewHeader viewing={viewing} index={index} />
 			</AccordionSummary>
 			<AccordionDetails style={{ padding: 0 }}>
@@ -53,10 +53,11 @@ export const WatchlistPreview = ({
 
 const WatchlistPreviewHeader = ({ viewing, index }: { viewing: Viewings[number]; index: number }) => (
 	<Box width="100%" padding="0.5em 0.5em 0 0.5em" boxSizing="border-box">
-		<Box display="flex" alignItems="center">
-			<Link to={`/watchlists/${viewing.watchlist.id}`}>
-				<Typography variant="h4">{viewing.watchlist.name}</Typography>
-			</Link>
+		<Box display="flex">
+			<Typography variant="h4" flex={1}>
+				{viewing.watchlist.name}
+			</Typography>
+			<WatchlistPreviewOptions viewing={viewing} />
 		</Box>
 		<Progress
 			numerator={index < 0 ? viewing.watchlist.episodes.length : index}
@@ -150,20 +151,14 @@ const WatchlistPreviewEntry = ({
 	);
 };
 
-const WatchlistPreviewEntryOptions = ({
-	viewingId,
-	episode,
-}: {
-	viewingId: string;
-	episode: DecoratedViewing["watchlist"]["episodes"][number];
-}) => {
+const Options = (props: { id: string; children?: ReactNode | ReactNode[] }) => {
 	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 	const open = Boolean(anchorEl);
 	const handleClick = (event: MouseEvent<HTMLButtonElement>) => setAnchorEl(event.currentTarget);
 	const handleClose = () => setAnchorEl(null);
 
-	const iconButtonId = `${viewingId}-${episode.id}-context-button`;
-	const menuId = `${viewingId}-${episode.id}-context-menu`;
+	const iconButtonId = `${props.id}-context-button`;
+	const menuId = `${props.id}-context-menu`;
 
 	return (
 		<>
@@ -188,16 +183,50 @@ const WatchlistPreviewEntryOptions = ({
 				MenuListProps={{ "aria-labelledby": iconButtonId }}
 				onClick={(event) => event.stopPropagation()}
 			>
-				<MenuItem
-					component={Link}
-					to={`/shows/${episode.seriesId.toLowerCase()}/seasons/${episode.season}/episodes/${episode.production}`}
-				>
-					Go to episode
-				</MenuItem>
-				<MenuItem component={Link} to={`/shows/${episode.seriesId.toLowerCase()}`}>
-					Go to series
-				</MenuItem>
+				{props.children}
 			</Menu>
 		</>
+	);
+};
+
+const WatchlistPreviewOptions = ({ viewing }: { viewing: Viewings[number] }) => {
+	return (
+		<Box>
+			<Options id={`${viewing.id}-w-${viewing.watchlist.id}`}>
+				<MenuItem component={Link} to={`/watchlists/${viewing.watchlist.id}`}>
+					Go to watchlist
+				</MenuItem>
+				<MenuItem>
+					<PauseRounded />
+					Pause viewing
+				</MenuItem>
+				<MenuItem>
+					<StopRounded />
+					Stop viewing
+				</MenuItem>
+			</Options>
+		</Box>
+	);
+};
+
+const WatchlistPreviewEntryOptions = ({
+	viewingId,
+	episode,
+}: {
+	viewingId: string;
+	episode: DecoratedViewing["watchlist"]["episodes"][number];
+}) => {
+	return (
+		<Options id={`${viewingId}-ep-${episode.id}`}>
+			<MenuItem
+				component={Link}
+				to={`/shows/${episode.seriesId.toLowerCase()}/seasons/${episode.season}/episodes/${episode.production}`}
+			>
+				Go to episode
+			</MenuItem>
+			<MenuItem component={Link} to={`/shows/${episode.seriesId.toLowerCase()}`}>
+				Go to series
+			</MenuItem>
+		</Options>
 	);
 };

@@ -11,6 +11,7 @@ type EventTransport = Events[number];
 
 export const ActivityList = (props: { getActivity: EventsProcedure; queryKey?: string[] }) => {
 	// TODO are these useful? {error, isFetchingNextPage, status}
+	// TODO is this useful? https://trpc.io/docs/server/subscriptions
 	const { data, fetchNextPage, hasNextPage, isFetching } = useInfiniteQuery({
 		queryKey: ["events", ...(props.queryKey ?? [])],
 		queryFn: ({ pageParam }) => props.getActivity(pageParam),
