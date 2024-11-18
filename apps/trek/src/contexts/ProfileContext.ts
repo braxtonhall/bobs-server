@@ -1,7 +1,11 @@
 import { createContext, useContext } from "react";
 import { API } from "../util/api";
 
-export const ProfileContext = createContext<NonNullable<Awaited<ReturnType<API["getSelf"]["query"]>>> | null>(null);
+type ProfileContextContent = NonNullable<Awaited<ReturnType<API["getSelf"]["query"]>>> & {
+	setSelf: ((opts: Parameters<API["setSelf"]["mutate"]>[0]) => void) | null;
+};
+
+export const ProfileContext = createContext<ProfileContextContent | null>(null);
 
 export const useProfileContext = () => {
 	const profileContext = useContext(ProfileContext);

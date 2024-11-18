@@ -6,7 +6,6 @@ import {
 	FormControlLabel,
 	Rating,
 	TextField,
-	Typography,
 	Stack,
 	useMediaQuery,
 } from "@mui/material";
@@ -15,7 +14,7 @@ import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Form } from "react-router-dom";
-import { ReactElement, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
 	HistoryEduRounded,
 	FavoriteBorderRounded,

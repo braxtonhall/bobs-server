@@ -13,7 +13,7 @@ export const EpisodeCard = ({
 }) => (
 	<Box {...props}>
 		<Card
-			style={{
+			sx={{
 				width: "100%",
 				height: "100%",
 				position: "relative",

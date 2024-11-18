@@ -19,13 +19,14 @@ import { updateWatchlist, updateWatchlistInputSchema } from "../operations/updat
 import { getViewer } from "../operations/getViewer";
 import { startWatching } from "../operations/startWatching";
 import { getSettings } from "../operations/getSettings";
-import { settingsPayloadSchema } from "../schemas";
+import { settingsPayloadSchema, signupPayloadSchema } from "../schemas";
 import { setSettings } from "../operations/setSettings";
 import { getWatchlists } from "../operations/getWatchlists";
 import { getViewerRatings } from "../operations/getViewerRatings";
 import { getWatchlistRelationship } from "../operations/getWatchlistRelationship";
 import { getWatchlistTags } from "../operations/getWatchlistTags";
 import { getWatchlistViewings } from "../operations/getWatchlistViewings";
+import { setSelf } from "../operations/setSelf";
 
 export const t = initTRPC.context<Context>().create();
 
@@ -83,6 +84,9 @@ const trekRouter = t.router({
 		.query(({ ctx: { viewerId }, input: targetId }) => getViewer({ requestorId: viewerId, targetId })),
 	getViewerRatings: t.procedure.input(z.string()).query(({ input: viewerId }) => getViewerRatings(viewerId)),
 	getSelf: t.procedure.query(({ ctx: { viewerId } }) => getViewer({ requestorId: viewerId, targetId: viewerId })),
+	setSelf: t.procedure
+		.input(signupPayloadSchema)
+		.mutation(({ ctx: { viewerId }, input: { name } }) => setSelf({ viewerId, name })),
 	getWatchlists: t.procedure
 		.input(z.object({ viewerId: z.string(), cursor: z.string().optional() }))
 		.query(({ ctx: { viewerId: requestorId }, input: { viewerId: targetId, cursor } }) =>

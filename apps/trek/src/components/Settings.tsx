@@ -4,6 +4,7 @@ import {
 	Accordion,
 	AccordionDetails,
 	AccordionSummary,
+	Alert,
 	Box,
 	Button,
 	Checkbox,
@@ -11,34 +12,39 @@ import {
 	Divider,
 	FormControlLabel,
 	FormGroup,
+	Snackbar,
+	SnackbarCloseReason,
 	Stack,
-	styled,
 	TextField,
 	Typography,
 } from "@mui/material";
-import { ReactNode, useState } from "react";
+import { ReactNode, SyntheticEvent, useCallback, useState } from "react";
 import { ExpandMoreRounded } from "@mui/icons-material";
-
-const StyledAccordion = styled(Accordion)(({ theme }) => ({
-	boxShadow: "none",
-}));
+import { Form } from "react-router-dom";
 
 const SettingsSection = (props: { name: string; children?: ReactNode | ReactNode[]; defaultExpanded?: boolean }) => (
-	<StyledAccordion defaultExpanded={props.defaultExpanded}>
-		<AccordionSummary expandIcon={<ExpandMoreRounded />} style={{ paddingLeft: 0 }}>
+	<Accordion defaultExpanded={props.defaultExpanded} sx={{ boxShadow: "none" }}>
+		<AccordionSummary expandIcon={<ExpandMoreRounded />} sx={{ paddingLeft: 0 }}>
 			<Typography variant="h4">{props.name}</Typography>
 		</AccordionSummary>
-		<AccordionDetails>{props.children}</AccordionDetails>
-	</StyledAccordion>
+		<AccordionDetails sx={{ padding: 0 }}>{props.children}</AccordionDetails>
+	</Accordion>
 );
 
 const Settings = () => {
-	const { viewer } = useProfileContext();
-	const { settings } = useUserContext();
+	const { viewer, setSelf } = useProfileContext();
+	const { settings, setSettings } = useUserContext();
 
 	const [name, setName] = useState(viewer.name);
 
-	const settingsStates = {
+	const [alertOpen, setAlertOpen] = useState(false);
+
+	const handleClose = useCallback(
+		(_?: SyntheticEvent | Event, reason?: SnackbarCloseReason) => reason !== "clickaway" && setAlertOpen(false),
+		[],
+	);
+
+	const spoilersStates = {
 		isSpoilerEpisodeName: {
 			name: "Episode Name",
 			state: useState(settings.isSpoilerEpisodeName),
@@ -69,61 +75,92 @@ const Settings = () => {
 		},
 	} as const;
 
-	console.log(settingsStates);
-
 	return (
-		<Container maxWidth="md">
-			<Box marginTop="1em">
-				<Typography variant="h2">Settings</Typography>
-
-				<FormGroup>
-					<Stack direction="column">
-						<SettingsSection name="Me" defaultExpanded>
-							<Stack direction="column">
-								<TextField
-									label="Name"
-									value={name}
-									onChange={(event) => setName(event.target.value)}
-								/>
-								<Box>TODO: favourites</Box>
-							</Stack>
-						</SettingsSection>
-
-						<Divider />
-
-						<SettingsSection name="Spoilers">
-							<Stack direction="column">
-								{Object.entries(settingsStates).map(
+		<>
+			<Snackbar open={alertOpen} autoHideDuration={6000} onClose={handleClose}>
+				<Alert onClose={handleClose} severity="success" variant="filled" sx={{ width: "100%" }}>
+					Saved!
+				</Alert>
+			</Snackbar>
+			<Container maxWidth="md">
+				<Box marginTop="1em" marginBottom="1em">
+					<Typography variant="h2">Settings</Typography>
+					<Form
+						onSubmit={(event) => {
+							event.preventDefault();
+							const spoilers = Object.fromEntries(
+								Object.entries(spoilersStates).map(
 									([
 										key,
 										{
-											name,
-											state: [value, set],
+											state: [value],
 										},
-									]) => (
-										<FormControlLabel
-											key={key}
-											control={
-												<Checkbox onChange={(_, checked) => set(checked)} checked={value} />
-											}
-											label={name}
-											value={value}
+									]) => [key, value],
+								),
+							) as Record<keyof typeof spoilersStates, boolean>;
+							setSelf?.({ name });
+							setSettings({
+								...spoilers,
+								colours: {},
+							});
+							setAlertOpen(true);
+						}}
+					>
+						<FormGroup>
+							<Stack direction="column">
+								<SettingsSection name="Me">
+									<Stack direction="column">
+										<TextField
+											label="Name"
+											value={name}
+											onChange={(event) => setName(event.target.value)}
 										/>
-									),
-								)}
+										<Box>TODO: favourites</Box>
+									</Stack>
+								</SettingsSection>
+
+								<Divider />
+
+								<SettingsSection name="Spoilers">
+									<Stack direction="column">
+										{Object.entries(spoilersStates).map(
+											([
+												key,
+												{
+													name,
+													state: [value, set],
+												},
+											]) => (
+												<FormControlLabel
+													key={key}
+													control={
+														<Checkbox
+															onChange={(_, checked) => set(checked)}
+															checked={value}
+														/>
+													}
+													label={name}
+													value={value}
+												/>
+											),
+										)}
+									</Stack>
+								</SettingsSection>
+
+								<Divider />
+
+								<SettingsSection name="Colours">
+									<Stack direction="column">TODO: colours</Stack>
+								</SettingsSection>
+								<Button type="submit" variant="contained">
+									Save
+								</Button>
 							</Stack>
-						</SettingsSection>
-
-						<Divider />
-
-						<SettingsSection name="Colours">
-							<Stack direction="column">TODO: colours</Stack>
-						</SettingsSection>
-						<Button>Save</Button>
-					</Stack>
-				</FormGroup>
-			</Box>
-		</Container>
+						</FormGroup>
+					</Form>
+				</Box>
+			</Container>
+		</>
 	);
 };
 

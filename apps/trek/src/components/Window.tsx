@@ -13,9 +13,10 @@ import {
 } from "@mui/material";
 import { Link, Outlet, useLocation, Location, useLoaderData } from "react-router-dom";
 import { SearchRounded, PersonRounded, RssFeedRounded, PlayArrowRounded } from "@mui/icons-material";
-import { API } from "../util/api";
+import { api, API } from "../util/api";
 import { defaultSettings, UserContext } from "../contexts/UserContext";
 import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 
 const selectValue = ({ pathname }: Location) => {
 	const slugs = pathname.split("/");
@@ -27,9 +28,10 @@ const drawerWidth = 240;
 export const Window = () => {
 	const value: string = selectValue(useLocation());
 	const [settings, setSettings] = useState(useLoaderData() as Awaited<ReturnType<API["getSettings"]["query"]>>);
+	const { mutate: updateSettings } = useMutation({ mutationFn: api.setSettings.mutate, onMutate: setSettings });
 
 	return (
-		<UserContext.Provider value={{ settings: settings ?? defaultSettings, setSettings }}>
+		<UserContext.Provider value={{ settings: settings ?? defaultSettings, setSettings: updateSettings }}>
 			<Box
 				display="flex"
 				flexDirection={{ xs: "column", sm: "unset" }}
@@ -37,12 +39,7 @@ export const Window = () => {
 				width="100vw"
 				position="absolute"
 			>
-				<Box
-					minWidth={drawerWidth}
-					height="100vh"
-					display={{ xs: "none", sm: "unset" }}
-					style={{ float: "left" }}
-				>
+				<Box minWidth={drawerWidth} height="100vh" display={{ xs: "none", sm: "unset" }} sx={{ float: "left" }}>
 					<Drawer
 						variant="permanent"
 						sx={{
@@ -95,7 +92,7 @@ export const Window = () => {
 					<Outlet />
 				</Box>
 
-				<Box display={{ sm: "none" }} style={{ opacity: 0 }}>
+				<Box display={{ sm: "none" }} sx={{ opacity: 0 }}>
 					<BottomNavigation />
 				</Box>
 

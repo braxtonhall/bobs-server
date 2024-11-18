@@ -13,8 +13,20 @@ import {
 	ListItemIcon,
 	ListItemText,
 	ListItem,
+	Typography,
+	Button,
+	ButtonGroup,
+	IconButton,
 } from "@mui/material";
-import { FavoriteRounded, ListRounded, ReviewsRounded, TagRounded, ShowChartRounded } from "@mui/icons-material";
+import {
+	FavoriteRounded,
+	ListRounded,
+	ReviewsRounded,
+	TagRounded,
+	ShowChartRounded,
+	EditRounded,
+	SettingsRounded,
+} from "@mui/icons-material";
 import { ActivityList } from "../ActivityList";
 import { ReactNode } from "react";
 import { useProfileContext } from "../../contexts/ProfileContext";
@@ -83,8 +95,20 @@ export const Profile = () => {
 
 	return (
 		<Container maxWidth="md">
-			<Box width="100%">
-				<h2>{viewer.name}</h2>
+			<Box width="100%" marginTop="1em" marginBottom="1em">
+				<Box display="flex">
+					<Box flex={1}>
+						<Typography variant="h2">{viewer.name}</Typography>
+					</Box>
+					{self && (
+						<Box marginTop="1em">
+							<IconButton aria-label="settings" component={Link} to="settings">
+								<SettingsRounded />
+							</IconButton>
+						</Box>
+					)}
+				</Box>
+
 				<Box>
 					<Grid container spacing={2} columns={3}>
 						<Grid size={1}>

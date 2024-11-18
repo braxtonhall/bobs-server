@@ -44,7 +44,7 @@ export const SlidingRating = ({
 }) => (
 	<Box
 		className="swiper-no-swiping"
-		style={{
+		sx={{
 			position: "relative",
 			width: "fit-content",
 			height: "fit-content",

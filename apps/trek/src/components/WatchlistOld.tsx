@@ -219,7 +219,7 @@ const Watchlist = () => {
 			</Button>
 
 			{episodes.length ? (
-				<Box className="ag-theme-quartz" style={{ width: "100%", marginBottom: "1em" }}>
+				<Box className="ag-theme-quartz" sx={{ width: "100%", marginBottom: "1em" }}>
 					<AgGridReact
 						ref={gridRef as any}
 						domLayout="autoHeight"

@@ -33,11 +33,11 @@ export const WatchlistPreview = ({ viewing, index }: { viewing: DecoratedViewing
 			</SpaceFillingBox>
 		</SpaceFillingBoxContainer>
 	) : (
-		<Accordion style={{ boxShadow: "none" }}>
-			<AccordionSummary expandIcon={<ExpandMoreRounded />} style={{ paddingLeft: 0 }}>
+		<Accordion sx={{ boxShadow: "none" }}>
+			<AccordionSummary expandIcon={<ExpandMoreRounded />} sx={{ paddingLeft: 0 }}>
 				<WatchlistPreviewHeader viewing={viewing} index={index} />
 			</AccordionSummary>
-			<AccordionDetails style={{ padding: 0 }}>
+			<AccordionDetails sx={{ padding: 0 }}>
 				<WatchlistPreviewContent viewing={viewing} index={index} />
 			</AccordionDetails>
 		</Accordion>
@@ -113,7 +113,7 @@ const WatchlistPreviewEntry = ({ episode, viewingId, selected, containerRef }: W
 			<ListItemButton
 				onClick={() => setCursor({ viewingId, episodeId: episode.id })}
 				selected={selected}
-				style={{ paddingRight: "8px" }}
+				sx={{ paddingRight: "8px" }}
 			>
 				<ListItemText
 					primary={

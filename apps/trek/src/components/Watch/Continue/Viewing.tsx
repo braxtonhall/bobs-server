@@ -18,14 +18,14 @@ export const Viewing = ({ viewing }: ViewingProps) => {
 	const { logEpisode } = useMutationContext();
 
 	return (
-		<Card style={{ marginBottom: "1em" }}>
+		<Card sx={{ marginBottom: "1em" }}>
 			<Box display={{ sm: "flex" }} justifyContent="right">
 				<Box width={{ xs: "100%", sm: "25%" }} flex={{ sm: 1 }} order={{ xs: 0, sm: 2 }}>
 					<WatchlistPreview viewing={viewing} index={index} key={viewing.id} />
 				</Box>
 
 				<Box width={{ xs: "100%", sm: "75%" }}>
-					<Box style={{ backgroundColor: "antiquewhite", padding: "1em" }}>
+					<Box sx={{ backgroundColor: "antiquewhite", padding: "1em" }}>
 						{current ? (
 							<Box key={current.id}>
 								<Box display="flex" alignItems="stretch" position="relative" marginBottom="1em">
