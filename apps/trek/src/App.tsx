@@ -10,8 +10,15 @@ import Activity from "./components/Activity";
 import { Profile } from "./components/Profile";
 import { Watchlists } from "./components/Profile/Watchlists";
 import { ProfileRoot } from "./components/Profile/ProfileRoot";
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Reviews } from "./components/Profile/Reviews";
+import { Tags } from "./components/Profile/Tags";
+import { Stats } from "./components/Profile/Stats";
+import { Likes } from "./components/Profile/Likes";
+import { Diary } from "./components/Profile/Diary";
+import { Followers } from "./components/Profile/Followers";
+import { Following } from "./components/Profile/Following";
 
 const createProfileTree = ({ root, loader }: { root: string; loader: (...args: any[]) => Promise<unknown> }) => ({
 	path: root,
@@ -26,6 +33,34 @@ const createProfileTree = ({ root, loader }: { root: string; loader: (...args: a
 			path: `${root}/watchlists`,
 			element: <Watchlists />,
 		},
+		{
+			path: `${root}/reviews`,
+			element: <Reviews />,
+		},
+		{
+			path: `${root}/likes`,
+			element: <Likes />,
+		},
+		{
+			path: `${root}/tags`,
+			element: <Tags />,
+		},
+		{
+			path: `${root}/stats`,
+			element: <Stats />,
+		},
+		{
+			path: `${root}/diary`,
+			element: <Diary />,
+		},
+		{
+			path: `${root}/followers`,
+			element: <Followers />,
+		},
+		{
+			path: `${root}/following`,
+			element: <Following />,
+		},
 	],
 });
 
@@ -37,15 +72,12 @@ const router = createBrowserRouter(
 			// TODO if not logged in, get a 401. The 401 error handler should give login page!
 			element: <Window />,
 			loader: () => api.getSettings.query(),
+			// errorElement: <ErrorPage />,
+			// action: rootAction,
 			children: [
 				{
 					path: "/",
 					element: <Watch />,
-					// errorElement: <ErrorPage />,
-					// loader: rootLoader,
-					// action: rootAction,
-					// TODO other pages should probably be children?
-					//  https://reactrouter.com/en/main/start/tutorial
 				},
 				{
 					path: "/explore",

@@ -23,21 +23,14 @@ import { MutableRefObject, useEffect, useRef, useState, type MouseEvent, useCont
 import { Link } from "react-router-dom";
 import { SpaceFillingBox, SpaceFillingBoxContainer } from "../../misc/SpaceFillingBox";
 import { UserContext } from "../../../contexts/UserContext";
+import { useMutationContext } from "./MutationContext";
 
-export const WatchlistPreview = ({
-	viewing,
-	index,
-	setCursor,
-}: {
-	viewing: DecoratedViewing;
-	index: number;
-	setCursor: (opts: Parameters<API["updateCursor"]["mutate"]>[0]) => void;
-}) =>
+export const WatchlistPreview = ({ viewing, index }: { viewing: DecoratedViewing; index: number }) =>
 	useMediaQuery(useTheme().breakpoints.up("sm")) ? (
 		<SpaceFillingBoxContainer flexDirection="column">
 			<WatchlistPreviewHeader viewing={viewing} index={index} />
 			<SpaceFillingBox>
-				<WatchlistPreviewContent viewing={viewing} index={index} setCursor={setCursor} />
+				<WatchlistPreviewContent viewing={viewing} index={index} />
 			</SpaceFillingBox>
 		</SpaceFillingBoxContainer>
 	) : (
@@ -46,7 +39,7 @@ export const WatchlistPreview = ({
 				<WatchlistPreviewHeader viewing={viewing} index={index} />
 			</AccordionSummary>
 			<AccordionDetails style={{ padding: 0 }}>
-				<WatchlistPreviewContent viewing={viewing} index={index} setCursor={setCursor} />
+				<WatchlistPreviewContent viewing={viewing} index={index} />
 			</AccordionDetails>
 		</Accordion>
 	);
@@ -66,15 +59,7 @@ const WatchlistPreviewHeader = ({ viewing, index }: { viewing: Viewings[number];
 	</Box>
 );
 
-const WatchlistPreviewContent = ({
-	viewing,
-	index: cursorIndex,
-	setCursor,
-}: {
-	viewing: DecoratedViewing;
-	index: number;
-	setCursor: (opts: Parameters<API["updateCursor"]["mutate"]>[0]) => void;
-}) => {
+const WatchlistPreviewContent = ({ viewing, index: cursorIndex }: { viewing: DecoratedViewing; index: number }) => {
 	const containerRef = useRef<HTMLElement>(null);
 	return (
 		<Box ref={containerRef} flex={1} overflow="auto" width="100%" maxHeight={{ xs: "400px", sm: "unset" }}>
@@ -84,7 +69,6 @@ const WatchlistPreviewContent = ({
 						{viewing.watchlist.episodes.map((episode, episodeIndex) => (
 							<WatchlistPreviewEntry
 								episode={episode}
-								setCursor={setCursor}
 								viewingId={viewing.id}
 								selected={cursorIndex === episodeIndex}
 								containerRef={containerRef}
@@ -101,20 +85,14 @@ const WatchlistPreviewContent = ({
 type WatchlistPreviewEntryProps = {
 	episode: DecoratedViewing["watchlist"]["episodes"][number];
 	viewingId: string;
-	setCursor: (opts: Parameters<API["updateCursor"]["mutate"]>[0]) => void;
 	selected: boolean;
 	containerRef: MutableRefObject<HTMLElement | null>;
 };
 
-const WatchlistPreviewEntry = ({
-	episode,
-	viewingId,
-	setCursor,
-	selected,
-	containerRef,
-}: WatchlistPreviewEntryProps) => {
+const WatchlistPreviewEntry = ({ episode, viewingId, selected, containerRef }: WatchlistPreviewEntryProps) => {
 	const initialRender = useRef(true);
 	const listItemRef = useRef<HTMLLIElement>(null);
+	const { setCursor } = useMutationContext();
 	useEffect(() => {
 		if (selected && listItemRef.current && containerRef.current) {
 			const top = listItemRef.current.offsetTop;

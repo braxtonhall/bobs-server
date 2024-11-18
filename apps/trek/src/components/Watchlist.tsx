@@ -22,6 +22,7 @@ import { EpisodeCard } from "./EpisodeCard";
 import { useContent } from "../util/useContent";
 import { useMemo } from "react";
 import { mergeEpisodesWithContent } from "./Watch/Continue/mergeViewingWithContent";
+import { DateTime } from "luxon";
 
 // https://trakt.tv/users/yosarasara/lists/star-trek-sara-s-suggested-watch-order?sort=rank,asc
 
@@ -103,6 +104,11 @@ const Watchlist = () => {
 								</>
 							)}
 							{watchlist.description}
+						</Typography>
+					</Box>
+					<Box>
+						<Typography variant="body2">
+							{watchlist.createdAt && <>{DateTime.fromISO(watchlist.createdAt.time).toLocaleString()}</>}
 						</Typography>
 					</Box>
 					<Box>

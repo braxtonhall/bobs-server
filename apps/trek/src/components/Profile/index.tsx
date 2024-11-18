@@ -82,17 +82,16 @@ const DirectoryItem = (props: { href: string; icon: ReactNode; name: string; cou
 	</ListItem>
 );
 
-type ViewerRatings = Awaited<ReturnType<API["getViewerRatings"]["query"]>>;
-
 export const Profile = () => {
-	// TODO
-	// eslint-disable-next-line
 	const { viewer, self } = useContext(ProfileContext);
 
 	const { data: ratings } = useQuery({
 		queryKey: ["ratings", viewer.id],
 		queryFn: () => api.getViewerRatings.query(viewer.id),
 	});
+
+	const isFollowingPage = !self && !!viewer.followers.length;
+	const isFollowedByPage = !self && !!viewer.following.length;
 
 	return (
 		<Container maxWidth="md">

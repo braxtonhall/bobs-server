@@ -5,6 +5,7 @@ import { Episode, SeriesCollection } from "../types";
 import { useMemo } from "react";
 import { mergeViewingWithContent } from "./mergeViewingWithContent";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
+import { MutationContext } from "./MutationContext";
 
 interface ContinueProps {
 	series: SeriesCollection | null;
@@ -56,32 +57,32 @@ const Continue = ({ series, episodes }: ContinueProps) => {
 	});
 
 	return (
-		<Box position="relative" width="100%" boxSizing="border-box">
-			{!hasNextPage && !viewings.length ? (
-				<ContinueInactive />
-			) : viewings.length && series && episodes ? (
-				viewings.map(
-					((series, episodes) => (viewing) => (
-						<Viewing
-							key={viewing.id}
-							viewing={mergeViewingWithContent({ viewing, series, episodes })}
-							setCursor={setCursor}
-							logEpisode={logEpisode}
-						/>
-					))(series, episodes),
-				)
-			) : (
-				<></>
-			)}
+		<MutationContext.Provider value={{ logEpisode, setCursor }}>
+			<Box position="relative" width="100%" boxSizing="border-box">
+				{!hasNextPage && !viewings.length ? (
+					<ContinueInactive />
+				) : viewings.length && series && episodes ? (
+					viewings.map(
+						((series, episodes) => (viewing) => (
+							<Viewing
+								key={viewing.id}
+								viewing={mergeViewingWithContent({ viewing, series, episodes })}
+							/>
+						))(series, episodes),
+					)
+				) : (
+					<></>
+				)}
 
-			{hasNextPage ? (
-				<Button disabled={isFetching} onClick={() => fetchNextPage()}>
-					Load more
-				</Button>
-			) : (
-				<></>
-			)}
-		</Box>
+				{hasNextPage ? (
+					<Button disabled={isFetching} onClick={() => fetchNextPage()}>
+						Load more
+					</Button>
+				) : (
+					<></>
+				)}
+			</Box>
+		</MutationContext.Provider>
 	);
 };
 

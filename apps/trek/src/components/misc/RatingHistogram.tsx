@@ -131,7 +131,7 @@ export const RatingHistogram = ({ counts, ...props }: RatingHistogramProps) => {
 							position="absolute"
 							sx={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}
 						>
-							{hovering ? toHumanNumber(counts[hovering]) : toAverage(average)}
+							{hovering === null ? toAverage(average) : toHumanNumber(counts[hovering])}
 						</Typography>
 					</Box>
 					<Box marginTop="auto">

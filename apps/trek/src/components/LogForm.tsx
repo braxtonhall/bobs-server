@@ -162,8 +162,8 @@ export const LogForm = (props: {
 						</LocalizationProvider>
 
 						<Box marginLeft="auto">
-							<Button type="submit" variant="contained">
-								<HistoryEduRounded /> Save
+							<Button type="submit" variant="contained" startIcon={<HistoryEduRounded />}>
+								Save
 							</Button>
 						</Box>
 					</Box>
