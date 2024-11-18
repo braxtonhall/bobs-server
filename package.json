@@ -74,7 +74,7 @@
 		"ext": ".ts"
 	},
 	"lint-staged": {
-		"*.{ts,tsx,js,md,yaml,yml,json,html,ejs,css}": "prettier --write",
+		"*.{ts,tsx,js,md,yaml,yml,json,html,ejs,css,webmanifest}": "prettier --write",
 		"*.prisma": "prisma format"
 	},
 	"dependencies": {
