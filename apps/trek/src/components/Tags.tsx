@@ -7,7 +7,7 @@ export const Tags = ({ tags, setTags }: { tags: string[]; setTags: (tags: string
 	const [inputString, setInputString] = useState("");
 
 	const { data: options = [] } = useQuery({
-		queryKey: ["tags"],
+		queryKey: ["tags", "user"],
 		queryFn: () => api.getViewerViewTags.query(),
 	});
 

@@ -1,20 +1,29 @@
 import { Episode, SeriesCollection, Viewings } from "../types";
 
-type Input = {
+export const mergeViewingWithContent = (input: {
 	viewing: Viewings[number];
 	series: SeriesCollection;
 	episodes: Record<string, Episode>;
-};
-
-export const mergeViewingWithContent = (input: Input) => ({
+}) => ({
 	...input.viewing,
 	watchlist: {
 		...input.viewing.watchlist,
-		episodes: input.viewing.watchlist.episodes.map((episode) => ({
-			...input.episodes[episode.id],
-			series: input.series[input.episodes[episode.id].seriesId],
-		})),
+		episodes: mergeEpisodesWithContent({
+			list: input.viewing.watchlist.episodes,
+			series: input.series,
+			episodes: input.episodes,
+		}),
 	},
 });
+
+export const mergeEpisodesWithContent = (input: {
+	list: Viewings[number]["watchlist"]["episodes"];
+	series: SeriesCollection;
+	episodes: Record<string, Episode>;
+}) =>
+	input.list.map((episode) => ({
+		...input.episodes[episode.id],
+		series: input.series[input.episodes[episode.id].seriesId],
+	}));
 
 export type DecoratedViewing = ReturnType<typeof mergeViewingWithContent>;

@@ -1,27 +1,12 @@
 import { PlayArrowRounded, ShuffleRounded } from "@mui/icons-material";
 import Continue from "./Continue";
 import Shuffle from "./Shuffle";
-import { api } from "../../util/api";
 import { SwiperTabs } from "../misc/SwiperTabs";
 import { Container } from "@mui/material";
-import { useQueries } from "@tanstack/react-query";
+import { useContent } from "../../util/useContent";
 
 const Watch = () => {
-	const [{ data: series = null }, { data: episodes = null }] = useQueries({
-		queries: [
-			{
-				queryKey: ["series"],
-				queryFn: () => api.getSeries.query(),
-			},
-			{
-				queryKey: ["episodes"],
-				queryFn: () =>
-					api.getEpisodes
-						.query()
-						.then((episodes) => Object.fromEntries(episodes.map((episode) => [episode.id, episode]))),
-			},
-		],
-	});
+	const { episodes, series } = useContent();
 
 	return (
 		<SwiperTabs

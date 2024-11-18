@@ -1,18 +1,15 @@
 import { API } from "../../../util/api";
-import { Box, Card, CardMedia, Typography } from "@mui/material";
+import { Box, Card, Typography } from "@mui/material";
 import { LogForm } from "../../LogForm";
 import { WatchlistPreview } from "./WatchlistPreview";
 import { DecoratedViewing } from "./mergeViewingWithContent";
-import { Link } from "react-router-dom";
+import { EpisodeCard } from "../../EpisodeCard";
 
 type ViewingProps = {
 	viewing: DecoratedViewing;
 	setCursor: (opts: Parameters<API["updateCursor"]["mutate"]>[0]) => void;
 	logEpisode: (opts: Parameters<API["logEpisode"]["mutate"]>[0]) => void;
 };
-
-// TODO remove this
-const IMG_URL = "https://media.themoviedb.org/t/p/w454_and_h254_bestv2/Asrl6u2tugWf9EJN24uhQ9zvyo6.jpg";
 
 export const Viewing = ({ viewing, setCursor, logEpisode }: ViewingProps) => {
 	// TODO what should happen if you are DONE???
@@ -33,31 +30,7 @@ export const Viewing = ({ viewing, setCursor, logEpisode }: ViewingProps) => {
 						{current ? (
 							<Box key={current.id}>
 								<Box display="flex" alignItems="stretch" position="relative" marginBottom="1em">
-									<Card
-										style={{
-											width: "4em",
-											marginRight: "0.5em",
-											minWidth: "50px",
-											position: "relative",
-										}}
-									>
-										<Link
-											to={`/shows/${current.seriesId.toLowerCase()}/seasons/${current.season}/episodes/${current.production}`}
-										>
-											<CardMedia
-												alt={current.name}
-												image={IMG_URL}
-												component="img"
-												sx={{
-													position: "absolute",
-													top: 0,
-													right: 0,
-													height: "100%",
-													width: "100%",
-												}}
-											/>
-										</Link>
-									</Card>
+									<EpisodeCard episode={current} width="4em" marginRight="0.5em" minWidth="50px" />
 
 									<Box
 										sx={{

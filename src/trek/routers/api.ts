@@ -23,6 +23,9 @@ import { settingsPayloadSchema } from "../schemas";
 import { setSettings } from "../operations/setSettings";
 import { getWatchlists } from "../operations/getWatchlists";
 import { getViewerRatings } from "../operations/getViewerRatings";
+import { getWatchlistRelationship } from "../operations/getWatchlistRelationship";
+import { getWatchlistTags } from "../operations/getWatchlistTags";
+import { getWatchlistViewings } from "../operations/getWatchlistViewings";
 
 export const t = initTRPC.context<Context>().create();
 
@@ -45,9 +48,24 @@ const trekRouter = t.router({
 	getWatchlist: t.procedure
 		.input(z.string())
 		.query(({ ctx: { viewerId }, input: watchlistId }) => getWatchlist({ viewerId, watchlistId })),
+	getWatchlistTags: t.procedure
+		.input(z.object({ watchlistId: z.string(), cursor: z.string().optional() }))
+		.query(({ input }) => getWatchlistTags(input)),
+	getWatchlistViewings: t.procedure
+		.input(z.object({ watchlistId: z.string(), cursor: z.string().optional() }))
+		.query(({ ctx: { viewerId }, input: { watchlistId, cursor } }) =>
+			getWatchlistViewings({
+				viewerId,
+				watchlistId,
+				cursor,
+			}),
+		),
+	getWatchlistRelationship: t.procedure
+		.input(z.string())
+		.query(({ ctx: { viewerId }, input: watchlistId }) => getWatchlistRelationship({ viewerId, watchlistId })),
 	startWatching: t.procedure
 		.input(z.string())
-		.query(({ ctx: { viewerId }, input: watchlistId }) => startWatching({ viewerId, watchlistId })),
+		.mutation(({ ctx: { viewerId }, input: watchlistId }) => startWatching({ viewerId, watchlistId })),
 	getEpisodes: t.procedure.query(({ ctx: { viewerId } }) => getEpisodes(viewerId)),
 	getEpisode: t.procedure
 		.input(z.object({ season: z.number(), show: z.string(), episode: z.number() }))
