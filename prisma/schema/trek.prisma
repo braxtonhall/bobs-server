@@ -37,6 +37,7 @@ model Episode {
   opinions   Opinion[]
   watchlists Watchlist[]
   viewings   Viewing[]
+  favourites Favourite[]
 
   // Each is a unique int. This is the default episode order
   // Not adding @unique tho becuase i want to easily update these
@@ -75,6 +76,7 @@ model Viewer {
   viewings   Viewing[]
   following  Follow[]    @relation("Follower")
   followers  Follow[]    @relation("Followed")
+  favourites Favourite[]
 
   watchlistLikes WatchlistLike[]
   viewLikes      ViewLike[]
@@ -92,6 +94,17 @@ model Viewer {
   isSpoilerEpisodeReviewScore             Boolean @default(false)
   isSpoilerEpisodeReviewCommentSpoilerTag Boolean @default(true)
   isSpoilerEpisodeRating                  Boolean @default(false)
+}
+
+model Favourite {
+  viewerId String
+  viewer   Viewer @relation(fields: [viewerId], references: [id])
+  rank     Int
+
+  episodeId String
+  episode   Episode @relation(fields: [episodeId], references: [id])
+
+  @@id([viewerId, rank])
 }
 
 model Viewing {

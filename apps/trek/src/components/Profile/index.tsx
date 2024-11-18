@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { API, api } from "../../util/api";
+import { api } from "../../util/api";
 import {
 	Box,
 	Container,
@@ -16,22 +16,10 @@ import {
 } from "@mui/material";
 import { FavoriteRounded, ListRounded, ReviewsRounded, TagRounded, ShowChartRounded } from "@mui/icons-material";
 import { ActivityList } from "../ActivityList";
-import { useContext, ReactNode, useState, useEffect } from "react";
-import { ProfileContext } from "../../contexts/ProfileContext";
+import { ReactNode } from "react";
+import { useProfileContext } from "../../contexts/ProfileContext";
 import { RatingHistogram } from "../misc/RatingHistogram";
 import { useQuery } from "@tanstack/react-query";
-
-// TODO: Need the following:
-//  0. My favourite episodes
-//  1. Watchlists that I made
-//  2. Watchlists that I saved
-//  3. Watchlists in progress
-//  3. Reviews that I liked
-//  4. Profiles that I follow
-//  5. Profiles following me
-//  5. My activity
-//  6. My diary
-//  7. My tags???
 
 const Favourite = styled(Paper)(({ theme }) => ({
 	backgroundColor: "#fff",
@@ -83,7 +71,7 @@ const DirectoryItem = (props: { href: string; icon: ReactNode; name: string; cou
 );
 
 export const Profile = () => {
-	const { viewer, self } = useContext(ProfileContext);
+	const { viewer, self } = useProfileContext();
 
 	const { data: ratings } = useQuery({
 		queryKey: ["ratings", viewer.id],
@@ -120,32 +108,38 @@ export const Profile = () => {
 						</Grid>
 					</Grid>
 				</Box>
-				<Box>
-					favourites
-					<Grid container spacing={2} columns={4}>
-						<Grid size={1}>
-							<Favourite>favourite</Favourite>
-						</Grid>
-						<Grid size={1}>
-							<Favourite>favourite</Favourite>
-						</Grid>
-						<Grid size={1}>
-							<Favourite>favourite</Favourite>
-						</Grid>
-						<Grid size={1}>
-							<Favourite>favourite</Favourite>
-						</Grid>
-					</Grid>
-				</Box>
 				<Box marginBottom="1em">
-					recently (mobile)
-					<Grid container spacing={1} columns={4}>
-						{viewer.views.slice(0, 4).map((view) => (
-							<Grid size={1} key={view.id}>
-								<LatestEntry>{view.episode.seriesId}</LatestEntry>
+					{viewer.favourites.length > 0 && (
+						<Box>
+							favourites
+							<Grid container spacing={2} columns={4}>
+								<Grid size={1}>
+									<Favourite>favourite</Favourite>
+								</Grid>
+								<Grid size={1}>
+									<Favourite>favourite</Favourite>
+								</Grid>
+								<Grid size={1}>
+									<Favourite>favourite</Favourite>
+								</Grid>
+								<Grid size={1}>
+									<Favourite>favourite</Favourite>
+								</Grid>
 							</Grid>
-						))}
-					</Grid>
+						</Box>
+					)}
+					{viewer.views.length > 0 && (
+						<Box>
+							recently (mobile)
+							<Grid container spacing={1} columns={4}>
+								{viewer.views.slice(0, 4).map((view) => (
+									<Grid size={1} key={view.id}>
+										<LatestEntry>{view.episode.seriesId}</LatestEntry>
+									</Grid>
+								))}
+							</Grid>
+						</Box>
+					)}
 				</Box>
 				<Divider />
 				<Box margin="0.5em">

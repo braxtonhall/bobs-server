@@ -1,6 +1,5 @@
 import { db, transaction } from "../../db";
-
-const RECENTLY_LIMIT = 10;
+import Config from "../../Config";
 
 export const getViewer = ({ requestorId, targetId }: { requestorId?: string; targetId: string }) =>
 	transaction(async () => {
@@ -8,7 +7,9 @@ export const getViewer = ({ requestorId, targetId }: { requestorId?: string; tar
 			where: {
 				id: targetId,
 			},
-			include: {
+			select: {
+				name: true,
+				id: true,
 				...(requestorId
 					? {
 							followers: {
@@ -28,8 +29,9 @@ export const getViewer = ({ requestorId, targetId }: { requestorId?: string; tar
 					orderBy: {
 						createdAtId: "desc",
 					},
-					take: RECENTLY_LIMIT,
+					take: Config.TREK_PROFILE_RECENTLY_MAX,
 				},
+				favourites: { where: { rank: { lt: Config.TREK_FAVOURITES_MAX } } },
 				_count: {
 					select: {
 						followers: {},

@@ -18,11 +18,10 @@ import {
 import { ExpandMoreRounded, MoreVertRounded, PauseRounded, StopRounded } from "@mui/icons-material";
 import { Progress } from "../../misc/Progress";
 import { DecoratedViewing } from "./mergeViewingWithContent";
-import { API } from "../../../util/api";
-import { MutableRefObject, useEffect, useRef, useState, type MouseEvent, useContext, ReactNode } from "react";
+import { MutableRefObject, useEffect, useRef, useState, type MouseEvent, ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { SpaceFillingBox, SpaceFillingBoxContainer } from "../../misc/SpaceFillingBox";
-import { UserContext } from "../../../contexts/UserContext";
+import { useUserContext } from "../../../contexts/UserContext";
 import { useMutationContext } from "./MutationContext";
 
 export const WatchlistPreview = ({ viewing, index }: { viewing: DecoratedViewing; index: number }) =>
@@ -108,7 +107,7 @@ const WatchlistPreviewEntry = ({ episode, viewingId, selected, containerRef }: W
 		}
 		initialRender.current = false;
 	}, [selected, containerRef]);
-	const { settings } = useContext(UserContext);
+	const { settings } = useUserContext();
 	return (
 		<ListItem disablePadding ref={listItemRef}>
 			<ListItemButton

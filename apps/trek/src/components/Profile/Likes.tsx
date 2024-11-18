@@ -1,7 +1,7 @@
-import { useContext } from "react";
-import { ProfileContext } from "../../contexts/ProfileContext";
+import { useProfileContext } from "../../contexts/ProfileContext";
 
 export const Likes = () => {
-	const { viewer, self } = useContext(ProfileContext);
+	const { viewer, self } = useProfileContext();
+	// TODO: Watchlists, Reviews, Episodes
 	return <>LIKES</>;
 };

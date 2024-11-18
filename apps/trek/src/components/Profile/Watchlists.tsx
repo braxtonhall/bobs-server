@@ -1,11 +1,10 @@
-import { useContext } from "react";
-import { ProfileContext } from "../../contexts/ProfileContext";
+import { useProfileContext } from "../../contexts/ProfileContext";
 import { Container } from "@mui/material";
 import { api } from "../../util/api";
 import { WatchlistsList } from "./WatchlistsList";
 
 export const Watchlists = () => {
-	const { viewer, self } = useContext(ProfileContext);
+	const { viewer, self } = useProfileContext();
 
 	return (
 		<Container maxWidth="md">

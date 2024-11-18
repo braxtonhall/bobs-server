@@ -1,4 +1,4 @@
-import { createContext } from "react";
+import { createContext, useContext } from "react";
 import { API } from "../util/api";
 
 type Settings = NonNullable<Awaited<ReturnType<API["getSettings"]["query"]>>>;
@@ -19,7 +19,13 @@ export const defaultSettings: Settings = {
 	isSpoilerEpisodeRating: false,
 };
 
-export const UserContext = createContext<User>({
-	settings: defaultSettings,
-	setSettings: () => void "shouldn't get used",
-});
+export const UserContext = createContext<User | null>(null);
+
+export const useUserContext = () => {
+	const userContext = useContext(UserContext);
+	if (userContext === null) {
+		throw new Error("User Context was not set!");
+	} else {
+		return userContext;
+	}
+};

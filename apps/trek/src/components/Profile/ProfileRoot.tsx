@@ -3,7 +3,7 @@ import { API } from "../../util/api";
 import { ProfileContext } from "../../contexts/ProfileContext";
 
 export const ProfileRoot = () => {
-	const { viewer, self } = useLoaderData() as NonNullable<Awaited<ReturnType<API["getViewer"]["query"]>>>;
+	const { viewer, self } = useLoaderData() as NonNullable<Awaited<ReturnType<API["getSelf"]["query"]>>>;
 	return (
 		<ProfileContext.Provider value={{ viewer, self }}>
 			<Outlet />

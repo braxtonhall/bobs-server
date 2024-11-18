@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, redirect } from "react-router-dom";
 import Watch from "./components/Watch";
 import Episode from "./components/Episode";
 import Watchlist from "./components/Watchlist";
@@ -19,8 +19,12 @@ import { Likes } from "./components/Profile/Likes";
 import { Diary } from "./components/Profile/Diary";
 import { Followers } from "./components/Profile/Followers";
 import { Following } from "./components/Profile/Following";
+import Settings from "./components/Settings";
 
-const createProfileTree = ({ root, loader }: { root: string; loader: (...args: any[]) => Promise<unknown> }) => ({
+const createProfileTree = <T extends unknown[]>(
+	{ root, loader }: { root: string; loader: (...args: any[]) => Promise<unknown> },
+	...children: T
+) => ({
 	path: root,
 	loader,
 	element: <ProfileRoot />,
@@ -61,6 +65,7 @@ const createProfileTree = ({ root, loader }: { root: string; loader: (...args: a
 			path: `${root}/following`,
 			element: <Following />,
 		},
+		...children,
 	],
 });
 
@@ -87,22 +92,30 @@ const router = createBrowserRouter(
 					path: "/activity",
 					element: <Activity />,
 				},
-				createProfileTree({
-					root: "/me",
-					loader: async () => {
-						const viewer = await api.getSelf.query();
-						if (viewer) {
-							return viewer;
-						} else {
-							throw new Response("Not Found", { status: 404 });
-						}
+				createProfileTree(
+					{
+						root: "/me",
+						loader: async () => {
+							const viewer = await api.getSelf.query();
+							if (viewer) {
+								return viewer;
+							} else {
+								throw new Response("Unauthorized", { status: 401 });
+							}
+						},
 					},
-				}),
+					{
+						path: "/me/settings",
+						element: <Settings />,
+					},
+				),
 				createProfileTree({
 					root: "/viewers/:id",
 					loader: async ({ params: { id } }) => {
 						const viewer = await api.getViewer.query(id ?? "");
-						if (viewer) {
+						if (viewer && viewer.self) {
+							return redirect("/me");
+						} else if (viewer) {
 							return viewer;
 						} else {
 							throw new Response("Not Found", { status: 404 });

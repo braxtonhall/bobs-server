@@ -23,7 +23,7 @@ export default z
 		DELETION_TIME_MIN: z.coerce.number().nonnegative().default(10),
 		KARMA_KILL_THRESHOLD: z.coerce.number().positive().default(5),
 		EMAIL_DISABLED: z
-			.string()
+			.enum(["true", "false"])
 			.optional()
 			.transform((string) => string === "true"),
 		DEFAULT_MAX_LENGTH: z.coerce.number().int().positive().default(100),
@@ -36,5 +36,7 @@ export default z
 		SEASON_ARCHIVE_INTERVAL_HOURS: z.coerce.number().nonnegative().default(4),
 		MINIMUM_GAME_DAYS: z.coerce.number().nonnegative().default(7),
 		MINIMUM_GRACE_DAYS: z.coerce.number().nonnegative().default(7),
+		TREK_PROFILE_RECENTLY_MAX: z.coerce.number().positive().default(10),
+		TREK_FAVOURITES_MAX: z.coerce.number().positive().default(4),
 	})
 	.parse(process.env);
