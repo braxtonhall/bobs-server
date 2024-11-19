@@ -20,7 +20,7 @@ import {
 } from "@mui/material";
 import {
 	FavoriteRounded,
-	ListRounded,
+	ViewStreamRounded,
 	ReviewsRounded,
 	TagRounded,
 	ShowChartRounded,
@@ -194,7 +194,7 @@ export const Profile = () => {
 					<List component={Stack} direction="column">
 						<DirectoryItem
 							href="watchlists"
-							icon={<ListRounded />}
+							icon={<ViewStreamRounded />}
 							name="Watchlists"
 							count={viewer._count.watchlists}
 						/>

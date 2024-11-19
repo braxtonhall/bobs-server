@@ -12,7 +12,7 @@ const Watch = () => {
 		<SwiperTabs
 			tabs={[
 				{
-					label: <PlayArrowRounded aria-label="play" titleAccess="play" />,
+					icon: <PlayArrowRounded aria-label="play" titleAccess="play" />,
 					content: (
 						<Container maxWidth="md">
 							<Continue episodes={episodes} series={series} />
@@ -20,7 +20,7 @@ const Watch = () => {
 					),
 				},
 				{
-					label: <ShuffleRounded aria-label="random" titleAccess="random" />,
+					icon: <ShuffleRounded aria-label="random" titleAccess="random" />,
 					content: (
 						<Container maxWidth="md">
 							<Shuffle />

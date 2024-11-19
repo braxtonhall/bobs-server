@@ -10,12 +10,8 @@ const Activity = () => (
 		<SwiperTabs
 			tabs={[
 				{
-					label: (
-						<>
-							<PublicRounded />
-							Everyone
-						</>
-					),
+					label: "Everyone",
+					icon: <PublicRounded />,
 					content: (
 						<Container maxWidth="md">
 							<ActivityList getActivity={(cursor) => api.getAllEvents.query(cursor)} queryKey={["ALL"]} />
@@ -23,12 +19,8 @@ const Activity = () => (
 					),
 				},
 				{
-					label: (
-						<>
-							<PeopleRounded />
-							Friends
-						</>
-					),
+					label: "Friends",
+					icon: <PeopleRounded />,
 					content: (
 						<Container maxWidth="md">
 							<ActivityList

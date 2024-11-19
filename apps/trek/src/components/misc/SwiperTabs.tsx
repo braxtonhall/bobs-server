@@ -21,8 +21,9 @@ const StyledSwiper = styled(Swiper)(({ theme }) => ({
 }));
 
 export type TabTransport = {
-	label: JSX.Element;
+	label?: string;
 	content: JSX.Element;
+	icon?: JSX.Element;
 };
 
 export const SwiperTabs = (props: { tabs: [...TabTransport[], TabTransport] }) => {
@@ -41,8 +42,8 @@ export const SwiperTabs = (props: { tabs: [...TabTransport[], TabTransport] }) =
 			<TabContext value={tab}>
 				<Box>
 					<TabList onChange={onChange} aria-label="views" centered>
-						{props.tabs.map(({ label }, index) => (
-							<Tab label={label} value={index} key={index} />
+						{props.tabs.map(({ label, icon }, index) => (
+							<Tab label={label} icon={icon} value={index} key={index} />
 						))}
 					</TabList>
 				</Box>
