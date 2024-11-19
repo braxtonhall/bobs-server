@@ -99,6 +99,7 @@ export const Profile = () => {
 				<Box display="flex">
 					<Box flex={1}>
 						<Typography variant="h2">{viewer.name}</Typography>
+						{viewer.about && <Typography variant="subtitle1">{viewer.about}</Typography>}
 					</Box>
 					{self && (
 						<Box marginTop="1em">

@@ -105,9 +105,9 @@ const Watchlist = () => {
 			] satisfies (ColDef<Episode> & { colId: string })[],
 		[],
 	);
-	const settings = useMemo(() => JSON.parse(watchlist.filters), [watchlist]);
+	// const settings = useMemo(() => JSON.parse(watchlist.filters), [watchlist]);
 	const columnDefs = useMemo<ColDef<Episode>[]>(() => {
-		const state: ColumnState[] = settings.state ?? [];
+		const state: ColumnState[] = [];
 		const savedColumns = Object.fromEntries(state.map((column) => [column.colId, column]));
 		const columnDefinitions = Object.fromEntries(definitions.map((definition) => [definition.colId, definition]));
 		const storageColumns = storage.order ?? [];
@@ -122,7 +122,7 @@ const Watchlist = () => {
 				})),
 			...definitions.filter((column) => !storageColumns.includes(column.colId)),
 		];
-	}, [settings, definitions, storage]);
+	}, [definitions, storage]);
 
 	const rowsRef = useRef<Episode[]>([]);
 	const selectionRef = useRef<Episode[]>([]);
@@ -226,7 +226,7 @@ const Watchlist = () => {
 						rowData={rowsRef.current}
 						initialState={{
 							filter: {
-								filterModel: settings.filters,
+								filterModel: {},
 							},
 							rowSelection: selectionRef.current.map(({ id }) => id),
 						}}

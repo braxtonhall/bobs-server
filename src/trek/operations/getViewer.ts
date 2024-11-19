@@ -9,6 +9,7 @@ export const getViewer = ({ requestorId, targetId }: { requestorId?: string; tar
 			},
 			select: {
 				name: true,
+				about: true,
 				id: true,
 				...(requestorId
 					? {

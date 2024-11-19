@@ -5,6 +5,12 @@ export const signupPayloadSchema = z.object({
 	name: z.string().min(1).max(Config.DEFAULT_MAX_LENGTH),
 });
 
+export const updateSelfPayloadSchema = signupPayloadSchema.and(
+	z.object({
+		about: z.string().max(Config.DESCRIPTION_MAX_LENGTH),
+	}),
+);
+
 export type SettingsPayload = z.infer<typeof settingsPayloadSchema>;
 
 export const settingsPayloadSchema = z.object({

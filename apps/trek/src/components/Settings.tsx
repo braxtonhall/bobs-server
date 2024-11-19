@@ -36,6 +36,7 @@ const Settings = () => {
 	const { settings, setSettings } = useUserContext();
 
 	const [name, setName] = useState(viewer.name);
+	const [about, setAbout] = useState(viewer.about);
 
 	const [alertOpen, setAlertOpen] = useState(false);
 
@@ -75,6 +76,18 @@ const Settings = () => {
 		},
 	} as const;
 
+	const changed =
+		viewer.name !== name ||
+		viewer.about !== about ||
+		Object.entries(spoilersStates).some(
+			([
+				key,
+				{
+					state: [value],
+				},
+			]) => value !== settings[key as keyof typeof spoilersStates],
+		);
+
 	return (
 		<>
 			<Snackbar open={alertOpen} autoHideDuration={6000} onClose={handleClose}>
@@ -98,7 +111,7 @@ const Settings = () => {
 									]) => [key, value],
 								),
 							) as Record<keyof typeof spoilersStates, boolean>;
-							setSelf?.({ name });
+							setSelf?.({ name, about });
 							setSettings({
 								...spoilers,
 								colours: {},
@@ -110,11 +123,24 @@ const Settings = () => {
 							<Stack direction="column">
 								<SettingsSection name="Me">
 									<Stack direction="column">
-										<TextField
-											label="Name"
-											value={name}
-											onChange={(event) => setName(event.target.value)}
-										/>
+										<Box width="100%" marginBottom="1em">
+											<TextField
+												label="Name"
+												value={name}
+												onChange={(event) => setName(event.target.value)}
+												autoComplete="off"
+												fullWidth
+											/>
+										</Box>
+										<Box width="100%">
+											<TextField
+												label="About"
+												value={about}
+												onChange={(event) => setAbout(event.target.value)}
+												autoComplete="off"
+												fullWidth
+											/>
+										</Box>
 										<Box>TODO: favourites</Box>
 									</Stack>
 								</SettingsSection>
@@ -152,7 +178,7 @@ const Settings = () => {
 								<SettingsSection name="Colours">
 									<Stack direction="column">TODO: colours</Stack>
 								</SettingsSection>
-								<Button type="submit" variant="contained">
+								<Button type="submit" variant="contained" disabled={!changed}>
 									Save
 								</Button>
 							</Stack>

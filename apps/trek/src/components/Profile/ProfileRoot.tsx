@@ -7,7 +7,10 @@ export const ProfileRoot = () => {
 	const { viewer, self } = useLoaderData() as NonNullable<Awaited<ReturnType<API["getSelf"]["query"]>>>;
 	const { mutate: setSelf } = useMutation({
 		mutationFn: api.setSelf.mutate,
-		onMutate: ({ name }) => (viewer.name = name),
+		onMutate: ({ name, about }) => {
+			viewer.name = name;
+			viewer.about = about;
+		},
 	});
 	return (
 		<ProfileContext.Provider value={{ viewer, self, setSelf: self ? setSelf : null }}>

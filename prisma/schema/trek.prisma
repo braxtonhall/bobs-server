@@ -47,15 +47,13 @@ model Episode {
 }
 
 model Watchlist {
-  id          String    @id @default(cuid())
-  // TODO There should be a default list that everyone gets!!!
+  id String @id @default(cuid())
+
   ownerId     String?
   owner       Viewer?   @relation(fields: [ownerId], references: [id], onDelete: SetNull)
   viewings    Viewing[]
   name        String
   description String
-  /// JSON formatted string for the filters used to create this watchlist
-  filters     String
   episodes    Episode[]
   tags        Tag[]
 
@@ -70,6 +68,7 @@ model Viewer {
   email      Email       @relation("ViewerEmail", fields: [emailId], references: [id], onDelete: Cascade)
   emailId    String      @unique
   name       String
+  about      String      @default("")
   views      View[]
   opinions   Opinion[]
   watchlists Watchlist[]

@@ -32,7 +32,6 @@ export const updateWatchlist = async (ownerId: string, watchlist: z.infer<typeof
 		data: {
 			name: watchlist.name,
 			description: watchlist.description,
-			filters: JSON.stringify(watchlist.filters),
 			tags: {
 				connectOrCreate: watchlist.tags.map((name) => ({
 					where: { name },
