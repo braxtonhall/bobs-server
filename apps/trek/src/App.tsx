@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider, redirect } from "react-router-dom";
+import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 import Watch from "./components/Watch";
 import Episode from "./components/Episode";
 import Watchlist from "./components/Watchlist";
@@ -9,7 +9,6 @@ import { Explore } from "./components/Explore";
 import Activity from "./components/Activity";
 import { Profile } from "./components/Profile";
 import { Watchlists } from "./components/Profile/Watchlists";
-import { ProfileRoot } from "./components/Profile/ProfileRoot";
 import React, { useMemo } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Reviews } from "./components/Profile/Reviews";
@@ -20,54 +19,7 @@ import { Diary } from "./components/Profile/Diary";
 import { Followers } from "./components/Profile/Followers";
 import { Following } from "./components/Profile/Following";
 import Settings from "./components/Settings";
-
-const createProfileTree = <T extends unknown[]>(
-	{ root, loader }: { root: string; loader: (...args: any[]) => Promise<unknown> },
-	...children: T
-) => ({
-	path: root,
-	loader,
-	element: <ProfileRoot />,
-	children: [
-		{
-			path: root,
-			element: <Profile />,
-		},
-		{
-			path: `${root}/watchlists`,
-			element: <Watchlists />,
-		},
-		{
-			path: `${root}/reviews`,
-			element: <Reviews />,
-		},
-		{
-			path: `${root}/likes`,
-			element: <Likes />,
-		},
-		{
-			path: `${root}/tags`,
-			element: <Tags />,
-		},
-		{
-			path: `${root}/stats`,
-			element: <Stats />,
-		},
-		{
-			path: `${root}/diary`,
-			element: <Diary />,
-		},
-		{
-			path: `${root}/followers`,
-			element: <Followers />,
-		},
-		{
-			path: `${root}/following`,
-			element: <Following />,
-		},
-		...children,
-	],
-});
+import { ProfileContextProvider } from "./contexts/ProfileContext";
 
 const router = createBrowserRouter(
 	[
@@ -76,7 +28,8 @@ const router = createBrowserRouter(
 			// TODO need to supply some platform settings
 			// TODO if not logged in, get a 401. The 401 error handler should give login page!
 			element: <Window />,
-			loader: () => api.getSettings.query(),
+			loader: () => api.getSelf.query(),
+			id: "root",
 			// errorElement: <ErrorPage />,
 			// action: rootAction,
 			children: [
@@ -92,36 +45,69 @@ const router = createBrowserRouter(
 					path: "/activity",
 					element: <Activity />,
 				},
-				createProfileTree(
-					{
-						root: "/me",
-						loader: async () => {
-							const viewer = await api.getSelf.query();
-							if (viewer) {
-								return viewer;
-							} else {
-								throw new Response("Unauthorized", { status: 401 });
-							}
-						},
-					},
-					{
-						path: "/me/settings",
-						element: <Settings />,
-					},
-				),
-				createProfileTree({
-					root: "/viewers/:id",
+				{
+					path: "/settings",
+					element: (
+						<ProfileContextProvider loaderId="root">
+							<Settings />
+						</ProfileContextProvider>
+					),
+				},
+				{
+					path: "/viewers/:id",
+					id: "viewer",
 					loader: async ({ params: { id } }) => {
 						const viewer = await api.getViewer.query(id ?? "");
-						if (viewer && viewer.self) {
-							return redirect("/me");
-						} else if (viewer) {
+						if (viewer) {
 							return viewer;
 						} else {
 							throw new Response("Not Found", { status: 404 });
 						}
 					},
-				}),
+					element: (
+						<ProfileContextProvider loaderId="viewer">
+							<Outlet />
+						</ProfileContextProvider>
+					),
+					children: [
+						{
+							path: "/viewers/:id",
+							element: <Profile />,
+						},
+						{
+							path: "/viewers/:id/watchlists",
+							element: <Watchlists />,
+						},
+						{
+							path: "/viewers/:id/reviews",
+							element: <Reviews />,
+						},
+						{
+							path: "/viewers/:id/likes",
+							element: <Likes />,
+						},
+						{
+							path: "/viewers/:id/tags",
+							element: <Tags />,
+						},
+						{
+							path: "/viewers/:id/stats",
+							element: <Stats />,
+						},
+						{
+							path: "/viewers/:id/diary",
+							element: <Diary />,
+						},
+						{
+							path: "/viewers/:id/followers",
+							element: <Followers />,
+						},
+						{
+							path: "/viewers/:id/following",
+							element: <Following />,
+						},
+					],
+				},
 				{
 					path: "/shows/:show",
 					element: <>SHOW</>,

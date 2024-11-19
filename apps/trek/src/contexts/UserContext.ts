@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react";
 import { API } from "../util/api";
 
-type Settings = NonNullable<Awaited<ReturnType<API["getSettings"]["query"]>>>;
+type Settings = NonNullable<Awaited<ReturnType<API["getSelf"]["query"]>>["settings"]>;
 
 type User = {
 	settings: Settings;

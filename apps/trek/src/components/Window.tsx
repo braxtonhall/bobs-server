@@ -20,15 +20,17 @@ import { useMutation } from "@tanstack/react-query";
 
 const selectValue = ({ pathname }: Location) => {
 	const slugs = pathname.split("/");
-	return `/${slugs[1]}`;
+	return { short: `/${slugs[1]}`, extended: `/${slugs[1]}/${slugs[2]}` };
 };
 
 const drawerWidth = 240;
 
 export const Window = () => {
-	const value: string = selectValue(useLocation());
-	const [settings, setSettings] = useState(useLoaderData() as Awaited<ReturnType<API["getSettings"]["query"]>>);
+	const value = selectValue(useLocation());
+	const loaderData = useLoaderData() as Awaited<ReturnType<API["getSelf"]["query"]>>;
+	const [settings, setSettings] = useState(loaderData.settings);
 	const { mutate: updateSettings } = useMutation({ mutationFn: api.setSettings.mutate, onMutate: setSettings });
+	const me = `/viewers/${loaderData.viewer.id}`;
 
 	return (
 		<UserContext.Provider value={{ settings: settings ?? defaultSettings, setSettings: updateSettings }}>
@@ -50,7 +52,7 @@ export const Window = () => {
 					>
 						<List component={Stack} direction="column">
 							<ListItem disablePadding>
-								<ListItemButton component={Link} to="/" selected={value === "/"}>
+								<ListItemButton component={Link} to="/" selected={value.short === "/"}>
 									<ListItemIcon>
 										<PlayArrowRounded />
 									</ListItemIcon>
@@ -59,7 +61,7 @@ export const Window = () => {
 							</ListItem>
 
 							<ListItem disablePadding>
-								<ListItemButton component={Link} to="/explore" selected={value === "/explore"}>
+								<ListItemButton component={Link} to="/explore" selected={value.short === "/explore"}>
 									<ListItemIcon>
 										<SearchRounded />
 									</ListItemIcon>
@@ -68,7 +70,7 @@ export const Window = () => {
 							</ListItem>
 
 							<ListItem disablePadding>
-								<ListItemButton component={Link} to="/activity" selected={value === "/activity"}>
+								<ListItemButton component={Link} to="/activity" selected={value.short === "/activity"}>
 									<ListItemIcon>
 										<RssFeedRounded />
 									</ListItemIcon>
@@ -77,7 +79,7 @@ export const Window = () => {
 							</ListItem>
 
 							<ListItem disablePadding>
-								<ListItemButton component={Link} to="/me" selected={value === "/me"}>
+								<ListItemButton component={Link} to={me} selected={value.extended === me}>
 									<ListItemIcon>
 										<PersonRounded />
 									</ListItemIcon>
@@ -109,7 +111,7 @@ export const Window = () => {
 					}}
 					elevation={3}
 				>
-					<BottomNavigation value={value}>
+					<BottomNavigation value={value.extended === me ? "/me" : value.short}>
 						<BottomNavigationAction
 							component={Link}
 							to="/"
@@ -133,7 +135,7 @@ export const Window = () => {
 						/>
 						<BottomNavigationAction
 							component={Link}
-							to="/me"
+							to={me}
 							label="Me"
 							value="/me"
 							icon={<PersonRounded />}

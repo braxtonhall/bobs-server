@@ -14,8 +14,6 @@ import {
 	ListItemText,
 	ListItem,
 	Typography,
-	Button,
-	ButtonGroup,
 	IconButton,
 } from "@mui/material";
 import {
@@ -24,7 +22,6 @@ import {
 	ReviewsRounded,
 	TagRounded,
 	ShowChartRounded,
-	EditRounded,
 	SettingsRounded,
 } from "@mui/icons-material";
 import { ActivityList } from "../ActivityList";
@@ -103,7 +100,7 @@ export const Profile = () => {
 					</Box>
 					{self && (
 						<Box marginTop="1em">
-							<IconButton aria-label="settings" component={Link} to="settings">
+							<IconButton aria-label="settings" component={Link} to="/settings">
 								<SettingsRounded />
 							</IconButton>
 						</Box>
