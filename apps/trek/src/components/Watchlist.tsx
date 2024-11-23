@@ -24,13 +24,11 @@ import { useMemo } from "react";
 import { DecoratedEpisodes, mergeEpisodesWithContent } from "./Watch/Continue/mergeViewingWithContent";
 import { DateTime } from "luxon";
 import { useColour } from "../hooks/useColour";
+import { EpisodeHeader } from "./EpisodeHeader";
 
 // https://trakt.tv/users/yosarasara/lists/star-trek-sara-s-suggested-watch-order?sort=rank,asc
 
-const IMG_URL = "https://media.themoviedb.org/t/p/w454_and_h254_bestv2/Asrl6u2tugWf9EJN24uhQ9zvyo6.jpg";
-
 type LoaderData = NonNullable<Awaited<ReturnType<API["getWatchlist"]["query"]>>>;
-type Episodes = LoaderData["watchlist"]["episodes"];
 
 const Watchlist = () => {
 	const { watchlist, owner } = useLoaderData() as LoaderData;
@@ -42,6 +40,11 @@ const Watchlist = () => {
 		onMutate: () => {},
 		mutationFn: api.startWatching.mutate,
 	});
+	const { episodes, series } = useContent();
+	const decorated = useMemo(
+		() => episodes && series && mergeEpisodesWithContent({ list: watchlist.episodes, episodes, series }),
+		[episodes, series, watchlist],
+	);
 
 	// TODO:
 	//  1. Like
@@ -51,15 +54,7 @@ const Watchlist = () => {
 
 	return (
 		<>
-			<Box
-				sx={{
-					padding: 0,
-					backgroundImage: `url('${IMG_URL}')`,
-					backgroundRepeat: "no-repeat",
-					backgroundSize: "cover",
-					height: "200px",
-				}}
-			/>
+			{decorated && decorated[0] && <EpisodeHeader episode={decorated[0]} />}
 			<Container maxWidth="md">
 				<Box display="flex">
 					<Typography variant="h2" flex={1}>
@@ -120,9 +115,7 @@ const Watchlist = () => {
 					</Box>
 				</Box>
 				<Divider />
-				<Box marginBottom="1em">
-					<EpisodeList episodes={watchlist.episodes} />
-				</Box>
+				<Box marginBottom="1em">{decorated && <EpisodeList episodes={decorated} />}</Box>
 			</Container>
 		</>
 	);
@@ -162,35 +155,26 @@ const EpisodeRow = ({ episode }: { episode: DecoratedEpisodes[number] }) => {
 	);
 };
 
-const EpisodeList = ({ episodes: watchlist }: { episodes: Episodes }) => {
-	const { episodes, series } = useContent();
-	const decorated = useMemo(
-		() => episodes && series && mergeEpisodesWithContent({ list: watchlist, episodes, series }),
-		[episodes, series, watchlist],
-	);
-	return (
-		decorated && (
-			<TableContainer component={Box}>
-				<Table sx={{ minWidth: 650, height: "1px" }} aria-label="simple table">
-					<TableHead>
-						<TableRow>
-							<TableCell padding="none" />
-							<TableCell padding="none" />
-							<TableCell>Episode</TableCell>
-							<TableCell>Name</TableCell>
-							<TableCell align="right">Stardate</TableCell>
-							<TableCell align="right">Air Date</TableCell>
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{decorated.map((episode) => (
-							<EpisodeRow episode={episode} key={episode.id} />
-						))}
-					</TableBody>
-				</Table>
-			</TableContainer>
-		)
-	);
-};
+const EpisodeList = ({ episodes }: { episodes: DecoratedEpisodes }) => (
+	<TableContainer component={Box}>
+		<Table sx={{ minWidth: 650, height: "1px" }} aria-label="simple table">
+			<TableHead>
+				<TableRow>
+					<TableCell padding="none" />
+					<TableCell padding="none" />
+					<TableCell>Episode</TableCell>
+					<TableCell>Name</TableCell>
+					<TableCell align="right">Stardate</TableCell>
+					<TableCell align="right">Air Date</TableCell>
+				</TableRow>
+			</TableHead>
+			<TableBody>
+				{episodes.map((episode) => (
+					<EpisodeRow episode={episode} key={episode.id} />
+				))}
+			</TableBody>
+		</Table>
+	</TableContainer>
+);
 
 export default Watchlist;

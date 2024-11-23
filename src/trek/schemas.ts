@@ -15,10 +15,10 @@ export type SettingsPayload = z.infer<typeof settingsPayloadSchema>;
 
 const hexSchema = z
 	.string()
-	.toUpperCase()
+	.toLowerCase()
 	.min(4)
 	.max(9)
-	.regex(/^#[0-9A-F]+$/);
+	.regex(/^#[0-9a-f]+$/);
 
 export const settingsPayloadSchema = z.object({
 	colours: z.record(z.string(), hexSchema).transform((colours) => JSON.stringify(colours)),

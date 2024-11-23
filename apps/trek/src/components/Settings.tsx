@@ -1,5 +1,6 @@
 import { useProfileContext } from "../contexts/ProfileContext";
 import { useUserContext } from "../contexts/UserContext";
+import { MuiColorInput } from "mui-color-input";
 import {
 	Accordion,
 	AccordionDetails,
@@ -10,17 +11,24 @@ import {
 	Checkbox,
 	Container,
 	Divider,
+	FormControl,
 	FormControlLabel,
 	FormGroup,
+	IconButton,
+	InputLabel,
+	MenuItem,
+	Select,
 	Snackbar,
 	SnackbarCloseReason,
 	Stack,
 	TextField,
 	Typography,
 } from "@mui/material";
-import { ReactNode, SyntheticEvent, useCallback, useState } from "react";
-import { ExpandMoreRounded } from "@mui/icons-material";
+import { ReactNode, SyntheticEvent, useCallback, useMemo, useState } from "react";
+import { AddCircleRounded, RemoveCircleRounded, ExpandMoreRounded } from "@mui/icons-material";
 import { Form } from "react-router-dom";
+import { useContent } from "../util/useContent";
+import { defaultColours } from "../hooks/useColour";
 
 const SettingsSection = (props: { name: string; children?: ReactNode | ReactNode[]; defaultExpanded?: boolean }) => (
 	<Accordion defaultExpanded={props.defaultExpanded} sx={{ boxShadow: "none" }}>
@@ -31,6 +39,75 @@ const SettingsSection = (props: { name: string; children?: ReactNode | ReactNode
 	</Accordion>
 );
 
+type ColourSettingTransport = { series: string | null; colour: string | null };
+
+const ColourSetting = ({
+	setting,
+	index,
+	setColours,
+	series,
+}: {
+	setting: ColourSettingTransport;
+	index: number;
+	setColours: (callback: (colours: ColourSettingTransport[]) => ColourSettingTransport[]) => void;
+	series: { name: string; id: string }[];
+}) => {
+	return (
+		<Box width="100%" display="flex" marginBottom="1em">
+			<Box flex={1} marginRight="1em">
+				<FormControl fullWidth>
+					<InputLabel id={`colour-series-${index}`}>Series</InputLabel>
+					<Select
+						variant="outlined"
+						labelId={`colour-series-${index}`}
+						value={setting.series ?? ""}
+						label="Series"
+						onChange={(event) =>
+							setColours((colours) => {
+								const series = event.target.value;
+								colours[index].series = series;
+								colours[index].colour ??= defaultColours[series];
+								return [...colours];
+							})
+						}
+					>
+						{series.map(({ name, id }) => (
+							<MenuItem key={id} value={id}>
+								{name}
+							</MenuItem>
+						))}
+					</Select>
+				</FormControl>
+			</Box>
+			<Box width="125px" marginRight="1em">
+				<MuiColorInput
+					format="hex"
+					value={setting.colour ?? ""}
+					onChange={(colour) =>
+						setColours((colours) => {
+							colours[index].colour = colour;
+							return [...colours];
+						})
+					}
+				/>
+			</Box>
+			<Box width="fit-content" display="flex" justifyContent="center" alignItems="center">
+				<IconButton
+					aria-label="remove"
+					onClick={() =>
+						setColours((colours) => {
+							colours.splice(index, 1);
+							return [...colours];
+						})
+					}
+				>
+					<RemoveCircleRounded />
+				</IconButton>
+			</Box>
+		</Box>
+	);
+};
+
 const Settings = () => {
 	const { viewer, setSelf } = useProfileContext();
 	const { settings, setSettings } = useUserContext();
@@ -40,9 +117,22 @@ const Settings = () => {
 
 	const [alertOpen, setAlertOpen] = useState(false);
 
+	const { series } = useContent();
+
+	const seriesAndNames = useMemo(() => Object.values(series ?? {}), [series]);
+
 	const handleClose = useCallback(
 		(_?: SyntheticEvent | Event, reason?: SnackbarCloseReason) => reason !== "clickaway" && setAlertOpen(false),
 		[],
+	);
+
+	const [colours, setColours] = useState<ColourSettingTransport[]>(
+		Object.entries(settings.colours).map(([key, value]) => ({ series: key, colour: value })),
+	);
+
+	const newColours = useMemo(
+		() => Object.fromEntries(colours.map((setting) => [setting.series, setting.colour])),
+		[colours],
 	);
 
 	const spoilersStates = {
@@ -76,7 +166,13 @@ const Settings = () => {
 		},
 	} as const;
 
+	const coloursUpdated = useMemo(
+		() => JSON.stringify(newColours) !== JSON.stringify(settings.colours),
+		[newColours, settings],
+	);
+
 	const changed =
+		coloursUpdated ||
 		viewer.name !== name ||
 		viewer.about !== about ||
 		Object.entries(spoilersStates).some(
@@ -87,6 +183,11 @@ const Settings = () => {
 				},
 			]) => value !== settings[key as keyof typeof spoilersStates],
 		);
+
+	const complete = useMemo(
+		() => !!name && colours.every((setting) => !!setting.series && !!setting.colour),
+		[name, colours],
+	);
 
 	return (
 		<>
@@ -114,7 +215,7 @@ const Settings = () => {
 							setSelf?.({ name, about });
 							setSettings({
 								...spoilers,
-								colours: {},
+								colours: newColours,
 							});
 							setAlertOpen(true);
 						}}
@@ -176,9 +277,40 @@ const Settings = () => {
 								<Divider />
 
 								<SettingsSection name="Colours">
-									<Stack direction="column">TODO: colours</Stack>
+									<Stack direction="column">
+										{colours.map((setting, index) => (
+											<ColourSetting
+												key={index}
+												setColours={setColours}
+												setting={setting}
+												series={seriesAndNames}
+												index={index}
+											/>
+										))}
+
+										<Box
+											width="100%"
+											display="flex"
+											justifyContent="right"
+											alignItems="center"
+											marginBottom="1em"
+										>
+											<IconButton
+												color="primary"
+												aria-label="add"
+												onClick={() =>
+													setColours((colours) => [
+														...colours,
+														{ colour: null, series: null },
+													])
+												}
+											>
+												<AddCircleRounded />
+											</IconButton>
+										</Box>
+									</Stack>
 								</SettingsSection>
-								<Button type="submit" variant="contained" disabled={!changed}>
+								<Button type="submit" variant="contained" disabled={!(changed && complete)}>
 									Save
 								</Button>
 							</Stack>
