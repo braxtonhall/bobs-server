@@ -1,4 +1,4 @@
-import { Box, Card, Typography } from "@mui/material";
+import { Box, Card, styled, Typography } from "@mui/material";
 import { LogForm } from "../../LogForm";
 import { WatchlistPreview } from "./WatchlistPreview";
 import { DecoratedViewing } from "./mergeViewingWithContent";
@@ -9,6 +9,19 @@ type ViewingProps = {
 	viewing: DecoratedViewing;
 };
 
+const StyledCard = styled(Card)(({ theme }) => ({
+	marginBottom: "1em",
+	animation: "fade-in 300ms",
+	"@keyframes fade-in": {
+		from: {
+			opacity: 0,
+		},
+		to: {
+			opacity: 1,
+		},
+	},
+}));
+
 export const Viewing = ({ viewing }: ViewingProps) => {
 	// TODO what should happen if you are DONE???
 	// TODO needs a button to just give up...
@@ -18,7 +31,7 @@ export const Viewing = ({ viewing }: ViewingProps) => {
 	const { logEpisode } = useMutationContext();
 
 	return (
-		<Card sx={{ marginBottom: "1em" }}>
+		<StyledCard>
 			<Box display={{ sm: "flex" }} justifyContent="right">
 				<Box width={{ xs: "100%", sm: "25%" }} flex={{ sm: 1 }} order={{ xs: 0, sm: 2 }}>
 					<WatchlistPreview viewing={viewing} index={index} key={viewing.id} />
@@ -63,6 +76,6 @@ export const Viewing = ({ viewing }: ViewingProps) => {
 					</Box>
 				</Box>
 			</Box>
-		</Card>
+		</StyledCard>
 	);
 };

@@ -1,4 +1,4 @@
-import { Box, Button } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 import { api } from "../../../util/api";
 import { Viewing } from "./Viewing";
 import { Episode, SeriesCollection } from "../types";
@@ -6,6 +6,7 @@ import { useMemo } from "react";
 import { mergeViewingWithContent } from "./mergeViewingWithContent";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import { MutationContext } from "./MutationContext";
+import { OnScreenWatcher } from "../../misc/OnScreenWatcher";
 
 interface ContinueProps {
 	series: SeriesCollection | null;
@@ -59,9 +60,12 @@ const Continue = ({ series, episodes }: ContinueProps) => {
 	return (
 		<MutationContext.Provider value={{ logEpisode, setCursor }}>
 			<Box position="relative" width="100%" boxSizing="border-box">
-				{!hasNextPage && !viewings.length ? (
+				{!hasNextPage && !isFetching && !viewings.length ? (
 					<ContinueInactive />
-				) : viewings.length && series && episodes ? (
+				) : (
+					!!viewings.length &&
+					series &&
+					episodes &&
 					viewings.map(
 						((series, episodes) => (viewing) => (
 							<Viewing
@@ -70,17 +74,16 @@ const Continue = ({ series, episodes }: ContinueProps) => {
 							/>
 						))(series, episodes),
 					)
-				) : (
-					<></>
 				)}
 
-				{hasNextPage ? (
-					<Button disabled={isFetching} onClick={() => fetchNextPage()}>
-						Load more
-					</Button>
-				) : (
-					<></>
-				)}
+				{hasNextPage &&
+					(isFetching ? (
+						<Box display="flex" justifyContent="center">
+							<CircularProgress />
+						</Box>
+					) : (
+						<OnScreenWatcher onScreen={fetchNextPage} />
+					))}
 			</Box>
 		</MutationContext.Provider>
 	);
