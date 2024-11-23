@@ -27,6 +27,7 @@ import { getWatchlistRelationship } from "../operations/getWatchlistRelationship
 import { getWatchlistTags } from "../operations/getWatchlistTags";
 import { getWatchlistViewings } from "../operations/getWatchlistViewings";
 import { setSelf } from "../operations/setSelf";
+import { setWatchlistLiked } from "../operations/setWatchlistLiked";
 
 export const t = initTRPC.context<Context>().create();
 
@@ -64,6 +65,11 @@ const trekRouter = t.router({
 	getWatchlistRelationship: t.procedure
 		.input(z.string())
 		.query(({ ctx: { viewerId }, input: watchlistId }) => getWatchlistRelationship({ viewerId, watchlistId })),
+	setWatchlistLiked: t.procedure
+		.input(z.object({ watchlistId: z.string(), liked: z.boolean() }))
+		.mutation(({ ctx: { viewerId }, input: { watchlistId, liked } }) =>
+			setWatchlistLiked({ viewerId, watchlistId, liked }),
+		),
 	startWatching: t.procedure
 		.input(z.string())
 		.mutation(({ ctx: { viewerId }, input: watchlistId }) => startWatching({ viewerId, watchlistId })),

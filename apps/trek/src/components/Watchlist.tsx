@@ -1,11 +1,13 @@
 import { Link, useLoaderData } from "react-router-dom";
 import {
 	Box,
-	Button,
-	ButtonGroup,
+	Checkbox,
 	Container,
 	Divider,
-	IconButton,
+	Fab,
+	ListItemIcon,
+	ListItemText,
+	MenuItem,
 	Table,
 	TableBody,
 	TableCell,
@@ -16,18 +18,24 @@ import {
 	Typography,
 } from "@mui/material";
 import { api, API } from "../util/api";
-import { EditRounded, FavoriteRounded, PlayArrowRounded } from "@mui/icons-material";
+import {
+	EditRounded,
+	FavoriteBorderRounded,
+	FavoriteRounded,
+	PlayArrowRounded,
+	RestartAltRounded,
+} from "@mui/icons-material";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { TagsList } from "./TagsList";
 import { EpisodeCard } from "./EpisodeCard";
 import { useContent } from "../util/useContent";
 import { useMemo, useState } from "react";
 import { DecoratedEpisodes, mergeEpisodesWithContent } from "./Watch/Continue/mergeViewingWithContent";
-import { DateTime } from "luxon";
+import { DateTime, Duration } from "luxon";
 import { useColour } from "../hooks/useColour";
 import { EpisodeHeader } from "./EpisodeHeader";
 import { fadeIn } from "../util/fadeIn";
-import { DebouncedTextField } from "./misc/DebouncedTextField";
+import { Options } from "./misc/Options";
 
 // https://trakt.tv/users/yosarasara/lists/star-trek-sara-s-suggested-watch-order?sort=rank,asc
 
@@ -37,19 +45,39 @@ const FadeInBox = fadeIn(Box);
 
 const Watchlist = () => {
 	const { watchlist, owner } = useLoaderData() as LoaderData;
-	const { data: counts } = useQuery({
+	const { data: relationship } = useQuery({
 		queryKey: ["watchlist-relationship", watchlist.id],
 		queryFn: () => api.getWatchlistRelationship.query(watchlist.id),
 	});
 	const { mutate: start } = useMutation({
-		onMutate: () => {},
-		mutationFn: api.startWatching.mutate,
+		onMutate: () => {
+			if (relationship) {
+				relationship._count.inFlight++;
+			}
+		},
+		mutationFn: () => api.startWatching.mutate(watchlist.id),
+	});
+	const { mutate: setLiked } = useMutation({
+		onMutate: (liked) => {
+			if (relationship) {
+				relationship._count.likes = liked ? 1 : 0;
+			}
+			watchlist._count.likes += liked ? 1 : -1;
+		},
+		mutationFn: (liked: boolean) => api.setWatchlistLiked.mutate({ watchlistId: watchlist.id, liked }),
 	});
 	const { episodes, series } = useContent();
 	const decorated = useMemo(
 		() => episodes && series && mergeEpisodesWithContent({ list: watchlist.episodes, episodes, series }),
 		[episodes, series, watchlist],
 	);
+	const runtime = useMemo(
+		() =>
+			decorated &&
+			Duration.fromObject({ minutes: decorated.reduce((acc, episode) => acc + episode.runtime, 0) }).toHuman(),
+		[decorated],
+	);
+	const [startModalOpen, setStartModalOpen] = useState(false);
 
 	// TODO:
 	//  1. Like
@@ -61,40 +89,10 @@ const Watchlist = () => {
 		<FadeInBox>
 			<EpisodeHeader episode={decorated?.[0] ?? undefined} />
 			<Container maxWidth="md">
-				<Box display="flex">
-					<Typography variant="h2" flex={1}>
-						{watchlist.name}
-					</Typography>
-					<Box marginTop="1em">
-						{owner && (
-							<ButtonGroup orientation="vertical" aria-label="Controls" variant="contained">
-								<Button component={Link} to="edit" startIcon={<EditRounded />}>
-									Edit
-								</Button>
-							</ButtonGroup>
-						)}
-					</Box>
-				</Box>
 				<Box marginBottom="1em">
-					<Typography variant="subtitle2">
-						<Box>
-							<IconButton aria-label="watch">
-								<PlayArrowRounded />
-							</IconButton>
-							{typeof counts?._count?.viewings === "number"
-								? `${counts._count.viewings} watch${counts._count.viewings === 1 ? "" : "es"}`
-								: undefined}
-						</Box>
-						<Box>
-							<IconButton aria-label="like">
-								<FavoriteRounded />
-							</IconButton>
-							{typeof counts?._count?.likes === "number"
-								? `${counts._count.likes} like${counts._count.likes === 1 ? "" : "s"}`
-								: undefined}
-						</Box>
-					</Typography>
+					<Typography variant="h2">{watchlist.name}</Typography>
 					<Box>
+						<Typography variant="body1">{watchlist.description}</Typography>
 						<Typography variant="body1">
 							{watchlist.owner && (
 								<>
@@ -104,13 +102,55 @@ const Watchlist = () => {
 									{" • "}
 								</>
 							)}
-							{watchlist.description}
+							{watchlist.createdAt && (
+								<>{DateTime.fromISO(watchlist.createdAt.time).toLocaleString() + " • "}</>
+							)}
+							{`${watchlist.episodes.length} episode${watchlist.episodes.length === 1 ? "" : "s"}`}
+							{runtime !== null && `, ${runtime}`}
+						</Typography>
+						<Typography variant="body1">
+							{`${watchlist._count.viewings} watch${watchlist._count.viewings === 1 ? "" : "es"}, `}
+							{`${watchlist._count.likes} like${watchlist._count.likes === 1 ? "" : "s"}`}
 						</Typography>
 					</Box>
-					<Box>
-						<Typography variant="body2">
-							{watchlist.createdAt && <>{DateTime.fromISO(watchlist.createdAt.time).toLocaleString()}</>}
-						</Typography>
+				</Box>
+				<Divider />
+				<Box>
+					<Box display="flex" marginTop="1em">
+						<Box display="flex" justifyContent="center" alignItems="center" marginRight="1em">
+							<Fab sx={{ boxShadow: "none" }} color="primary" disabled={!relationship}>
+								{relationship ? (
+									relationship._count.inFlight ? (
+										<RestartAltRounded />
+									) : (
+										<PlayArrowRounded />
+									)
+								) : (
+									<></>
+								)}
+							</Fab>
+						</Box>
+						<Box display="flex" justifyContent="center" alignItems="center">
+							<Checkbox
+								disabled={!relationship}
+								icon={<FavoriteBorderRounded />}
+								checkedIcon={<FavoriteRounded />}
+								checked={!!relationship?._count.likes}
+								onChange={(_, checked) => setLiked(checked)}
+							/>
+						</Box>
+						{owner && (
+							<Box display="flex" justifyContent="center" alignItems="center" marginLeft="1em">
+								<Options id={`options-${watchlist.id}`} horizontal>
+									<MenuItem component={Link} to="edit">
+										<ListItemIcon>
+											<EditRounded fontSize="small" />
+										</ListItemIcon>
+										<ListItemText>Edit watchlist</ListItemText>
+									</MenuItem>
+								</Options>
+							</Box>
+						)}
 					</Box>
 					<Box>
 						<TagsList
@@ -119,7 +159,6 @@ const Watchlist = () => {
 						/>
 					</Box>
 				</Box>
-				<Divider />
 				<Box marginBottom="1em">{decorated && <EpisodeList episodes={decorated} />}</Box>
 			</Container>
 		</FadeInBox>

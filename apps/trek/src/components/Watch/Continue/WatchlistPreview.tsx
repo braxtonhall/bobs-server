@@ -4,26 +4,26 @@ import {
 	AccordionDetails,
 	AccordionSummary,
 	Box,
-	IconButton,
 	List,
 	ListItem,
 	ListItemButton,
+	ListItemIcon,
 	ListItemText,
-	Menu,
 	MenuItem,
 	Typography,
 	useMediaQuery,
 	useTheme,
 } from "@mui/material";
-import { ExpandMoreRounded, MoreVertRounded, PauseRounded, StopRounded } from "@mui/icons-material";
+import { ExpandMoreRounded, PauseRounded, StopRounded } from "@mui/icons-material";
 import { Progress } from "../../misc/Progress";
 import { DecoratedViewing } from "./mergeViewingWithContent";
-import { MutableRefObject, useEffect, useRef, useState, type MouseEvent, ReactNode } from "react";
+import { MutableRefObject, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { SpaceFillingBox, SpaceFillingBoxContainer } from "../../misc/SpaceFillingBox";
 import { useUserContext } from "../../../contexts/UserContext";
 import { useMutationContext } from "./MutationContext";
 import { useColour } from "../../../hooks/useColour";
+import { Options } from "../../misc/Options";
 
 export const WatchlistPreview = ({ viewing, index }: { viewing: DecoratedViewing; index: number }) =>
 	useMediaQuery(useTheme().breakpoints.up("sm")) ? (
@@ -128,63 +128,27 @@ const WatchlistPreviewEntry = ({ episode, viewingId, selected, containerRef }: W
 	);
 };
 
-const Options = (props: { id: string; children?: ReactNode | ReactNode[] }) => {
-	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-	const open = Boolean(anchorEl);
-	const handleClick = (event: MouseEvent<HTMLButtonElement>) => setAnchorEl(event.currentTarget);
-	const handleClose = () => setAnchorEl(null);
-
-	const iconButtonId = `${props.id}-context-button`;
-	const menuId = `${props.id}-context-menu`;
-
-	return (
-		<>
-			<IconButton
-				id={iconButtonId}
-				aria-controls={open ? menuId : undefined}
-				aria-haspopup
-				aria-expanded={open}
-				size="small"
-				onClick={(event) => {
-					event.stopPropagation();
-					handleClick(event);
-				}}
-			>
-				<MoreVertRounded />
-			</IconButton>
-			<Menu
-				id={menuId}
-				anchorEl={anchorEl}
-				open={open}
-				onClose={handleClose}
-				MenuListProps={{ "aria-labelledby": iconButtonId }}
-				onClick={(event) => event.stopPropagation()}
-			>
-				{props.children}
-			</Menu>
-		</>
-	);
-};
-
-const WatchlistPreviewOptions = ({ viewing }: { viewing: Viewings[number] }) => {
-	return (
-		<Box>
-			<Options id={`${viewing.id}-w-${viewing.watchlist.id}`}>
-				<MenuItem component={Link} to={`/watchlists/${viewing.watchlist.id}`}>
-					Go to watchlist
-				</MenuItem>
-				<MenuItem>
-					<PauseRounded />
-					Pause viewing
-				</MenuItem>
-				<MenuItem>
-					<StopRounded />
-					Stop viewing
-				</MenuItem>
-			</Options>
-		</Box>
-	);
-};
+const WatchlistPreviewOptions = ({ viewing }: { viewing: Viewings[number] }) => (
+	<Box>
+		<Options id={`${viewing.id}-w-${viewing.watchlist.id}`}>
+			<MenuItem component={Link} to={`/watchlists/${viewing.watchlist.id}`}>
+				Go to watchlist
+			</MenuItem>
+			<MenuItem>
+				<ListItemIcon>
+					<PauseRounded fontSize="small" />
+				</ListItemIcon>
+				<ListItemText>Pause viewing</ListItemText>
+			</MenuItem>
+			<MenuItem>
+				<ListItemIcon>
+					<StopRounded fontSize="small" />
+				</ListItemIcon>
+				<ListItemText>Stop viewing</ListItemText>
+			</MenuItem>
+		</Options>
+	</Box>
+);
 
 const WatchlistPreviewEntryOptions = ({
 	viewingId,
