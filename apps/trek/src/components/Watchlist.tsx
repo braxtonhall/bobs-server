@@ -21,8 +21,9 @@ import { TagsList } from "./TagsList";
 import { EpisodeCard } from "./EpisodeCard";
 import { useContent } from "../util/useContent";
 import { useMemo } from "react";
-import { mergeEpisodesWithContent } from "./Watch/Continue/mergeViewingWithContent";
+import { DecoratedEpisodes, mergeEpisodesWithContent } from "./Watch/Continue/mergeViewingWithContent";
 import { DateTime } from "luxon";
+import { useColour } from "../hooks/useColour";
 
 // https://trakt.tv/users/yosarasara/lists/star-trek-sara-s-suggested-watch-order?sort=rank,asc
 
@@ -127,6 +128,40 @@ const Watchlist = () => {
 	);
 };
 
+const EpisodeRow = ({ episode }: { episode: DecoratedEpisodes[number] }) => {
+	const colour = useColour(episode);
+	return (
+		<TableRow
+			sx={{
+				"&:last-child td, &:last-child th": { borderBottom: 0 },
+				height: "100%",
+			}}
+		>
+			<TableCell sx={{ padding: 0, height: "100%" }}>
+				<Box
+					sx={{
+						height: "100%",
+						boxSizing: "border-box",
+						borderLeft: "solid 1em",
+						borderLeftColor: colour,
+					}}
+				/>
+			</TableCell>
+			<TableCell padding="checkbox">
+				<EpisodeCard episode={episode} height="40px" width="40px" />
+			</TableCell>
+			<TableCell>
+				{episode.seriesId} {episode.season}-{episode.production}
+			</TableCell>
+			<TableCell component="th" scope="row">
+				{episode.name}
+			</TableCell>
+			<TableCell align="right">{episode.starDate}</TableCell>
+			<TableCell align="right">{episode.release}</TableCell>
+		</TableRow>
+	);
+};
+
 const EpisodeList = ({ episodes: watchlist }: { episodes: Episodes }) => {
 	const { episodes, series } = useContent();
 	const decorated = useMemo(
@@ -136,10 +171,11 @@ const EpisodeList = ({ episodes: watchlist }: { episodes: Episodes }) => {
 	return (
 		decorated && (
 			<TableContainer component={Box}>
-				<Table sx={{ minWidth: 650 }} aria-label="simple table">
+				<Table sx={{ minWidth: 650, height: "1px" }} aria-label="simple table">
 					<TableHead>
 						<TableRow>
-							<TableCell></TableCell>
+							<TableCell padding="none" />
+							<TableCell padding="none" />
 							<TableCell>Episode</TableCell>
 							<TableCell>Name</TableCell>
 							<TableCell align="right">Stardate</TableCell>
@@ -148,19 +184,7 @@ const EpisodeList = ({ episodes: watchlist }: { episodes: Episodes }) => {
 					</TableHead>
 					<TableBody>
 						{decorated.map((episode) => (
-							<TableRow key={episode.id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-								<TableCell padding="checkbox">
-									<EpisodeCard episode={episode} height="40px" width="40px" />
-								</TableCell>
-								<TableCell>
-									{episode.seriesId} {episode.season}-{episode.production}
-								</TableCell>
-								<TableCell component="th" scope="row">
-									{episode.name}
-								</TableCell>
-								<TableCell align="right">{episode.starDate}</TableCell>
-								<TableCell align="right">{episode.release}</TableCell>
-							</TableRow>
+							<EpisodeRow episode={episode} key={episode.id} />
 						))}
 					</TableBody>
 				</Table>

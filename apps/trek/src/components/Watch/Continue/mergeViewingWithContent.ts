@@ -27,3 +27,4 @@ export const mergeEpisodesWithContent = (input: {
 	}));
 
 export type DecoratedViewing = ReturnType<typeof mergeViewingWithContent>;
+export type DecoratedEpisodes = ReturnType<typeof mergeEpisodesWithContent>;
