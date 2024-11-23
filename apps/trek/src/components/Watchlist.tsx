@@ -12,6 +12,7 @@ import {
 	TableContainer,
 	TableHead,
 	TableRow,
+	TextField,
 	Typography,
 } from "@mui/material";
 import { api, API } from "../util/api";
@@ -20,12 +21,13 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { TagsList } from "./TagsList";
 import { EpisodeCard } from "./EpisodeCard";
 import { useContent } from "../util/useContent";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { DecoratedEpisodes, mergeEpisodesWithContent } from "./Watch/Continue/mergeViewingWithContent";
 import { DateTime } from "luxon";
 import { useColour } from "../hooks/useColour";
 import { EpisodeHeader } from "./EpisodeHeader";
 import { fadeIn } from "../util/fadeIn";
+import { DebouncedTextField } from "./misc/DebouncedTextField";
 
 // https://trakt.tv/users/yosarasara/lists/star-trek-sara-s-suggested-watch-order?sort=rank,asc
 
@@ -165,26 +167,60 @@ const EpisodeRow = ({ episode }: { episode: DecoratedEpisodes[number] }) => {
 	);
 };
 
-const EpisodeList = ({ episodes }: { episodes: DecoratedEpisodes }) => (
-	<TableContainer component={Box}>
-		<Table sx={{ minWidth: 650, height: "1px" }} aria-label="simple table">
-			<TableHead>
-				<TableRow>
-					<TableCell padding="none" />
-					<TableCell padding="none" />
-					<TableCell>Episode</TableCell>
-					<TableCell>Name</TableCell>
-					<TableCell align="right">Stardate</TableCell>
-					<TableCell align="right">Air Date</TableCell>
-				</TableRow>
-			</TableHead>
-			<TableBody>
-				{episodes.map((episode) => (
-					<EpisodeRow episode={episode} key={episode.id} />
-				))}
-			</TableBody>
-		</Table>
-	</TableContainer>
-);
+const matches =
+	(search: string) =>
+	(episode: DecoratedEpisodes[number]): boolean => {
+		if (search === "") {
+			return true;
+		}
+		const {
+			series: { name: seriesName },
+			name,
+			abbreviation,
+			seriesId,
+		} = episode;
+		return [name, seriesName, abbreviation, seriesId].some((value) =>
+			String(value ?? "")
+				.toLowerCase()
+				.includes(search.toLowerCase()),
+		);
+	};
+
+const EpisodeList = ({ episodes }: { episodes: DecoratedEpisodes }) => {
+	const [search, setSearch] = useState("");
+	const filteredEpisodes = useMemo(() => episodes.filter(matches(search)), [episodes, search]);
+	return (
+		<Box>
+			<Box marginTop="1em">
+				<TextField
+					placeholder="Filter…"
+					autoComplete="off"
+					variant="standard"
+					fullWidth
+					onChange={(newValue) => setSearch(newValue.target.value)}
+				/>
+			</Box>
+			<TableContainer component={Box}>
+				<Table sx={{ minWidth: 650, height: "1px" }} aria-label="simple table">
+					<TableHead>
+						<TableRow>
+							<TableCell padding="none" />
+							<TableCell padding="none" />
+							<TableCell>Episode</TableCell>
+							<TableCell>Name</TableCell>
+							<TableCell align="right">Stardate</TableCell>
+							<TableCell align="right">Air Date</TableCell>
+						</TableRow>
+					</TableHead>
+					<TableBody>
+						{filteredEpisodes.map((episode) => (
+							<EpisodeRow episode={episode} key={episode.id} />
+						))}
+					</TableBody>
+				</Table>
+			</TableContainer>
+		</Box>
+	);
+};
 
 export default Watchlist;
