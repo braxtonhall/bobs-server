@@ -1,9 +1,11 @@
-import { Box, Card, styled, Typography } from "@mui/material";
+import { Box, Card, createTheme, styled, Typography, useTheme, ThemeProvider } from "@mui/material";
 import { LogForm } from "../../LogForm";
 import { WatchlistPreview } from "./WatchlistPreview";
 import { DecoratedViewing } from "./mergeViewingWithContent";
 import { EpisodeCard } from "../../EpisodeCard";
 import { useMutationContext } from "./MutationContext";
+import { useColour } from "../../../hooks/useColour";
+import tinycolor from "tinycolor2";
 
 type ViewingProps = {
 	viewing: DecoratedViewing;
@@ -22,14 +24,25 @@ const StyledCard = styled(Card)(({ theme }) => ({
 	},
 }));
 
+const darkTheme = createTheme({
+	palette: {
+		mode: "dark",
+	},
+});
+
+const DARK_MODE_THRESHOLD = 155;
+
 export const Viewing = ({ viewing }: ViewingProps) => {
 	// TODO what should happen if you are DONE???
 	// TODO needs a button to just give up...
+	const defaultTheme = useTheme();
 	const maybeIndex = viewing.watchlist.episodes.findIndex(({ id }) => id === viewing.cursor);
 	const index = maybeIndex >= 0 ? maybeIndex : viewing.watchlist.episodes.length;
 	const current = viewing.watchlist.episodes[index];
 	const { logEpisode } = useMutationContext();
-
+	const colour = useColour(current);
+	const dark = tinycolor(colour).getBrightness() < DARK_MODE_THRESHOLD;
+	const theme = dark ? darkTheme : defaultTheme;
 	return (
 		<StyledCard>
 			<Box display={{ sm: "flex" }} justifyContent="right">
@@ -37,8 +50,8 @@ export const Viewing = ({ viewing }: ViewingProps) => {
 					<WatchlistPreview viewing={viewing} index={index} key={viewing.id} />
 				</Box>
 
-				<Box width={{ xs: "100%", sm: "75%" }}>
-					<Box sx={{ backgroundColor: "antiquewhite", padding: "1em" }}>
+				<ThemeProvider theme={theme}>
+					<Box width={{ xs: "100%", sm: "75%" }} sx={{ backgroundColor: colour, padding: "1em" }}>
 						{current ? (
 							<Box key={current.id}>
 								<Box display="flex" alignItems="stretch" position="relative" marginBottom="1em">
@@ -51,18 +64,20 @@ export const Viewing = ({ viewing }: ViewingProps) => {
 										}}
 									>
 										{/*TODO it would be nice if this font changed based on the show https://github.com/wrstone/fonts-startrek*/}
-										<Typography variant="h5" component="h2">
+										<Typography variant="h5" component="h2" color={theme.palette.text.primary}>
 											{current.name}
 										</Typography>
 
-										<Typography variant="body2" component="p">
+										<Typography variant="body2" component="p" color={theme.palette.text.primary}>
 											{current.abbreviation ?? current.seriesId}
 											{current.abbreviation === null
 												? ` Season ${current.season}, Episode ${current.production}`
 												: ""}
 										</Typography>
 
-										<Typography sx={{ fontSize: 14 }}>{current.release}</Typography>
+										<Typography sx={{ fontSize: 14 }} color={theme.palette.text.primary}>
+											{current.release}
+										</Typography>
 									</Box>
 								</Box>
 
@@ -74,7 +89,7 @@ export const Viewing = ({ viewing }: ViewingProps) => {
 							</Box>
 						)}
 					</Box>
-				</Box>
+				</ThemeProvider>
 			</Box>
 		</StyledCard>
 	);

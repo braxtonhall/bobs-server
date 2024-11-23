@@ -13,8 +13,15 @@ export const updateSelfPayloadSchema = signupPayloadSchema.and(
 
 export type SettingsPayload = z.infer<typeof settingsPayloadSchema>;
 
+const hexSchema = z
+	.string()
+	.toUpperCase()
+	.min(4)
+	.max(9)
+	.regex(/^#[0-9A-F]+$/);
+
 export const settingsPayloadSchema = z.object({
-	colours: z.record(z.string(), z.string()).transform((colours) => JSON.stringify(colours)),
+	colours: z.record(z.string(), hexSchema).transform((colours) => JSON.stringify(colours)),
 	isSpoilerEpisodeReviewComment: z.boolean(),
 	isSpoilerEpisodeReviewScore: z.boolean(),
 	isSpoilerEpisodeDescription: z.boolean(),

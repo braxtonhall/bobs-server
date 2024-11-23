@@ -8,6 +8,8 @@ import {
 	TextField,
 	Stack,
 	useMediaQuery,
+	useTheme,
+	Typography,
 } from "@mui/material";
 import { Tags } from "./Tags";
 import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon";
@@ -51,6 +53,7 @@ export const LogForm = (props: {
 	const [review, setReview] = useState("");
 	const [spoiler, setSpoiler] = useState(false);
 	const touchScreen = useMediaQuery("(pointer:coarse)");
+	const theme = useTheme();
 
 	useEffect(() => {
 		window.onbeforeunload = () => (review || rating || liked ? "Are you sure you want to exit?" : undefined);
@@ -123,7 +126,11 @@ export const LogForm = (props: {
 									onChange={(_, spoiler) => setSpoiler(spoiler)}
 								/>
 							}
-							label="Review contains spoilers"
+							label={
+								<Typography color={review ? theme.palette.text.primary : theme.palette.text.disabled}>
+									Review contains spoilers
+								</Typography>
+							}
 							labelPlacement="end"
 							value={spoiler}
 							disabled={!review}

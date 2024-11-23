@@ -23,6 +23,7 @@ import { Link } from "react-router-dom";
 import { SpaceFillingBox, SpaceFillingBoxContainer } from "../../misc/SpaceFillingBox";
 import { useUserContext } from "../../../contexts/UserContext";
 import { useMutationContext } from "./MutationContext";
+import { useColour } from "../../../hooks/useColour";
 
 export const WatchlistPreview = ({ viewing, index }: { viewing: DecoratedViewing; index: number }) =>
 	useMediaQuery(useTheme().breakpoints.up("sm")) ? (
@@ -62,21 +63,19 @@ const WatchlistPreviewContent = ({ viewing, index: cursorIndex }: { viewing: Dec
 	const containerRef = useRef<HTMLElement>(null);
 	return (
 		<Box ref={containerRef} flex={1} overflow="auto" width="100%" maxHeight={{ xs: "400px", sm: "unset" }}>
-			<Box>
-				<nav>
-					<List>
-						{viewing.watchlist.episodes.map((episode, episodeIndex) => (
-							<WatchlistPreviewEntry
-								episode={episode}
-								viewingId={viewing.id}
-								selected={cursorIndex === episodeIndex}
-								containerRef={containerRef}
-								key={episode.id}
-							/>
-						))}
-					</List>
-				</nav>
-			</Box>
+			<nav>
+				<List disablePadding>
+					{viewing.watchlist.episodes.map((episode, episodeIndex) => (
+						<WatchlistPreviewEntry
+							episode={episode}
+							viewingId={viewing.id}
+							selected={cursorIndex === episodeIndex}
+							containerRef={containerRef}
+							key={episode.id}
+						/>
+					))}
+				</List>
+			</nav>
 		</Box>
 	);
 };
@@ -108,8 +107,9 @@ const WatchlistPreviewEntry = ({ episode, viewingId, selected, containerRef }: W
 		initialRender.current = false;
 	}, [selected, containerRef]);
 	const { settings } = useUserContext();
+	const colour = useColour(episode);
 	return (
-		<ListItem disablePadding ref={listItemRef}>
+		<ListItem disablePadding ref={listItemRef} sx={{ borderRight: "solid", borderColor: colour }}>
 			<ListItemButton
 				onClick={() => setCursor({ viewingId, episodeId: episode.id })}
 				selected={selected}
@@ -192,18 +192,16 @@ const WatchlistPreviewEntryOptions = ({
 }: {
 	viewingId: string;
 	episode: DecoratedViewing["watchlist"]["episodes"][number];
-}) => {
-	return (
-		<Options id={`${viewingId}-ep-${episode.id}`}>
-			<MenuItem
-				component={Link}
-				to={`/shows/${episode.seriesId.toLowerCase()}/seasons/${episode.season}/episodes/${episode.production}`}
-			>
-				Go to episode
-			</MenuItem>
-			<MenuItem component={Link} to={`/shows/${episode.seriesId.toLowerCase()}`}>
-				Go to series
-			</MenuItem>
-		</Options>
-	);
-};
+}) => (
+	<Options id={`${viewingId}-ep-${episode.id}`}>
+		<MenuItem
+			component={Link}
+			to={`/shows/${episode.seriesId.toLowerCase()}/seasons/${episode.season}/episodes/${episode.production}`}
+		>
+			Go to episode
+		</MenuItem>
+		<MenuItem component={Link} to={`/shows/${episode.seriesId.toLowerCase()}`}>
+			Go to series
+		</MenuItem>
+	</Options>
+);
