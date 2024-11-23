@@ -6,22 +6,14 @@ import { EpisodeCard } from "../../EpisodeCard";
 import { useMutationContext } from "./MutationContext";
 import { useColour } from "../../../hooks/useColour";
 import tinycolor from "tinycolor2";
+import { fadeIn } from "../../../util/fadeIn";
 
 type ViewingProps = {
 	viewing: DecoratedViewing;
 };
 
-const StyledCard = styled(Card)(({ theme }) => ({
+const StyledCard = styled(fadeIn(Card))(({ theme }) => ({
 	marginBottom: "1em",
-	animation: "fade-in 300ms",
-	"@keyframes fade-in": {
-		from: {
-			opacity: 0,
-		},
-		to: {
-			opacity: 1,
-		},
-	},
 }));
 
 const darkTheme = createTheme({

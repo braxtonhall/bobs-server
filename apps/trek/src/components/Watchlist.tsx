@@ -25,10 +25,13 @@ import { DecoratedEpisodes, mergeEpisodesWithContent } from "./Watch/Continue/me
 import { DateTime } from "luxon";
 import { useColour } from "../hooks/useColour";
 import { EpisodeHeader } from "./EpisodeHeader";
+import { fadeIn } from "../util/fadeIn";
 
 // https://trakt.tv/users/yosarasara/lists/star-trek-sara-s-suggested-watch-order?sort=rank,asc
 
 type LoaderData = NonNullable<Awaited<ReturnType<API["getWatchlist"]["query"]>>>;
+
+const FadeInBox = fadeIn(Box);
 
 const Watchlist = () => {
 	const { watchlist, owner } = useLoaderData() as LoaderData;
@@ -53,8 +56,8 @@ const Watchlist = () => {
 	//  5. Entries
 
 	return (
-		<>
-			{decorated && decorated[0] && <EpisodeHeader episode={decorated[0]} />}
+		<FadeInBox>
+			<EpisodeHeader episode={decorated?.[0] ?? undefined} />
 			<Container maxWidth="md">
 				<Box display="flex">
 					<Typography variant="h2" flex={1}>
@@ -117,12 +120,21 @@ const Watchlist = () => {
 				<Divider />
 				<Box marginBottom="1em">{decorated && <EpisodeList episodes={decorated} />}</Box>
 			</Container>
-		</>
+		</FadeInBox>
 	);
+};
+
+const selectEpisodeString = (episode: DecoratedEpisodes[number]): string => {
+	if (episode.abbreviation) {
+		return episode.abbreviation;
+	} else {
+		return `${episode.seriesId} ${episode.season}-${episode.production}`;
+	}
 };
 
 const EpisodeRow = ({ episode }: { episode: DecoratedEpisodes[number] }) => {
 	const colour = useColour(episode);
+	const episodeString = useMemo(() => selectEpisodeString(episode), [episode]);
 	return (
 		<TableRow
 			sx={{
@@ -143,9 +155,7 @@ const EpisodeRow = ({ episode }: { episode: DecoratedEpisodes[number] }) => {
 			<TableCell padding="checkbox">
 				<EpisodeCard episode={episode} height="40px" width="40px" />
 			</TableCell>
-			<TableCell>
-				{episode.seriesId} {episode.season}-{episode.production}
-			</TableCell>
+			<TableCell>{episodeString}</TableCell>
 			<TableCell component="th" scope="row">
 				{episode.name}
 			</TableCell>
