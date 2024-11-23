@@ -1,13 +1,22 @@
 import { Link, useLoaderData } from "react-router-dom";
 import {
+	Alert,
 	Box,
+	Button,
 	Checkbox,
 	Container,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogContentText,
+	DialogTitle,
 	Divider,
 	Fab,
 	ListItemIcon,
 	ListItemText,
 	MenuItem,
+	Snackbar,
+	SnackbarCloseReason,
 	Table,
 	TableBody,
 	TableCell,
@@ -29,7 +38,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { TagsList } from "./TagsList";
 import { EpisodeCard } from "./EpisodeCard";
 import { useContent } from "../util/useContent";
-import { useMemo, useState } from "react";
+import { SyntheticEvent, useCallback, useMemo, useState } from "react";
 import { DecoratedEpisodes, mergeEpisodesWithContent } from "./Watch/Continue/mergeViewingWithContent";
 import { DateTime, Duration } from "luxon";
 import { useColour } from "../hooks/useColour";
@@ -45,15 +54,24 @@ const FadeInBox = fadeIn(Box);
 
 const Watchlist = () => {
 	const { watchlist, owner } = useLoaderData() as LoaderData;
+	const [startDialogOpen, setStartDialogOpen] = useState(false);
+	const [alertOpen, setAlertOpen] = useState(false);
+	const handleCloseSnackbar = useCallback(
+		(_?: SyntheticEvent | Event, reason?: SnackbarCloseReason) => reason !== "clickaway" && setAlertOpen(false),
+		[],
+	);
+
 	const { data: relationship } = useQuery({
 		queryKey: ["watchlist-relationship", watchlist.id],
 		queryFn: () => api.getWatchlistRelationship.query(watchlist.id),
 	});
 	const { mutate: start } = useMutation({
 		onMutate: () => {
+			setStartDialogOpen(false);
 			if (relationship) {
 				relationship._count.inFlight++;
 			}
+			setAlertOpen(true);
 		},
 		mutationFn: () => api.startWatching.mutate(watchlist.id),
 	});
@@ -77,7 +95,6 @@ const Watchlist = () => {
 			Duration.fromObject({ minutes: decorated.reduce((acc, episode) => acc + episode.runtime, 0) }).toHuman(),
 		[decorated],
 	);
-	const [startModalOpen, setStartModalOpen] = useState(false);
 
 	// TODO:
 	//  1. Like
@@ -86,82 +103,122 @@ const Watchlist = () => {
 	//  5. Entries
 
 	return (
-		<FadeInBox>
-			<EpisodeHeader episode={decorated?.[0] ?? undefined} />
-			<Container maxWidth="md">
-				<Box marginBottom="1em">
-					<Typography variant="h2">{watchlist.name}</Typography>
-					<Box>
-						<Typography variant="body1">{watchlist.description}</Typography>
-						<Typography variant="body1">
-							{watchlist.owner && (
-								<>
-									<Link to={`/viewers/${watchlist.owner.id}`} style={{ fontWeight: "bold" }}>
-										{watchlist.owner.name}
-									</Link>
-									{" • "}
-								</>
-							)}
-							{watchlist.createdAt && (
-								<>{DateTime.fromISO(watchlist.createdAt.time).toLocaleString() + " • "}</>
-							)}
-							{`${watchlist.episodes.length} episode${watchlist.episodes.length === 1 ? "" : "s"}`}
-							{runtime !== null && `, ${runtime}`}
-						</Typography>
-						<Typography variant="body1">
-							{`${watchlist._count.viewings} watch${watchlist._count.viewings === 1 ? "" : "es"}, `}
-							{`${watchlist._count.likes} like${watchlist._count.likes === 1 ? "" : "s"}`}
-						</Typography>
-					</Box>
-				</Box>
-				<Divider />
-				<Box>
-					<Box display="flex" marginTop="1em">
-						<Box display="flex" justifyContent="center" alignItems="center" marginRight="1em">
-							<Fab sx={{ boxShadow: "none" }} color="primary" disabled={!relationship}>
-								{relationship ? (
-									relationship._count.inFlight ? (
-										<RestartAltRounded />
-									) : (
-										<PlayArrowRounded />
-									)
-								) : (
-									<></>
+		<>
+			<Snackbar open={alertOpen} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+				<Alert onClose={handleCloseSnackbar} severity="success" variant="filled" sx={{ width: "100%" }}>
+					New viewing started!
+				</Alert>
+			</Snackbar>
+			<FadeInBox>
+				<EpisodeHeader episode={decorated?.[0] ?? undefined} />
+				<Container maxWidth="md">
+					<Box marginBottom="1em">
+						<Typography variant="h2">{watchlist.name}</Typography>
+						<Box>
+							<Typography variant="body1">{watchlist.description}</Typography>
+							<Typography variant="body1">
+								{watchlist.owner && (
+									<>
+										<Link to={`/viewers/${watchlist.owner.id}`} style={{ fontWeight: "bold" }}>
+											{watchlist.owner.name}
+										</Link>
+										{" • "}
+									</>
 								)}
-							</Fab>
+								{watchlist.createdAt && (
+									<>{DateTime.fromISO(watchlist.createdAt.time).toLocaleString() + " • "}</>
+								)}
+								{`${watchlist.episodes.length} episode${watchlist.episodes.length === 1 ? "" : "s"}`}
+								{runtime !== null && `, ${runtime}`}
+							</Typography>
+							<Typography variant="body1">
+								{`${watchlist._count.viewings} watch${watchlist._count.viewings === 1 ? "" : "es"}, `}
+								{`${watchlist._count.likes} like${watchlist._count.likes === 1 ? "" : "s"}`}
+							</Typography>
 						</Box>
-						<Box display="flex" justifyContent="center" alignItems="center">
-							<Checkbox
-								disabled={!relationship}
-								icon={<FavoriteBorderRounded />}
-								checkedIcon={<FavoriteRounded />}
-								checked={!!relationship?._count.likes}
-								onChange={(_, checked) => setLiked(checked)}
+					</Box>
+					<Divider />
+					<Box>
+						<Box display="flex" marginTop="1em">
+							<Box display="flex" justifyContent="center" alignItems="center" marginRight="1em">
+								<Fab
+									sx={{ boxShadow: "none" }}
+									color="primary"
+									disabled={!relationship}
+									onClick={() => {
+										if (relationship?._count.inFlight) {
+											setStartDialogOpen(true);
+										} else {
+											start();
+										}
+									}}
+								>
+									{relationship ? (
+										relationship._count.inFlight ? (
+											<RestartAltRounded />
+										) : (
+											<PlayArrowRounded />
+										)
+									) : (
+										<></>
+									)}
+								</Fab>
+								<Dialog
+									open={startDialogOpen}
+									onClose={() => setStartDialogOpen(false)}
+									aria-labelledby="alert-dialog-title"
+									aria-describedby="alert-dialog-description"
+								>
+									<DialogTitle id="alert-dialog-title">Start another viewing?</DialogTitle>
+									<DialogContent>
+										<DialogContentText id="alert-dialog-description">
+											{relationship &&
+												`You are currently viewing this watchlist ${relationship._count.inFlight} time${
+													relationship._count.inFlight === 1 ? "" : "s"
+												}`}
+										</DialogContentText>
+									</DialogContent>
+									<DialogActions>
+										<Button onClick={() => start()}>Engage</Button>
+										<Button variant="outlined" onClick={() => setStartDialogOpen(false)} autoFocus>
+											Belay
+										</Button>
+									</DialogActions>
+								</Dialog>
+							</Box>
+							<Box display="flex" justifyContent="center" alignItems="center">
+								<Checkbox
+									disabled={!relationship}
+									icon={<FavoriteBorderRounded />}
+									checkedIcon={<FavoriteRounded />}
+									checked={!!relationship?._count.likes}
+									onChange={(_, checked) => setLiked(checked)}
+								/>
+							</Box>
+							{owner && (
+								<Box display="flex" justifyContent="center" alignItems="center" marginLeft="1em">
+									<Options id={`options-${watchlist.id}`} horizontal>
+										<MenuItem component={Link} to="edit">
+											<ListItemIcon>
+												<EditRounded fontSize="small" />
+											</ListItemIcon>
+											<ListItemText>Edit watchlist</ListItemText>
+										</MenuItem>
+									</Options>
+								</Box>
+							)}
+						</Box>
+						<Box>
+							<TagsList
+								getTags={(cursor) => api.getWatchlistTags.query({ cursor, watchlistId: watchlist.id })}
+								queryKey={["watchlist", watchlist.id]}
 							/>
 						</Box>
-						{owner && (
-							<Box display="flex" justifyContent="center" alignItems="center" marginLeft="1em">
-								<Options id={`options-${watchlist.id}`} horizontal>
-									<MenuItem component={Link} to="edit">
-										<ListItemIcon>
-											<EditRounded fontSize="small" />
-										</ListItemIcon>
-										<ListItemText>Edit watchlist</ListItemText>
-									</MenuItem>
-								</Options>
-							</Box>
-						)}
 					</Box>
-					<Box>
-						<TagsList
-							getTags={(cursor) => api.getWatchlistTags.query({ cursor, watchlistId: watchlist.id })}
-							queryKey={["watchlist", watchlist.id]}
-						/>
-					</Box>
-				</Box>
-				<Box marginBottom="1em">{decorated && <EpisodeList episodes={decorated} />}</Box>
-			</Container>
-		</FadeInBox>
+					<Box marginBottom="1em">{decorated && <EpisodeList episodes={decorated} />}</Box>
+				</Container>
+			</FadeInBox>
+		</>
 	);
 };
 
