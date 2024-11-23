@@ -24,6 +24,7 @@ import { useUserContext } from "../../../contexts/UserContext";
 import { useMutationContext } from "./MutationContext";
 import { useColour } from "../../../hooks/useColour";
 import { Options } from "../../misc/Options";
+import { useViewingControls } from "../../../contexts/ViewingControlsContext";
 
 export const WatchlistPreview = ({ viewing, index }: { viewing: DecoratedViewing; index: number }) =>
 	useMediaQuery(useTheme().breakpoints.up("sm")) ? (
@@ -128,27 +129,31 @@ const WatchlistPreviewEntry = ({ episode, viewingId, selected, containerRef }: W
 	);
 };
 
-const WatchlistPreviewOptions = ({ viewing }: { viewing: Viewings[number] }) => (
-	<Box>
-		<Options id={`${viewing.id}-w-${viewing.watchlist.id}`}>
-			<MenuItem component={Link} to={`/watchlists/${viewing.watchlist.id}`}>
-				Go to watchlist
-			</MenuItem>
-			<MenuItem>
-				<ListItemIcon>
-					<PauseRounded fontSize="small" />
-				</ListItemIcon>
-				<ListItemText>Pause viewing</ListItemText>
-			</MenuItem>
-			<MenuItem>
-				<ListItemIcon>
-					<StopRounded fontSize="small" />
-				</ListItemIcon>
-				<ListItemText>Stop viewing</ListItemText>
-			</MenuItem>
-		</Options>
-	</Box>
-);
+const WatchlistPreviewOptions = ({ viewing }: { viewing: Viewings[number] }) => {
+	const controls = useViewingControls();
+	// TODO it might be nice to have a confirmation dialog
+	return (
+		<Box>
+			<Options id={`${viewing.id}-w-${viewing.watchlist.id}`}>
+				<MenuItem component={Link} to={`/watchlists/${viewing.watchlist.id}`}>
+					Go to watchlist
+				</MenuItem>
+				<MenuItem onClick={controls.pause}>
+					<ListItemIcon>
+						<PauseRounded fontSize="small" />
+					</ListItemIcon>
+					<ListItemText>Pause viewing</ListItemText>
+				</MenuItem>
+				<MenuItem onClick={controls.stop}>
+					<ListItemIcon>
+						<StopRounded fontSize="small" />
+					</ListItemIcon>
+					<ListItemText>Stop viewing</ListItemText>
+				</MenuItem>
+			</Options>
+		</Box>
+	);
+};
 
 const WatchlistPreviewEntryOptions = ({
 	viewingId,

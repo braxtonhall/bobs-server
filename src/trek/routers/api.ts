@@ -17,7 +17,7 @@ import { getEpisode } from "../operations/getEpisode";
 import { getWatchlist } from "../operations/getWatchlist";
 import { updateWatchlist, updateWatchlistInputSchema } from "../operations/updateWatchlist";
 import { getViewer } from "../operations/getViewer";
-import { startWatching } from "../operations/startWatching";
+import * as viewing from "../operations/viewing";
 import { getSettings } from "../operations/getSettings";
 import { episodeQuerySchema, settingsPayloadSchema, updateSelfPayloadSchema } from "../schemas";
 import { setSettings } from "../operations/setSettings";
@@ -70,9 +70,21 @@ const trekRouter = t.router({
 		.mutation(({ ctx: { viewerId }, input: { watchlistId, liked } }) =>
 			setWatchlistLiked({ viewerId, watchlistId, liked }),
 		),
-	startWatching: t.procedure
+	startViewing: t.procedure
 		.input(z.string())
-		.mutation(({ ctx: { viewerId }, input: watchlistId }) => startWatching({ viewerId, watchlistId })),
+		.mutation(({ ctx: { viewerId }, input: watchlistId }) => viewing.start({ viewerId, watchlistId })),
+	pauseViewing: t.procedure
+		.input(z.string())
+		.mutation(({ ctx: { viewerId }, input: viewingId }) => viewing.pause({ viewerId, viewingId })),
+	stopViewing: t.procedure
+		.input(z.string())
+		.mutation(({ ctx: { viewerId }, input: viewingId }) => viewing.stop({ viewerId, viewingId })),
+	resumeViewing: t.procedure
+		.input(z.string())
+		.mutation(({ ctx: { viewerId }, input: viewingId }) => viewing.resume({ viewerId, viewingId })),
+	completeViewing: t.procedure
+		.input(z.string())
+		.mutation(({ ctx: { viewerId }, input: viewingId }) => viewing.complete({ viewerId, viewingId })),
 	getEpisodeRelationships: t.procedure.query(({ ctx: { viewerId } }) => getEpisodeRelationships(viewerId)),
 	getEpisodeRelationship: t.procedure
 		.input(episodeQuerySchema)

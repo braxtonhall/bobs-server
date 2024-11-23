@@ -26,7 +26,6 @@ const DARK_MODE_THRESHOLD = 155;
 
 export const Viewing = ({ viewing }: ViewingProps) => {
 	// TODO what should happen if you are DONE???
-	// TODO needs a button to just give up...
 	const defaultTheme = useTheme();
 	const maybeIndex = viewing.watchlist.episodes.findIndex(({ id }) => id === viewing.cursor);
 	const index = maybeIndex >= 0 ? maybeIndex : viewing.watchlist.episodes.length;

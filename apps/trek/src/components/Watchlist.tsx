@@ -73,7 +73,7 @@ const Watchlist = () => {
 			}
 			setAlertOpen(true);
 		},
-		mutationFn: () => api.startWatching.mutate(watchlist.id),
+		mutationFn: () => api.startViewing.mutate(watchlist.id),
 	});
 	const { mutate: setLiked } = useMutation({
 		onMutate: (liked) => {

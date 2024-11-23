@@ -2,11 +2,13 @@ import { Box, CircularProgress } from "@mui/material";
 import { api } from "../../../util/api";
 import { Viewing } from "./Viewing";
 import { Episode, SeriesCollection } from "../types";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { mergeViewingWithContent } from "./mergeViewingWithContent";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import { MutationContext } from "./MutationContext";
 import { OnScreenWatcher } from "../../misc/OnScreenWatcher";
+import { curry } from "../../../util/curry";
+import { ViewingControlsContext } from "../../../contexts/ViewingControlsContext";
 
 interface ContinueProps {
 	series: SeriesCollection | null;
@@ -57,6 +59,49 @@ const Continue = ({ series, episodes }: ContinueProps) => {
 			}),
 	});
 
+	const removeFromInProgress = useCallback(
+		(id: string) => {
+			for (const page of data?.pages ?? []) {
+				const index = page.viewings.findIndex((element) => element.id === id);
+				if (index >= 0) {
+					page.viewings.splice(index, 1);
+				}
+			}
+			const index = viewings.findIndex((element) => element.id === id);
+			if (index >= 0) {
+				return viewings.splice(index, 1);
+			}
+			return [];
+		},
+		[data, viewings],
+	);
+
+	const { mutate: pause } = useMutation({
+		onMutate: (id: string) => {
+			const removed = removeFromInProgress(id);
+			// TODO add to the pause list
+		},
+		mutationFn: api.pauseViewing.mutate,
+	});
+	const { mutate: stop } = useMutation({
+		onMutate: removeFromInProgress,
+		mutationFn: api.stopViewing.mutate,
+	});
+	const { mutate: resume } = useMutation({
+		onMutate: (id: string) => {
+			// TODO remove from paused list
+			// TODO add to in progress list
+		},
+		mutationFn: api.resumeViewing.mutate,
+	});
+	const { mutate: complete } = useMutation({
+		onMutate: (id: string) => {
+			const removed = removeFromInProgress(id);
+			// TODO add to the complete list
+		},
+		mutationFn: api.completeViewing.mutate,
+	});
+
 	return (
 		<MutationContext.Provider value={{ logEpisode, setCursor }}>
 			<Box position="relative" width="100%" boxSizing="border-box">
@@ -68,10 +113,20 @@ const Continue = ({ series, episodes }: ContinueProps) => {
 					episodes &&
 					viewings.map(
 						((series, episodes) => (viewing) => (
-							<Viewing
+							<ViewingControlsContext.Provider
 								key={viewing.id}
-								viewing={mergeViewingWithContent({ viewing, series, episodes })}
-							/>
+								value={{
+									stop: curry(stop, viewing.id),
+									pause: curry(pause, viewing.id),
+									complete: curry(complete, viewing.id),
+									resume: curry(resume, viewing.id),
+								}}
+							>
+								<Viewing
+									key={viewing.id}
+									viewing={mergeViewingWithContent({ viewing, series, episodes })}
+								/>
+							</ViewingControlsContext.Provider>
 						))(series, episodes),
 					)
 				)}
