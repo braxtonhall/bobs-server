@@ -148,17 +148,19 @@ const router = createBrowserRouter(
 					element: <Episode />,
 					loader: async ({ params }) => {
 						try {
-							const episode = await api.getEpisode.query(
-								z
-									.object({
-										season: z.coerce.number(),
-										show: z.string().toUpperCase(),
-										episode: z.coerce.number(),
-									})
-									.parse(params),
-							);
-							if (episode) {
-								return episode;
+							const input = z
+								.object({
+									season: z.coerce.number(),
+									show: z.string().toUpperCase(),
+									episode: z.coerce.number(),
+								})
+								.parse(params);
+							const [episode, relationship] = await Promise.all([
+								api.getEpisode.query(input),
+								api.getEpisodeRelationship.query(input),
+							]);
+							if (episode && relationship) {
+								return { episode, relationship };
 							}
 						} catch {}
 						throw new Response("Not Found", { status: 404 });

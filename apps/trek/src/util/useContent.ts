@@ -11,7 +11,7 @@ export const useContent = () => {
 			{
 				queryKey: ["episodes"],
 				queryFn: () =>
-					api.getEpisodes
+					api.getEpisodeRelationships
 						.query()
 						.then((episodes) => Object.fromEntries(episodes.map((episode) => [episode.id, episode]))),
 			},

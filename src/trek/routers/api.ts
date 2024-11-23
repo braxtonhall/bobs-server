@@ -12,14 +12,14 @@ import { initTRPC } from "@trpc/server";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { getLatestEvents } from "../operations/getLatestEvents";
 import { Scope } from "../types";
-import { getEpisodes } from "../operations/getEpisodes";
+import { getEpisodeRelationship, getEpisodeRelationships } from "../operations/getEpisodeRelationships";
 import { getEpisode } from "../operations/getEpisode";
 import { getWatchlist } from "../operations/getWatchlist";
 import { updateWatchlist, updateWatchlistInputSchema } from "../operations/updateWatchlist";
 import { getViewer } from "../operations/getViewer";
 import { startWatching } from "../operations/startWatching";
 import { getSettings } from "../operations/getSettings";
-import { settingsPayloadSchema, updateSelfPayloadSchema } from "../schemas";
+import { episodeQuerySchema, settingsPayloadSchema, updateSelfPayloadSchema } from "../schemas";
 import { setSettings } from "../operations/setSettings";
 import { getWatchlists } from "../operations/getWatchlists";
 import { getViewerRatings } from "../operations/getViewerRatings";
@@ -67,12 +67,15 @@ const trekRouter = t.router({
 	startWatching: t.procedure
 		.input(z.string())
 		.mutation(({ ctx: { viewerId }, input: watchlistId }) => startWatching({ viewerId, watchlistId })),
-	getEpisodes: t.procedure.query(({ ctx: { viewerId } }) => getEpisodes(viewerId)),
-	getEpisode: t.procedure
-		.input(z.object({ season: z.number(), show: z.string(), episode: z.number() }))
+	getEpisodeRelationships: t.procedure.query(({ ctx: { viewerId } }) => getEpisodeRelationships(viewerId)),
+	getEpisodeRelationship: t.procedure
+		.input(episodeQuerySchema)
 		.query(({ ctx: { viewerId }, input: { season, show, episode } }) =>
-			getEpisode({ viewerId, seriesId: show, season, production: episode }),
+			getEpisodeRelationship({ seriesId: show, season, production: episode, viewerId }),
 		),
+	getEpisode: t.procedure
+		.input(episodeQuerySchema)
+		.query(({ input: { season, show, episode } }) => getEpisode({ seriesId: show, season, production: episode })),
 	getSeason: t.procedure.input(z.object({ season: z.number(), show: z.string() })).query(
 		({ ctx: { viewerId }, input: { season, show } }) => `TODO ${viewerId} ${show} ${season}`, // TODO
 	),

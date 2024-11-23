@@ -11,6 +11,8 @@ export const updateSelfPayloadSchema = signupPayloadSchema.and(
 	}),
 );
 
+export const episodeQuerySchema = z.object({ season: z.number(), show: z.string(), episode: z.number() });
+
 export type SettingsPayload = z.infer<typeof settingsPayloadSchema>;
 
 const hexSchema = z

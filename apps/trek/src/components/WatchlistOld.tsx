@@ -131,7 +131,7 @@ const Watchlist = () => {
 
 	useEffect(
 		() =>
-			void api.getEpisodes.query().then((episodes) => {
+			void api.getEpisodeRelationships.query().then((episodes) => {
 				setEpisodes(episodes);
 				const episodeMap = new Map(episodes.map((episode) => [episode.id, episode]));
 				const selection = watchlist.episodes.map(({ id }) => episodeMap.get(id)!);

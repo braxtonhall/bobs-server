@@ -2,12 +2,10 @@ import { db } from "../../db";
 import { getEpisode as getEpisodeQuery } from "@prisma/client/sql";
 
 export const getEpisode = async ({
-	viewerId,
 	seriesId,
 	season,
 	production,
 }: {
-	viewerId?: string;
 	seriesId: string;
 	production: number;
 	season: number;
