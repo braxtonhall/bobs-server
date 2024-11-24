@@ -1,7 +1,7 @@
 import { Box, Container } from "@mui/material";
 import { useState } from "react";
 import { DebouncedTextField } from "../misc/DebouncedTextField";
-import { ViewStreamRounded, PeopleRounded, ReviewsRounded, VideoLibraryRounded } from "@mui/icons-material";
+import { TableRowsRounded, PeopleRounded, ReviewsRounded, RectangleRounded } from "@mui/icons-material";
 import { SwiperTabs } from "../misc/SwiperTabs";
 import { SpaceFillingBoxContainer } from "../misc/SpaceFillingBox";
 
@@ -25,30 +25,18 @@ export const Explore = () => {
 				tabs={[
 					{
 						label: "Episodes",
-						icon: <VideoLibraryRounded />,
-						content: (
-							<Container maxWidth="md">
-								{search ? `SEARCHING FOR "${search}" IN EPISODES` : `EXPLORING EPISODES`}
-							</Container>
-						),
+						icon: <RectangleRounded />,
+						content: <>{search ? `SEARCHING FOR "${search}" IN EPISODES` : `EXPLORING EPISODES`}</>,
 					},
 					{
 						label: "Lists",
-						icon: <ViewStreamRounded />,
-						content: (
-							<Container maxWidth="md">
-								{search ? `SEARCHING FOR "${search}" IN LISTS` : `EXPLORING LISTS`}
-							</Container>
-						),
+						icon: <TableRowsRounded />,
+						content: <>{search ? `SEARCHING FOR "${search}" IN LISTS` : `EXPLORING LISTS`}</>,
 					},
 					{
 						label: "Reviews",
 						icon: <ReviewsRounded />,
-						content: (
-							<Container maxWidth="md">
-								{search ? `SEARCHING FOR "${search}" IN REVIEWS` : `EXPLORING REVIEWS`}
-							</Container>
-						),
+						content: <>{search ? `SEARCHING FOR "${search}" IN REVIEWS` : `EXPLORING REVIEWS`}</>,
 					},
 					{
 						label: "Viewers",

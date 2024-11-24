@@ -1,8 +1,7 @@
 import { useProfileContext } from "../../contexts/ProfileContext";
 import { SpaceFillingBoxContainer } from "../misc/SpaceFillingBox";
 import { SwiperTabs } from "../misc/SwiperTabs";
-import { Container } from "@mui/material";
-import { ViewStreamRounded, ReviewsRounded, VideoLibraryRounded } from "@mui/icons-material";
+import { TableRowsRounded, ReviewsRounded, VideoLibraryRounded } from "@mui/icons-material";
 
 export const Likes = () => {
 	const { viewer, self } = useProfileContext();
@@ -14,17 +13,17 @@ export const Likes = () => {
 					{
 						label: "Episodes",
 						icon: <VideoLibraryRounded />,
-						content: <Container maxWidth="md" />,
+						content: <></>,
 					},
 					{
 						label: "Reviews",
 						icon: <ReviewsRounded />,
-						content: <Container maxWidth="md" />,
+						content: <></>,
 					},
 					{
 						label: "Watchlists",
-						icon: <ViewStreamRounded />,
-						content: <Container maxWidth="md" />,
+						icon: <TableRowsRounded />,
+						content: <></>,
 					},
 				]}
 			/>

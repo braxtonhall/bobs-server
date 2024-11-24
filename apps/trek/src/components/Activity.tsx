@@ -1,5 +1,4 @@
 import { api } from "../util/api";
-import { Container } from "@mui/material";
 import { ActivityList } from "./ActivityList";
 import { SwiperTabs } from "./misc/SwiperTabs";
 import { SpaceFillingBoxContainer } from "./misc/SpaceFillingBox";
@@ -13,21 +12,17 @@ const Activity = () => (
 					label: "Everyone",
 					icon: <PublicRounded />,
 					content: (
-						<Container maxWidth="md">
-							<ActivityList getActivity={(cursor) => api.getAllEvents.query(cursor)} queryKey={["ALL"]} />
-						</Container>
+						<ActivityList getActivity={(cursor) => api.getAllEvents.query(cursor)} queryKey={["ALL"]} />
 					),
 				},
 				{
 					label: "Friends",
 					icon: <PeopleRounded />,
 					content: (
-						<Container maxWidth="md">
-							<ActivityList
-								getActivity={(cursor) => api.getFollowingEvents.query(cursor)}
-								queryKey={["FOLLOWING"]}
-							/>
-						</Container>
+						<ActivityList
+							getActivity={(cursor) => api.getFollowingEvents.query(cursor)}
+							queryKey={["FOLLOWING"]}
+						/>
 					),
 				},
 			]}

@@ -15,7 +15,14 @@ import {
 	useMediaQuery,
 	useTheme,
 } from "@mui/material";
-import { ExpandMoreRounded, PauseRounded, StopRounded } from "@mui/icons-material";
+import {
+	ExpandMoreRounded,
+	PauseRounded,
+	StopRounded,
+	TableRowsRounded,
+	AutoAwesomeMotionRounded,
+	RectangleRounded,
+} from "@mui/icons-material";
 import { Progress } from "../../misc/Progress";
 import { DecoratedViewing } from "./mergeViewingWithContent";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -204,7 +211,10 @@ const WatchlistPreviewOptions = ({ viewing }: { viewing: Viewings[number] }) => 
 		<Box>
 			<Options id={`${viewing.id}-w-${viewing.watchlist.id}`}>
 				<MenuItem component={Link} to={`/watchlists/${viewing.watchlist.id}`}>
-					Go to watchlist
+					<ListItemIcon>
+						<TableRowsRounded fontSize="small" />
+					</ListItemIcon>
+					<ListItemText>Go to watchlist</ListItemText>
 				</MenuItem>
 				<MenuItem onClick={pause}>
 					<ListItemIcon>
@@ -235,9 +245,15 @@ const WatchlistPreviewEntryOptions = ({
 			component={Link}
 			to={`/shows/${episode.seriesId.toLowerCase()}/seasons/${episode.season}/episodes/${episode.production}`}
 		>
-			Go to episode
+			<ListItemIcon>
+				<RectangleRounded fontSize="small" />
+			</ListItemIcon>
+			<ListItemText>Go to episode</ListItemText>
 		</MenuItem>
 		<MenuItem component={Link} to={`/shows/${episode.seriesId.toLowerCase()}`}>
+			<ListItemIcon>
+				<AutoAwesomeMotionRounded fontSize="small" />
+			</ListItemIcon>
 			Go to series
 		</MenuItem>
 	</Options>

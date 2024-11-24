@@ -1,5 +1,5 @@
 import { useState, useCallback, JSX, useRef } from "react";
-import { Box, styled, Tab, useMediaQuery } from "@mui/material";
+import { Box, Container, styled, Tab, useMediaQuery } from "@mui/material";
 import { TabList, TabContext, TabPanel } from "@mui/lab";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Swiper as SwiperApi } from "swiper";
@@ -67,7 +67,9 @@ export const SwiperTabs = (props: { tabs: [...TabTransport[], TabTransport] }) =
 											overflow: "auto",
 										}}
 									>
-										<Box marginTop="1em">{content}</Box>
+										<Box marginTop="1em">
+											<Container maxWidth="md">{content}</Container>
+										</Box>
 									</Box>
 								</SwiperSlide>
 							))}
@@ -75,7 +77,7 @@ export const SwiperTabs = (props: { tabs: [...TabTransport[], TabTransport] }) =
 					) : (
 						props.tabs.map(({ content }, index) => (
 							<StyledTabPanel key={index} value={index}>
-								{content}
+								<Container maxWidth="md">{content}</Container>
 							</StyledTabPanel>
 						))
 					)}
