@@ -1,4 +1,4 @@
-import { PlayArrowRounded, ShuffleRounded } from "@mui/icons-material";
+import { PlayCircleOutlineRounded, ShuffleRounded } from "@mui/icons-material";
 import Continue from "./Continue";
 import Shuffle from "./Shuffle";
 import { SwiperTabs } from "../misc/SwiperTabs";
@@ -12,7 +12,7 @@ const Watch = () => {
 		<SwiperTabs
 			tabs={[
 				{
-					icon: <PlayArrowRounded aria-label="play" titleAccess="play" />,
+					icon: <PlayCircleOutlineRounded aria-label="play" titleAccess="play" />,
 					content: (
 						<Container maxWidth="md">
 							<Continue episodes={episodes} series={series} />

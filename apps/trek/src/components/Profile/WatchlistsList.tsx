@@ -1,7 +1,8 @@
-import { Box, Button, Card, Typography } from "@mui/material";
+import { Box, Button, Card, Tooltip, Typography } from "@mui/material";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { API } from "../../util/api";
 import { Link } from "react-router-dom";
+import { FavoriteRounded, PlayCircleOutlineRounded, VisibilityRounded } from "@mui/icons-material";
 
 type WatchlistsProcedure = (cursor?: string) => ReturnType<API["getWatchlists"]["query"]>;
 
@@ -16,6 +17,7 @@ export const WatchlistEntry = ({ watchlist }: { watchlist: Watchlist }) => (
 					<Link to={`/watchlists/${watchlist.id}`}>
 						<Typography variant="h4">{watchlist.name}</Typography>
 					</Link>
+					<Typography>{watchlist.description}</Typography>
 				</Box>
 				{watchlist.owner ? (
 					<Box textAlign="right">
@@ -25,13 +27,28 @@ export const WatchlistEntry = ({ watchlist }: { watchlist: Watchlist }) => (
 						<Typography variant="subtitle2">
 							{watchlist._count.episodes} episode{watchlist._count.episodes === 1 ? "" : "s"}
 						</Typography>
+						<Typography>
+							{!!watchlist.viewings?.length && (
+								<Tooltip title="You are watching this watchlist" arrow placement="top">
+									<PlayCircleOutlineRounded />
+								</Tooltip>
+							)}
+							{!!watchlist._count.viewings && (
+								<Tooltip title="You have completed this watchlist" arrow placement="top">
+									<VisibilityRounded />
+								</Tooltip>
+							)}
+							{!!watchlist.likes?.length && (
+								<Tooltip title="You liked this watchlist" arrow placement="top">
+									<FavoriteRounded />
+								</Tooltip>
+							)}
+						</Typography>
 					</Box>
 				) : (
 					<></>
 				)}
 			</Box>
-
-			<Typography>{watchlist.description}</Typography>
 		</Box>
 	</Card>
 );

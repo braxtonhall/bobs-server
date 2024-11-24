@@ -10,7 +10,7 @@ model TrekSeason {
   // memoryAlphaUrl String // TODO
 
   seriesId String
-  series   Series    @relation(fields: [seriesId], references: [id])
+  series   Series    @relation(fields: [seriesId], references: [id], onDelete: Restrict)
   number   Int
   episodes Episode[]
 
@@ -31,8 +31,8 @@ model Episode {
   description  String
 
   seriesId   String
-  series     Series      @relation(fields: [seriesId], references: [id])
-  trekSeason TrekSeason  @relation(fields: [seriesId, season], references: [seriesId, number])
+  series     Series      @relation(fields: [seriesId], references: [id], onDelete: Restrict)
+  trekSeason TrekSeason  @relation(fields: [seriesId, season], references: [seriesId, number], onDelete: Restrict)
   views      View[]
   opinions   Opinion[]
   watchlists Watchlist[]
@@ -58,7 +58,7 @@ model Watchlist {
   tags        Tag[]
 
   createdAtId Int?   @unique
-  createdAt   Event? @relation(fields: [createdAtId], references: [id])
+  createdAt   Event? @relation(fields: [createdAtId], references: [id], onDelete: Restrict)
 
   likes WatchlistLike[]
 }
@@ -81,7 +81,7 @@ model Viewer {
   viewLikes      ViewLike[]
 
   createdAtId Int   @unique
-  createdAt   Event @relation(fields: [createdAtId], references: [id])
+  createdAt   Event @relation(fields: [createdAtId], references: [id], onDelete: Restrict)
 
   // settings
   /// JSON formatted string for the user's colour settings
@@ -97,11 +97,11 @@ model Viewer {
 
 model Favourite {
   viewerId String
-  viewer   Viewer @relation(fields: [viewerId], references: [id])
+  viewer   Viewer @relation(fields: [viewerId], references: [id], onDelete: Cascade)
   rank     Int
 
   episodeId String
-  episode   Episode @relation(fields: [episodeId], references: [id])
+  episode   Episode @relation(fields: [episodeId], references: [id], onDelete: Cascade)
 
   @@id([viewerId, rank])
 }
@@ -110,36 +110,36 @@ model Viewing {
   id          String    @id @default(cuid())
   state       String
   viewerId    String
-  viewer      Viewer    @relation(fields: [viewerId], references: [id])
+  viewer      Viewer    @relation(fields: [viewerId], references: [id], onDelete: Cascade)
   cursor      String?
   episode     Episode?  @relation(fields: [cursor], references: [id], onDelete: SetNull)
   watchlistId String
   watchlist   Watchlist @relation(fields: [watchlistId], references: [id], onDelete: Cascade)
 
   startedAtId Int   @unique
-  startedAt   Event @relation("StartedViewing", fields: [startedAtId], references: [id])
+  startedAt   Event @relation("StartedViewing", fields: [startedAtId], references: [id], onDelete: Restrict)
 
   finishedAtId Int?   @unique
-  finishedAt   Event? @relation("FinishedViewing", fields: [finishedAtId], references: [id])
+  finishedAt   Event? @relation("FinishedViewing", fields: [finishedAtId], references: [id], onDelete: Restrict)
 }
 
 model WatchlistLike {
   viewerId    String
-  viewer      Viewer    @relation(fields: [viewerId], references: [id])
+  viewer      Viewer    @relation(fields: [viewerId], references: [id], onDelete: Cascade)
   watchlistId String
-  watchlist   Watchlist @relation(fields: [watchlistId], references: [id])
+  watchlist   Watchlist @relation(fields: [watchlistId], references: [id], onDelete: Cascade)
 
   createdAtId Int   @unique
-  createdAt   Event @relation(fields: [createdAtId], references: [id])
+  createdAt   Event @relation(fields: [createdAtId], references: [id], onDelete: Restrict)
 
   @@id([viewerId, watchlistId])
 }
 
 model Opinion {
   viewerId  String
-  viewer    Viewer  @relation(fields: [viewerId], references: [id])
+  viewer    Viewer  @relation(fields: [viewerId], references: [id], onDelete: Cascade)
   episodeId String
-  episode   Episode @relation(fields: [episodeId], references: [id])
+  episode   Episode @relation(fields: [episodeId], references: [id], onDelete: Cascade)
 
   liked  Boolean
   rating Int?
@@ -151,10 +151,10 @@ model View {
   id String @id @default(cuid())
 
   viewerId String
-  viewer   Viewer @relation(fields: [viewerId], references: [id])
+  viewer   Viewer @relation(fields: [viewerId], references: [id], onDelete: Cascade)
 
   episodeId String
-  episode   Episode @relation(fields: [episodeId], references: [id])
+  episode   Episode @relation(fields: [episodeId], references: [id], onDelete: Cascade)
 
   liked    Boolean
   rating   Int?
@@ -163,7 +163,7 @@ model View {
   viewedOn String?
 
   createdAtId Int   @unique
-  createdAt   Event @relation(fields: [createdAtId], references: [id])
+  createdAt   Event @relation(fields: [createdAtId], references: [id], onDelete: Restrict)
 
   tags Tag[]
 
@@ -172,25 +172,25 @@ model View {
 
 model ViewLike {
   viewerId String
-  viewer   Viewer @relation(fields: [viewerId], references: [id])
+  viewer   Viewer @relation(fields: [viewerId], references: [id], onDelete: Cascade)
   viewId   String
-  view     View   @relation(fields: [viewId], references: [id])
+  view     View   @relation(fields: [viewId], references: [id], onDelete: Cascade)
 
   createdAtId Int   @unique
-  createdAt   Event @relation(fields: [createdAtId], references: [id])
+  createdAt   Event @relation(fields: [createdAtId], references: [id], onDelete: Restrict)
 
   @@id([viewerId, viewId])
 }
 
 model Follow {
   followerId String
-  follower   Viewer @relation("Follower", fields: [followerId], references: [id])
+  follower   Viewer @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
 
   followedId String
-  followed   Viewer @relation("Followed", fields: [followedId], references: [id])
+  followed   Viewer @relation("Followed", fields: [followedId], references: [id], onDelete: Cascade)
 
   createdAtId Int   @unique
-  createdAt   Event @relation(fields: [createdAtId], references: [id])
+  createdAt   Event @relation(fields: [createdAtId], references: [id], onDelete: Restrict)
 
   @@id([followerId, followedId])
 }
@@ -205,7 +205,6 @@ model Event {
   id   Int      @id @default(autoincrement())
   time DateTime @default(now())
 
-  // TODO all of these should have an on delete cascade, right??? TEST THIS!!!
   view            View?
   watchlist       Watchlist?
   startedViewing  Viewing?       @relation("StartedViewing")

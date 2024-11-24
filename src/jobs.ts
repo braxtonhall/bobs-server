@@ -5,10 +5,19 @@ import { sendReplyUpdates } from "./toolbox/jobs/sendReplyUpdates";
 import AsyncPool from "./util/AsyncPool";
 import { sendReminders } from "./secret-dj/jobs/sendReminders";
 import { loadContent } from "./trek/jobs/loadContent";
+import { deleteBadEvents } from "./trek/jobs/deleteBadEvents";
 
 export type Job = { callback: () => unknown; interval: number };
 
-const jobs: Job[] = [archiveSeasons, removeTokens, sendBoxUpdates, sendReplyUpdates, sendReminders, loadContent];
+const jobs: Job[] = [
+	archiveSeasons,
+	removeTokens,
+	sendBoxUpdates,
+	sendReplyUpdates,
+	sendReminders,
+	loadContent,
+	deleteBadEvents,
+];
 const scheduledJobs = new Set<NodeJS.Timeout>();
 const pool = new AsyncPool(jobs.length);
 

@@ -12,7 +12,7 @@ import {
 	Stack,
 } from "@mui/material";
 import { Link, Outlet, useLocation, Location, useLoaderData } from "react-router-dom";
-import { SearchRounded, PersonRounded, RssFeedRounded, PlayArrowRounded } from "@mui/icons-material";
+import { SearchRounded, PersonRounded, RssFeedRounded, PlayCircleOutlineRounded } from "@mui/icons-material";
 import { api, API } from "../util/api";
 import { defaultSettings, UserContext } from "../contexts/UserContext";
 import { useState } from "react";
@@ -57,7 +57,7 @@ export const Window = () => {
 							<ListItem disablePadding>
 								<ListItemButton component={Link} to="/" selected={value === "/"}>
 									<ListItemIcon>
-										<PlayArrowRounded />
+										<PlayCircleOutlineRounded />
 									</ListItemIcon>
 									<ListItemText primary="Watch" />
 								</ListItemButton>
@@ -120,7 +120,7 @@ export const Window = () => {
 							to="/"
 							label="Watch"
 							value="/"
-							icon={<PlayArrowRounded />}
+							icon={<PlayCircleOutlineRounded />}
 						/>
 						<BottomNavigationAction
 							component={Link}

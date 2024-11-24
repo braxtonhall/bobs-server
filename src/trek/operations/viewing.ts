@@ -1,4 +1,4 @@
-import { db } from "../../db";
+import { db, transaction } from "../../db";
 import { ViewingState } from "../types";
 
 export const start = async ({ viewerId, watchlistId }: { viewerId: string; watchlistId: string }) => {
@@ -56,11 +56,17 @@ export const complete = ({ viewerId, viewingId }: { viewerId: string; viewingId:
 		},
 		data: {
 			state: ViewingState.FINISHED,
-			cursor: null,
+			episode: { disconnect: true },
+			finishedAt: { create: {} },
 		},
 	});
 
 export const stop = ({ viewerId, viewingId }: { viewerId: string; viewingId: string }) =>
-	db.viewing.delete({
-		where: { viewerId, id: viewingId },
+	transaction(async () => {
+		const { startedAtId } = await db.viewing.delete({
+			where: { viewerId, id: viewingId },
+		});
+		await db.event.delete({
+			where: { id: startedAtId },
+		});
 	});

@@ -1,6 +1,6 @@
-import { db } from "../../db";
+import { db, transaction } from "../../db";
 
-export const setWatchlistLiked = ({
+export const setWatchlistLiked = async ({
 	viewerId,
 	watchlistId,
 	liked,
@@ -10,7 +10,7 @@ export const setWatchlistLiked = ({
 	liked: boolean;
 }) => {
 	if (liked) {
-		return db.watchlistLike.upsert({
+		await db.watchlistLike.upsert({
 			where: { viewerId_watchlistId: { viewerId, watchlistId } },
 			create: {
 				viewer: { connect: { id: viewerId } },
@@ -20,6 +20,11 @@ export const setWatchlistLiked = ({
 			update: {},
 		});
 	} else {
-		return db.watchlistLike.delete({ where: { viewerId_watchlistId: { viewerId, watchlistId } } });
+		await transaction(async () => {
+			const { createdAtId } = await db.watchlistLike.delete({
+				where: { viewerId_watchlistId: { viewerId, watchlistId } },
+			});
+			await db.event.delete({ where: { id: createdAtId } });
+		});
 	}
 };
