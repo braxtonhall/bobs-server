@@ -10,6 +10,7 @@ import {
 	ListItemIcon,
 	ListItemText,
 	MenuItem,
+	styled,
 	Typography,
 	useMediaQuery,
 	useTheme,
@@ -17,7 +18,7 @@ import {
 import { ExpandMoreRounded, PauseRounded, StopRounded } from "@mui/icons-material";
 import { Progress } from "../../misc/Progress";
 import { DecoratedViewing } from "./mergeViewingWithContent";
-import { useCallback, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { SpaceFillingBox, SpaceFillingBoxContainer } from "../../misc/SpaceFillingBox";
 import { useUserContext } from "../../../contexts/UserContext";
@@ -103,6 +104,58 @@ const WatchlistPreviewContent = ({ viewing, index: cursorIndex }: { viewing: Dec
 	);
 };
 
+const ScrollableListItemText = styled(Box)(() => ({
+	"@keyframes infinite-scroll": {
+		"0%": {
+			transform: "translateX(0)",
+		},
+		"100%": {
+			transform: "translateX(-50%)",
+		},
+	},
+	".watchlist-preview-entry:hover &.scrollable": {
+		animation: "infinite-scroll 6s linear 600ms infinite",
+	},
+	whiteSpace: "nowrap",
+	width: "fit-content",
+}));
+
+const WatchlistPreviewEntryText = ({ text, selected }: { text: string; selected: boolean }) => {
+	const [containerWidth, setContainerWidth] = useState<number | null>(null);
+	const [textWidth, setTextWidth] = useState<number | null>(null);
+	const [scrollable, setScrollable] = useState(false);
+	const textRef = useCallback((element: HTMLElement | null) => {
+		if (element !== null) {
+			setTextWidth(element.getBoundingClientRect().width);
+		}
+	}, []);
+	const containerRef = useCallback((element: HTMLElement | null) => {
+		if (element !== null) {
+			setContainerWidth(element.getBoundingClientRect().width);
+		}
+	}, []);
+	useEffect(() => {
+		if (typeof textWidth === "number" && typeof containerWidth === "number") {
+			if (textWidth > containerWidth) {
+				setScrollable(true);
+			}
+		}
+	}, [textWidth, containerWidth]);
+
+	return (
+		<ListItemText
+			ref={containerRef}
+			sx={{ overflow: "hidden" }}
+			primary={
+				<ScrollableListItemText ref={textRef} className={scrollable ? "scrollable" : ""}>
+					<span>{text}</span>
+					{scrollable && <span>&nbsp;&nbsp;&nbsp;&nbsp;{text}&nbsp;&nbsp;&nbsp;&nbsp;</span>}
+				</ScrollableListItemText>
+			}
+		/>
+	);
+};
+
 type WatchlistPreviewEntryProps = {
 	episode: DecoratedViewing["watchlist"]["episodes"][number];
 	viewingId: string;
@@ -124,12 +177,13 @@ const WatchlistPreviewEntry = ({ episode, viewingId, selected }: WatchlistPrevie
 	);
 	return (
 		<ListItem
+			className="watchlist-preview-entry"
 			disablePadding
 			ref={listItemRef}
 			sx={{ borderRight: "solid", borderColor: colour, height: "50px", boxSizing: "border-box" }}
 		>
 			<ListItemButton onClick={onClick} selected={selected} sx={{ paddingRight: "8px", position: "relative" }}>
-				<ListItemText sx={{ whiteSpace: "nowrap", overflow: "hidden" }} primary={text} />
+				<WatchlistPreviewEntryText text={text} selected={selected} />
 				<WatchlistPreviewEntryOptions episode={episode} viewingId={viewingId} />
 			</ListItemButton>
 		</ListItem>
@@ -137,7 +191,7 @@ const WatchlistPreviewEntry = ({ episode, viewingId, selected }: WatchlistPrevie
 };
 
 const WatchlistPreviewOptions = ({ viewing }: { viewing: Viewings[number] }) => {
-	const controls = useViewingControls();
+	const { pause, stop } = useViewingControls();
 	// TODO it might be nice to have a confirmation dialog
 	return (
 		<Box>
@@ -145,13 +199,13 @@ const WatchlistPreviewOptions = ({ viewing }: { viewing: Viewings[number] }) => 
 				<MenuItem component={Link} to={`/watchlists/${viewing.watchlist.id}`}>
 					Go to watchlist
 				</MenuItem>
-				<MenuItem onClick={controls.pause}>
+				<MenuItem onClick={pause}>
 					<ListItemIcon>
 						<PauseRounded fontSize="small" />
 					</ListItemIcon>
 					<ListItemText>Pause viewing</ListItemText>
 				</MenuItem>
-				<MenuItem onClick={controls.stop}>
+				<MenuItem onClick={stop}>
 					<ListItemIcon>
 						<StopRounded fontSize="small" />
 					</ListItemIcon>
