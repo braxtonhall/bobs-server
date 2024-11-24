@@ -4,6 +4,7 @@ import {
 	AccordionDetails,
 	AccordionSummary,
 	Box,
+	List,
 	ListItem,
 	ListItemButton,
 	ListItemIcon,
@@ -24,8 +25,7 @@ import { useMutationContext } from "./MutationContext";
 import { useColour } from "../../../hooks/useColour";
 import { Options } from "../../misc/Options";
 import { useViewingControls } from "../../../contexts/ViewingControlsContext";
-import { FixedSizeList as List } from "react-window";
-import AutoSizer from "react-virtualized-auto-sizer";
+import { useVirtualizer } from "@tanstack/react-virtual";
 
 export const WatchlistPreview = ({ viewing, index }: { viewing: DecoratedViewing; index: number }) =>
 	useMediaQuery(useTheme().breakpoints.up("sm")) ? (
@@ -61,39 +61,52 @@ const WatchlistPreviewHeader = ({ viewing, index }: { viewing: Viewings[number];
 	</Box>
 );
 
+// TODO https://tanstack.com/virtual/latest/docs/framework/react/examples/smooth-scroll
+// TODO https://tanstack.com/virtual/latest/docs/framework/react/examples/variable
 const WatchlistPreviewContent = ({ viewing, index: cursorIndex }: { viewing: DecoratedViewing; index: number }) => {
-	const listRef = useRef<List | null>(null);
+	const parentRef = useRef<HTMLDivElement>(null);
+
+	const virtualizer = useVirtualizer({
+		count: viewing.watchlist.episodes.length,
+		getScrollElement: () => parentRef.current,
+		estimateSize: () => 50, // TODO
+		overscan: 5,
+	});
+
+	// TODO perform the initial scroll
+
 	return (
-		<Box flex={1} overflow="auto" width="100%" maxHeight={{ xs: "400px", sm: "unset" }}>
-			<AutoSizer>
-				{({ height, width }: { height: number; width: number }) => (
-					<nav>
-						<List
-							ref={(list) => {
-								listRef.current = list;
-								list?.scrollToItem(cursorIndex);
+		<Box ref={parentRef} flex={1} overflow="auto" width="100%" maxHeight={{ xs: "400px", sm: "unset" }}>
+			<nav>
+				<List
+					sx={{
+						height: `${virtualizer.getTotalSize()}px`,
+						width: "100%",
+						position: "relative",
+					}}
+				>
+					{virtualizer.getVirtualItems().map(({ index, start }) => (
+						<Box
+							key={viewing.watchlist.episodes[index].id}
+							sx={{
+								position: "absolute",
+								top: 0,
+								left: 0,
+								width: "100%",
+								height: `50px`, // TODO
+								transform: `translateY(${start}px)`,
 							}}
-							width={width}
-							height={height}
-							itemCount={viewing.watchlist.episodes.length}
-							itemSize={50}
 						>
-							{({ index, style }) => (
-								<div key={index} style={style}>
-									<WatchlistPreviewEntry
-										episode={viewing.watchlist.episodes[index]}
-										viewingId={viewing.id}
-										selected={cursorIndex === index}
-										listRef={listRef}
-										index={index}
-										key={viewing.watchlist.episodes[index].id}
-									/>
-								</div>
-							)}
-						</List>
-					</nav>
-				)}
-			</AutoSizer>
+							<WatchlistPreviewEntry
+								episode={viewing.watchlist.episodes[index]}
+								viewingId={viewing.id}
+								selected={cursorIndex === index}
+								index={index}
+							/>
+						</Box>
+					))}
+				</List>
+			</nav>
 		</Box>
 	);
 };
@@ -102,20 +115,19 @@ type WatchlistPreviewEntryProps = {
 	episode: DecoratedViewing["watchlist"]["episodes"][number];
 	viewingId: string;
 	selected: boolean;
-	listRef: MutableRefObject<List<any> | null>;
 	index: number;
 };
 
-const WatchlistPreviewEntry = ({ episode, viewingId, selected, listRef, index }: WatchlistPreviewEntryProps) => {
+const WatchlistPreviewEntry = ({ episode, viewingId, selected, index }: WatchlistPreviewEntryProps) => {
 	const initialRender = useRef(true);
 	const listItemRef = useRef<HTMLLIElement>(null);
 	const { setCursor } = useMutationContext();
 	useEffect(() => {
-		if (selected && listItemRef.current && listRef.current) {
-			listRef.current.scrollToItem(index);
+		if (selected && listItemRef.current && !initialRender.current) {
+			// TODO scroll to item
 		}
 		initialRender.current = false;
-	}, [selected, index, listRef]);
+	}, [selected, index]);
 	const onClick = useCallback(() => setCursor({ viewingId, episodeId: episode.id }), [setCursor, viewingId, episode]);
 	const { settings } = useUserContext();
 	const colour = useColour(episode);
