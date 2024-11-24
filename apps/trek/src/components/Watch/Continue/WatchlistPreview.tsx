@@ -65,6 +65,7 @@ const WatchlistPreviewHeader = ({ viewing, index }: { viewing: Viewings[number];
 // TODO https://tanstack.com/virtual/latest/docs/framework/react/examples/variable
 const WatchlistPreviewContent = ({ viewing, index: cursorIndex }: { viewing: DecoratedViewing; index: number }) => {
 	const parentRef = useRef<HTMLDivElement>(null);
+	const initialRender = useRef(true);
 
 	const virtualizer = useVirtualizer({
 		count: viewing.watchlist.episodes.length,
@@ -73,7 +74,14 @@ const WatchlistPreviewContent = ({ viewing, index: cursorIndex }: { viewing: Dec
 		overscan: 5,
 	});
 
-	// TODO perform the initial scroll
+	useEffect(() => {
+		if (initialRender.current) {
+			virtualizer.scrollToIndex(cursorIndex);
+		} else {
+			virtualizer.scrollToIndex(cursorIndex, { behavior: "smooth" });
+		}
+		initialRender.current = false;
+	}, [virtualizer, cursorIndex]);
 
 	return (
 		<Box ref={parentRef} flex={1} overflow="auto" width="100%" maxHeight={{ xs: "400px", sm: "unset" }}>
@@ -101,7 +109,6 @@ const WatchlistPreviewContent = ({ viewing, index: cursorIndex }: { viewing: Dec
 								episode={viewing.watchlist.episodes[index]}
 								viewingId={viewing.id}
 								selected={cursorIndex === index}
-								index={index}
 							/>
 						</Box>
 					))}
@@ -115,19 +122,11 @@ type WatchlistPreviewEntryProps = {
 	episode: DecoratedViewing["watchlist"]["episodes"][number];
 	viewingId: string;
 	selected: boolean;
-	index: number;
 };
 
-const WatchlistPreviewEntry = ({ episode, viewingId, selected, index }: WatchlistPreviewEntryProps) => {
-	const initialRender = useRef(true);
+const WatchlistPreviewEntry = ({ episode, viewingId, selected }: WatchlistPreviewEntryProps) => {
 	const listItemRef = useRef<HTMLLIElement>(null);
 	const { setCursor } = useMutationContext();
-	useEffect(() => {
-		if (selected && listItemRef.current && !initialRender.current) {
-			// TODO scroll to item
-		}
-		initialRender.current = false;
-	}, [selected, index]);
 	const onClick = useCallback(() => setCursor({ viewingId, episodeId: episode.id }), [setCursor, viewingId, episode]);
 	const { settings } = useUserContext();
 	const colour = useColour(episode);
