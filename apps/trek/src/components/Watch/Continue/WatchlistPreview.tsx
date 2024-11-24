@@ -27,6 +27,7 @@ import { useColour } from "../../../hooks/useColour";
 import { Options } from "../../misc/Options";
 import { useViewingControls } from "../../../contexts/ViewingControlsContext";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import { useDimensions } from "../../../hooks/useDimensions";
 
 export const WatchlistPreview = ({ viewing, index }: { viewing: DecoratedViewing; index: number }) =>
 	useMediaQuery(useTheme().breakpoints.up("sm")) ? (
@@ -70,11 +71,11 @@ const WatchlistPreviewContent = ({ viewing, index: cursorIndex }: { viewing: Dec
 		getScrollElement: () => parentRef.current,
 		estimateSize: () => 50,
 		initialOffset: cursorIndex * 50 - 25,
-		overscan: 5,
+		overscan: 10,
 	});
 
 	return (
-		<Box ref={parentRef} flex={1} overflow="auto" width="100%" maxHeight={{ xs: "400px", sm: "unset" }}>
+		<Box ref={parentRef} overflow="auto" width="100%" maxHeight={{ xs: "400px", sm: "unset" }}>
 			<nav>
 				<List
 					disablePadding
@@ -106,56 +107,52 @@ const WatchlistPreviewContent = ({ viewing, index: cursorIndex }: { viewing: Dec
 
 const ScrollableListItemText = styled(Box)(() => ({
 	"@keyframes infinite-scroll": {
-		"0%": {
+		from: {
 			transform: "translateX(0)",
 		},
-		"100%": {
+		to: {
 			transform: "translateX(-50%)",
 		},
 	},
 	"@media (hover: none)": {
 		".Mui-selected &.scrollable": {
-			animation: "infinite-scroll 6s linear 600ms infinite",
+			animation: "infinite-scroll 6s linear 1s infinite",
 		},
 	},
 	".watchlist-preview-entry:hover &.scrollable": {
-		animation: "infinite-scroll 6s linear 600ms infinite",
+		animation: "infinite-scroll 6s linear 1s infinite",
 	},
 	whiteSpace: "nowrap",
 	width: "fit-content",
 }));
 
+const ScrollableListItemTextContainer = styled(ListItemText)(() => ({
+	overflow: "hidden",
+	"&:has(.scrollable)": {
+		maskImage: "linear-gradient(black, black), linear-gradient(to right, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0))",
+		maskSize: "calc(100% - 16px), 16px",
+		maskRepeat: "no-repeat",
+		maskPosition: "left, right",
+	},
+}));
+
 const WatchlistPreviewEntryText = ({ text }: { text: string }) => {
-	const [containerWidth, setContainerWidth] = useState<number | null>(null);
-	const [textWidth, setTextWidth] = useState<number | null>(null);
-	const [scrollable, setScrollable] = useState(false);
-	const textRef = useCallback((element: HTMLElement | null) => {
-		if (element !== null) {
-			setTextWidth(element.getBoundingClientRect().width);
-		}
-	}, []);
-	const containerRef = useCallback((element: HTMLElement | null) => {
-		if (element !== null) {
-			setContainerWidth(element.getBoundingClientRect().width);
-		}
-	}, []);
-	useEffect(() => {
-		// TODO needs to be affected by re-render
-		if (typeof textWidth === "number" && typeof containerWidth === "number") {
-			if (textWidth > containerWidth) {
-				setScrollable(true);
-			}
-		}
-	}, [textWidth, containerWidth]);
+	const [className, setClassName] = useState<"scrollable" | undefined>();
+	const textRef = useRef<HTMLElement>();
+	const containerRef = useRef<HTMLElement>();
+	const { width: containerWidth } = useDimensions(containerRef);
+	const { width: textWidth } = useDimensions(textRef, [text]);
+	useEffect(() => setClassName(textWidth > containerWidth ? "scrollable" : undefined), [textWidth, containerWidth]);
 
 	return (
-		<ListItemText
+		<ScrollableListItemTextContainer
 			ref={containerRef}
-			sx={{ overflow: "hidden" }}
 			primary={
-				<ScrollableListItemText ref={textRef} className={scrollable ? "scrollable" : ""}>
-					<span>&nbsp;&nbsp;&nbsp;&nbsp;{text}</span>
-					{scrollable && <span>&nbsp;&nbsp;&nbsp;&nbsp;{text}</span>}
+				<ScrollableListItemText className={className}>
+					<Box component="span" ref={textRef}>
+						&nbsp;&nbsp;&nbsp;&nbsp;{text}
+					</Box>
+					{className && <Box component="span">&nbsp;&nbsp;&nbsp;&nbsp;{text}</Box>}
 				</ScrollableListItemText>
 			}
 		/>
