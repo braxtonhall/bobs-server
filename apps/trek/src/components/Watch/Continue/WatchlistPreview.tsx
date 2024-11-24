@@ -113,6 +113,11 @@ const ScrollableListItemText = styled(Box)(() => ({
 			transform: "translateX(-50%)",
 		},
 	},
+	"@media (hover: none)": {
+		".Mui-selected &.scrollable": {
+			animation: "infinite-scroll 6s linear 600ms infinite",
+		},
+	},
 	".watchlist-preview-entry:hover &.scrollable": {
 		animation: "infinite-scroll 6s linear 600ms infinite",
 	},
@@ -120,7 +125,7 @@ const ScrollableListItemText = styled(Box)(() => ({
 	width: "fit-content",
 }));
 
-const WatchlistPreviewEntryText = ({ text, selected }: { text: string; selected: boolean }) => {
+const WatchlistPreviewEntryText = ({ text }: { text: string }) => {
 	const [containerWidth, setContainerWidth] = useState<number | null>(null);
 	const [textWidth, setTextWidth] = useState<number | null>(null);
 	const [scrollable, setScrollable] = useState(false);
@@ -135,6 +140,7 @@ const WatchlistPreviewEntryText = ({ text, selected }: { text: string; selected:
 		}
 	}, []);
 	useEffect(() => {
+		// TODO needs to be affected by re-render
 		if (typeof textWidth === "number" && typeof containerWidth === "number") {
 			if (textWidth > containerWidth) {
 				setScrollable(true);
@@ -148,8 +154,8 @@ const WatchlistPreviewEntryText = ({ text, selected }: { text: string; selected:
 			sx={{ overflow: "hidden" }}
 			primary={
 				<ScrollableListItemText ref={textRef} className={scrollable ? "scrollable" : ""}>
-					<span>{text}</span>
-					{scrollable && <span>&nbsp;&nbsp;&nbsp;&nbsp;{text}&nbsp;&nbsp;&nbsp;&nbsp;</span>}
+					<span>&nbsp;&nbsp;&nbsp;&nbsp;{text}</span>
+					{scrollable && <span>&nbsp;&nbsp;&nbsp;&nbsp;{text}</span>}
 				</ScrollableListItemText>
 			}
 		/>
@@ -182,8 +188,12 @@ const WatchlistPreviewEntry = ({ episode, viewingId, selected }: WatchlistPrevie
 			ref={listItemRef}
 			sx={{ borderRight: "solid", borderColor: colour, height: "50px", boxSizing: "border-box" }}
 		>
-			<ListItemButton onClick={onClick} selected={selected} sx={{ paddingRight: "8px", position: "relative" }}>
-				<WatchlistPreviewEntryText text={text} selected={selected} />
+			<ListItemButton
+				onClick={onClick}
+				selected={selected}
+				sx={{ paddingRight: "8px", position: "relative", paddingLeft: 0 }}
+			>
+				<WatchlistPreviewEntryText text={text} />
 				<WatchlistPreviewEntryOptions episode={episode} viewingId={viewingId} />
 			</ListItemButton>
 		</ListItem>
