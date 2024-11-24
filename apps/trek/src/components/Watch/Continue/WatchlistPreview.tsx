@@ -10,7 +10,6 @@ import {
 	ListItemIcon,
 	ListItemText,
 	MenuItem,
-	styled,
 	Typography,
 	useMediaQuery,
 	useTheme,
@@ -18,7 +17,7 @@ import {
 import { ExpandMoreRounded, PauseRounded, StopRounded } from "@mui/icons-material";
 import { Progress } from "../../misc/Progress";
 import { DecoratedViewing } from "./mergeViewingWithContent";
-import { MutableRefObject, useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import { SpaceFillingBox, SpaceFillingBoxContainer } from "../../misc/SpaceFillingBox";
 import { useUserContext } from "../../../contexts/UserContext";

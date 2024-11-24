@@ -42,7 +42,11 @@ export const Viewing = ({ viewing }: ViewingProps) => {
 				</Box>
 
 				<ThemeProvider theme={theme}>
-					<Box width={{ xs: "100%", sm: "75%" }} sx={{ backgroundColor: colour, padding: "1em" }}>
+					<Box
+						width={{ xs: "100%", sm: "75%" }}
+						sx={{ backgroundColor: colour, padding: "1em" }}
+						boxSizing="border-box"
+					>
 						{current ? (
 							<Box key={current.id}>
 								<Box display="flex" alignItems="stretch" position="relative" marginBottom="1em">
