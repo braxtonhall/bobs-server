@@ -4,7 +4,6 @@ import {
 	AccordionDetails,
 	AccordionSummary,
 	Box,
-	List,
 	ListItem,
 	ListItemButton,
 	ListItemIcon,
@@ -17,7 +16,7 @@ import {
 import { ExpandMoreRounded, PauseRounded, StopRounded } from "@mui/icons-material";
 import { Progress } from "../../misc/Progress";
 import { DecoratedViewing } from "./mergeViewingWithContent";
-import { MutableRefObject, useEffect, useRef } from "react";
+import { MutableRefObject, useCallback, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { SpaceFillingBox, SpaceFillingBoxContainer } from "../../misc/SpaceFillingBox";
 import { useUserContext } from "../../../contexts/UserContext";
@@ -25,6 +24,8 @@ import { useMutationContext } from "./MutationContext";
 import { useColour } from "../../../hooks/useColour";
 import { Options } from "../../misc/Options";
 import { useViewingControls } from "../../../contexts/ViewingControlsContext";
+import { FixedSizeList as List } from "react-window";
+import AutoSizer from "react-virtualized-auto-sizer";
 
 export const WatchlistPreview = ({ viewing, index }: { viewing: DecoratedViewing; index: number }) =>
 	useMediaQuery(useTheme().breakpoints.up("sm")) ? (
@@ -64,19 +65,25 @@ const WatchlistPreviewContent = ({ viewing, index: cursorIndex }: { viewing: Dec
 	const containerRef = useRef<HTMLElement>(null);
 	return (
 		<Box ref={containerRef} flex={1} overflow="auto" width="100%" maxHeight={{ xs: "400px", sm: "unset" }}>
-			<nav>
-				<List disablePadding>
-					{viewing.watchlist.episodes.map((episode, episodeIndex) => (
-						<WatchlistPreviewEntry
-							episode={episode}
-							viewingId={viewing.id}
-							selected={cursorIndex === episodeIndex}
-							containerRef={containerRef}
-							key={episode.id}
-						/>
-					))}
-				</List>
-			</nav>
+			<AutoSizer>
+				{({ height, width }: { height: number; width: number }) => (
+					<nav>
+						<List width={width} height={height} itemCount={viewing.watchlist.episodes.length} itemSize={50}>
+							{({ index, style }) => (
+								<div key={index} style={style}>
+									<WatchlistPreviewEntry
+										episode={viewing.watchlist.episodes[index]}
+										viewingId={viewing.id}
+										selected={cursorIndex === index}
+										containerRef={containerRef}
+										key={viewing.watchlist.episodes[index].id}
+									/>
+								</div>
+							)}
+						</List>
+					</nav>
+				)}
+			</AutoSizer>
 		</Box>
 	);
 };
@@ -107,15 +114,16 @@ const WatchlistPreviewEntry = ({ episode, viewingId, selected, containerRef }: W
 		}
 		initialRender.current = false;
 	}, [selected, containerRef]);
+	const onClick = useCallback(() => setCursor({ viewingId, episodeId: episode.id }), [setCursor, viewingId, episode]);
 	const { settings } = useUserContext();
 	const colour = useColour(episode);
 	return (
-		<ListItem disablePadding ref={listItemRef} sx={{ borderRight: "solid", borderColor: colour }}>
-			<ListItemButton
-				onClick={() => setCursor({ viewingId, episodeId: episode.id })}
-				selected={selected}
-				sx={{ paddingRight: "8px" }}
-			>
+		<ListItem
+			disablePadding
+			ref={listItemRef}
+			sx={{ borderRight: "solid", borderColor: colour, height: "50px", boxSizing: "border-box" }}
+		>
+			<ListItemButton onClick={onClick} selected={selected} sx={{ paddingRight: "8px" }}>
 				<ListItemText
 					primary={
 						selected || episode.opinions[0] || !settings.isSpoilerEpisodeName
