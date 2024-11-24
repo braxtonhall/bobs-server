@@ -62,20 +62,30 @@ const WatchlistPreviewHeader = ({ viewing, index }: { viewing: Viewings[number];
 );
 
 const WatchlistPreviewContent = ({ viewing, index: cursorIndex }: { viewing: DecoratedViewing; index: number }) => {
-	const containerRef = useRef<HTMLElement>(null);
+	const listRef = useRef<List | null>(null);
 	return (
-		<Box ref={containerRef} flex={1} overflow="auto" width="100%" maxHeight={{ xs: "400px", sm: "unset" }}>
+		<Box flex={1} overflow="auto" width="100%" maxHeight={{ xs: "400px", sm: "unset" }}>
 			<AutoSizer>
 				{({ height, width }: { height: number; width: number }) => (
 					<nav>
-						<List width={width} height={height} itemCount={viewing.watchlist.episodes.length} itemSize={50}>
+						<List
+							ref={(list) => {
+								listRef.current = list;
+								list?.scrollToItem(cursorIndex);
+							}}
+							width={width}
+							height={height}
+							itemCount={viewing.watchlist.episodes.length}
+							itemSize={50}
+						>
 							{({ index, style }) => (
 								<div key={index} style={style}>
 									<WatchlistPreviewEntry
 										episode={viewing.watchlist.episodes[index]}
 										viewingId={viewing.id}
 										selected={cursorIndex === index}
-										containerRef={containerRef}
+										listRef={listRef}
+										index={index}
 										key={viewing.watchlist.episodes[index].id}
 									/>
 								</div>
@@ -92,28 +102,20 @@ type WatchlistPreviewEntryProps = {
 	episode: DecoratedViewing["watchlist"]["episodes"][number];
 	viewingId: string;
 	selected: boolean;
-	containerRef: MutableRefObject<HTMLElement | null>;
+	listRef: MutableRefObject<List<any> | null>;
+	index: number;
 };
 
-const WatchlistPreviewEntry = ({ episode, viewingId, selected, containerRef }: WatchlistPreviewEntryProps) => {
+const WatchlistPreviewEntry = ({ episode, viewingId, selected, listRef, index }: WatchlistPreviewEntryProps) => {
 	const initialRender = useRef(true);
 	const listItemRef = useRef<HTMLLIElement>(null);
 	const { setCursor } = useMutationContext();
 	useEffect(() => {
-		if (selected && listItemRef.current && containerRef.current) {
-			const top = listItemRef.current.offsetTop;
-			const bottom = top + listItemRef.current.clientHeight;
-			const containerTop = containerRef.current.scrollTop;
-			const containerBottom = containerTop + containerRef.current.clientHeight;
-			if (bottom >= containerBottom || top <= containerTop) {
-				containerRef.current.scrollTo({
-					top,
-					behavior: initialRender.current ? undefined : "smooth",
-				});
-			}
+		if (selected && listItemRef.current && listRef.current) {
+			listRef.current.scrollToItem(index);
 		}
 		initialRender.current = false;
-	}, [selected, containerRef]);
+	}, [selected, index, listRef]);
 	const onClick = useCallback(() => setCursor({ viewingId, episodeId: episode.id }), [setCursor, viewingId, episode]);
 	const { settings } = useUserContext();
 	const colour = useColour(episode);
