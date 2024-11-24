@@ -61,8 +61,6 @@ const WatchlistPreviewHeader = ({ viewing, index }: { viewing: Viewings[number];
 	</Box>
 );
 
-// TODO https://tanstack.com/virtual/latest/docs/framework/react/examples/smooth-scroll
-// TODO https://tanstack.com/virtual/latest/docs/framework/react/examples/variable
 const WatchlistPreviewContent = ({ viewing, index: cursorIndex }: { viewing: DecoratedViewing; index: number }) => {
 	const parentRef = useRef<HTMLDivElement>(null);
 	const initialRender = useRef(true);
