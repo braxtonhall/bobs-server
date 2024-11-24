@@ -87,9 +87,12 @@ export const Profile = () => {
 		queryFn: () => api.getViewerRatings.query(viewer.id),
 	});
 
-	const isFollowingPage = !self && !!viewer.followers.length;
-	const isFollowedByPage = !self && !!viewer.following.length;
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const isFollowingPage = !self && !!viewer.followers.length; // TODO
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const isFollowedByPage = !self && !!viewer.following.length; // TODO
 
+	// noinspection HtmlUnknownTarget
 	return (
 		<Container maxWidth="md">
 			<Box width="100%" marginTop="1em" marginBottom="1em">

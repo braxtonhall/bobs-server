@@ -78,6 +78,7 @@ const Continue = ({ series, episodes }: ContinueProps) => {
 
 	const { mutate: pause } = useMutation({
 		onMutate: (id: string) => {
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const removed = removeFromInProgress(id);
 			// TODO add to the pause list
 		},
@@ -96,6 +97,7 @@ const Continue = ({ series, episodes }: ContinueProps) => {
 	});
 	const { mutate: complete } = useMutation({
 		onMutate: (id: string) => {
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const removed = removeFromInProgress(id);
 			// TODO add to the complete list
 		},

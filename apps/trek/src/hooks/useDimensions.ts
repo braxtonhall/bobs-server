@@ -14,6 +14,7 @@ export const useDimensions = (ref: MutableRefObject<HTMLElement | null | undefin
 		onResize();
 		window.addEventListener("resize", onResize);
 		return () => window.removeEventListener("resize", onResize);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ref, onResize, ...(deps ?? [])]);
 	return dimensions;
 };

@@ -25,28 +25,19 @@ import {
 	RadioButtonUnchecked,
 } from "@mui/icons-material";
 import { DateTime } from "luxon";
-import { API } from "../util/api";
+import { api, API } from "../util/api";
 import { Episode } from "./Watch/types";
 import { SlidingRating } from "./misc/SlidingRating";
 import { Labelled } from "./misc/Labelled";
-
-const getStoredTags = () => {
-	try {
-		const savedTags = JSON.parse(localStorage.getItem("tags") ?? "[]");
-		if (Array.isArray(savedTags) && savedTags.every((element) => typeof element === "string")) {
-			return savedTags;
-		}
-	} catch {
-		// Do nothing
-	}
-	return [];
-};
+import { useQuery } from "@tanstack/react-query";
+import { useStorage } from "../hooks/useStorage";
 
 export const LogForm = (props: {
 	episode: Episode;
 	logEpisode: (opts: Parameters<API["logEpisode"]["mutate"]>[0]) => void;
 }) => {
-	const [tags, setTags] = useState(getStoredTags());
+	const storage = useStorage("viewTags");
+	const [tags, setTags] = useState(storage.get());
 	const [date, setDate] = useState<DateTime | null>(DateTime.now());
 	const [rating, setRating] = useState<number | null>(null);
 	const [liked, setLiked] = useState(false);
@@ -55,15 +46,23 @@ export const LogForm = (props: {
 	const touchScreen = useMediaQuery("(pointer:coarse)");
 	const theme = useTheme();
 
+	const { data: tagOptions = [] } = useQuery({
+		queryKey: ["tags", "user"],
+		queryFn: () => api.getViewerViewTags.query(),
+	});
+
 	useEffect(() => {
 		window.onbeforeunload = () => (review || rating || liked ? "Are you sure you want to exit?" : undefined);
 		return () => void (window.onbeforeunload = null);
 	}, [review, rating, liked]);
 
-	const storeTags = useCallback((tags: string[]) => {
-		localStorage.setItem("tags", JSON.stringify(tags));
-		return setTags(tags);
-	}, []);
+	const storeTags = useCallback(
+		(tags: string[]) => {
+			storage.set(tags);
+			return setTags(tags);
+		},
+		[storage],
+	);
 
 	return (
 		<Form
@@ -151,7 +150,7 @@ export const LogForm = (props: {
 						width="100%"
 						marginBottom={{ xs: "1em", md: "unset" }}
 					>
-						<Tags tags={tags} setTags={storeTags} />
+						<Tags tags={tags} setTags={storeTags} options={tagOptions} />
 					</Box>
 					<Box display="flex" justifyContent="center" alignItems="center" width={{ xs: "100%", md: "unset" }}>
 						<LocalizationProvider dateAdapter={AdapterLuxon}>
