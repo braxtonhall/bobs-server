@@ -22,18 +22,23 @@ const darkTheme = createTheme({
 	},
 });
 
+const lightTheme = createTheme({
+	palette: {
+		mode: "light",
+	},
+});
+
 const DARK_MODE_THRESHOLD = 155;
 
 export const Viewing = ({ viewing }: ViewingProps) => {
 	// TODO what should happen if you are DONE???
-	const defaultTheme = useTheme();
 	const maybeIndex = viewing.watchlist.episodes.findIndex(({ id }) => id === viewing.cursor);
 	const index = maybeIndex >= 0 ? maybeIndex : viewing.watchlist.episodes.length;
 	const current = viewing.watchlist.episodes[index];
 	const { logEpisode } = useMutationContext();
 	const colour = useColour(current);
 	const dark = tinycolor(colour).getBrightness() < DARK_MODE_THRESHOLD;
-	const theme = dark ? darkTheme : defaultTheme;
+	const theme = dark ? darkTheme : lightTheme;
 	return (
 		<StyledCard>
 			<Box display={{ sm: "flex" }} justifyContent="right">

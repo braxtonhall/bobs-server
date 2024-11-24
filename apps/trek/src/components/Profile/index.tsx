@@ -31,35 +31,35 @@ import { RatingHistogram } from "../misc/RatingHistogram";
 import { useQuery } from "@tanstack/react-query";
 
 const Favourite = styled(Paper)(({ theme }) => ({
-	backgroundColor: "#fff",
+	backgroundColor: "#fff", // TODO
 	...theme.typography.body2,
 	padding: theme.spacing(1),
 	textAlign: "center",
 	color: theme.palette.text.secondary,
 	...theme.applyStyles("dark", {
-		backgroundColor: "#1A2027",
+		backgroundColor: "#1A2027", // TODO
 	}),
 }));
 
 const Statistic = styled(Box)(({ theme }) => ({
-	backgroundColor: "#fff",
+	backgroundColor: "#fff", // TODO
 	...theme.typography.body2,
 	padding: theme.spacing(1),
 	textAlign: "center",
 	color: theme.palette.text.secondary,
 	...theme.applyStyles("dark", {
-		backgroundColor: "#1A2027",
+		backgroundColor: "#1A2027", // TODO
 	}),
 }));
 
 const LatestEntry = styled(Paper)(({ theme }) => ({
-	backgroundColor: "#fff",
+	backgroundColor: "#fff", // TODO
 	...theme.typography.body2,
 	padding: theme.spacing(1),
 	textAlign: "center",
 	color: theme.palette.text.secondary,
 	...theme.applyStyles("dark", {
-		backgroundColor: "#1A2027",
+		backgroundColor: "#1A2027", // TODO
 	}),
 }));
 
