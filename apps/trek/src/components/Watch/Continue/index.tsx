@@ -102,33 +102,35 @@ const Continue = ({ series, episodes }: ContinueProps) => {
 		mutationFn: api.completeViewing.mutate,
 	});
 
+	const decoratedViewings = useMemo(
+		() =>
+			!!viewings.length &&
+			series &&
+			episodes &&
+			viewings.map((viewing) => mergeViewingWithContent({ viewing, series, episodes })),
+		[viewings, series, episodes],
+	);
+
 	return (
 		<MutationContext.Provider value={{ logEpisode, setCursor }}>
 			<Box position="relative" width="100%" boxSizing="border-box">
 				{!hasNextPage && !isFetching && !viewings.length ? (
 					<ContinueInactive />
 				) : (
-					!!viewings.length &&
-					series &&
-					episodes &&
-					viewings.map(
-						((series, episodes) => (viewing) => (
-							<ViewingControlsContext.Provider
-								key={viewing.id}
-								value={{
-									stop: curry(stop, viewing.id),
-									pause: curry(pause, viewing.id),
-									complete: curry(complete, viewing.id),
-									resume: curry(resume, viewing.id),
-								}}
-							>
-								<Viewing
-									key={viewing.id}
-									viewing={mergeViewingWithContent({ viewing, series, episodes })}
-								/>
-							</ViewingControlsContext.Provider>
-						))(series, episodes),
-					)
+					decoratedViewings &&
+					decoratedViewings.map((viewing) => (
+						<ViewingControlsContext.Provider
+							key={viewing.id}
+							value={{
+								stop: curry(stop, viewing.id),
+								pause: curry(pause, viewing.id),
+								complete: curry(complete, viewing.id),
+								resume: curry(resume, viewing.id),
+							}}
+						>
+							<Viewing key={viewing.id} viewing={viewing} />
+						</ViewingControlsContext.Provider>
+					))
 				)}
 
 				{hasNextPage &&
