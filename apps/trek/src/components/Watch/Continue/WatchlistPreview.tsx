@@ -10,6 +10,7 @@ import {
 	ListItemIcon,
 	ListItemText,
 	MenuItem,
+	styled,
 	Typography,
 	useMediaQuery,
 	useTheme,
@@ -17,7 +18,7 @@ import {
 import { ExpandMoreRounded, PauseRounded, StopRounded } from "@mui/icons-material";
 import { Progress } from "../../misc/Progress";
 import { DecoratedViewing } from "./mergeViewingWithContent";
-import { MutableRefObject, useCallback, useEffect, useRef } from "react";
+import { MutableRefObject, useCallback, useEffect, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import { SpaceFillingBox, SpaceFillingBoxContainer } from "../../misc/SpaceFillingBox";
 import { useUserContext } from "../../../contexts/UserContext";
@@ -63,44 +64,31 @@ const WatchlistPreviewHeader = ({ viewing, index }: { viewing: Viewings[number];
 
 const WatchlistPreviewContent = ({ viewing, index: cursorIndex }: { viewing: DecoratedViewing; index: number }) => {
 	const parentRef = useRef<HTMLDivElement>(null);
-	const initialRender = useRef(true);
 
 	const virtualizer = useVirtualizer({
 		count: viewing.watchlist.episodes.length,
 		getScrollElement: () => parentRef.current,
-		estimateSize: () => 50, // TODO
+		estimateSize: () => 50,
+		initialOffset: cursorIndex * 50 - 25,
 		overscan: 5,
 	});
-
-	useEffect(() => {
-		if (initialRender.current) {
-			virtualizer.scrollToIndex(cursorIndex);
-		} else {
-			virtualizer.scrollToIndex(cursorIndex, { behavior: "smooth" });
-		}
-		initialRender.current = false;
-	}, [virtualizer, cursorIndex]);
 
 	return (
 		<Box ref={parentRef} flex={1} overflow="auto" width="100%" maxHeight={{ xs: "400px", sm: "unset" }}>
 			<nav>
 				<List
-					sx={{
-						height: `${virtualizer.getTotalSize()}px`,
-						width: "100%",
-						position: "relative",
-					}}
+					disablePadding
+					sx={{ height: `${virtualizer.getTotalSize()}px`, width: "100%", position: "relative" }}
 				>
 					{virtualizer.getVirtualItems().map(({ index, start }) => (
 						<Box
 							key={viewing.watchlist.episodes[index].id}
 							sx={{
 								position: "absolute",
-								top: 0,
+								top: start,
 								left: 0,
 								width: "100%",
-								height: `50px`, // TODO
-								transform: `translateY(${start}px)`,
+								height: "50px",
 							}}
 						>
 							<WatchlistPreviewEntry
@@ -128,20 +116,21 @@ const WatchlistPreviewEntry = ({ episode, viewingId, selected }: WatchlistPrevie
 	const onClick = useCallback(() => setCursor({ viewingId, episodeId: episode.id }), [setCursor, viewingId, episode]);
 	const { settings } = useUserContext();
 	const colour = useColour(episode);
+	const text = useMemo(
+		() =>
+			selected || episode.opinions[0] || !settings.isSpoilerEpisodeName
+				? episode.name
+				: `${episode.seriesId} ${episode.season ? episode.season + "-" : ""}${episode.production}`,
+		[selected, episode, settings],
+	);
 	return (
 		<ListItem
 			disablePadding
 			ref={listItemRef}
 			sx={{ borderRight: "solid", borderColor: colour, height: "50px", boxSizing: "border-box" }}
 		>
-			<ListItemButton onClick={onClick} selected={selected} sx={{ paddingRight: "8px" }}>
-				<ListItemText
-					primary={
-						selected || episode.opinions[0] || !settings.isSpoilerEpisodeName
-							? episode.name
-							: `${episode.seriesId} ${episode.season ? episode.season + "-" : ""}${episode.production}`
-					}
-				/>
+			<ListItemButton onClick={onClick} selected={selected} sx={{ paddingRight: "8px", position: "relative" }}>
+				<ListItemText sx={{ whiteSpace: "nowrap", overflow: "hidden" }} primary={text} />
 				<WatchlistPreviewEntryOptions episode={episode} viewingId={viewingId} />
 			</ListItemButton>
 		</ListItem>
