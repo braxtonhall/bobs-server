@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import storage from "../util/storage";
 
 type StoreOptions<T> = {
 	serialize: (input: T) => string;
@@ -28,7 +29,7 @@ function store<T>(options: Partial<StoreOptions<T>> & PartialStoreOptions<T>): S
 		return {
 			get: (): T => {
 				try {
-					const stored = localStorage.getItem(key);
+					const stored = storage.get(key);
 					if (stored) {
 						const value = options.deserialize!(stored);
 						if (options.validator!(value)) {
@@ -40,8 +41,8 @@ function store<T>(options: Partial<StoreOptions<T>> & PartialStoreOptions<T>): S
 				}
 				return options.default();
 			},
-			set: (value: T): void => localStorage.setItem(key, options.serialize!(value)),
-			clear: (): void => localStorage.removeItem(key),
+			set: (value: T): void => storage.set(key, options.serialize!(value)),
+			clear: (): void => storage.remove(key),
 		};
 	};
 }
