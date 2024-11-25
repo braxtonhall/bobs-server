@@ -172,6 +172,18 @@ type WatchlistPreviewEntryProps = {
 	selected: boolean;
 };
 
+const WatchlistPreviewEntryListItem = styled(ListItem)(() => ({
+	height: "50px",
+	"&::after": {
+		content: '""',
+		position: "absolute",
+		height: "100%",
+		width: "3px",
+		right: "0",
+		pointerEvents: "none",
+	},
+}));
+
 const WatchlistPreviewEntry = ({ episode, viewingId, selected }: WatchlistPreviewEntryProps) => {
 	const listItemRef = useRef<HTMLLIElement>(null);
 	const { setCursor } = useMutationContext();
@@ -186,21 +198,23 @@ const WatchlistPreviewEntry = ({ episode, viewingId, selected }: WatchlistPrevie
 		[selected, episode, settings],
 	);
 	return (
-		<ListItem
+		<WatchlistPreviewEntryListItem
 			className="watchlist-preview-entry"
 			disablePadding
 			ref={listItemRef}
-			sx={{ borderRight: "solid", borderColor: colour, height: "50px", boxSizing: "border-box" }}
+			sx={{
+				"&::after": { backgroundColor: colour },
+			}}
 		>
 			<ListItemButton
 				onClick={onClick}
 				selected={selected}
-				sx={{ paddingRight: "8px", position: "relative", paddingLeft: 0 }}
+				sx={{ paddingRight: "11px", position: "relative", paddingLeft: 0 }}
 			>
 				<WatchlistPreviewEntryText text={text} />
 				<WatchlistPreviewEntryOptions episode={episode} viewingId={viewingId} />
 			</ListItemButton>
-		</ListItem>
+		</WatchlistPreviewEntryListItem>
 	);
 };
 
