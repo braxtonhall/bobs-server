@@ -65,8 +65,8 @@ const WatchlistPreviewHeader = ({ viewing, index }: { viewing: Viewings[number];
 			<WatchlistPreviewOptions viewing={viewing} />
 		</Box>
 		<Progress
-			numerator={index < 0 ? viewing.watchlist.episodes.length : index}
-			denominator={viewing.watchlist.episodes.length}
+			numerator={index < 0 ? viewing.watchlist.entries.length : index}
+			denominator={viewing.watchlist.entries.length}
 		/>
 	</Box>
 );

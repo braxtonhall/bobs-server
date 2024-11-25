@@ -29,10 +29,12 @@ const Continue = ({ series, episodes }: ContinueProps) => {
 		onMutate: (env) => {
 			viewings.forEach((viewing) => {
 				if (viewing.cursor === env.episodeId) {
-					const currentIndex = viewing.watchlist.episodes.findIndex(({ id }) => id === env.episodeId);
+					const currentIndex = viewing.watchlist.entries.findIndex(
+						({ episodeId }) => episodeId === env.episodeId,
+					);
 					if (currentIndex >= 0) {
-						const next = viewing.watchlist.episodes[currentIndex + 1];
-						viewing.cursor = next?.id ?? null;
+						const next = viewing.watchlist.entries[currentIndex + 1];
+						viewing.cursor = next?.episodeId ?? null;
 					}
 				}
 			});

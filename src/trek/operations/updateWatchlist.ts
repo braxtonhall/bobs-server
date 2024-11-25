@@ -11,19 +11,6 @@ export const updateWatchlistInputSchema = z.object({
 });
 
 export const updateWatchlist = async (ownerId: string, watchlist: z.infer<typeof updateWatchlistInputSchema>) => {
-	const { episodes } = await db.watchlist.findUniqueOrThrow({
-		where: {
-			id: watchlist.watchlistId,
-			ownerId,
-		},
-		select: {
-			episodes: {
-				select: {
-					id: true,
-				},
-			},
-		},
-	});
 	return db.watchlist.update({
 		where: {
 			id: watchlist.watchlistId,
@@ -38,10 +25,11 @@ export const updateWatchlist = async (ownerId: string, watchlist: z.infer<typeof
 					create: { name },
 				})),
 			},
-			episodes: {
-				disconnect: episodes,
-				connect: watchlist.episodes.map((id) => ({
-					id,
+			entries: {
+				deleteMany: {},
+				create: watchlist.episodes.map((episodeId, rank) => ({
+					episodeId,
+					rank,
 				})),
 			},
 		},

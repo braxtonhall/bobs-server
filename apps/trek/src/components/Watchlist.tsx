@@ -87,7 +87,7 @@ const Watchlist = () => {
 	});
 	const { episodes, series } = useContent();
 	const decorated = useMemo(
-		() => episodes && series && mergeEpisodesWithContent({ list: watchlist.episodes, episodes, series }),
+		() => episodes && series && mergeEpisodesWithContent({ list: watchlist.entries, episodes, series }),
 		[episodes, series, watchlist],
 	);
 	const runtime = useMemo(
@@ -128,7 +128,7 @@ const Watchlist = () => {
 								{watchlist.createdAt && (
 									<>{DateTime.fromISO(watchlist.createdAt.time).toLocaleString() + " • "}</>
 								)}
-								{`${watchlist.episodes.length} episode${watchlist.episodes.length === 1 ? "" : "s"}`}
+								{`${watchlist.entries.length} episode${watchlist.entries.length === 1 ? "" : "s"}`}
 								{runtime !== null && `, ${runtime}`}
 							</Typography>
 							<Typography variant="body1">

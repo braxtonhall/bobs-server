@@ -8,8 +8,9 @@ export const getWatchlist = async ({ watchlistId, viewerId }: { watchlistId: str
 				id: watchlistId,
 			},
 			include: {
-				episodes: {
-					select: { id: true },
+				entries: {
+					select: { episodeId: true },
+					orderBy: { rank: "asc" },
 				},
 				owner: {
 					select: { name: true, id: true },

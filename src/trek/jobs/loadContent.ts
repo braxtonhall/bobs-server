@@ -42,12 +42,12 @@ const loadEpisodes = async () => {
 	for (let i = 0; i < episodes.length; i++) {
 		const row = episodes[i];
 		const seriesId = row.SERIES_ID;
-		const season = Number(row.SEASON) || 0;
+		const seasonNumber = Number(row.SEASON) || 0;
 		const production = Number(row.EPISODE) || 0;
 
 		const episode = {
 			seriesId,
-			season,
+			season: seasonNumber,
 			production,
 			abbreviation: row.ABBR || null,
 			name: row.NAME,
@@ -62,11 +62,20 @@ const loadEpisodes = async () => {
 			}).toFormat("yyyy-MM-dd"),
 		};
 
+		const season = { seriesId, number: seasonNumber };
+		await db.trekSeason.upsert({
+			where: {
+				seriesId_number: season,
+			},
+			update: season,
+			create: season,
+		});
+
 		await db.episode.upsert({
 			where: {
 				seriesId_season_production: {
 					seriesId,
-					season,
+					season: seasonNumber,
 					production,
 				},
 			},
@@ -76,37 +85,53 @@ const loadEpisodes = async () => {
 	}
 };
 
-const setDefaultWatchlist = async () => {
+const ensureDefaultWatchlist = async () => {
 	const watchlist = await db.watchlist.findFirst({
 		where: {
 			ownerId: { in: null },
 		},
 	});
-	const data = {
-		name: "bob's trek",
-		description: "Where some have gone before",
-		filters: "{}",
-		episodes: {
-			connect: await db.episode.findMany({
-				select: {
-					id: true,
-				},
-				orderBy: {
-					sort: "asc",
-				},
-			}),
-		},
-	} as const;
 	if (watchlist) {
-		await db.watchlist.update({
-			where: {
-				id: watchlist.id,
-			},
-			data,
-		});
+		return watchlist.id;
 	} else {
-		await db.watchlist.create({ data });
+		const watchlist = await db.watchlist.create({
+			data: {
+				name: "a name",
+				description: "a description",
+			},
+		});
+		return watchlist.id;
 	}
+};
+
+const setDefaultWatchlist = async () => {
+	const id = await ensureDefaultWatchlist();
+	const episodes = await db.episode.findMany({
+		select: {
+			id: true,
+		},
+		orderBy: {
+			sort: "asc",
+		},
+	});
+
+	return db.watchlist.update({
+		where: {
+			id,
+		},
+		data: {
+			name: "bob's trek",
+			description: "Where some have gone before",
+			tags: {},
+			entries: {
+				deleteMany: {},
+				create: episodes.map(({ id }, rank) => ({
+					episodeId: id,
+					rank,
+				})),
+			} as const,
+		},
+	});
 };
 
 const load = async () => {
@@ -119,9 +144,3 @@ export const loadContent = {
 	callback: load,
 	interval: Infinity,
 } satisfies Job;
-
-if (require.main === module) {
-	load()
-		.then(() => process.exit(0))
-		.catch(() => process.exit(1));
-}

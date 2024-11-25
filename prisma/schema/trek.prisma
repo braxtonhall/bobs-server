@@ -31,11 +31,11 @@ model Episode {
   description  String
 
   seriesId   String
-  series     Series      @relation(fields: [seriesId], references: [id], onDelete: Restrict)
-  trekSeason TrekSeason  @relation(fields: [seriesId, season], references: [seriesId, number], onDelete: Restrict)
+  series     Series           @relation(fields: [seriesId], references: [id], onDelete: Restrict)
+  trekSeason TrekSeason       @relation(fields: [seriesId, season], references: [seriesId, number], onDelete: Restrict)
   views      View[]
   opinions   Opinion[]
-  watchlists Watchlist[]
+  entries    WatchlistEntry[]
   viewings   Viewing[]
   favourites Favourite[]
 
@@ -50,17 +50,28 @@ model Watchlist {
   id String @id @default(cuid())
 
   ownerId     String?
-  owner       Viewer?   @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+  owner       Viewer?          @relation(fields: [ownerId], references: [id], onDelete: SetNull)
   viewings    Viewing[]
   name        String
   description String
-  episodes    Episode[]
+  entries     WatchlistEntry[]
   tags        Tag[]
 
   createdAtId Int?   @unique
   createdAt   Event? @relation(fields: [createdAtId], references: [id], onDelete: Restrict)
 
   likes WatchlistLike[]
+}
+
+model WatchlistEntry {
+  watchlistId String
+  watchlist   Watchlist @relation(fields: [watchlistId], references: [id], onDelete: Cascade)
+  rank        Int
+  episodeId   String
+  episode     Episode   @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+
+  @@id([watchlistId, rank])
+  @@unique([watchlistId, episodeId])
 }
 
 model Viewer {

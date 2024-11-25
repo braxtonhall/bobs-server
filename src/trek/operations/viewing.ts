@@ -5,19 +5,20 @@ export const start = async ({ viewerId, watchlistId }: { viewerId: string; watch
 	const watchlist = await db.watchlist.findUniqueOrThrow({
 		where: { id: watchlistId },
 		include: {
-			episodes: {
+			entries: {
 				take: 1,
-				select: { id: true },
+				select: { episodeId: true },
+				orderBy: { rank: "asc" },
 			},
 		},
 	});
-	const [firstEpisode] = watchlist.episodes;
+	const [firstEpisode] = watchlist.entries;
 	await db.viewing.create({
 		data: {
 			watchlist: { connect: { id: watchlist.id } },
 			viewer: { connect: { id: viewerId } },
 			state: ViewingState.IN_PROGRESS,
-			...(firstEpisode ? { episode: { connect: firstEpisode } } : {}),
+			...(firstEpisode ? { episode: { connect: { id: firstEpisode.episodeId } } } : {}),
 			startedAt: { create: {} },
 		},
 	});

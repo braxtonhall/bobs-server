@@ -36,7 +36,7 @@ export const getWatchlists = async ({
 				: {}),
 			_count: {
 				select: {
-					episodes: true,
+					entries: true,
 					...(requestorId
 						? {
 								viewings: {

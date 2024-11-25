@@ -20,6 +20,7 @@ import { Followers } from "./components/Profile/Followers";
 import { Following } from "./components/Profile/Following";
 import { Settings } from "./components/Settings";
 import { ProfileContextProvider } from "./contexts/ProfileContext";
+import WatchlistOld from "./components/WatchlistOld";
 
 const router = createBrowserRouter(
 	[
@@ -179,7 +180,16 @@ const router = createBrowserRouter(
 					},
 				},
 				{
-					path: "/views/:id",
+					path: "/watchlists/:id/edit",
+					element: <WatchlistOld />,
+					loader: async ({ params: { id } }) => {
+						const watchlist = await api.getWatchlist.query(id ?? "");
+						if (watchlist && watchlist.owner) {
+							return watchlist;
+						} else {
+							throw new Response("Not Found", { status: 404 });
+						}
+					},
 				},
 			],
 		},

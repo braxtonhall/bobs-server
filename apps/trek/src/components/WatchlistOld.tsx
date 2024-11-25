@@ -134,7 +134,7 @@ const Watchlist = () => {
 			void api.getEpisodeRelationships.query().then((episodes) => {
 				setEpisodes(episodes);
 				const episodeMap = new Map(episodes.map((episode) => [episode.id, episode]));
-				const selection = watchlist.episodes.map(({ id }) => episodeMap.get(id)!);
+				const selection = watchlist.entries.map(({ episodeId }) => episodeMap.get(episodeId)!);
 				const selectionMap = new Map(selection.map((episode) => [episode.id, episode]));
 				selectionRef.current = selection;
 				rowsRef.current = [...selection, ...episodes.filter((episode) => !selectionMap.has(episode.id))];

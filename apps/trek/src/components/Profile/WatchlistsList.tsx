@@ -25,7 +25,7 @@ export const WatchlistEntry = ({ watchlist }: { watchlist: Watchlist }) => (
 							<Typography variant="subtitle1">{watchlist.owner.name}</Typography>
 						</Link>
 						<Typography variant="subtitle2">
-							{watchlist._count.episodes} episode{watchlist._count.episodes === 1 ? "" : "s"}
+							{watchlist._count.entries} episode{watchlist._count.entries === 1 ? "" : "s"}
 						</Typography>
 						<Typography>
 							{!!watchlist.viewings?.length && (

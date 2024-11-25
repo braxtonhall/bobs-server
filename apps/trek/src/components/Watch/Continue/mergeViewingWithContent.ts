@@ -9,7 +9,7 @@ export const mergeViewingWithContent = (input: {
 	watchlist: {
 		...input.viewing.watchlist,
 		episodes: mergeEpisodesWithContent({
-			list: input.viewing.watchlist.episodes,
+			list: input.viewing.watchlist.entries,
 			series: input.series,
 			episodes: input.episodes,
 		}),
@@ -17,13 +17,13 @@ export const mergeViewingWithContent = (input: {
 });
 
 export const mergeEpisodesWithContent = (input: {
-	list: Viewings[number]["watchlist"]["episodes"];
+	list: Viewings[number]["watchlist"]["entries"];
 	series: SeriesCollection;
 	episodes: Record<string, Episode>;
 }) =>
 	input.list.map((episode) => ({
-		...input.episodes[episode.id],
-		series: input.series[input.episodes[episode.id].seriesId],
+		...input.episodes[episode.episodeId],
+		series: input.series[input.episodes[episode.episodeId].seriesId],
 	}));
 
 export type DecoratedViewing = ReturnType<typeof mergeViewingWithContent>;

@@ -18,10 +18,11 @@ export const getCurrentlyWatching = async (viewerId: string, cursor: string | un
 			cursor: true,
 			watchlist: {
 				include: {
-					episodes: {
+					entries: {
 						select: {
-							id: true,
+							episodeId: true,
 						},
+						orderBy: { rank: "asc" },
 					},
 				},
 			},

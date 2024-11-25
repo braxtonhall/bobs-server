@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { db, transaction } from "../../db";
-import { updateCursor } from "./updateCursor";
+import { incrementCursor, updateCursor } from "./updateCursor";
 import { DateTime } from "luxon";
 import Config from "../../Config";
 
@@ -86,21 +86,11 @@ export const logEpisode = async (viewerId: string, env: z.infer<typeof logEpisod
 			},
 			select: {
 				id: true,
-				watchlist: {
-					include: {
-						episodes: {
-							cursor: { id: env.episodeId },
-							take: 1,
-							skip: 1,
-						},
-					},
-				},
 			},
 		});
 		for (const viewing of viewings) {
-			await updateCursor({
+			await incrementCursor({
 				viewerId,
-				episodeId: viewing.watchlist.episodes[0]?.id ?? null,
 				viewingId: viewing.id,
 			});
 		}
