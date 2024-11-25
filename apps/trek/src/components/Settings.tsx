@@ -108,6 +108,11 @@ const ColourSetting = ({
 	);
 };
 
+// TODO
+//  1. Delete account
+//  2. Light/Dark/System mode
+//  3. Export (imdb format?)
+//  4. Import
 const Settings = () => {
 	const { viewer, setSelf } = useProfileContext();
 	const { settings, setSettings } = useUserContext();

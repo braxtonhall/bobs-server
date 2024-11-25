@@ -96,11 +96,7 @@ const Watchlist = () => {
 		[decorated],
 	);
 
-	// TODO:
-	//  1. Like
-	//  2. Tags
-	//  3. Start a new viewing / see count
-	//  5. Entries
+	// TODO: See counts of viewings done/in-progress
 
 	return (
 		<>
