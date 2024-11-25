@@ -46,6 +46,15 @@ const ColourInput = styled(MuiColorInput)(() => ({
 	"& input": { display: "none" },
 	"& > div": { flex: 1, padding: "14px" },
 	"& div": { margin: 0 },
+	"& button": { backgroundImage: "unset !important" },
+	"& div:has(> button)": {
+		"background-color": "white",
+		"background-image":
+			"linear-gradient(45deg, #ccc 26%, transparent 26%), linear-gradient(135deg, #ccc 26%, transparent 26%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(135deg, transparent 75%, #ccc 75%)",
+		"background-size": "6px 6px",
+		"background-position": "0 0, 3px 0, 3px -3px, 0px 3px",
+		"border-radius": "4px",
+	},
 	display: "flex",
 	flex: 1,
 }));
