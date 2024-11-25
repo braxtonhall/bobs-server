@@ -81,7 +81,7 @@ const ColourSetting = ({
 			</Box>
 			<Box width="125px" marginRight="1em">
 				<MuiColorInput
-					format="hex"
+					format="hex8"
 					value={setting.colour ?? ""}
 					onChange={(colour) =>
 						setColours((colours) => {

@@ -2,7 +2,7 @@ import { Box, CircularProgress } from "@mui/material";
 import { api } from "../../../util/api";
 import { Viewing } from "./Viewing";
 import { Episode, SeriesCollection } from "../types";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { mergeViewingWithContent } from "./mergeViewingWithContent";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import { MutationContext } from "./MutationContext";
