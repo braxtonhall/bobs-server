@@ -25,6 +25,7 @@ import {
 	TableRow,
 	TextField,
 	Typography,
+	useTheme,
 } from "@mui/material";
 import { api, API } from "../util/api";
 import {
@@ -95,6 +96,7 @@ const Watchlist = () => {
 			Duration.fromObject({ minutes: decorated.reduce((acc, episode) => acc + episode.runtime, 0) }).toHuman(),
 		[decorated],
 	);
+	const theme = useTheme();
 
 	// TODO: See counts of viewings done/in-progress
 
@@ -109,8 +111,10 @@ const Watchlist = () => {
 				<EpisodeHeader episode={decorated?.[0] ?? undefined} />
 				<Container maxWidth="md">
 					<Box marginBottom="1em">
-						<Typography variant="h2">{watchlist.name}</Typography>
-						<Box>
+						<Typography variant="h2" color={theme.palette.text.primary}>
+							{watchlist.name}
+						</Typography>
+						<Box color={theme.palette.text.secondary}>
 							<Typography variant="body1">{watchlist.description}</Typography>
 							<Typography variant="body1">
 								{watchlist.owner && (

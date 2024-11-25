@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react";
+import { createContext } from "react";
 import { API } from "../util/api";
 import { useSafeContext } from "../hooks/useSafeContext";
 

@@ -16,7 +16,7 @@ import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Form } from "react-router-dom";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import {
 	ErrorRounded,
 	FavoriteBorderRounded,
@@ -32,7 +32,6 @@ import { Labelled } from "./misc/Labelled";
 import { useQuery } from "@tanstack/react-query";
 import type { Storage, StorageKind } from "../hooks/useStorage";
 import { useExitConfirmation } from "../hooks/useExitConfirmation";
-import { usePrompt } from "../hooks/usePrompt";
 
 export const LogForm = (props: {
 	episode: Episode;

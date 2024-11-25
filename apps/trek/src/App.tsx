@@ -18,7 +18,7 @@ import { Likes } from "./components/Profile/Likes";
 import { Diary } from "./components/Profile/Diary";
 import { Followers } from "./components/Profile/Followers";
 import { Following } from "./components/Profile/Following";
-import Settings from "./components/Settings";
+import { Settings } from "./components/Settings";
 import { ProfileContextProvider } from "./contexts/ProfileContext";
 
 const router = createBrowserRouter(

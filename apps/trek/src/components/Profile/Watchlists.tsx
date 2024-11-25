@@ -1,18 +1,24 @@
 import { useProfileContext } from "../../contexts/ProfileContext";
-import { Container } from "@mui/material";
+import { Box, Container, Typography, useTheme } from "@mui/material";
 import { api } from "../../util/api";
 import { WatchlistsList } from "./WatchlistsList";
 
 export const Watchlists = () => {
 	const { viewer, self } = useProfileContext();
 
+	const theme = useTheme();
+
 	return (
 		<Container maxWidth="md">
-			<h2>{self ? "Your" : `${viewer.name}'s`} watchlists</h2>
-			<WatchlistsList
-				getWatchlists={(cursor) => api.getWatchlists.query({ viewerId: viewer.id, cursor })}
-				queryKey={["profile", viewer.id]}
-			/>
+			<Box marginTop="1em">
+				<Typography variant="h2" color={theme.palette.text.primary}>
+					{self ? "Your" : `${viewer.name}'s`} watchlists
+				</Typography>
+				<WatchlistsList
+					getWatchlists={(cursor) => api.getWatchlists.query({ viewerId: viewer.id, cursor })}
+					queryKey={["profile", viewer.id]}
+				/>
+			</Box>
 		</Container>
 	);
 };

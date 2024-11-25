@@ -15,6 +15,7 @@ import {
 	ListItem,
 	Typography,
 	IconButton,
+	useTheme,
 } from "@mui/material";
 import {
 	FavoriteRounded,
@@ -63,8 +64,12 @@ const LatestEntry = styled(Paper)(({ theme }) => ({
 	}),
 }));
 
+const StyledListItem = styled(ListItem)(({ theme }) => ({
+	color: theme.palette.text.primary,
+}));
+
 const DirectoryItem = (props: { href: string; icon: ReactNode; name: string; count?: number }) => (
-	<ListItem disablePadding>
+	<StyledListItem disablePadding>
 		<ListItemButton component={Link} to={props.href}>
 			<ListItemIcon>{props.icon}</ListItemIcon>
 			<ListItemText
@@ -76,7 +81,7 @@ const DirectoryItem = (props: { href: string; icon: ReactNode; name: string; cou
 				}
 			/>
 		</ListItemButton>
-	</ListItem>
+	</StyledListItem>
 );
 
 export const Profile = () => {
@@ -86,6 +91,8 @@ export const Profile = () => {
 		queryKey: ["ratings", viewer.id],
 		queryFn: () => api.getViewerRatings.query(viewer.id),
 	});
+
+	const theme = useTheme();
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const isFollowingPage = !self && !!viewer.followers.length; // TODO
@@ -98,8 +105,14 @@ export const Profile = () => {
 			<Box width="100%" marginTop="1em" marginBottom="1em">
 				<Box display="flex">
 					<Box flex={1}>
-						<Typography variant="h2">{viewer.name}</Typography>
-						{viewer.about && <Typography variant="subtitle1">{viewer.about}</Typography>}
+						<Typography variant="h2" color={theme.palette.text.primary}>
+							{viewer.name}
+						</Typography>
+						{viewer.about && (
+							<Typography variant="subtitle1" color={theme.palette.text.secondary}>
+								{viewer.about}
+							</Typography>
+						)}
 					</Box>
 					{self && (
 						<Box marginTop="1em">
@@ -218,8 +231,10 @@ export const Profile = () => {
 						<DirectoryItem href="stats" icon={<ShowChartRounded />} name="Statistics" />
 					</List>
 					<Divider />
-					<Box>
-						<h3>Activity</h3>
+					<Box marginTop="1em">
+						<Typography variant="h5" color={theme.palette.text.primary}>
+							Activity
+						</Typography>
 						<ActivityList
 							getActivity={(cursor) => api.getIndividualEvents.query({ cursor, viewerId: viewer.id })}
 							queryKey={["INDIVIDUAL", viewer.id]}

@@ -20,8 +20,6 @@ const toAverage = (average: number | null) => {
 	}
 };
 
-(window as any).toHumanNumber = toHumanNumber;
-
 type RatingHistogramProps = BoxProps & {
 	counts: [number, number, number, number, number, number, number, number, number, number];
 };
@@ -46,14 +44,14 @@ const Bar = ({
 			display="flex"
 			sx={{
 				"&:hover > *": {
-					backgroundColor: theme.palette.info.dark,
+					backgroundColor: theme.palette.primary.dark,
 				},
 			}}
 			onMouseOver={() => setHovering(rating)}
 			onMouseOut={() => setHovering(null)}
 		>
 			<Box
-				bgcolor={theme.palette.info.main}
+				bgcolor={theme.palette.primary.main}
 				width="100%"
 				marginTop="auto"
 				marginLeft="0.1em"
@@ -67,9 +65,9 @@ const Bar = ({
 const Star = (props: { index: number; rating: number }) => {
 	const starAtIndex = props.rating / 2 - props.index;
 	if (starAtIndex >= 1) {
-		return <StarRounded />;
+		return <StarRounded color="primary" />;
 	} else if (starAtIndex > 0) {
-		return <StarHalfRounded />;
+		return <StarHalfRounded color="primary" />;
 	} else {
 		return <StarRounded sx={{ opacity: 0 }} />;
 	}
@@ -92,6 +90,7 @@ export const RatingHistogram = ({ counts, ...props }: RatingHistogramProps) => {
 	const total = counts.reduce((a, b) => a + b);
 	const average =
 		total === 0 ? null : counts.reduce((sum, count, index) => sum + count * ((index + 1) / 2), 0) / total;
+	const theme = useTheme();
 
 	// const activeTouch = useRef<Element | null>(null);
 	// const onTouchMove = useCallback((event: TouchEvent) => {
@@ -117,7 +116,7 @@ export const RatingHistogram = ({ counts, ...props }: RatingHistogramProps) => {
 		<Box {...props}>
 			<Box display="flex" width="100%" height="100%">
 				<Box marginTop="auto" sx={hovering === null ? {} : { opacity: 0 }}>
-					<StarRounded />
+					<StarRounded color="primary" />
 				</Box>
 				<Box display="flex" flex="1" height="100%">
 					{counts.map((count, index) => (
@@ -129,6 +128,7 @@ export const RatingHistogram = ({ counts, ...props }: RatingHistogramProps) => {
 						<Typography
 							variant="h4"
 							position="absolute"
+							color={theme.palette.text.secondary}
 							sx={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}
 						>
 							{hovering === null ? toAverage(average) : toHumanNumber(counts[hovering])}

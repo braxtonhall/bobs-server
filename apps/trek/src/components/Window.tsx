@@ -11,7 +11,6 @@ import {
 	Paper,
 	Stack,
 	ThemeProvider,
-	useTheme,
 } from "@mui/material";
 import { Link, Location, Outlet, useLoaderData, useLocation } from "react-router-dom";
 import { PersonRounded, PlayCircleOutlineRounded, RssFeedRounded, SearchRounded } from "@mui/icons-material";
@@ -34,8 +33,8 @@ const selectValue = ({ pathname }: Location, me: string) => {
 const drawerWidth = 240;
 
 export const Window = () => {
-	const storage = useStorage(StorageKind.Theme);
-	const [mode, setMode] = useState(storage.get());
+	const themeStorage = useStorage(StorageKind.Theme);
+	const [mode, setMode] = useState(themeStorage.get());
 	const theme = useThemeMode(mode);
 	const loaderData = useLoaderData() as Awaited<ReturnType<API["getSelf"]["query"]>>;
 	const [settings, setSettings] = useState(loaderData.settings);
@@ -44,7 +43,15 @@ export const Window = () => {
 	const value = selectValue(useLocation(), me);
 
 	return (
-		<ThemeModeContext.Provider value={{ set: (theme) => setMode(theme), mode, save: () => storage.set(mode) }}>
+		<ThemeModeContext.Provider
+			value={{
+				setMode: (theme) => {
+					themeStorage.set(theme);
+					setMode(theme);
+				},
+				mode,
+			}}
+		>
 			<ThemeProvider theme={theme}>
 				<UserContext.Provider value={{ settings: settings ?? defaultSettings, setSettings: updateSettings }}>
 					<Box

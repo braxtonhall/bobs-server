@@ -17,6 +17,8 @@ import {
 	IconButton,
 	InputLabel,
 	MenuItem,
+	Radio,
+	RadioGroup,
 	Select,
 	Snackbar,
 	SnackbarCloseReason,
@@ -24,6 +26,7 @@ import {
 	styled,
 	TextField,
 	Typography,
+	useTheme,
 } from "@mui/material";
 import { ReactNode, SyntheticEvent, useCallback, useMemo, useState } from "react";
 import { AddCircleRounded, RemoveCircleRounded, ExpandMoreRounded } from "@mui/icons-material";
@@ -31,13 +34,16 @@ import { Form } from "react-router-dom";
 import { useContent } from "../hooks/useContent";
 import { defaultColours } from "../hooks/useColour";
 import { useExitConfirmation } from "../hooks/useExitConfirmation";
+import { useSafeContext } from "../hooks/useSafeContext";
+import { ThemeModeContext } from "../contexts/ThemeModeContext";
+import { ThemeMode } from "../util/themeMode";
 
 const SettingsSection = (props: { name: string; children?: ReactNode | ReactNode[]; defaultExpanded?: boolean }) => (
 	<Accordion defaultExpanded={props.defaultExpanded} sx={{ boxShadow: "none" }}>
-		<AccordionSummary expandIcon={<ExpandMoreRounded />} sx={{ paddingLeft: 0 }}>
+		<AccordionSummary expandIcon={<ExpandMoreRounded />}>
 			<Typography variant="h4">{props.name}</Typography>
 		</AccordionSummary>
-		<AccordionDetails sx={{ padding: 0 }}>{props.children}</AccordionDetails>
+		<AccordionDetails>{props.children}</AccordionDetails>
 	</Accordion>
 );
 
@@ -129,12 +135,13 @@ const ColourSetting = ({
 
 // TODO
 //  1. Delete account
-//  2. Light/Dark/System mode
-//  3. Export (imdb format?)
-//  4. Import
-const Settings = () => {
+//  2. Export (imdb format?)
+//  3. Import
+export const Settings = () => {
 	const { viewer, setSelf } = useProfileContext();
 	const { settings, setSettings } = useUserContext();
+	const { mode, setMode } = useSafeContext(ThemeModeContext);
+	const theme = useTheme();
 
 	const [name, setName] = useState(viewer.name);
 	const [about, setAbout] = useState(viewer.about);
@@ -224,7 +231,9 @@ const Settings = () => {
 			</Snackbar>
 			<Container maxWidth="md">
 				<Box marginTop="1em" marginBottom="1em">
-					<Typography variant="h2">Settings</Typography>
+					<Typography variant="h2" color={theme.palette.text.primary}>
+						Settings
+					</Typography>
 					<Form
 						onSubmit={(event) => {
 							event.preventDefault();
@@ -259,7 +268,7 @@ const Settings = () => {
 												fullWidth
 											/>
 										</Box>
-										<Box width="100%">
+										<Box width="100%" marginBottom="1em">
 											<TextField
 												label="About"
 												value={about}
@@ -314,13 +323,7 @@ const Settings = () => {
 											/>
 										))}
 
-										<Box
-											width="100%"
-											display="flex"
-											justifyContent="right"
-											alignItems="center"
-											marginBottom="1em"
-										>
+										<Box width="100%" display="flex" justifyContent="right" alignItems="center">
 											<IconButton
 												color="primary"
 												aria-label="add"
@@ -336,6 +339,35 @@ const Settings = () => {
 										</Box>
 									</Stack>
 								</SettingsSection>
+
+								<Divider />
+
+								<SettingsSection name="Theme">
+									<FormControl fullWidth>
+										<Box width="100%" display="flex">
+											<RadioGroup
+												defaultValue={mode}
+												onChange={(_, value) => setMode(value as ThemeMode)}
+											>
+												<FormControlLabel
+													value={ThemeMode.Light}
+													control={<Radio />}
+													label="Light"
+												/>
+												<FormControlLabel
+													value={ThemeMode.Dark}
+													control={<Radio />}
+													label="Dark"
+												/>
+												<FormControlLabel
+													value={ThemeMode.System}
+													control={<Radio />}
+													label="System"
+												/>
+											</RadioGroup>
+										</Box>
+									</FormControl>
+								</SettingsSection>
 								<Button type="submit" variant="contained" disabled={!(changed && complete)}>
 									Save
 								</Button>
@@ -347,5 +379,3 @@ const Settings = () => {
 		</>
 	);
 };
-
-export default Settings;
