@@ -1,25 +1,28 @@
 import { useUserContext } from "../contexts/UserContext";
+import { useMemo } from "react";
 
-const defaultColour = "#FFFFFF";
+const defaultColour = "#ffffff00";
 
 export const defaultColours: Record<string, string> = {
-	TOS: "#fff2cc",
-	TOSM: "#fff2cc",
-	TAS: "#fce5cd",
-	TNG: "#c9daf8",
-	TNGM: "#c9daf8",
-	DS9: "#d9d2e9",
-	VOY: "#f4cccc",
-	ENT: "#d9eAd3",
+	TOS: "#fff2ccff",
+	TOSM: "#fff2ccff",
+	TAS: "#fce5cdff",
+	TNG: "#c9daf8ff",
+	TNGM: "#c9daf8ff",
+	DS9: "#d9d2e9ff",
+	VOY: "#f4ccccff",
+	ENT: "#d9eAd3ff",
 };
 
 export const useColour = (episode?: { seriesId: string }): string => {
 	const {
 		settings: { colours },
 	} = useUserContext();
-	if (episode) {
-		return colours[episode.seriesId] ?? defaultColours[episode.seriesId] ?? defaultColour;
-	} else {
-		return defaultColour;
-	}
+	return useMemo(() => {
+		if (episode) {
+			return colours[episode.seriesId] ?? defaultColours[episode.seriesId] ?? defaultColour;
+		} else {
+			return defaultColour;
+		}
+	}, [colours, episode]);
 };
