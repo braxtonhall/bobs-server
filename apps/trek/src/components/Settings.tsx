@@ -21,6 +21,7 @@ import {
 	Snackbar,
 	SnackbarCloseReason,
 	Stack,
+	styled,
 	TextField,
 	Typography,
 } from "@mui/material";
@@ -40,6 +41,14 @@ const SettingsSection = (props: { name: string; children?: ReactNode | ReactNode
 );
 
 type ColourSettingTransport = { series: string | null; colour: string | null };
+
+const ColourInput = styled(MuiColorInput)(() => ({
+	"& input": { display: "none" },
+	"& > div": { flex: 1, padding: "14px" },
+	"& div": { margin: 0 },
+	display: "flex",
+	flex: 1,
+}));
 
 const ColourSetting = ({
 	setting,
@@ -79,8 +88,8 @@ const ColourSetting = ({
 					</Select>
 				</FormControl>
 			</Box>
-			<Box width="125px" marginRight="1em">
-				<MuiColorInput
+			<Box display="flex" flexDirection="column" marginRight="1em">
+				<ColourInput
 					format="hex8"
 					value={setting.colour ?? ""}
 					onChange={(colour) =>
