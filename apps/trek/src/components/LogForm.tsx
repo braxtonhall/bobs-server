@@ -31,6 +31,8 @@ import { SlidingRating } from "./misc/SlidingRating";
 import { Labelled } from "./misc/Labelled";
 import { useQuery } from "@tanstack/react-query";
 import type { Storage, StorageKind } from "../hooks/useStorage";
+import { useExitConfirmation } from "../hooks/useExitConfirmation";
+import { usePrompt } from "../hooks/usePrompt";
 
 export const LogForm = (props: {
 	episode: Episode;
@@ -51,10 +53,7 @@ export const LogForm = (props: {
 		queryFn: () => api.getViewerViewTags.query(),
 	});
 
-	useEffect(() => {
-		window.onbeforeunload = () => (review || rating || liked ? "Are you sure you want to exit?" : undefined);
-		return () => void (window.onbeforeunload = null);
-	}, [review, rating, liked]);
+	useExitConfirmation({ block: review || rating || liked });
 
 	const storeTags = useCallback(
 		(tags: string[]) => {

@@ -37,7 +37,7 @@ import {
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { TagsList } from "./TagsList";
 import { EpisodeCard } from "./EpisodeCard";
-import { useContent } from "../util/useContent";
+import { useContent } from "../hooks/useContent";
 import { SyntheticEvent, useCallback, useMemo, useState } from "react";
 import { DecoratedEpisodes, mergeEpisodesWithContent } from "./Watch/Continue/mergeViewingWithContent";
 import { DateTime, Duration } from "luxon";

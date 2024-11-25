@@ -2,7 +2,7 @@ import { PlayCircleOutlineRounded, ShuffleRounded } from "@mui/icons-material";
 import Continue from "./Continue";
 import Shuffle from "./Shuffle";
 import { SwiperTabs } from "../misc/SwiperTabs";
-import { useContent } from "../../util/useContent";
+import { useContent } from "../../hooks/useContent";
 
 const Watch = () => {
 	const { episodes, series } = useContent();

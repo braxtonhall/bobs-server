@@ -28,8 +28,9 @@ import {
 import { ReactNode, SyntheticEvent, useCallback, useMemo, useState } from "react";
 import { AddCircleRounded, RemoveCircleRounded, ExpandMoreRounded } from "@mui/icons-material";
 import { Form } from "react-router-dom";
-import { useContent } from "../util/useContent";
+import { useContent } from "../hooks/useContent";
 import { defaultColours } from "../hooks/useColour";
+import { useExitConfirmation } from "../hooks/useExitConfirmation";
 
 const SettingsSection = (props: { name: string; children?: ReactNode | ReactNode[]; defaultExpanded?: boolean }) => (
 	<Accordion defaultExpanded={props.defaultExpanded} sx={{ boxShadow: "none" }}>
@@ -211,6 +212,8 @@ const Settings = () => {
 		() => !!name && colours.every((setting) => !!setting.series && !!setting.colour),
 		[name, colours],
 	);
+
+	useExitConfirmation({ block: changed });
 
 	return (
 		<>

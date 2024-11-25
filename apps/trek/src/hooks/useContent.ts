@@ -1,5 +1,5 @@
 import { useQueries } from "@tanstack/react-query";
-import { api } from "./api";
+import { api } from "../util/api";
 
 export const useContent = () => {
 	const [{ data: series = null }, { data: episodes = null }] = useQueries({
