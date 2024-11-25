@@ -38,7 +38,7 @@ export const Viewing = ({ viewing }: ViewingProps) => {
 	const current = viewing.watchlist.episodes[index];
 	const { logEpisode } = useMutationContext();
 	const colour = useColour(current);
-	const dark = tinycolor(colour).getBrightness() < DARK_MODE_THRESHOLD;
+	const dark = tinycolor(colour).isDark();
 	const theme = dark ? darkTheme : lightTheme;
 	const storage = useStorage(StorageKind.StringList, viewing.id);
 	return (
