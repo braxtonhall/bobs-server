@@ -32,9 +32,10 @@ import { useUserContext } from "../../../contexts/UserContext";
 import { useMutationContext } from "./MutationContext";
 import { useColour } from "../../../hooks/useColour";
 import { Options } from "../../misc/Options";
-import { useViewingControls } from "../../../contexts/ViewingControlsContext";
+import { ViewingControlsContext } from "../../../contexts/ViewingControlsContext";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useDimensions } from "../../../hooks/useDimensions";
+import { useSafeContext } from "../../../hooks/useSafeContext";
 
 export const WatchlistPreview = ({ viewing, index }: { viewing: DecoratedViewing; index: number }) =>
 	useMediaQuery(useTheme().breakpoints.up("sm")) ? (
@@ -219,7 +220,7 @@ const WatchlistPreviewEntry = ({ episode, viewingId, selected }: WatchlistPrevie
 };
 
 const WatchlistPreviewOptions = ({ viewing }: { viewing: Viewings[number] }) => {
-	const { pause, stop } = useViewingControls();
+	const { pause, stop } = useSafeContext(ViewingControlsContext);
 	// TODO it might be nice to have a confirmation dialog
 	return (
 		<Box>

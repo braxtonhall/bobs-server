@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react";
+import { createContext } from "react";
 
 type ViewingControls = {
 	pause: () => void;
@@ -8,12 +8,3 @@ type ViewingControls = {
 };
 
 export const ViewingControlsContext = createContext<ViewingControls | null>(null);
-
-export const useViewingControls = () => {
-	const controls = useContext(ViewingControlsContext);
-	if (controls === null) {
-		throw new Error("Viewing controls were not set!");
-	} else {
-		return controls;
-	}
-};

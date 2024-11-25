@@ -1,5 +1,6 @@
 import { createContext, useContext } from "react";
 import { API } from "../util/api";
+import { useSafeContext } from "../hooks/useSafeContext";
 
 type Settings = NonNullable<Awaited<ReturnType<API["getSelf"]["query"]>>["settings"]>;
 
@@ -21,11 +22,4 @@ export const defaultSettings: Settings = {
 
 export const UserContext = createContext<User | null>(null);
 
-export const useUserContext = () => {
-	const userContext = useContext(UserContext);
-	if (userContext === null) {
-		throw new Error("User Context was not set!");
-	} else {
-		return userContext;
-	}
-};
+export const useUserContext = () => useSafeContext(UserContext);

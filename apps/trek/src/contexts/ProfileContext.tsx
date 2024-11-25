@@ -2,6 +2,7 @@ import { createContext, ReactNode, useContext } from "react";
 import { api, API } from "../util/api";
 import { useRouteLoaderData } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
+import { useSafeContext } from "../hooks/useSafeContext";
 
 type ProfileContextContent = NonNullable<Awaited<ReturnType<API["getViewer"]["query"]>>> & {
 	setSelf: ((opts: Parameters<API["setSelf"]["mutate"]>[0]) => void) | null;
@@ -9,14 +10,7 @@ type ProfileContextContent = NonNullable<Awaited<ReturnType<API["getViewer"]["qu
 
 export const ProfileContext = createContext<ProfileContextContent | null>(null);
 
-export const useProfileContext = () => {
-	const profileContext = useContext(ProfileContext);
-	if (profileContext === null) {
-		throw new Error("Profile Context was not set!");
-	} else {
-		return profileContext;
-	}
-};
+export const useProfileContext = () => useSafeContext(ProfileContext);
 
 export const ProfileContextProvider = ({
 	children,

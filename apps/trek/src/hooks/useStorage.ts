@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import storage from "../util/storage";
+import { isThemeMode, ThemeMode } from "../util/themeMode";
 
 type StoreOptions<T> = {
 	serialize: (input: T) => string;
@@ -58,10 +59,9 @@ const stores = {
 		validator: (input): input is string[] =>
 			Array.isArray(input) && input.every((element) => typeof element === "string"),
 	}),
-	[StorageKind.Theme]: store<"light" | "system" | "dark">({
-		default: () => "system",
-		validator: (input): input is "light" | "system" | "dark" =>
-			(["light", "system", "dark"] as unknown[]).includes(input),
+	[StorageKind.Theme]: store<ThemeMode>({
+		default: () => ThemeMode.System,
+		validator: isThemeMode,
 	}),
 } satisfies { [K in StorageKind]: Store<any> };
 

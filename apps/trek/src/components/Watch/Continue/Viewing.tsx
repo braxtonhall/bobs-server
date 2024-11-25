@@ -1,4 +1,4 @@
-import { Box, Card, createTheme, styled, Typography, useTheme, ThemeProvider } from "@mui/material";
+import { Box, Card, styled, Typography, useTheme, ThemeProvider } from "@mui/material";
 import { LogForm } from "../../LogForm";
 import { WatchlistPreview } from "./WatchlistPreview";
 import { DecoratedViewing } from "./mergeViewingWithContent";
@@ -9,6 +9,7 @@ import { fadeIn } from "../../../util/fadeIn";
 import { StorageKind, useStorage } from "../../../hooks/useStorage";
 import { isDark, overlay } from "../../../util/colour";
 import { useMemo } from "react";
+import { darkTheme, lightTheme } from "../../../themes";
 
 type ViewingProps = {
 	viewing: DecoratedViewing;
@@ -17,18 +18,6 @@ type ViewingProps = {
 const StyledCard = styled(fadeIn(Card))(({ theme }) => ({
 	marginBottom: "1em",
 }));
-
-const darkTheme = createTheme({
-	palette: {
-		mode: "dark",
-	},
-});
-
-const lightTheme = createTheme({
-	palette: {
-		mode: "light",
-	},
-});
 
 export const Viewing = ({ viewing }: ViewingProps) => {
 	const theme = useTheme();
