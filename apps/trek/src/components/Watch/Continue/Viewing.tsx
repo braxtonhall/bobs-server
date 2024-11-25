@@ -7,6 +7,7 @@ import { useMutationContext } from "./MutationContext";
 import { useColour } from "../../../hooks/useColour";
 import tinycolor from "tinycolor2";
 import { fadeIn } from "../../../util/fadeIn";
+import { StorageKind, useStorage } from "../../../hooks/useStorage";
 
 type ViewingProps = {
 	viewing: DecoratedViewing;
@@ -39,6 +40,7 @@ export const Viewing = ({ viewing }: ViewingProps) => {
 	const colour = useColour(current);
 	const dark = tinycolor(colour).getBrightness() < DARK_MODE_THRESHOLD;
 	const theme = dark ? darkTheme : lightTheme;
+	const storage = useStorage(StorageKind.StringList, viewing.id);
 	return (
 		<StyledCard>
 			<Box display={{ sm: "flex" }} justifyContent="right">
@@ -81,11 +83,11 @@ export const Viewing = ({ viewing }: ViewingProps) => {
 									</Box>
 								</Box>
 
-								<LogForm episode={current} logEpisode={logEpisode} key={current.id} />
+								<LogForm episode={current} logEpisode={logEpisode} key={current.id} storage={storage} />
 							</Box>
 						) : (
 							<Box width="200px" height="200px">
-								Looks like you're done! TODO mark as finished button
+								Looks like you're done! TODO mark as finished button TODO storage.clear()
 							</Box>
 						)}
 					</Box>

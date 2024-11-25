@@ -1,15 +1,15 @@
 import {
-	Button,
 	Box,
+	Button,
 	Checkbox,
-	FormGroup,
 	FormControlLabel,
+	FormGroup,
 	Rating,
-	TextField,
 	Stack,
+	TextField,
+	Typography,
 	useMediaQuery,
 	useTheme,
-	Typography,
 } from "@mui/material";
 import { Tags } from "./Tags";
 import { AdapterLuxon } from "@mui/x-date-pickers/AdapterLuxon";
@@ -18,10 +18,10 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Form } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import {
-	HistoryEduRounded,
+	ErrorRounded,
 	FavoriteBorderRounded,
 	FavoriteRounded,
-	ErrorRounded,
+	HistoryEduRounded,
 	RadioButtonUnchecked,
 } from "@mui/icons-material";
 import { DateTime } from "luxon";
@@ -30,14 +30,14 @@ import { Episode } from "./Watch/types";
 import { SlidingRating } from "./misc/SlidingRating";
 import { Labelled } from "./misc/Labelled";
 import { useQuery } from "@tanstack/react-query";
-import { useStorage } from "../hooks/useStorage";
+import type { Storage, StorageKind } from "../hooks/useStorage";
 
 export const LogForm = (props: {
 	episode: Episode;
 	logEpisode: (opts: Parameters<API["logEpisode"]["mutate"]>[0]) => void;
+	storage?: Storage[StorageKind.StringList];
 }) => {
-	const storage = useStorage("viewTags");
-	const [tags, setTags] = useState(storage.get());
+	const [tags, setTags] = useState(props.storage?.get() ?? []);
 	const [date, setDate] = useState<DateTime | null>(DateTime.now());
 	const [rating, setRating] = useState<number | null>(null);
 	const [liked, setLiked] = useState(false);
@@ -58,10 +58,10 @@ export const LogForm = (props: {
 
 	const storeTags = useCallback(
 		(tags: string[]) => {
-			storage.set(tags);
+			props.storage?.set(tags);
 			return setTags(tags);
 		},
-		[storage],
+		[props.storage],
 	);
 
 	return (
