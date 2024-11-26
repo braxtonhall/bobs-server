@@ -25,7 +25,7 @@ import {
 } from "@mui/icons-material";
 import { Progress } from "../../misc/Progress";
 import { DecoratedViewing } from "./mergeViewingWithContent";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { SpaceFillingBox, SpaceFillingBoxContainer } from "../../misc/SpaceFillingBox";
 import { useUserContext } from "../../../contexts/UserContext";
@@ -36,6 +36,7 @@ import { ViewingControlsContext } from "../../../contexts/ViewingControlsContext
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useDimensions } from "../../../hooks/useDimensions";
 import { useSafeContext } from "../../../hooks/useSafeContext";
+import { useOnScreen } from "../../../hooks/useOnScreen";
 
 export const WatchlistPreview = ({ viewing, index }: { viewing: DecoratedViewing; index: number }) =>
 	useMediaQuery(useTheme().breakpoints.up("sm")) ? (
@@ -71,9 +72,26 @@ const WatchlistPreviewHeader = ({ viewing, index }: { viewing: Viewings[number];
 	</Box>
 );
 
-const WatchlistPreviewContent = ({ viewing, index: cursorIndex }: { viewing: DecoratedViewing; index: number }) => {
+const WatchlistPreviewContent = ({ viewing, index }: { viewing: DecoratedViewing; index: number }) => {
 	const parentRef = useRef<HTMLDivElement>(null);
+	const onScreen = useOnScreen(parentRef);
 
+	return (
+		<Box ref={parentRef} overflow="auto" width="100%" maxHeight={{ xs: "400px", sm: "unset" }}>
+			<nav>{onScreen && <WatchlistPreviewList viewing={viewing} index={index} parentRef={parentRef} />}</nav>
+		</Box>
+	);
+};
+
+const WatchlistPreviewList = ({
+	viewing,
+	index: cursorIndex,
+	parentRef,
+}: {
+	viewing: DecoratedViewing;
+	index: number;
+	parentRef: RefObject<HTMLDivElement>;
+}) => {
 	const virtualizer = useVirtualizer({
 		count: viewing.watchlist.episodes.length,
 		getScrollElement: () => parentRef.current,
@@ -83,33 +101,26 @@ const WatchlistPreviewContent = ({ viewing, index: cursorIndex }: { viewing: Dec
 	});
 
 	return (
-		<Box ref={parentRef} overflow="auto" width="100%" maxHeight={{ xs: "400px", sm: "unset" }}>
-			<nav>
-				<List
-					disablePadding
-					sx={{ height: `${virtualizer.getTotalSize()}px`, width: "100%", position: "relative" }}
+		<List disablePadding sx={{ height: `${virtualizer.getTotalSize()}px`, width: "100%", position: "relative" }}>
+			{virtualizer.getVirtualItems().map(({ index, start }) => (
+				<Box
+					key={viewing.watchlist.episodes[index].id}
+					sx={{
+						position: "absolute",
+						top: start,
+						left: 0,
+						width: "100%",
+						height: "50px",
+					}}
 				>
-					{virtualizer.getVirtualItems().map(({ index, start }) => (
-						<Box
-							key={viewing.watchlist.episodes[index].id}
-							sx={{
-								position: "absolute",
-								top: start,
-								left: 0,
-								width: "100%",
-								height: "50px",
-							}}
-						>
-							<WatchlistPreviewEntry
-								episode={viewing.watchlist.episodes[index]}
-								viewingId={viewing.id}
-								selected={cursorIndex === index}
-							/>
-						</Box>
-					))}
-				</List>
-			</nav>
-		</Box>
+					<WatchlistPreviewEntry
+						episode={viewing.watchlist.episodes[index]}
+						viewingId={viewing.id}
+						selected={cursorIndex === index}
+					/>
+				</Box>
+			))}
+		</List>
 	);
 };
 

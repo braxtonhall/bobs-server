@@ -8,8 +8,9 @@ import { useColour } from "../../../hooks/useColour";
 import { fadeIn } from "../../../util/fadeIn";
 import { StorageKind, useStorage } from "../../../hooks/useStorage";
 import { isDark, overlay } from "../../../util/colour";
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { darkTheme, lightTheme } from "../../../themes";
+import { useOnScreen } from "../../../hooks/useOnScreen";
 
 type ViewingProps = {
 	viewing: DecoratedViewing;

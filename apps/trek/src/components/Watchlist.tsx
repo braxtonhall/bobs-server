@@ -179,8 +179,15 @@ const Watchlist = () => {
 										</DialogContentText>
 									</DialogContent>
 									<DialogActions>
-										<Button onClick={() => start()}>Engage</Button>
-										<Button variant="outlined" onClick={() => setStartDialogOpen(false)} autoFocus>
+										<Button variant="outlined" onClick={() => start()}>
+											Engage
+										</Button>
+										<Button
+											variant="contained"
+											color="error"
+											onClick={() => setStartDialogOpen(false)}
+											autoFocus
+										>
 											Belay
 										</Button>
 									</DialogActions>
