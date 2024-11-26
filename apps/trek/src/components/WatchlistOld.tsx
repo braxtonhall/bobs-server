@@ -2,7 +2,7 @@ import { useLoaderData } from "react-router-dom";
 import { api, API } from "../util/api";
 import { Box, Button, Card, CardMedia, TextField, Typography } from "@mui/material";
 import { VisibilityRounded } from "@mui/icons-material";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Episode } from "./Watch/types";
 
 import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the Data Grid
@@ -129,6 +129,19 @@ const Watchlist = () => {
 		];
 	}, [definitions, storage]);
 
+	const onSave = useCallback(() => {
+		api.updateWatchlist
+			.mutate({
+				episodes: selectionRef.current.map(({ id }) => id),
+				watchlistId: watchlist.id,
+				name,
+				tags,
+				description,
+			})
+			.then(() => alert("done"))
+			.catch(console.error);
+	}, [watchlist, name, tags, description]);
+
 	const rowsRef = useRef<Episode[]>([]);
 	const selectionRef = useRef<Episode[]>([]);
 
@@ -178,22 +191,7 @@ const Watchlist = () => {
 
 			<Tags tags={tags} setTags={setTags} />
 
-			<Button
-				onClick={() => {
-					api.updateWatchlist
-						.mutate({
-							episodes: selectionRef.current.map(({ id }) => id),
-							watchlistId: watchlist.id,
-							name,
-							tags,
-							description,
-						})
-						.then(() => alert("done"))
-						.catch(console.error);
-				}}
-			>
-				Save
-			</Button>
+			<Button onClick={onSave}>Save</Button>
 			<Button
 				onClick={() => {
 					gridRef.current?.api.setGridOption("rowData", episodes);

@@ -7,7 +7,7 @@ export const Tags = ({
 	options = [],
 }: {
 	tags: string[];
-	setTags: (tags: string[]) => void;
+	setTags: (callback: string[] | ((tags: string[]) => string[])) => void;
 	options?: string[];
 }) => {
 	const [inputString, setInputString] = useState("");
@@ -23,8 +23,7 @@ export const Tags = ({
 			onInputChange={(_, newInputValue) => {
 				const tokens = newInputValue.split(",");
 				if (tokens.length > 1) {
-					// TODO this is very slow
-					setTags([
+					setTags((tags) => [
 						...tags,
 						...tokens.map((tag) => tag.trim().toLowerCase()).filter((tag) => tag && !tags.includes(tag)),
 					]);

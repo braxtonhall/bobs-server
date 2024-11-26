@@ -54,18 +54,11 @@ export const LogForm = (props: {
 
 	useExitConfirmation({ block: review || rating || liked });
 
-	const storeTags = useCallback(
-		(tags: string[]) => {
-			props.storage?.set(tags);
-			return setTags(tags);
-		},
-		[props.storage],
-	);
-
 	return (
 		<Form
 			onSubmit={(event) => {
 				event.preventDefault();
+				props.storage?.set(tags);
 				return props.logEpisode({
 					episodeId: props.episode.id,
 					viewedOn: date && date.toFormat("yyyy-MM-dd"),
@@ -148,7 +141,7 @@ export const LogForm = (props: {
 						width="100%"
 						marginBottom={{ xs: "1em", md: "unset" }}
 					>
-						<Tags tags={tags} setTags={storeTags} options={tagOptions} />
+						<Tags tags={tags} setTags={setTags} options={tagOptions} />
 					</Box>
 					<Box display="flex" justifyContent="center" alignItems="center" width={{ xs: "100%", md: "unset" }}>
 						<LocalizationProvider dateAdapter={AdapterLuxon}>
