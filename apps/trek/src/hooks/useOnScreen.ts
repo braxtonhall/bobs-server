@@ -11,14 +11,12 @@ export const useOnScreen = (ref: RefObject<HTMLElement>, onChange?: (isIntersect
 
 	const onWatched = useCallback(
 		(newIsIntersecting: boolean) => {
-			setIntersecting((isIntersecting) => {
-				if (onChange && isIntersecting !== newIsIntersecting) {
-					onChange(newIsIntersecting);
-				}
-				return newIsIntersecting;
-			});
+			if (isIntersecting !== newIsIntersecting) {
+				onChange?.(newIsIntersecting);
+				setIntersecting(newIsIntersecting);
+			}
 		},
-		[onChange],
+		[onChange, isIntersecting],
 	);
 
 	useEffect(() => {

@@ -75,9 +75,8 @@ const WatchlistPreviewHeader = ({ viewing, index }: { viewing: Viewings[number];
 const WatchlistPreviewContent = ({ viewing, index }: { viewing: DecoratedViewing; index: number }) => {
 	const parentRef = useRef<HTMLDivElement>(null);
 	const onScreen = useOnScreen(parentRef);
-
 	return (
-		<Box ref={parentRef} overflow="auto" width="100%" maxHeight={{ xs: "400px", sm: "unset" }}>
+		<Box ref={parentRef} overflow="auto" width="100%" height={{ xs: "400px", sm: "100%" }}>
 			<nav>{onScreen && <WatchlistPreviewList viewing={viewing} index={index} parentRef={parentRef} />}</nav>
 		</Box>
 	);
