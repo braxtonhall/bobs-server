@@ -23,6 +23,7 @@ export const Tags = ({
 			onInputChange={(_, newInputValue) => {
 				const tokens = newInputValue.split(",");
 				if (tokens.length > 1) {
+					// TODO this is very slow
 					setTags([
 						...tags,
 						...tokens.map((tag) => tag.trim().toLowerCase()).filter((tag) => tag && !tags.includes(tag)),

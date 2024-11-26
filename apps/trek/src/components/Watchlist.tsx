@@ -136,6 +136,12 @@ const Watchlist = () => {
 								{`${watchlist._count.likes} like${watchlist._count.likes === 1 ? "" : "s"}`}
 							</Typography>
 						</Box>
+						<Box marginTop="0.5em">
+							<TagsList
+								getTags={(cursor) => api.getWatchlistTags.query({ cursor, watchlistId: watchlist.id })}
+								queryKey={["watchlist", watchlist.id]}
+							/>
+						</Box>
 					</Box>
 					<Divider />
 					<Box>
@@ -214,12 +220,6 @@ const Watchlist = () => {
 									</Options>
 								</Box>
 							)}
-						</Box>
-						<Box>
-							<TagsList
-								getTags={(cursor) => api.getWatchlistTags.query({ cursor, watchlistId: watchlist.id })}
-								queryKey={["watchlist", watchlist.id]}
-							/>
 						</Box>
 					</Box>
 					<Box marginBottom="1em">{decorated && <EpisodeList episodes={decorated} />}</Box>

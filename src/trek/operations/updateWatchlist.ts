@@ -4,7 +4,6 @@ import { z } from "zod";
 export const updateWatchlistInputSchema = z.object({
 	episodes: z.array(z.string()),
 	watchlistId: z.string(),
-	filters: z.record(z.string(), z.unknown()),
 	name: z.string(),
 	tags: z.array(z.string()),
 	description: z.string(),
@@ -20,6 +19,7 @@ export const updateWatchlist = async (ownerId: string, watchlist: z.infer<typeof
 			name: watchlist.name,
 			description: watchlist.description,
 			tags: {
+				set: [],
 				connectOrCreate: watchlist.tags.map((name) => ({
 					where: { name },
 					create: { name },

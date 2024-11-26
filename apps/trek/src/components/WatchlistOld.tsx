@@ -1,6 +1,6 @@
 import { useLoaderData } from "react-router-dom";
 import { api, API } from "../util/api";
-import { Box, Button, Card, CardMedia, Typography } from "@mui/material";
+import { Box, Button, Card, CardMedia, TextField, Typography } from "@mui/material";
 import { VisibilityRounded } from "@mui/icons-material";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Episode } from "./Watch/types";
@@ -9,13 +9,18 @@ import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the 
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the Data Grid
 import { AgGridReact } from "ag-grid-react";
 import type { GridApi, ColDef, ColumnState } from "ag-grid-community";
+import { Tags } from "./Tags";
 // https://trakt.tv/users/yosarasara/lists/star-trek-sara-s-suggested-watch-order?sort=rank,asc
 // TODO remove
 const IMG_URL = "https://media.themoviedb.org/t/p/w454_and_h254_bestv2/Asrl6u2tugWf9EJN24uhQ9zvyo6.jpg";
 
 const Watchlist = () => {
 	const { watchlist, owner } = useLoaderData() as NonNullable<Awaited<ReturnType<API["getWatchlist"]["query"]>>>;
+	const startingTags = useMemo(() => watchlist.tags.map(({ name }) => name), [watchlist]);
 	const [episodes, setEpisodes] = useState<Episode[]>([]);
+	const [name, setName] = useState(watchlist.name);
+	const [description, setDescription] = useState(watchlist.description);
+	const [tags, setTags] = useState(startingTags);
 	const storage = useMemo<{ widths?: Record<string, number>; order: string[] }>(() => {
 		try {
 			return JSON.parse(localStorage.getItem("columns") ?? "{}");
@@ -162,7 +167,16 @@ const Watchlist = () => {
 	return (
 		<>
 			<Typography>{watchlist.name}</Typography>
-			<Typography>{watchlist.description}</Typography>
+			<TextField label="Name" value={name} onChange={(event) => setName(event.target.value)} />
+
+			<TextField
+				label="Description"
+				multiline
+				value={description}
+				onChange={(event) => setDescription(event.target.value)}
+			/>
+
+			<Tags tags={tags} setTags={setTags} />
 
 			<Button
 				onClick={() => {
@@ -170,13 +184,9 @@ const Watchlist = () => {
 						.mutate({
 							episodes: selectionRef.current.map(({ id }) => id),
 							watchlistId: watchlist.id,
-							filters: {
-								filters: gridRef.current?.api.getFilterModel(),
-								state: gridRef.current?.api.getColumnState(),
-							},
-							name: watchlist.name,
-							tags: [],
-							description: watchlist.description,
+							name,
+							tags,
+							description,
 						})
 						.then(() => alert("done"))
 						.catch(console.error);

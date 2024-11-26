@@ -9,7 +9,7 @@ export const getWatchlistTags = async ({ watchlistId, cursor }: { watchlistId: s
 		select: {
 			tags: {
 				cursor: cursor ? { name: cursor } : undefined,
-				orderBy: { name: "desc" },
+				orderBy: { name: "asc" },
 				take: Config.DEFAULT_PAGE_SIZE + 1,
 			},
 		},
