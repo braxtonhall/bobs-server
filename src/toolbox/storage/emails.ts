@@ -3,6 +3,7 @@ import { None, Option, Some } from "../../types/option";
 import { match, P } from "ts-pattern";
 import { Failure } from "../../types/failure";
 import { Err, Ok, Result } from "../../types/result";
+import { hashAddress } from "../../util/hashAddress";
 
 export type Email = Awaited<ReturnType<typeof internalGet>>;
 
@@ -12,9 +13,7 @@ const internalGet = (address: string) =>
 			address,
 		},
 		update: {},
-		create: {
-			address,
-		},
+		create: { address, gravatar: hashAddress(address) },
 		select: {
 			id: true,
 			confirmed: true,

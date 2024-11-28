@@ -6,6 +6,7 @@ import AsyncPool from "./util/AsyncPool";
 import { sendReminders } from "./secret-dj/jobs/sendReminders";
 import { loadContent } from "./trek/jobs/loadContent";
 import { deleteBadEvents } from "./trek/jobs/deleteBadEvents";
+import { ensureHashes } from "./trek/jobs/ensureHashes";
 
 export type Job = { callback: () => unknown; interval: number };
 
@@ -17,6 +18,7 @@ const jobs: Job[] = [
 	sendReminders,
 	loadContent,
 	deleteBadEvents,
+	ensureHashes,
 ];
 const scheduledJobs = new Set<NodeJS.Timeout>();
 const pool = new AsyncPool(jobs.length);

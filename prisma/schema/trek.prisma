@@ -78,6 +78,7 @@ model Viewer {
   id         String      @id @default(cuid())
   email      Email       @relation("ViewerEmail", fields: [emailId], references: [id], onDelete: Cascade)
   emailId    String      @unique
+  gravatar   Boolean     @default(false)
   name       String
   about      String      @default("")
   views      View[]

@@ -18,6 +18,7 @@ export const defaultSettings: Settings = {
 	isSpoilerEpisodeReviewComment: false,
 	isSpoilerEpisodeReviewScore: false,
 	isSpoilerEpisodeRating: false,
+	gravatar: false,
 };
 
 export const UserContext = createContext<User | null>(null);

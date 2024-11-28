@@ -23,6 +23,7 @@ const hexSchema = z
 	.regex(/^#[0-9a-f]+$/);
 
 export const settingsPayloadSchema = z.object({
+	gravatar: z.boolean(),
 	colours: z.record(z.string(), hexSchema).transform((colours) => JSON.stringify(colours)),
 	isSpoilerEpisodeReviewComment: z.boolean(),
 	isSpoilerEpisodeReviewScore: z.boolean(),

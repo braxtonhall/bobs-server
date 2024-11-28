@@ -6,6 +6,7 @@ import {
 	AccordionDetails,
 	AccordionSummary,
 	Alert,
+	Avatar,
 	Box,
 	Button,
 	Checkbox,
@@ -28,7 +29,7 @@ import {
 	Typography,
 	useTheme,
 } from "@mui/material";
-import { ReactNode, SyntheticEvent, useCallback, useMemo, useState } from "react";
+import { ReactNode, SyntheticEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { AddCircleRounded, RemoveCircleRounded, ExpandMoreRounded } from "@mui/icons-material";
 import { Form } from "react-router-dom";
 import { useContent } from "../hooks/useContent";
@@ -37,6 +38,7 @@ import { useExitConfirmation } from "../hooks/useExitConfirmation";
 import { useSafeContext } from "../hooks/useSafeContext";
 import { ThemeModeContext } from "../contexts/ThemeModeContext";
 import { ThemeMode } from "../util/themeMode";
+import { GravatarQuickEditor, GravatarQuickEditorCore } from "@gravatar-com/quick-editor";
 
 const SettingsSection = (props: { name: string; children?: ReactNode | ReactNode[]; defaultExpanded?: boolean }) => (
 	<Accordion defaultExpanded={props.defaultExpanded} sx={{ boxShadow: "none" }}>
@@ -161,6 +163,15 @@ export const Settings = () => {
 		Object.entries(settings.colours).map(([key, value]) => ({ series: key, colour: value })),
 	);
 
+	const editor = useMemo(
+		() => new GravatarQuickEditorCore({ email: viewer.email.address, scope: ["avatars"] }),
+		[viewer],
+	);
+
+	const [gravatar, setGravatar] = useState(settings.gravatar);
+
+	const hash = viewer.email.gravatar ?? "";
+
 	const newColours = useMemo(
 		() => Object.fromEntries(colours.map((setting) => [setting.series, setting.colour])),
 		[colours],
@@ -206,6 +217,7 @@ export const Settings = () => {
 		coloursUpdated ||
 		viewer.name !== name ||
 		viewer.about !== about ||
+		settings.gravatar !== gravatar ||
 		Object.entries(spoilersStates).some(
 			([
 				key,
@@ -251,6 +263,7 @@ export const Settings = () => {
 							setSettings({
 								...spoilers,
 								colours: newColours,
+								gravatar,
 							});
 							setAlertOpen(true);
 						}}
@@ -277,6 +290,37 @@ export const Settings = () => {
 												fullWidth
 											/>
 										</Box>
+
+										<Accordion
+											sx={{
+												marginBottom: "1em",
+												boxShadow: "none",
+												"&:before": { display: "none" },
+											}}
+											expanded={gravatar}
+										>
+											<FormControlLabel
+												sx={{ marginBottom: "1em" }}
+												control={
+													<Checkbox
+														onChange={(_, checked) => setGravatar(checked)}
+														checked={gravatar}
+													/>
+												}
+												label="Enable Profile Picture"
+												value={gravatar}
+											/>
+											<AccordionDetails>
+												<Box display="flex">
+													<Avatar
+														alt="Profile Picture"
+														src={`https://www.gravatar.com/avatar/${hash}`}
+													/>
+													<Button onClick={() => editor.open()}>Edit</Button>
+												</Box>
+											</AccordionDetails>
+										</Accordion>
+
 										<Box>TODO: favourites</Box>
 									</Stack>
 								</SettingsSection>

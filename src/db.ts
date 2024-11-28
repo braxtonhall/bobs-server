@@ -1,10 +1,20 @@
 import { PrismaClient } from "@prisma/client";
 import { AsyncLocalStorage } from "node:async_hooks";
 import { ITXClientDenyList } from "@prisma/client/runtime/library";
+import { hashAddress } from "./util/hashAddress";
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient().$extends({
+	query: {
+		email: {
+			create: ({ args, query }) => {
+				args.data.gravatar = hashAddress(args.data.address);
+				return query(args);
+			},
+		},
+	},
+});
 
-type Client = Omit<PrismaClient, ITXClientDenyList>;
+type Client = Omit<typeof prisma, ITXClientDenyList>;
 
 const storage = new AsyncLocalStorage<Client>();
 

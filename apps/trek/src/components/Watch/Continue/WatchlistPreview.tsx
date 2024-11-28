@@ -4,6 +4,7 @@ import {
 	AccordionDetails,
 	AccordionSummary,
 	Box,
+	Card,
 	List,
 	ListItem,
 	ListItemButton,
@@ -37,6 +38,7 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { useDimensions } from "../../../hooks/useDimensions";
 import { useSafeContext } from "../../../hooks/useSafeContext";
 import { useOnScreen } from "../../../hooks/useOnScreen";
+import { fadeIn } from "../../../util/fadeIn";
 
 export const WatchlistPreview = ({ viewing, index }: { viewing: DecoratedViewing; index: number }) =>
 	useMediaQuery(useTheme().breakpoints.up("sm")) ? (
@@ -82,6 +84,8 @@ const WatchlistPreviewContent = ({ viewing, index }: { viewing: DecoratedViewing
 	);
 };
 
+const FadeInList = fadeIn(List);
+
 const WatchlistPreviewList = ({
 	viewing,
 	index: cursorIndex,
@@ -100,7 +104,10 @@ const WatchlistPreviewList = ({
 	});
 
 	return (
-		<List disablePadding sx={{ height: `${virtualizer.getTotalSize()}px`, width: "100%", position: "relative" }}>
+		<FadeInList
+			disablePadding
+			sx={{ height: `${virtualizer.getTotalSize()}px`, width: "100%", position: "relative" }}
+		>
 			{virtualizer.getVirtualItems().map(({ index, start }) => (
 				<Box
 					key={viewing.watchlist.episodes[index].id}
@@ -119,7 +126,7 @@ const WatchlistPreviewList = ({
 					/>
 				</Box>
 			))}
-		</List>
+		</FadeInList>
 	);
 };
 

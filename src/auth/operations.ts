@@ -7,6 +7,7 @@ import { DateTime } from "luxon";
 import Config from "../Config";
 import { AuthorizePayload } from "./schemas";
 import { EmailPersona, enqueue, sendQueuedMessages } from "../email";
+import { hashAddress } from "../util/hashAddress";
 
 type Confirmation = {
 	address: string;
@@ -119,7 +120,7 @@ export const getVerificationToken = async (address: string): Promise<{ expiratio
 				email: {
 					connectOrCreate: {
 						where: { address },
-						create: { address },
+						create: { address, gravatar: hashAddress(address) },
 					},
 				},
 			},
@@ -191,7 +192,7 @@ export const login = async ({ email: address, next }: { email: string; next?: st
 				email: {
 					connectOrCreate: {
 						where: { address },
-						create: { address },
+						create: { address, gravatar: hashAddress(address) },
 					},
 				},
 			},

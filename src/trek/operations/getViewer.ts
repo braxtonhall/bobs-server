@@ -11,6 +11,7 @@ export const getViewer = ({ requestorId, targetId }: { requestorId?: string; tar
 				name: true,
 				about: true,
 				id: true,
+				email: requestorId === targetId,
 				...(requestorId
 					? {
 							followers: {

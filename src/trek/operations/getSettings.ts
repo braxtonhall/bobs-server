@@ -13,6 +13,7 @@ export const getSettings = (viewerId: string) =>
 				isSpoilerEpisodeName: true,
 				isSpoilerEpisodeReviewCommentSpoilerTag: true,
 				isSpoilerEpisodeRating: true,
+				gravatar: true,
 			},
 		})
 		.then((settings) => ({ ...settings, colours: JSON.parse(settings.colours) as Record<string, string> }))
