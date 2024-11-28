@@ -11,7 +11,13 @@ export const getViewer = ({ requestorId, targetId }: { requestorId?: string; tar
 				name: true,
 				about: true,
 				id: true,
-				email: requestorId === targetId,
+				gravatar: true,
+				email: {
+					select: {
+						address: requestorId === targetId,
+						gravatar: true,
+					},
+				},
 				...(requestorId
 					? {
 							followers: {
@@ -93,6 +99,10 @@ export const getViewer = ({ requestorId, targetId }: { requestorId?: string; tar
 		]);
 		return {
 			...baseViewer,
+			email: {
+				...baseViewer.email,
+				gravatar: (baseViewer.gravatar && baseViewer.email?.gravatar) || null,
+			},
 			_count: {
 				...baseViewer._count,
 				reviews: additionalCounts._count.views,

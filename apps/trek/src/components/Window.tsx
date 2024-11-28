@@ -21,6 +21,7 @@ import { useMutation } from "@tanstack/react-query";
 import { StorageKind, useStorage } from "../hooks/useStorage";
 import { ThemeModeContext } from "../contexts/ThemeModeContext";
 import { useThemeMode } from "../hooks/useThemeMode";
+import { Gravatar } from "./misc/Gravatar";
 
 const selectValue = ({ pathname }: Location, me: string) => {
 	const slugs = pathname.split("/");
@@ -111,7 +112,12 @@ export const Window = () => {
 									<ListItem disablePadding>
 										<ListItemButton component={Link} to={me} selected={value === "/me"}>
 											<ListItemIcon>
-												<PersonRounded />
+												<Gravatar
+													hash={
+														(settings?.gravatar && loaderData.viewer.email.gravatar) || null
+													}
+													sx={{ width: 24, height: 24 }}
+												/>
 											</ListItemIcon>
 											<ListItemText primary="Me" />
 										</ListItemButton>
@@ -168,7 +174,12 @@ export const Window = () => {
 									to={me}
 									label="Me"
 									value="/me"
-									icon={<PersonRounded />}
+									icon={
+										<Gravatar
+											hash={(settings?.gravatar && loaderData.viewer.email.gravatar) || null}
+											sx={{ width: 24, height: 24 }}
+										/>
+									}
 								/>
 							</BottomNavigation>
 						</Paper>

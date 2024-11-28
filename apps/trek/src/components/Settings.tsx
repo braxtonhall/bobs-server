@@ -29,8 +29,8 @@ import {
 	Typography,
 	useTheme,
 } from "@mui/material";
-import { ReactNode, SyntheticEvent, useCallback, useEffect, useMemo, useState } from "react";
-import { AddCircleRounded, RemoveCircleRounded, ExpandMoreRounded } from "@mui/icons-material";
+import { ReactNode, SyntheticEvent, useCallback, useMemo, useState } from "react";
+import { AddCircleRounded, RemoveCircleRounded, ExpandMoreRounded, Edit } from "@mui/icons-material";
 import { Form } from "react-router-dom";
 import { useContent } from "../hooks/useContent";
 import { defaultColours } from "../hooks/useColour";
@@ -291,14 +291,7 @@ export const Settings = () => {
 											/>
 										</Box>
 
-										<Accordion
-											sx={{
-												marginBottom: "1em",
-												boxShadow: "none",
-												"&:before": { display: "none" },
-											}}
-											expanded={gravatar}
-										>
+										<Box display="flex" marginBottom="1em">
 											<FormControlLabel
 												sx={{ marginBottom: "1em" }}
 												control={
@@ -310,16 +303,43 @@ export const Settings = () => {
 												label="Enable Profile Picture"
 												value={gravatar}
 											/>
-											<AccordionDetails>
-												<Box display="flex">
-													<Avatar
-														alt="Profile Picture"
+
+											{gravatar && (
+												<Avatar
+													alt="Edit Profile Picture"
+													sx={{
+														"& > *": {
+															transition: "opacity 200ms",
+															position: "absolute",
+															width: "100%",
+															height: "100%",
+														},
+														"&:hover > div": {
+															opacity: 0.5,
+														},
+														"&:not(:hover) > button": { opacity: 0 },
+														position: "relative",
+														cursor: "pointer",
+													}}
+												>
+													<Box
+														component="img"
 														src={`https://www.gravatar.com/avatar/${hash}`}
+														alt="Profile Picture"
 													/>
-													<Button onClick={() => editor.open()}>Edit</Button>
-												</Box>
-											</AccordionDetails>
-										</Accordion>
+													<Box bgcolor={theme.palette.grey.A400} sx={{ opacity: 0 }} />
+													<IconButton
+														disabled={!gravatar}
+														aria-label="edit"
+														size="small"
+														color="inherit"
+														onClick={() => editor.open()}
+													>
+														<Edit fontSize="inherit" />
+													</IconButton>
+												</Avatar>
+											)}
+										</Box>
 
 										<Box>TODO: favourites</Box>
 									</Stack>

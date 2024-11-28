@@ -30,6 +30,7 @@ import { ReactNode } from "react";
 import { useProfileContext } from "../../contexts/ProfileContext";
 import { RatingHistogram } from "../misc/RatingHistogram";
 import { useQuery } from "@tanstack/react-query";
+import { Gravatar } from "../misc/Gravatar";
 
 const Favourite = styled(Paper)(({ theme }) => ({
 	backgroundColor: "#fff", // TODO
@@ -104,23 +105,26 @@ export const Profile = () => {
 		<Container maxWidth="md">
 			<Box width="100%" marginTop="1em" marginBottom="1em">
 				<Box display="flex">
-					<Box flex={1}>
-						<Typography variant="h2" color={theme.palette.text.primary}>
-							{viewer.name}
-						</Typography>
-						{viewer.about && (
-							<Typography variant="subtitle1" color={theme.palette.text.secondary}>
-								{viewer.about}
+					<Gravatar sx={{ width: 72, height: 72, marginRight: "1em" }} hash={viewer.email.gravatar} />
+					<Box display="flex" flex={1}>
+						<Box flex={1}>
+							<Typography variant="h2" color={theme.palette.text.primary}>
+								{viewer.name}
 							</Typography>
+							{viewer.about && (
+								<Typography variant="subtitle1" color={theme.palette.text.secondary}>
+									{viewer.about}
+								</Typography>
+							)}
+						</Box>
+						{self && (
+							<Box marginTop="1em">
+								<IconButton aria-label="settings" component={Link} to="/settings">
+									<SettingsRounded />
+								</IconButton>
+							</Box>
 						)}
 					</Box>
-					{self && (
-						<Box marginTop="1em">
-							<IconButton aria-label="settings" component={Link} to="/settings">
-								<SettingsRounded />
-							</IconButton>
-						</Box>
-					)}
 				</Box>
 
 				<Box>
