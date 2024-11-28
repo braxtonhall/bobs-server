@@ -40,6 +40,7 @@ describe("email", () => {
 			subscribed: true,
 			address: "foo@bar.ca",
 			confirmed: false,
+			gravatar: expect.any(String),
 		} satisfies Email);
 	});
 
@@ -50,6 +51,7 @@ describe("email", () => {
 			subscribed: true,
 			address: "foo@bar.ca",
 			confirmed: false,
+			gravatar: expect.any(String),
 		} satisfies Email);
 	});
 
@@ -64,6 +66,7 @@ describe("email", () => {
 			subscribed: true,
 			address: "foo@bar.ca",
 			confirmed: false,
+			gravatar: expect.any(String),
 		} satisfies Email);
 	});
 
@@ -74,6 +77,7 @@ describe("email", () => {
 			subscribed: true,
 			address: "Bar@Foo.ca",
 			confirmed: false,
+			gravatar: expect.any(String),
 		} satisfies Email);
 	});
 });

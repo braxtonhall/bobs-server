@@ -3,8 +3,10 @@ model Email {
   address       String         @unique
   confirmed     Boolean        @default(false)
   subscribed    Boolean        @default(true)
+  gravatar      String?
   posts         Post[]
   participant   Participant?   @relation("ParticipantEmail")
+  viewer        Viewer?        @relation("ViewerEmail")
   tokens        Token[]
   boxes         Box[]
   counters      Counter[]

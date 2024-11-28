@@ -3,6 +3,7 @@ import { Err, Ok } from "../../types/result";
 import { Failure } from "../../types/failure";
 import { startVerificationForSubscription } from "../../auth/operations";
 import { sendQueuedMessages } from "../../email";
+import { hashAddress } from "../../util/hashAddress";
 
 export const addSubscriber = ({ boxId, address }: { boxId: string; address: string }) =>
 	transaction(async () => {
@@ -16,7 +17,7 @@ export const addSubscriber = ({ boxId, address }: { boxId: string; address: stri
 			address: realAddress,
 		} = await db.email.upsert({
 			where: { address },
-			create: { address },
+			create: { address, gravatar: hashAddress(address) },
 			update: {},
 			select: { id: true, confirmed: true, address: true },
 		});

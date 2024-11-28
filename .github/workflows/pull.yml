@@ -33,7 +33,7 @@ jobs:
         run: yarn install
 
       - name: setup prisma
-        run: yarn db:generate && yarn db:migrate
+        run: yarn db:migrate && yarn db:generate
 
       - name: compile
         run: yarn build

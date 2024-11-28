@@ -8,10 +8,21 @@ COPY yarn.lock ./
 RUN yarn install
 
 COPY prisma/ ./prisma/
-RUN yarn db:generate
+RUN yarn db:generate # TODO does this even work without the database?
 
 COPY src/ ./src/
 RUN yarn build
+
+# TODO begin new code...
+
+WORKDIR /app/apps/trek
+
+COPY apps/trek/tsconfig.json ./
+COPY apps/trek/package.json ./
+COPY apps/trek/yarn.lock ./
+RUN yarn install
+
+# TODO somewhere here we also need to build the star trek thing... but it relies on the backend types :(
 
 FROM node:20-alpine as runner
 
