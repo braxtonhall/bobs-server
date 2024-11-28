@@ -1,9 +1,3 @@
-/*
-  Warnings:
-
-  - Added the required column `gravatar` to the `Email` table without a default value. This is not possible if the table is not empty.
-
-*/
 -- CreateTable
 CREATE TABLE "Series" (
     "id" TEXT NOT NULL PRIMARY KEY,
@@ -195,23 +189,6 @@ CREATE TABLE "_TagToWatchlist" (
     CONSTRAINT "_TagToWatchlist_A_fkey" FOREIGN KEY ("A") REFERENCES "Tag" ("name") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "_TagToWatchlist_B_fkey" FOREIGN KEY ("B") REFERENCES "Watchlist" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
-
--- RedefineTables
-PRAGMA defer_foreign_keys=ON;
-PRAGMA foreign_keys=OFF;
-CREATE TABLE "new_Email" (
-    "id" TEXT NOT NULL PRIMARY KEY,
-    "address" TEXT NOT NULL,
-    "confirmed" BOOLEAN NOT NULL DEFAULT false,
-    "subscribed" BOOLEAN NOT NULL DEFAULT true,
-    "gravatar" TEXT NOT NULL
-);
-INSERT INTO "new_Email" ("address", "confirmed", "id", "subscribed") SELECT "address", "confirmed", "id", "subscribed" FROM "Email";
-DROP TABLE "Email";
-ALTER TABLE "new_Email" RENAME TO "Email";
-CREATE UNIQUE INDEX "Email_address_key" ON "Email"("address");
-PRAGMA foreign_keys=ON;
-PRAGMA defer_foreign_keys=OFF;
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Episode_seriesId_season_production_key" ON "Episode"("seriesId", "season", "production");
