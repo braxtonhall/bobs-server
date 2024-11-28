@@ -39,6 +39,7 @@ import { useSafeContext } from "../hooks/useSafeContext";
 import { ThemeModeContext } from "../contexts/ThemeModeContext";
 import { ThemeMode } from "../util/themeMode";
 import { GravatarQuickEditor, GravatarQuickEditorCore } from "@gravatar-com/quick-editor";
+import { Gravatar } from "./misc/Gravatar";
 
 const SettingsSection = (props: { name: string; children?: ReactNode | ReactNode[]; defaultExpanded?: boolean }) => (
 	<Accordion defaultExpanded={props.defaultExpanded} sx={{ boxShadow: "none" }}>
@@ -304,7 +305,7 @@ export const Settings = () => {
 												value={gravatar}
 											/>
 
-											{gravatar && (
+											{gravatar ? (
 												<Avatar
 													alt="Edit Profile Picture"
 													sx={{
@@ -338,6 +339,8 @@ export const Settings = () => {
 														<Edit fontSize="inherit" />
 													</IconButton>
 												</Avatar>
+											) : (
+												<Gravatar hash={null} />
 											)}
 										</Box>
 
