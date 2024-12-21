@@ -1,6 +1,6 @@
 import { createContext, ReactNode } from "react";
 import { api, API } from "../util/api";
-import { useRouteLoaderData } from "react-router-dom";
+import { useLoaderData } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { useSafeContext } from "../hooks/useSafeContext";
 
@@ -12,16 +12,8 @@ export const ProfileContext = createContext<ProfileContextContent | null>(null);
 
 export const useProfileContext = () => useSafeContext(ProfileContext);
 
-export const ProfileContextProvider = ({
-	children,
-	loaderId,
-}: {
-	children?: ReactNode | ReactNode[];
-	loaderId: string;
-}) => {
-	const { viewer, self } = useRouteLoaderData(loaderId) as NonNullable<
-		Awaited<ReturnType<API["getViewer"]["query"]>>
-	>;
+export const ProfileContextProvider = ({ children }: { children?: ReactNode | ReactNode[] }) => {
+	const { viewer, self } = useLoaderData() as NonNullable<Awaited<ReturnType<API["getViewer"]["query"]>>>;
 	const { mutate: setSelf } = useMutation({
 		mutationFn: api.setSelf.mutate,
 		onMutate: ({ name, about }) => {

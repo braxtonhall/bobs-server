@@ -31,15 +31,16 @@ import {
 } from "@mui/material";
 import { ReactNode, SyntheticEvent, useCallback, useMemo, useState } from "react";
 import { AddCircleRounded, RemoveCircleRounded, ExpandMoreRounded, Edit } from "@mui/icons-material";
-import { Form } from "react-router-dom";
+import { Form, useNavigate } from "react-router-dom";
 import { useContent } from "../hooks/useContent";
 import { defaultColours } from "../hooks/useColour";
 import { useExitConfirmation } from "../hooks/useExitConfirmation";
 import { useSafeContext } from "../hooks/useSafeContext";
 import { ThemeModeContext } from "../contexts/ThemeModeContext";
 import { ThemeMode } from "../util/themeMode";
-import { GravatarQuickEditor, GravatarQuickEditorCore } from "@gravatar-com/quick-editor";
+import { GravatarQuickEditorCore } from "@gravatar-com/quick-editor";
 import { Gravatar } from "./misc/Gravatar";
+import { api } from "../util/api";
 
 const SettingsSection = (props: { name: string; children?: ReactNode | ReactNode[]; defaultExpanded?: boolean }) => (
 	<Accordion defaultExpanded={props.defaultExpanded} sx={{ boxShadow: "none" }}>
@@ -150,6 +151,9 @@ export const Settings = () => {
 	const [about, setAbout] = useState(viewer.about);
 
 	const [alertOpen, setAlertOpen] = useState(false);
+
+	const navigate = useNavigate();
+	const logout = useCallback(() => api.logout.mutate().then(() => navigate("/")), [navigate]);
 
 	const { series } = useContent();
 
@@ -437,6 +441,9 @@ export const Settings = () => {
 								</SettingsSection>
 								<Button type="submit" variant="contained" disabled={!(changed && complete)}>
 									Save
+								</Button>
+								<Button variant="outlined" color="error" sx={{ mt: "1em" }} onClick={logout}>
+									Logout
 								</Button>
 							</Stack>
 						</FormGroup>

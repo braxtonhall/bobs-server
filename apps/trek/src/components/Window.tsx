@@ -12,11 +12,11 @@ import {
 	Stack,
 	ThemeProvider,
 } from "@mui/material";
-import { Link, Location, Outlet, useLoaderData, useLocation } from "react-router-dom";
-import { PersonRounded, PlayCircleOutlineRounded, RssFeedRounded, SearchRounded } from "@mui/icons-material";
+import { Link, Location, useLoaderData, useLocation } from "react-router-dom";
+import { PlayCircleOutlineRounded, RssFeedRounded, SearchRounded } from "@mui/icons-material";
 import { api, API } from "../util/api";
 import { defaultSettings, UserContext } from "../contexts/UserContext";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { StorageKind, useStorage } from "../hooks/useStorage";
 import { ThemeModeContext } from "../contexts/ThemeModeContext";
@@ -33,14 +33,14 @@ const selectValue = ({ pathname }: Location, me: string) => {
 
 const drawerWidth = 240;
 
-export const Window = () => {
+export const Window = ({ children }: { children?: ReactNode | ReactNode[] }) => {
 	const themeStorage = useStorage(StorageKind.Theme);
 	const [mode, setMode] = useState(themeStorage.get());
 	const theme = useThemeMode(mode);
-	const loaderData = useLoaderData() as Awaited<ReturnType<API["getSelf"]["query"]>>;
-	const [settings, setSettings] = useState(loaderData.settings);
+	const loaderData = useLoaderData() as Partial<Awaited<ReturnType<API["getSelf"]["query"]>>>;
+	const [settings, setSettings] = useState(loaderData?.settings ?? null);
 	const { mutate: updateSettings } = useMutation({ mutationFn: api.setSettings.mutate, onMutate: setSettings });
-	const me = `/viewers/${loaderData.viewer.id}`;
+	const me = loaderData?.viewer ? `/viewers/${loaderData.viewer.id}` : "/login";
 	const value = selectValue(useLocation(), me);
 
 	return (
@@ -114,7 +114,8 @@ export const Window = () => {
 											<ListItemIcon>
 												<Gravatar
 													hash={
-														(settings?.gravatar && loaderData.viewer.email.gravatar) || null
+														(settings?.gravatar && loaderData.viewer?.email.gravatar) ||
+														null
 													}
 													sx={{ width: 24, height: 24 }}
 												/>
@@ -127,7 +128,7 @@ export const Window = () => {
 						</Box>
 
 						<Box flex="1" overflow="auto">
-							<Outlet />
+							{children}
 						</Box>
 
 						<Box display={{ sm: "none" }} sx={{ opacity: 0 }}>
@@ -176,7 +177,7 @@ export const Window = () => {
 									value="/me"
 									icon={
 										<Gravatar
-											hash={(settings?.gravatar && loaderData.viewer.email.gravatar) || null}
+											hash={(settings?.gravatar && loaderData.viewer?.email.gravatar) || null}
 											sx={{ width: 24, height: 24 }}
 										/>
 									}

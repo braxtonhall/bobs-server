@@ -1,4 +1,4 @@
-import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Outlet, redirect, RouterProvider } from "react-router-dom";
 import Watch from "./components/Watch";
 import Episode from "./components/Episode";
 import Watchlist from "./components/Watchlist";
@@ -21,6 +21,38 @@ import { Following } from "./components/Profile/Following";
 import { Settings } from "./components/Settings";
 import { ProfileContextProvider } from "./contexts/ProfileContext";
 import WatchlistOld from "./components/WatchlistOld";
+import { TRPCClientError } from "@trpc/client";
+import { Login } from "./components/Login";
+
+const publicLoader = async () => {
+	try {
+		return await api.getSelf.query();
+	} catch (error) {
+		return {
+			viewer: null,
+			self: false,
+			settings: null,
+		};
+	}
+};
+
+const authedLoader = async () => {
+	try {
+		// TODO This should be checking if there's something in storage first
+		return await api.getSelf.query();
+	} catch (error) {
+		if (error instanceof TRPCClientError) {
+			if (error.message === "UNAUTHORIZED") {
+				// TODO i don't wanna redirect....
+				//   i want the page to be the login page!
+				// return redirect("/login");
+			} else if (error.message === "FORBIDDEN") {
+				// return redirect("/signup");
+			}
+		}
+		throw error;
+	}
+};
 
 const router = createBrowserRouter(
 	[
@@ -28,15 +60,21 @@ const router = createBrowserRouter(
 			path: "/",
 			// TODO need to supply some platform settings
 			// TODO if not logged in, get a 401. The 401 error handler should give login page!
-			element: <Window />,
-			loader: () => api.getSelf.query(),
+			element: (
+				<Window>
+					<Outlet />
+				</Window>
+			),
+			loader: publicLoader,
 			id: "root",
-			// errorElement: <ErrorPage />,
 			// action: rootAction,
 			children: [
 				{
 					path: "/",
+					loader: authedLoader,
 					element: <Watch />,
+					// TODO need to repeat a layer of this for signup as well
+					errorElement: <Login />,
 				},
 				{
 					path: "/explore",
@@ -45,14 +83,6 @@ const router = createBrowserRouter(
 				{
 					path: "/activity",
 					element: <Activity />,
-				},
-				{
-					path: "/settings",
-					element: (
-						<ProfileContextProvider loaderId="root">
-							<Settings />
-						</ProfileContextProvider>
-					),
 				},
 				{
 					path: "/viewers/:id",
@@ -66,7 +96,7 @@ const router = createBrowserRouter(
 						}
 					},
 					element: (
-						<ProfileContextProvider loaderId="viewer">
+						<ProfileContextProvider>
 							<Outlet />
 						</ProfileContextProvider>
 					),
@@ -193,9 +223,70 @@ const router = createBrowserRouter(
 				},
 			],
 		},
-		// TODO fill these in ofc
 		{
 			path: "/signup",
+			loader: async () => {
+				try {
+					await api.getSelf.query();
+					return redirect("/");
+				} catch (error) {
+					if (error instanceof TRPCClientError) {
+						if (error.message === "UNAUTHORIZED") {
+							return redirect("/login");
+						} else if (error.message === "FORBIDDEN") {
+							return {
+								viewer: null,
+								self: false,
+								settings: null,
+							};
+						}
+					}
+					throw error;
+				}
+			},
+			element: (
+				<Window>
+					<></>
+				</Window>
+			),
+		},
+		{
+			path: "/login",
+			loader: async () => {
+				try {
+					await api.getSelf.query();
+					return redirect("/");
+				} catch (error) {
+					if (error instanceof TRPCClientError) {
+						if (error.message === "UNAUTHORIZED") {
+							return {
+								viewer: null,
+								self: false,
+								settings: null,
+							};
+						} else if (error.message === "FORBIDDEN") {
+							return redirect("/signup");
+						}
+					}
+					throw error;
+				}
+			},
+			element: (
+				<Window>
+					<Login />
+				</Window>
+			),
+		},
+		{
+			path: "/settings",
+			loader: authedLoader,
+			element: (
+				<Window>
+					<ProfileContextProvider>
+						<Settings />
+					</ProfileContextProvider>
+				</Window>
+			),
 		},
 	],
 	{ basename: process.env.PUBLIC_URL },

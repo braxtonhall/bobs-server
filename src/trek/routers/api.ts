@@ -1,5 +1,5 @@
 import express from "express";
-import { authenticateHeader } from "../../auth/middlewares/authenticate";
+import { authenticateCookie } from "../../auth/middlewares/authenticate";
 import { getViewing } from "../middlewares/checkViewing";
 import { getSeries } from "../operations/getSeries";
 import { getCurrentlyWatching } from "../operations/getCurrentlyWatching";
@@ -8,7 +8,7 @@ import { updateCursor } from "../operations/updateCursor";
 import { getViewerViewTags } from "../operations/getViewerViewTags";
 import { z } from "zod";
 import { logEpisode, logEpisodeSchema } from "../operations/logEpisode";
-import { initTRPC } from "@trpc/server";
+import { initTRPC, TRPCError } from "@trpc/server";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { getLatestEvents } from "../operations/getLatestEvents";
 import { Scope } from "../types";
@@ -28,32 +28,56 @@ import { getWatchlistTags } from "../operations/getWatchlistTags";
 import { getWatchlistViewings } from "../operations/getWatchlistViewings";
 import { setSelf } from "../operations/setSelf";
 import { setWatchlistLiked } from "../operations/setWatchlistLiked";
+import { authorize, deauthenticate, login } from "../../auth/operations";
+import { Duration } from "luxon";
+import Config from "../../Config";
+import cookieParser from "cookie-parser";
+
+const tokenMaxAge = Duration.fromObject({ hour: Config.API_TOKEN_EXPIRATION_HOURS }).toMillis();
 
 export const t = initTRPC.context<Context>().create();
 
 const createContext = ({ res }: trpcExpress.CreateExpressContextOptions) => ({
-	viewerId: res.locals.viewer.id as string,
+	setCookie: (env: { key: string; value: string; maxAge: number }) =>
+		res.cookie(env.key, env.value, { sameSite: "none", secure: true, maxAge: env.maxAge }),
+	clearCookie: (key: string) => res.clearCookie(key),
+	token: res.locals.token as string | undefined,
+	emailId: (res.locals.email?.id ?? undefined) as string | undefined,
+	viewerId: (res.locals.viewer?.id ?? undefined) as string | undefined,
 });
 type Context = Awaited<ReturnType<typeof createContext>>;
 
+const publicProcedure = t.procedure;
+
+const authedProcedure = t.procedure.use(async ({ ctx: { emailId, viewerId }, next }) => {
+	if (!emailId) {
+		throw new TRPCError({ code: "UNAUTHORIZED" });
+	}
+	if (!viewerId) {
+		throw new TRPCError({ code: "FORBIDDEN" });
+	}
+
+	return next({ ctx: { viewerId, emailId } });
+});
+
 const trekRouter = t.router({
-	getSeries: t.procedure.query(getSeries),
-	getViewerViewTags: t.procedure.query(({ ctx }) => getViewerViewTags(ctx.viewerId)),
-	getCurrentlyWatching: t.procedure
+	getSeries: publicProcedure.query(getSeries),
+	getViewerViewTags: authedProcedure.query(({ ctx }) => getViewerViewTags(ctx.viewerId)),
+	getCurrentlyWatching: authedProcedure
 		.input(z.string().optional())
 		.query(({ input: cursor, ctx }) => getCurrentlyWatching(ctx.viewerId, cursor)),
-	updateCursor: t.procedure
+	updateCursor: authedProcedure
 		.input(z.object({ viewingId: z.string(), episodeId: z.string().or(z.null()) }))
 		.mutation(({ input: { viewingId, episodeId }, ctx: { viewerId } }) =>
 			updateCursor({ viewerId, episodeId, viewingId }),
 		),
-	getWatchlist: t.procedure
+	getWatchlist: publicProcedure
 		.input(z.string())
 		.query(({ ctx: { viewerId }, input: watchlistId }) => getWatchlist({ viewerId, watchlistId })),
-	getWatchlistTags: t.procedure
+	getWatchlistTags: publicProcedure
 		.input(z.object({ watchlistId: z.string(), cursor: z.string().optional() }))
 		.query(({ input }) => getWatchlistTags(input)),
-	getWatchlistViewings: t.procedure
+	getWatchlistViewings: authedProcedure
 		.input(z.object({ watchlistId: z.string(), cursor: z.string().optional() }))
 		.query(({ ctx: { viewerId }, input: { watchlistId, cursor } }) =>
 			getWatchlistViewings({
@@ -62,74 +86,74 @@ const trekRouter = t.router({
 				cursor,
 			}),
 		),
-	getWatchlistRelationship: t.procedure
+	getWatchlistRelationship: authedProcedure
 		.input(z.string())
 		.query(({ ctx: { viewerId }, input: watchlistId }) => getWatchlistRelationship({ viewerId, watchlistId })),
-	setWatchlistLiked: t.procedure
+	setWatchlistLiked: authedProcedure
 		.input(z.object({ watchlistId: z.string(), liked: z.boolean() }))
 		.mutation(({ ctx: { viewerId }, input: { watchlistId, liked } }) =>
 			setWatchlistLiked({ viewerId, watchlistId, liked }),
 		),
-	startViewing: t.procedure
+	startViewing: authedProcedure
 		.input(z.string())
 		.mutation(({ ctx: { viewerId }, input: watchlistId }) => viewing.start({ viewerId, watchlistId })),
-	pauseViewing: t.procedure
+	pauseViewing: authedProcedure
 		.input(z.string())
 		.mutation(({ ctx: { viewerId }, input: viewingId }) => viewing.pause({ viewerId, viewingId })),
-	stopViewing: t.procedure
+	stopViewing: authedProcedure
 		.input(z.string())
 		.mutation(({ ctx: { viewerId }, input: viewingId }) => viewing.stop({ viewerId, viewingId })),
-	resumeViewing: t.procedure
+	resumeViewing: authedProcedure
 		.input(z.string())
 		.mutation(({ ctx: { viewerId }, input: viewingId }) => viewing.resume({ viewerId, viewingId })),
-	completeViewing: t.procedure
+	completeViewing: authedProcedure
 		.input(z.string())
 		.mutation(({ ctx: { viewerId }, input: viewingId }) => viewing.complete({ viewerId, viewingId })),
-	getEpisodeRelationships: t.procedure.query(({ ctx: { viewerId } }) => getEpisodeRelationships(viewerId)),
-	getEpisodeRelationship: t.procedure
+	getEpisodeRelationships: publicProcedure.query(({ ctx: { viewerId } }) => getEpisodeRelationships(viewerId)),
+	getEpisodeRelationship: publicProcedure
 		.input(episodeQuerySchema)
 		.query(({ ctx: { viewerId }, input: { season, show, episode } }) =>
 			getEpisodeRelationship({ seriesId: show, season, production: episode, viewerId }),
 		),
-	getEpisode: t.procedure
+	getEpisode: publicProcedure
 		.input(episodeQuerySchema)
 		.query(({ input: { season, show, episode } }) => getEpisode({ seriesId: show, season, production: episode })),
-	getSeason: t.procedure.input(z.object({ season: z.number(), show: z.string() })).query(
+	getSeason: publicProcedure.input(z.object({ season: z.number(), show: z.string() })).query(
 		({ ctx: { viewerId }, input: { season, show } }) => `TODO ${viewerId} ${show} ${season}`, // TODO
 	),
-	getShow: t.procedure
+	getShow: publicProcedure
 		.input(z.object({ show: z.string() }))
 		.query(({ ctx: { viewerId }, input: { show } }) => `TODO ${viewerId} ${show}`), // TODO
-	getViewer: t.procedure
+	getViewer: publicProcedure
 		.input(z.string())
 		.query(({ ctx: { viewerId }, input: targetId }) => getViewer({ requestorId: viewerId, targetId })),
-	getViewerRatings: t.procedure.input(z.string()).query(({ input: viewerId }) => getViewerRatings(viewerId)),
-	getSelf: t.procedure.query(async ({ ctx: { viewerId } }) => ({
+	getViewerRatings: publicProcedure.input(z.string()).query(({ input: viewerId }) => getViewerRatings(viewerId)),
+	getSelf: authedProcedure.query(async ({ ctx: { viewerId } }) => ({
 		...(await getViewer({ requestorId: viewerId, targetId: viewerId }))!,
 		settings: await getSettings(viewerId),
 	})),
-	setSelf: t.procedure
+	setSelf: authedProcedure
 		.input(updateSelfPayloadSchema)
 		.mutation(({ ctx: { viewerId }, input: { name, about } }) => setSelf({ viewerId, name, about })),
-	getWatchlists: t.procedure
+	getWatchlists: publicProcedure
 		.input(z.object({ viewerId: z.string(), cursor: z.string().optional() }))
 		.query(({ ctx: { viewerId: requestorId }, input: { viewerId: targetId, cursor } }) =>
 			getWatchlists({ requestorId, targetId, cursor }),
 		),
-	setSettings: t.procedure
+	setSettings: authedProcedure
 		.input(settingsPayloadSchema)
 		.mutation(({ ctx: { viewerId }, input: settings }) => setSettings({ viewerId, settings })),
-	updateWatchlist: t.procedure
+	updateWatchlist: authedProcedure
 		.input(updateWatchlistInputSchema)
 		.mutation(({ ctx, input }) => updateWatchlist(ctx.viewerId, input)),
-	logEpisode: t.procedure.input(logEpisodeSchema).mutation(({ input, ctx }) => logEpisode(ctx.viewerId, input)),
-	getAllEvents: t.procedure
+	logEpisode: authedProcedure.input(logEpisodeSchema).mutation(({ input, ctx }) => logEpisode(ctx.viewerId, input)),
+	getAllEvents: publicProcedure
 		.input(z.number().optional())
-		.query(({ input: cursor, ctx: { viewerId } }) => getLatestEvents({ cursor, viewerId, scope: Scope.EVERYONE })),
-	getFollowingEvents: t.procedure
+		.query(({ input: cursor }) => getLatestEvents({ cursor, scope: Scope.EVERYONE })),
+	getFollowingEvents: authedProcedure
 		.input(z.number().optional())
 		.query(({ input: cursor, ctx: { viewerId } }) => getLatestEvents({ cursor, viewerId, scope: Scope.FOLLOWING })),
-	getIndividualEvents: t.procedure
+	getIndividualEvents: publicProcedure
 		.input(
 			z.object({
 				cursor: z.number().optional(),
@@ -137,26 +161,38 @@ const trekRouter = t.router({
 			}),
 		)
 		.query(({ input: { cursor, viewerId } }) => getLatestEvents({ cursor, viewerId, scope: Scope.INDIVIDUAL })),
+	startLogin: publicProcedure
+		.input(
+			z.object({
+				email: z.string(),
+				next: z.string(),
+			}),
+		)
+		.mutation(({ input: { email, next } }) => login({ email, next })),
+	completeLogin: publicProcedure
+		.input(
+			z.object({
+				email: z.string(),
+				password: z.string(),
+			}),
+		)
+		.mutation(async ({ input: { email, password }, ctx: { setCookie } }) => {
+			const token = await authorize({ email, temporaryToken: password });
+			setCookie({ key: "token", value: token, maxAge: tokenMaxAge });
+		}),
+	logout: authedProcedure.mutation(async ({ ctx: { token, clearCookie } }) => {
+		token && (await deauthenticate(token).catch(() => {}));
+		clearCookie("token");
+	}),
 });
 
 export type TrekRouter = typeof trekRouter;
 
 export const api = express()
 	.post("/*", bodyParser.urlencoded({ extended: true }))
-	.use(authenticateHeader)
+	.use(cookieParser())
+	.use(authenticateCookie)
 	.use(getViewing)
-	.use((req, res, next) => {
-		// TODO migrate this ... https://trpc.io/docs/server/procedures
-		//  getViewing should really just be part of createContext,
-		//  and this function should get rolled into t.procedure.use(..)
-		if (!res.locals.logged) {
-			return res.sendStatus(403);
-		} else if (!res.locals.viewing) {
-			return res.sendStatus(401);
-		} else {
-			return next();
-		}
-	})
 	.use(
 		"/trpc",
 		trpcExpress.createExpressMiddleware({

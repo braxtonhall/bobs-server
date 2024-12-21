@@ -8,6 +8,7 @@ import { setViewing } from "../operations/setViewing";
 
 export const views = express()
 	.use(getViewing)
+	// TODO delete all this stuff
 	.get("/signup", enforceLoggedIn, checkViewing, (_req, res) =>
 		res.render("pages/trek/signup", { locals: res.locals, Config }),
 	)

@@ -27,13 +27,3 @@ export const checkViewing = async (req: Request, res: Response, next: NextFuncti
 		return next();
 	}
 };
-
-export const enforceViewing = async (req: Request, res: Response, next: NextFunction) => {
-	if (res.locals.viewing) {
-		return next();
-	} else if (req.originalUrl === "/trek") {
-		return res.redirect("/trek/signup");
-	} else {
-		return res.redirect(`/trek/signup?${new URLSearchParams({ next: req.originalUrl })}`);
-	}
-};

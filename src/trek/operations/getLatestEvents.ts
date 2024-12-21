@@ -3,7 +3,7 @@ import { Scope } from "../types";
 import Config from "../../Config";
 
 // TODO use the scope!!!
-export const getLatestEvents = async ({ cursor }: { cursor?: number; viewerId: string; scope: Scope }) => {
+export const getLatestEvents = async ({ cursor }: { cursor?: number; viewerId?: string; scope: Scope }) => {
 	const events = await db.event.findMany({
 		cursor: cursor ? { id: cursor } : undefined,
 		orderBy: { id: "desc" },
