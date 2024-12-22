@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { TextField, Autocomplete } from "@mui/material";
 
 export const Tags = ({
@@ -11,6 +11,10 @@ export const Tags = ({
 	options?: string[];
 }) => {
 	const [inputString, setInputString] = useState("");
+	const squeezeTags = useCallback((newTokens: string[]) => {
+		const tags = newTokens.map((tag) => tag.trim().toLowerCase()).filter((tag) => !!tag);
+		return Array.from(new Set(tags));
+	}, []);
 	return (
 		<Autocomplete
 			multiple
@@ -19,14 +23,11 @@ export const Tags = ({
 			options={options.filter((tag) => !tags.includes(tag))}
 			value={tags}
 			inputValue={inputString}
-			onChange={(_, newValue) => setTags(newValue)}
+			onChange={(_, newValue) => setTags(squeezeTags(newValue))}
 			onInputChange={(_, newInputValue) => {
 				const tokens = newInputValue.split(",");
 				if (tokens.length > 1) {
-					setTags((tags) => [
-						...tags,
-						...tokens.map((tag) => tag.trim().toLowerCase()).filter((tag) => tag && !tags.includes(tag)),
-					]);
+					setTags((tags) => squeezeTags([...tags, ...tokens]));
 					setInputString("");
 				} else {
 					setInputString(newInputValue);
