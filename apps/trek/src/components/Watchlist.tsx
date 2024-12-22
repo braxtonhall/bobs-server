@@ -316,6 +316,7 @@ const EpisodeList = ({ episodes }: { episodes: DecoratedEpisodes }) => {
 						</TableRow>
 					</TableHead>
 					<TableBody>
+						{/*TODO this should be virtualized!*/}
 						{filteredEpisodes.map((episode) => (
 							<EpisodeRow episode={episode} key={episode.id} />
 						))}

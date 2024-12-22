@@ -102,6 +102,17 @@ const WatchlistPreviewList = ({
 		initialOffset: cursorIndex * 50 - 25,
 		overscan: 10,
 	});
+	const lastIndex = useRef(cursorIndex);
+	useEffect(() => {
+		if (lastIndex.current !== cursorIndex) {
+			const start = virtualizer.range?.startIndex ?? 0;
+			const end = virtualizer.range?.endIndex ?? Infinity;
+			if (cursorIndex < start || cursorIndex > end) {
+				virtualizer.scrollToIndex(cursorIndex, { behavior: "smooth" });
+			}
+		}
+		lastIndex.current = cursorIndex;
+	}, [cursorIndex, virtualizer]);
 
 	return (
 		<FadeInList

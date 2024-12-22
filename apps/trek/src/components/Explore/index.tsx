@@ -31,6 +31,7 @@ export const Explore = () => {
 					{
 						label: "Lists",
 						icon: <TableRowsRounded />,
+						// TODO you should also be able to create a list from here!
 						content: <>{search ? `SEARCHING FOR "${search}" IN LISTS` : `EXPLORING LISTS`}</>,
 					},
 					{
