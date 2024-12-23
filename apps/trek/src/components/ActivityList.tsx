@@ -43,6 +43,7 @@ export const ActivityList = (props: { getActivity: EventsProcedure; queryKey?: s
 
 const Event = ({ event }: { event: EventTransport }) => {
 	if (event.watchlist) {
+		// TODO should a watchlist get a colour in edit page?
 		return (
 			<EventCard
 				time={event.time}
@@ -122,6 +123,7 @@ const Event = ({ event }: { event: EventTransport }) => {
 			</EventCard>
 		);
 	} else if (event.viewer) {
+		// TODO should a viewer get a colour in settings?
 		return (
 			<EventCard
 				viewer={event.viewer}
