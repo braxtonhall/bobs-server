@@ -1,6 +1,13 @@
 import { API } from "../util/api";
-import { Button } from "@mui/material";
+import { Box, Button, Card, CardActionArea, CardContent, ThemeProvider, Typography, useTheme } from "@mui/material";
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { Gravatar } from "./misc/Gravatar";
+import { DateTime } from "luxon";
+import { ReactNode, useMemo } from "react";
+import { Link } from "react-router-dom";
+import { useColour } from "../hooks/useColour";
+import { isDark, overlay } from "../util/colour";
+import { darkTheme, lightTheme } from "../themes";
 
 type EventsProcedure = (
 	cursor?: number,
@@ -8,6 +15,7 @@ type EventsProcedure = (
 
 type Events = Awaited<ReturnType<EventsProcedure>>["events"];
 type EventTransport = Events[number];
+type EventType<K extends keyof EventTransport> = NonNullable<EventTransport[K]>;
 
 export const ActivityList = (props: { getActivity: EventsProcedure; queryKey?: string[] }) => {
 	// TODO are these useful? {error, isFetchingNextPage, status}
@@ -18,6 +26,7 @@ export const ActivityList = (props: { getActivity: EventsProcedure; queryKey?: s
 		getNextPageParam: (lastPage) => lastPage.cursor,
 	});
 
+	// TODO more virtualization!!!!!
 	return (
 		<>
 			{data?.pages.flatMap((page) => page.events.map((event) => <Event event={event} key={event.id}></Event>))}
@@ -35,49 +44,137 @@ export const ActivityList = (props: { getActivity: EventsProcedure; queryKey?: s
 const Event = ({ event }: { event: EventTransport }) => {
 	if (event.watchlist) {
 		return (
-			<p>
-				{event.watchlist.owner?.name ?? "Someone"} created the watchlist {event.watchlist.name}
-			</p>
+			<EventCard
+				time={event.time}
+				title={`${event.watchlist.owner?.name ?? "Someone"} created the watchlist ${event.watchlist.name}`}
+				viewer={event.watchlist.owner ?? undefined}
+				to={`/watchlists/${event.watchlist.id}`}
+			>
+				<WatchlistEmbed watchlist={event.watchlist} />
+			</EventCard>
 		);
 	} else if (event.follow) {
 		return (
-			<p>
-				{event.follow.follower.name} followed {event.follow.followed.name}
-			</p>
+			<EventCard
+				time={event.time}
+				title={`${event.follow.follower.name} followed ${event.follow.followed.name}`}
+				viewer={event.follow.follower}
+				to={`/viewers/${event.follow.followed.id}`}
+			>
+				<ProfileEmbed profile={event.follow.followed} />
+			</EventCard>
 		);
 	} else if (event.view) {
 		return (
-			<p>
-				{event.view.viewer.name} watched {event.view.episode.name}
-			</p>
+			<EventCard
+				time={event.time}
+				title={`${event.view.viewer.name} watched${event.view.viewedOn ? ` on ${DateTime.fromFormat(event.view.viewedOn, "yyyy-MM-dd").toLocaleString()}` : ""}`}
+				viewer={event.view.viewer}
+				to={`/views/${event.view.id}`}
+				episode={event.view.episode}
+			>
+				<ViewEmbed view={event.view} />
+			</EventCard>
 		);
 	} else if (event.startedViewing) {
 		return (
-			<p>
-				{event.startedViewing.viewer.name} started viewing {event.startedViewing.watchlist.name}
-			</p>
+			<EventCard
+				time={event.time}
+				title={`${event.startedViewing.viewer.name} started viewing a watchlist`}
+				viewer={event.startedViewing.viewer}
+				to={`/watchlists/${event.startedViewing.watchlist.id}`}
+			>
+				<WatchlistEmbed watchlist={event.startedViewing.watchlist} />
+			</EventCard>
 		);
 	} else if (event.finishedViewing) {
 		return (
-			<p>
-				{event.finishedViewing.viewer.name} finished viewing {event.finishedViewing.watchlist.name}
-			</p>
+			<EventCard
+				time={event.time}
+				title={`${event.finishedViewing.viewer.name} finished viewing a watchlist`}
+				viewer={event.finishedViewing.viewer}
+				to={`/watchlists/${event.finishedViewing.watchlist.id}`}
+			>
+				<WatchlistEmbed watchlist={event.finishedViewing.watchlist} />
+			</EventCard>
 		);
 	} else if (event.viewLike) {
 		return (
-			<p>
-				{event.viewLike.viewer.name} liked {event.viewLike.view.viewer.name}'s review
-			</p>
+			<EventCard
+				time={event.time}
+				title={`${event.viewLike.viewer.name} liked`}
+				viewer={event.viewLike.viewer}
+				to={`/views/${event.viewLike.view.id}`}
+			>
+				{/*TODO just embed the other event card within this one?????*/}
+				<ViewEmbed view={event.viewLike.view} />
+			</EventCard>
 		);
 	} else if (event.watchlistLike) {
 		return (
-			<p>
-				{event.watchlistLike.viewer.name} liked the watchlist {event.watchlistLike.watchlist.name}
-			</p>
+			<EventCard
+				time={event.time}
+				title={`${event.watchlistLike.viewer.name} liked`}
+				viewer={event.watchlistLike.viewer}
+				to={`/watchlists/${event.watchlistLike.watchlist.id}`}
+			>
+				<WatchlistEmbed watchlist={event.watchlistLike.watchlist} />
+			</EventCard>
 		);
 	} else if (event.viewer) {
-		return <p>{event.viewer.name} joined bob's trek</p>;
+		return (
+			<EventCard
+				viewer={event.viewer}
+				time={event.time}
+				title={`${event.viewer.name} joined bob's trek`}
+				to={`/viewers/${event.viewer.id}`}
+			/>
+		);
 	} else {
 		return <>UNEXPECTED: {JSON.stringify(event)}</>;
 	}
+};
+
+const ProfileEmbed = (props: { profile: EventType<"follow">["followed"] }) => <>{props.profile.name}</>;
+
+const ViewEmbed = (props: { view: EventType<"view"> }) => <>{props.view.episode.name}</>;
+
+const WatchlistEmbed = (props: { watchlist: Omit<EventType<"watchlist">, "owner"> }) => <>{props.watchlist.name}</>;
+
+const EventCard = (props: {
+	children?: ReactNode | ReactNode[];
+	time: string;
+	viewer?: EventType<"viewer">;
+	title: string;
+	to: string;
+	episode?: EventType<"view">["episode"];
+}) => {
+	const theme = useTheme();
+	const colour = useColour(props.episode);
+	const useDarkTheme = useMemo(() => isDark(overlay(theme.palette.background.default, colour)), [theme, colour]);
+	const viewTheme = useDarkTheme ? darkTheme : lightTheme;
+	return (
+		<ThemeProvider theme={viewTheme}>
+			<Card sx={{ marginBottom: "1em", backgroundColor: colour }}>
+				<CardActionArea component={Link} to={props.to}>
+					<CardContent>
+						<Box sx={{ display: "flex" }}>
+							<Gravatar
+								href={props.viewer ? `/viewers/${props.viewer.id}` : undefined}
+								sx={{ width: 40, height: 40, marginRight: "1em" }}
+								hash={props.viewer?.email.gravatar ?? null}
+							/>
+							<Box display="flex" flexDirection="column" justifyContent="center" flex="1">
+								<Typography>{props.title}</Typography>
+							</Box>
+							<Box display="flex" flexDirection="column" justifyContent="center">
+								<Typography>{DateTime.fromISO(props.time).toLocaleString()}</Typography>
+							</Box>
+						</Box>
+						{props.children && <Box marginTop="1em">{props.children}</Box>}
+					</CardContent>
+				</CardActionArea>
+			</Card>
+		</ThemeProvider>
+	);
 };

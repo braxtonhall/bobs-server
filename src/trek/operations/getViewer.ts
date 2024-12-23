@@ -109,6 +109,8 @@ export const getViewer = ({ requestorId, targetId }: { requestorId?: string; tar
 				episodeLikes: additionalCounts._count.opinions,
 				tags: tagsCount,
 			},
+			followingRequestor: !!baseViewer.following?.length,
+			followedByRequestor: !!baseViewer.followers?.length,
 		};
 	})
 		.then((viewer) => ({ viewer, self: requestorId === targetId }))

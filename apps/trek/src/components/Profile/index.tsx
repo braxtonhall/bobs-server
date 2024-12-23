@@ -95,10 +95,12 @@ export const Profile = () => {
 
 	const theme = useTheme();
 
+	console.log(viewer);
+
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const isFollowingPage = !self && !!viewer.followers.length; // TODO
+	const isFollowingPage = !self && viewer.followedByRequestor; // TODO
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const isFollowedByPage = !self && !!viewer.following.length; // TODO
+	const isFollowedByPage = !self && viewer.followingRequestor; // TODO
 
 	// noinspection HtmlUnknownTarget
 	return (
