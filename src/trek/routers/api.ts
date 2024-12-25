@@ -177,8 +177,12 @@ const trekRouter = t.router({
 			}),
 		)
 		.mutation(async ({ input: { email, password }, ctx: { setCookie } }) => {
-			const token = await authorize({ email, temporaryToken: password });
-			setCookie({ key: "token", value: token, maxAge: tokenMaxAge });
+			try {
+				const token = await authorize({ email, temporaryToken: password });
+				setCookie({ key: "token", value: token, maxAge: tokenMaxAge });
+			} catch {
+				throw new TRPCError({ code: "BAD_REQUEST" });
+			}
 		}),
 	logout: authedProcedure.mutation(async ({ ctx: { token, clearCookie } }) => {
 		token && (await deauthenticate(token).catch(() => {}));

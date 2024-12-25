@@ -23,7 +23,7 @@ const StyledSlider = styled(Slider)(({ theme }) => ({
 	top: 0,
 	left: 0,
 	position: "absolute",
-	padding: 0,
+	padding: "0 !important",
 	opacity: 0,
 	"& .MuiSlider-thumb::after, & .MuiSlider-thumb": {
 		height: "unset !important",
@@ -58,7 +58,7 @@ export const SlidingRating = ({
 			step={precision}
 			marks
 			min={0}
-			max={5 + precision}
+			max={5}
 			onChange={(_, value) => onChange(value === null ? null : Math.min(value as number, 5))}
 			// TODO double click to unset is not supported
 			onDoubleClick={() => onChange(null)}

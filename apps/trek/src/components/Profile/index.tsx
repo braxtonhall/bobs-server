@@ -95,8 +95,6 @@ export const Profile = () => {
 
 	const theme = useTheme();
 
-	console.log(viewer);
-
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const isFollowingPage = !self && viewer.followedByRequestor; // TODO
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
