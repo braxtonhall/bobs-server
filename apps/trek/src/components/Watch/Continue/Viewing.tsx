@@ -1,8 +1,7 @@
-import { Box, Card, styled, Typography, useTheme, ThemeProvider } from "@mui/material";
+import { Box, Card, styled, useTheme, ThemeProvider } from "@mui/material";
 import { LogForm } from "../../LogForm";
 import { WatchlistPreview } from "./WatchlistPreview";
 import { DecoratedViewing } from "./mergeViewingWithContent";
-import { EpisodeCard } from "../../EpisodeCard";
 import { useMutationContext } from "./MutationContext";
 import { useColour } from "../../../hooks/useColour";
 import { fadeIn } from "../../../util/fadeIn";
@@ -10,6 +9,7 @@ import { StorageKind, useStorage } from "../../../hooks/useStorage";
 import { isDark, overlay } from "../../../util/colour";
 import { useMemo } from "react";
 import { darkTheme, lightTheme } from "../../../themes";
+import { EpisodeHeader } from "../../EpisodeHeader";
 
 type ViewingProps = {
 	viewing: DecoratedViewing;
@@ -46,35 +46,8 @@ export const Viewing = ({ viewing }: ViewingProps) => {
 					>
 						{current ? (
 							<Box key={current.id}>
-								<Box display="flex" alignItems="stretch" position="relative" marginBottom="1em">
-									<EpisodeCard episode={current} width="4em" marginRight="0.5em" minWidth="50px" />
-
-									<Box
-										sx={{
-											display: { xs: "unset", md: "table-cell" },
-											width: { xs: "unset", md: "100%" },
-										}}
-									>
-										{/*TODO it would be nice if this font changed based on the show https://github.com/wrstone/fonts-startrek*/}
-										<Typography variant="h5" component="h2" color={viewTheme.palette.text.primary}>
-											{current.name}
-										</Typography>
-
-										<Typography
-											variant="body2"
-											component="p"
-											color={viewTheme.palette.text.primary}
-										>
-											{current.abbreviation ?? current.seriesId}
-											{current.abbreviation === null
-												? ` Season ${current.season}, Episode ${current.production}`
-												: ""}
-										</Typography>
-
-										<Typography sx={{ fontSize: 14 }} color={viewTheme.palette.text.primary}>
-											{current.release}
-										</Typography>
-									</Box>
+								<Box marginBottom="1em">
+									<EpisodeHeader episode={current} forceShowName />
 								</Box>
 
 								<LogForm episode={current} logEpisode={logEpisode} key={current.id} storage={storage} />

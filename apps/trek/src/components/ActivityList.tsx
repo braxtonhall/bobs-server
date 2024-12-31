@@ -6,8 +6,10 @@ import { DateTime } from "luxon";
 import { ReactNode, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useColour } from "../hooks/useColour";
-import { isDark, overlay } from "../util/colour";
+import { darken, isDark, isVeryLight, lighten, overlay } from "../util/colour";
 import { darkTheme, lightTheme } from "../themes";
+import { useContent } from "../hooks/useContent";
+import { EpisodeHeader } from "./EpisodeHeader";
 
 type EventsProcedure = (
 	cursor?: number,
@@ -72,7 +74,7 @@ const Event = ({ event }: { event: EventTransport }) => {
 				title={`${event.view.viewer.name} watched${event.view.viewedOn ? ` on ${DateTime.fromFormat(event.view.viewedOn, "yyyy-MM-dd").toLocaleString()}` : ""}`}
 				viewer={event.view.viewer}
 				to={`/views/${event.view.id}`}
-				episode={event.view.episode}
+				episodeId={event.view.episodeId}
 			>
 				<ViewEmbed view={event.view} />
 			</EventCard>
@@ -139,7 +141,34 @@ const Event = ({ event }: { event: EventTransport }) => {
 
 const ProfileEmbed = (props: { profile: EventType<"follow">["followed"] }) => <>{props.profile.name}</>;
 
-const ViewEmbed = (props: { view: EventType<"view"> }) => <>{props.view.episode.name}</>;
+const ViewEmbed = (props: { view: EventType<"view"> }) => {
+	const theme = useTheme();
+	const { episodes } = useContent();
+	const episode = episodes?.[props.view.episodeId];
+	const episodeColour = useColour(episode);
+	const { viewTheme, finalColour } = useMemo(() => {
+		const baseColour = overlay(theme.palette.background.default, episodeColour);
+		const finalColour = isVeryLight(baseColour) ? darken(baseColour, 5) : lighten(baseColour, 10);
+		const useDarkTheme = isDark(finalColour);
+		const viewTheme = useDarkTheme ? darkTheme : lightTheme;
+		return { viewTheme, finalColour };
+	}, [episodeColour, theme]);
+	if (episode) {
+		return (
+			<ThemeProvider theme={viewTheme}>
+				<Card sx={{ backgroundColor: finalColour }}>
+					<CardActionArea>
+						<CardContent>
+							<EpisodeHeader episode={episode} />
+						</CardContent>
+					</CardActionArea>
+				</Card>
+			</ThemeProvider>
+		);
+	} else {
+		return <></>;
+	}
+};
 
 const WatchlistEmbed = (props: { watchlist: Omit<EventType<"watchlist">, "owner"> }) => <>{props.watchlist.name}</>;
 
@@ -149,10 +178,12 @@ const EventCard = (props: {
 	viewer?: EventType<"viewer">;
 	title: string;
 	to: string;
-	episode?: EventType<"view">["episode"];
+	episodeId?: string;
 }) => {
+	const { episodes } = useContent();
 	const theme = useTheme();
-	const colour = useColour(props.episode);
+	const episode = props.episodeId ? episodes?.[props.episodeId] ?? undefined : undefined;
+	const colour = useColour(episode);
 	const useDarkTheme = useMemo(() => isDark(overlay(theme.palette.background.default, colour)), [theme, colour]);
 	const viewTheme = useDarkTheme ? darkTheme : lightTheme;
 	return (
@@ -160,7 +191,7 @@ const EventCard = (props: {
 			<Card sx={{ marginBottom: "1em", backgroundColor: colour }}>
 				<CardActionArea component={Link} to={props.to}>
 					<CardContent>
-						<Box sx={{ display: "flex" }}>
+						<Box display="flex">
 							<Gravatar
 								href={props.viewer ? `/viewers/${props.viewer.id}` : undefined}
 								sx={{ width: 40, height: 40, marginRight: "1em" }}

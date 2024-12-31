@@ -43,7 +43,7 @@ import { SyntheticEvent, useCallback, useMemo, useState } from "react";
 import { DecoratedEpisodes, mergeEpisodesWithContent } from "./Watch/Continue/mergeViewingWithContent";
 import { DateTime, Duration } from "luxon";
 import { useColour } from "../hooks/useColour";
-import { EpisodeHeader } from "./EpisodeHeader";
+import { EpisodeBanner } from "./EpisodeBanner";
 import { fadeIn } from "../util/fadeIn";
 import { Options } from "./misc/Options";
 
@@ -108,7 +108,7 @@ const Watchlist = () => {
 				</Alert>
 			</Snackbar>
 			<FadeInBox>
-				<EpisodeHeader episode={decorated?.[0] ?? undefined} />
+				<EpisodeBanner episode={decorated?.[0] ?? undefined} />
 				<Container maxWidth="md">
 					<Box marginBottom="1em">
 						<Typography variant="h2" color={theme.palette.text.primary}>

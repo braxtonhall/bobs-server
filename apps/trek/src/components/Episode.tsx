@@ -2,7 +2,7 @@ import { useLoaderData } from "react-router-dom";
 import { API } from "../util/api";
 import { useTheme } from "@mui/material";
 import { RatingHistogram } from "./misc/RatingHistogram";
-import { EpisodeHeader } from "./EpisodeHeader";
+import { EpisodeBanner } from "./EpisodeBanner";
 
 // https://trakt.tv/shows/star-trek/seasons/3/episodes/24
 
@@ -15,7 +15,7 @@ const Episode = () => {
 
 	return (
 		<>
-			<EpisodeHeader
+			<EpisodeBanner
 				episode={{
 					...episode,
 					...relationship,

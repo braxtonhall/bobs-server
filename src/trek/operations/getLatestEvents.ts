@@ -3,138 +3,6 @@ import { Scope } from "../types";
 import Config from "../../Config";
 import { Prisma } from "@prisma/client";
 
-const SELECTION = {
-	id: true,
-	time: true,
-	view: {
-		include: {
-			viewer: {
-				include: {
-					email: {
-						select: {
-							gravatar: true,
-						},
-					},
-				},
-			},
-			episode: true,
-		},
-	},
-	watchlist: {
-		include: {
-			owner: {
-				include: {
-					email: {
-						select: {
-							gravatar: true,
-						},
-					},
-				},
-			},
-		},
-	},
-	startedViewing: {
-		include: {
-			viewer: {
-				include: {
-					email: {
-						select: {
-							gravatar: true,
-						},
-					},
-				},
-			},
-			watchlist: true,
-		},
-	},
-	finishedViewing: {
-		include: {
-			viewer: {
-				include: {
-					email: {
-						select: {
-							gravatar: true,
-						},
-					},
-				},
-			},
-			watchlist: true,
-		},
-	},
-	viewLike: {
-		select: {
-			viewer: {
-				include: {
-					email: {
-						select: {
-							gravatar: true,
-						},
-					},
-				},
-			},
-			view: {
-				include: {
-					viewer: {
-						include: {
-							email: {
-								select: {
-									gravatar: true,
-								},
-							},
-						},
-					},
-					episode: true,
-				},
-			},
-		},
-	},
-	watchlistLike: {
-		select: {
-			viewer: {
-				include: {
-					email: {
-						select: {
-							gravatar: true,
-						},
-					},
-				},
-			},
-			watchlist: true,
-		},
-	},
-	follow: {
-		select: {
-			follower: {
-				include: {
-					email: {
-						select: {
-							gravatar: true,
-						},
-					},
-				},
-			},
-			followed: {
-				include: {
-					email: {
-						select: {
-							gravatar: true,
-						},
-					},
-				},
-			},
-		},
-	},
-	viewer: {
-		include: {
-			email: {
-				select: {
-					gravatar: true,
-				},
-			},
-		},
-	},
-} as const;
-
 const hasFollower = (viewerId: string) => ({ followers: { some: { followerId: viewerId } } }) as const;
 
 const where = (viewerId: string | undefined, scope: Scope): Prisma.EventWhereInput => {
@@ -195,7 +63,141 @@ export const getLatestEvents = async ({
 		cursor: cursor ? { id: cursor } : undefined,
 		orderBy: { id: "desc" },
 		take: Config.DEFAULT_PAGE_SIZE + 1,
-		select: SELECTION,
+		select: {
+			id: true,
+			time: true,
+			view: {
+				select: {
+					episodeId: true,
+					id: true,
+					viewedOn: true,
+					viewer: {
+						include: {
+							email: {
+								select: {
+									gravatar: true,
+								},
+							},
+						},
+					},
+				},
+			},
+			watchlist: {
+				include: {
+					owner: {
+						include: {
+							email: {
+								select: {
+									gravatar: true,
+								},
+							},
+						},
+					},
+				},
+			},
+			startedViewing: {
+				include: {
+					viewer: {
+						include: {
+							email: {
+								select: {
+									gravatar: true,
+								},
+							},
+						},
+					},
+					watchlist: true,
+				},
+			},
+			finishedViewing: {
+				include: {
+					viewer: {
+						include: {
+							email: {
+								select: {
+									gravatar: true,
+								},
+							},
+						},
+					},
+					watchlist: true,
+				},
+			},
+			viewLike: {
+				select: {
+					viewer: {
+						include: {
+							email: {
+								select: {
+									gravatar: true,
+								},
+							},
+						},
+					},
+					view: {
+						select: {
+							episodeId: true,
+							id: true,
+							viewedOn: true,
+							viewer: {
+								include: {
+									email: {
+										select: {
+											gravatar: true,
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			watchlistLike: {
+				select: {
+					viewer: {
+						include: {
+							email: {
+								select: {
+									gravatar: true,
+								},
+							},
+						},
+					},
+					watchlist: true,
+				},
+			},
+			follow: {
+				select: {
+					follower: {
+						include: {
+							email: {
+								select: {
+									gravatar: true,
+								},
+							},
+						},
+					},
+					followed: {
+						include: {
+							email: {
+								select: {
+									gravatar: true,
+								},
+							},
+						},
+					},
+				},
+			},
+			viewer: {
+				include: {
+					email: {
+						select: {
+							gravatar: true,
+						},
+					},
+				},
+			},
+		},
 		where: where(viewerId, scope),
 	});
 	if (events.length > Config.DEFAULT_PAGE_SIZE) {

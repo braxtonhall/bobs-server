@@ -1,7 +1,6 @@
 import { Box, CircularProgress } from "@mui/material";
 import { api } from "../../../util/api";
 import { Viewing } from "./Viewing";
-import { Episode, SeriesCollection } from "../types";
 import { useCallback, useMemo } from "react";
 import { mergeViewingWithContent } from "./mergeViewingWithContent";
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
@@ -9,13 +8,11 @@ import { MutationContext } from "./MutationContext";
 import { OnScreenWatcher } from "../../misc/OnScreenWatcher";
 import { curry } from "../../../util/curry";
 import { ViewingControlsContext } from "../../../contexts/ViewingControlsContext";
+import { useContent } from "../../../hooks/useContent";
 
-interface ContinueProps {
-	series: SeriesCollection | null;
-	episodes: Record<string, Episode> | null;
-}
+const Continue = () => {
+	const { episodes, series, setOpinion } = useContent();
 
-const Continue = ({ series, episodes }: ContinueProps) => {
 	// TODO are these useful? {error, isFetchingNextPage, status}
 	const { data, fetchNextPage, hasNextPage, isFetching } = useInfiniteQuery({
 		queryKey: ["continue"],
@@ -38,16 +35,11 @@ const Continue = ({ series, episodes }: ContinueProps) => {
 					}
 				}
 			});
-			if (episodes) {
-				episodes[env.episodeId]._count.views++;
-				episodes[env.episodeId].opinions[0] = {
-					episodeId: env.episodeId,
-					liked: env.liked,
-					rating: env.rating,
-					// i am sure this will bite me in the butt one day
-					viewerId: "viewerId",
-				};
-			}
+			setOpinion({
+				episodeId: env.episodeId,
+				liked: env.liked,
+				rating: env.rating,
+			});
 		},
 	});
 

@@ -4,6 +4,11 @@ type Colour = Parameters<typeof tinycolor>[0];
 
 export const isDark = (colour: Colour): boolean => tinycolor(colour).isDark();
 
+export const isVeryLight = (colour: Colour): boolean => tinycolor(colour).getBrightness() > 250;
+
+export const lighten = (colour: Colour, amount: number) => tinycolor(colour).lighten(amount).toString("hex8");
+export const darken = (colour: Colour, amount: number) => tinycolor(colour).darken(amount).toString("hex8");
+
 export const overlay = (back: Colour, front: Colour) => {
 	const tinyBack = tinycolor(back);
 	const frgba = tinycolor(front).toRgb();
