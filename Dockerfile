@@ -2,6 +2,14 @@ FROM node:20-alpine as builder
 
 WORKDIR /app
 
+RUN apk add python3 \
+    pkgconfig \
+    pixman-dev \
+    cairo-dev \
+    pango-dev \
+    build-base \
+    npm
+
 COPY tsconfig.json ./
 COPY package.json ./
 COPY yarn.lock ./
