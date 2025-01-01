@@ -1,4 +1,4 @@
-FROM node:20-alpine as builder
+FROM node:20.9.0-alpine as builder
 
 WORKDIR /app
 
@@ -21,9 +21,14 @@ RUN yarn db:generate
 COPY src/ ./src/
 RUN yarn build
 
-FROM node:20-alpine as runner
+FROM node:20.9.0-alpine as runner
 
 WORKDIR /app
+
+RUN apk add pixman-dev \
+    cairo-dev \
+    pango-dev \
+    build-base
 
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/yarn.lock ./
