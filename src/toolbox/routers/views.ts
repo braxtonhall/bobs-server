@@ -84,7 +84,7 @@ export const views = express()
 			)
 			.otherwise(() => res.sendStatus(400)),
 	)
-	.get("/counters/:counter/png", async (req, res) => {
+	.get("/counters/:counter/png", async (req, res) =>
 		match(await createCounterImage(req.params.counter, hashString(req.ip ?? "")))
 			.with(Some(P.select()), (buffer) => {
 				res.writeHead(200, {
@@ -93,8 +93,8 @@ export const views = express()
 				});
 				res.end(buffer);
 			})
-			.otherwise(() => res.sendStatus(404));
-	});
+			.otherwise(() => res.sendStatus(404)),
+	);
 
 const killProcedure = (dead: boolean) => async (req: Request<{ postId: string; boxId: string }>, res: Response) =>
 	match(await posts.setDeadAndGetPosterId(req.params.postId, res.locals.email.id, dead))
