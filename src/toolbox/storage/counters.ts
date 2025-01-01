@@ -41,8 +41,6 @@ const updateAndGet = (counterId: string, ip: HashedString): Promise<Option<numbe
 			},
 		});
 
-		console.log(JSON.stringify({ counter, counterView }, null, "\t"));
-
 		if (counter.unique === false || (counter.unique === true && counterView.count === 1)) {
 			const updatedCount = await db.counter.update({
 				where: {
