@@ -1,26 +1,68 @@
-import { db } from "../../db";
+import { db, transaction } from "../../db";
 import { match, P } from "ts-pattern";
 import { None, Option, Some } from "../../types/option";
+import { HashedString } from "../../types/hashed";
+import posters from "./posters";
 
-const updateAndGet = async (id: string): Promise<Option<number>> =>
-	match(
-		await db.counter.update({
+const updateAndGet = (counterId: string, ip: HashedString): Promise<Option<number>> =>
+	transaction(async () => {
+		const counter = await db.counter.findUnique({
 			where: {
-				id,
+				id: counterId,
 				deleted: false,
 			},
-			data: {
+		});
+		if (!counter) {
+			return None();
+		}
+
+		const posterId = await posters.getId(ip);
+
+		const counterView = await db.counterView.upsert({
+			where: {
+				id: {
+					counterId,
+					posterId,
+				},
+			},
+			create: {
+				counter: { connect: counter },
+				poster: {
+					connectOrCreate: {
+						where: { ip },
+						create: { ip },
+					},
+				},
+			},
+			update: {
 				count: {
 					increment: 1,
 				},
 			},
-			select: {
-				count: true,
-			},
-		}),
-	)
-		.with({ count: P.number.select() }, Some)
-		.otherwise(None);
+		});
+
+		console.log(JSON.stringify({ counter, counterView }, null, "\t"));
+
+		if (counter.unique === false || (counter.unique === true && counterView.count === 1)) {
+			const updatedCount = await db.counter.update({
+				where: {
+					id: counterId,
+					deleted: false,
+				},
+				data: {
+					count: {
+						increment: 1,
+					},
+				},
+				select: {
+					count: true,
+				},
+			});
+			return Some(updatedCount.count);
+		} else {
+			return Some(counter.count);
+		}
+	}).catch(None);
 
 const getDetails = async (id: string, ownerId: string) =>
 	match(
@@ -37,6 +79,7 @@ const getDetails = async (id: string, ownerId: string) =>
 				name: true,
 				origin: true,
 				deleted: true,
+				unique: true,
 			},
 		}),
 	)
@@ -67,7 +110,7 @@ const getOrigin = async (id: string): Promise<Option<string>> =>
 		.with(null, None)
 		.otherwise(({ origin }) => (origin ? Some(origin) : None));
 
-const create = async (data: { name: string; origin?: string; ownerId: string }): Promise<string> =>
+const create = async (data: { name: string; origin?: string; ownerId: string; unique: boolean }): Promise<string> =>
 	db.counter
 		.create({
 			data: data,

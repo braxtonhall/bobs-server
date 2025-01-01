@@ -47,21 +47,34 @@ model Subscription {
 }
 
 model Counter {
-  sort    Int     @id @default(autoincrement())
-  id      String  @unique @default(cuid())
-  deleted Boolean @default(false)
+  sort    Int           @id @default(autoincrement())
+  id      String        @unique @default(cuid())
+  deleted Boolean       @default(false)
   name    String
   origin  String?
-  owner   Email   @relation(fields: [ownerId], references: [id])
+  owner   Email         @relation(fields: [ownerId], references: [id])
   ownerId String
-  count   Int     @default(0)
+  count   Int           @default(0)
+  unique  Boolean
+  views   CounterView[]
+}
+
+model CounterView {
+  counterId String
+  counter   Counter @relation(fields: [counterId], references: [id])
+  posterId  Int
+  poster    Poster  @relation(fields: [posterId], references: [id])
+  count     Int     @default(1)
+
+  @@id(name: "id", [counterId, posterId])
 }
 
 model Poster {
-  id    Int    @id @default(autoincrement())
-  ip    String @unique
+  id    Int           @id @default(autoincrement())
+  ip    String        @unique
   posts Post[]
-  karma Int    @default(0)
+  views CounterView[]
+  karma Int           @default(0)
 }
 
 model Post {

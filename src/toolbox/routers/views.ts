@@ -85,7 +85,7 @@ export const views = express()
 			.otherwise(() => res.sendStatus(400)),
 	)
 	.get("/counters/:counter/png", async (req, res) => {
-		match(await createCounterImage(req.params.counter))
+		match(await createCounterImage(req.params.counter, hashString(req.ip ?? "")))
 			.with(Some(P.select()), (buffer) => {
 				res.writeHead(200, {
 					"Content-Type": "image/png",
@@ -265,11 +265,12 @@ const counterAdminViews = express()
 	.get("/create", async (req, res) => res.render("pages/toolbox/counters/create", { Config }))
 	.post("/create", async (req, res) =>
 		match(parse(createCounterSchema, req.body))
-			.with(Ok(P.select()), async ({ name, origin }) => {
+			.with(Ok(P.select()), async ({ name, origin, unique }) => {
 				const id = await countersClient.create({
 					name,
 					origin,
 					ownerId: res.locals.email.id,
+					unique,
 				});
 				return res.redirect(`/toolbox/counters/admin/${id}`);
 			})

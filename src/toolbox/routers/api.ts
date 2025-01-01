@@ -86,7 +86,7 @@ export const api = express()
 	.post("/counters/:counter", limiter, async (req, res) =>
 		// this is an inc
 		// return ++counter;
-		match(await counters.get(req.params.counter))
+		match(await counters.updateAndGet(req.params.counter, hashString(req.ip ?? "")))
 			.with(Some(P.select()), (count) => res.send(count))
 			.otherwise(() => res.sendStatus(404)),
 	)

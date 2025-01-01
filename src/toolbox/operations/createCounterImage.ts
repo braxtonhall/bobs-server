@@ -3,9 +3,10 @@ import { createCanvas } from "canvas";
 import { match, P } from "ts-pattern";
 import { None, Option, Some } from "../../types/option";
 import Config from "../../Config";
+import { HashedString } from "../../types/hashed";
 
-export const createCounterImage = async (id: string): Promise<Option<Buffer>> =>
-	match(await counters.updateAndGet(id))
+export const createCounterImage = async (id: string, ip: HashedString): Promise<Option<Buffer>> =>
+	match(await counters.updateAndGet(id, ip))
 		.with(Some(P.select()), (count) => {
 			const imageCanvas = createCanvas(Config.COUNTER_IMG_WIDTH, Config.COUNTER_IMG_HEIGHT);
 			const context = imageCanvas.getContext("2d");
