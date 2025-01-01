@@ -23,6 +23,8 @@ import { getSubscriptions } from "../operations/getSubscriptions";
 import { deleteSubscription } from "../operations/deleteSubscription";
 import { settingsSchema } from "../../schema";
 import emails from "../storage/emails";
+import { createCounterImage } from "../operations/createCounterImage";
+import counters from "../storage/counters";
 
 // TODO there is WAY too much repetition here... There must be a good way to get reuse a lot of code
 
@@ -80,7 +82,18 @@ export const views = express()
 					.exhaustive(),
 			)
 			.otherwise(() => res.sendStatus(400)),
-	);
+	)
+	.get("/counters/:counter", async (req, res) => {
+		match(await createCounterImage(req.params.counter))
+			.with(Some(P.select()), (buffer) => {
+				res.writeHead(200, {
+					"Content-Type": "image/png",
+					"Content-Length": buffer.length,
+				});
+				res.end(buffer);
+			})
+			.otherwise(() => res.sendStatus(404));
+	});
 
 const killProcedure = (dead: boolean) => async (req: Request<{ postId: string; boxId: string }>, res: Response) =>
 	match(await posts.setDeadAndGetPosterId(req.params.postId, res.locals.email.id, dead))
