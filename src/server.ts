@@ -62,7 +62,12 @@ const views = express()
 	.get("/", (req, res) => res.render("pages/index"))
 	.get("/*", (req, res) => res.sendStatus(404));
 
-const api = express().use(subdomain("api", unauthenticatedApi));
+const api = express().use(
+	"/api",
+	express()
+		.use(unauthenticatedApi)
+		.get("/", (req, res) => res.send("API")),
+);
 
 export const getServers = async () => ({
 	https: https.createServer(
