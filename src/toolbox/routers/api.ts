@@ -38,7 +38,7 @@ const limiter = slowDown({
 export const api = express()
 	.use(bodyParser.json({ type: "application/json" }))
 	.all(
-		"/counters/:counter",
+		"/counters/:counter/*",
 		allowOrigin<{ counter: string }>((params) => counters.getOrigin(params.counter)),
 	)
 	.all(
@@ -80,14 +80,14 @@ export const api = express()
 		// this is a peek
 		// return counter;
 		match(await counters.get(req.params.counter))
-			.with(Some(P.select()), (count) => res.send(count))
+			.with(Some(P.select()), (count) => res.send({ count }))
 			.otherwise(() => res.sendStatus(404)),
 	)
 	.post("/counters/:counter", limiter, async (req, res) =>
 		// this is an inc
 		// return ++counter;
 		match(await counters.updateAndGet(req.params.counter, hashString(req.ip ?? "")))
-			.with(Some(P.select()), (count) => res.send(count))
+			.with(Some(P.select()), (count) => res.send({ count }))
 			.otherwise(() => res.sendStatus(404)),
 	)
 	.get("/", (req, res) => res.send("API"));
