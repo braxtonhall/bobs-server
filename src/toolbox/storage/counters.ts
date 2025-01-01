@@ -22,7 +22,7 @@ const updateAndGet = async (id: string): Promise<Option<number>> =>
 		.with({ count: P.number.select() }, Some)
 		.otherwise(None);
 
-const get = async (id: string, ownerId: string) =>
+const getDetails = async (id: string, ownerId: string) =>
 	match(
 		await db.counter.findUnique({
 			where: {
@@ -41,6 +41,16 @@ const get = async (id: string, ownerId: string) =>
 		}),
 	)
 		.with(P.not(P.nullish), Some)
+		.otherwise(None);
+
+const get = async (id: string) =>
+	match(
+		await db.counter.findUnique({
+			where: { id },
+			select: { count: true },
+		}),
+	)
+		.with({ count: P.select() }, Some)
 		.otherwise(None);
 
 const getOrigin = async (id: string): Promise<Option<string>> =>
@@ -101,4 +111,4 @@ const list = async (ownerId: string, deleted: boolean, count: number, cursor?: s
 	return { counters: counters.slice(0, count), cursor: counters[count]?.id };
 };
 
-export default { updateAndGet, get, getOrigin, create, edit, list };
+export default { updateAndGet, getDetails, get, getOrigin, create, edit, list };

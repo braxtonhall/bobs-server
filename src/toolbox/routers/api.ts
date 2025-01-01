@@ -69,9 +69,17 @@ export const api = express()
 			)
 			.otherwise(() => res.sendStatus(400)),
 	)
-	// TODO counter should also have a rendered image version for people who do not have javascript
 	.get("/counters/:counter", async (req, res) =>
-		match(await counters.updateAndGet(req.params.counter))
+		// this is a peek
+		// return counter;
+		match(await counters.get(req.params.counter))
+			.with(Some(P.select()), (count) => res.send(count))
+			.otherwise(() => res.sendStatus(404)),
+	)
+	.post("/counters/:counter", async (req, res) =>
+		// this is an inc
+		// return ++counter;
+		match(await counters.get(req.params.counter))
 			.with(Some(P.select()), (count) => res.send(count))
 			.otherwise(() => res.sendStatus(404)),
 	)

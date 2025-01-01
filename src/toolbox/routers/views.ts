@@ -276,7 +276,7 @@ const counterAdminViews = express()
 			.otherwise(() => res.sendStatus(400)),
 	)
 	.get("/admin/:id", async (req, res) => {
-		return match(await countersClient.get(req.params.id, res.locals.email.id))
+		return match(await countersClient.getDetails(req.params.id, res.locals.email.id))
 			.with(Some(P.select()), async (result) =>
 				res.render("pages/toolbox/counters/admin", {
 					...result,
