@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<%- include('../../../partials/head'); %>
+	</head>
+	<body>
+		<header>
+			<%- include('../../../partials/header'); %>
+		</header>
+
+		<main>
+			<div>hello! this is the admin page for a counter</div>
+			<% if (message) {%>
+			<%=message%>
+			<%}%>
+
+			<!--			<% const action = deleted ? 'restore':'archive';%>-->
+			<!--			<form method="post" class="<%=action%>" action="/toolbox/boxes/admin/<%= id %>/<%= action %>">-->
+			<!--				<button class="<%=action%>-save"><%=action%></button>-->
+			<!--			</form>-->
+
+			<!--			<form method="post" class="edit-form" action="/toolbox/boxes/admin/<%= id %>/edit">-->
+			<!--				<label for="name" class="name-label">name</label>-->
+			<!--				<input-->
+			<!--					class="name-input"-->
+			<!--					id="name"-->
+			<!--					name="name"-->
+			<!--					value="<%= name %>"-->
+			<!--					required-->
+			<!--					maxlength="<%=Config.DEFAULT_MAX_LENGTH%>"-->
+			<!--				/>-->
+
+			<!--				<label for="origin" class="origin-label">origin</label>-->
+			<!--				<input-->
+			<!--					class="origin-input"-->
+			<!--					id="origin"-->
+			<!--					name="origin"-->
+			<!--					value="<%= origin %>"-->
+			<!--					maxlength="<%=Config.DEFAULT_MAX_LENGTH%>"-->
+			<!--				/>-->
+
+			<!--				<button class="edit-save">submit</button>-->
+			<!--			</form>-->
+
+			<p>count: <%=count%></p>
+
+			<pre>
+                <%=`<img src="https://${Config.HOST}/counters/${id}/png" alt="view count">`%>
+            </pre>
+		</main>
+	</body>
+</html>

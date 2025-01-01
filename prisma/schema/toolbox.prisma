@@ -47,7 +47,9 @@ model Subscription {
 }
 
 model Counter {
-  id      String  @id @default(cuid())
+  sort    Int     @id @default(autoincrement())
+  id      String  @unique @default(cuid())
+  deleted Boolean @default(false)
   name    String
   origin  String?
   owner   Email   @relation(fields: [ownerId], references: [id])

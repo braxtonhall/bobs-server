@@ -7,6 +7,7 @@ const updateAndGet = async (id: string): Promise<Option<number>> =>
 		await db.counter.update({
 			where: {
 				id,
+				deleted: false,
 			},
 			data: {
 				count: {
@@ -21,23 +22,26 @@ const updateAndGet = async (id: string): Promise<Option<number>> =>
 		.with({ count: P.number.select() }, Some)
 		.otherwise(None);
 
-const get = async (id: string, address: string) => {
+const get = async (id: string, ownerId: string) =>
 	match(
 		await db.counter.findUnique({
 			where: {
 				id,
 				owner: {
-					address,
+					id: ownerId,
 				},
 			},
 			select: {
+				id: true,
 				count: true,
+				name: true,
+				origin: true,
+				deleted: true,
 			},
 		}),
 	)
-		.with({ count: P.number.select() }, Some)
+		.with(P.not(P.nullish), Some)
 		.otherwise(None);
-};
 
 const getOrigin = async (id: string): Promise<Option<string>> =>
 	match(
@@ -77,6 +81,24 @@ const edit = async (id: string, address: string, data: { name?: string; origin?:
 		})
 		.then();
 
-// TODO list counters
+const list = async (ownerId: string, deleted: boolean, count: number, cursor?: string) => {
+	const counters = await db.counter.findMany({
+		where: {
+			deleted,
+			ownerId,
+		},
+		select: {
+			id: true,
+			name: true,
+			count: true,
+		},
+		cursor: typeof cursor === "string" ? { id: cursor } : undefined,
+		take: count + 1,
+		orderBy: {
+			sort: "desc",
+		},
+	});
+	return { counters: counters.slice(0, count), cursor: counters[count]?.id };
+};
 
-export default { updateAndGet, get, getOrigin, create, edit };
+export default { updateAndGet, get, getOrigin, create, edit, list };

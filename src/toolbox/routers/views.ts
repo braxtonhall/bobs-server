@@ -24,7 +24,8 @@ import { deleteSubscription } from "../operations/deleteSubscription";
 import { settingsSchema } from "../../schema";
 import emails from "../storage/emails";
 import { createCounterImage } from "../operations/createCounterImage";
-import counters from "../storage/counters";
+import countersClient from "../storage/counters";
+import { createCounterSchema } from "../schema/createCounter";
 
 // TODO there is WAY too much repetition here... There must be a good way to get reuse a lot of code
 
@@ -83,7 +84,7 @@ export const views = express()
 			)
 			.otherwise(() => res.sendStatus(400)),
 	)
-	.get("/counters/:counter", async (req, res) => {
+	.get("/counters/:counter/png", async (req, res) => {
 		match(await createCounterImage(req.params.counter))
 			.with(Some(P.select()), (buffer) => {
 				res.writeHead(200, {
@@ -119,6 +120,19 @@ const subscribedProcedure = (subscribed: boolean) => async (req: Request<{ id: s
 		.with(Err(Failure.FORBIDDEN), () => res.sendStatus(403))
 		.with(Err(Failure.MISSING_DEPENDENCY), () => res.sendStatus(404))
 		.exhaustive();
+
+const getBoxes = (deleted: boolean, view: string) => async (req: Request, res: Response) => {
+	const { boxes, cursor } = await boxesClient.list(
+		res.locals.email.id,
+		deleted,
+		Math.max(
+			Config.MINIMUM_PAGE_SIZE,
+			Math.min(Number(req.query.take) || Config.DEFAULT_PAGE_SIZE, Config.MAXIMUM_PAGE_SIZE),
+		),
+		typeof req.query.cursor === "string" ? req.query.cursor : undefined,
+	);
+	return res.render(view, { boxes, cursor, query: req.query, Config });
+};
 
 const boxAdminViews = express()
 	.get("/create", async (req, res) => res.render("pages/toolbox/boxes/create", { Config }))
@@ -226,32 +240,53 @@ const boxAdminViews = express()
 	.post("/admin/:id/restore", deleteProcedure(false))
 	.post("/admin/:boxId/posts/:postId/hide", killProcedure(true))
 	.post("/admin/:boxId/posts/:postId/unhide", killProcedure(false))
-	.get("/archive", async (req, res) => {
-		const { boxes, cursor } = await boxesClient.list(
-			res.locals.email.id,
-			true,
-			Math.max(
-				Config.MINIMUM_PAGE_SIZE,
-				Math.min(Number(req.query.take) || Config.DEFAULT_PAGE_SIZE, Config.MAXIMUM_PAGE_SIZE),
-			),
-			typeof req.query.cursor === "string" ? req.query.cursor : undefined,
-		);
-		return res.render("pages/toolbox/boxes/archive", { boxes, cursor, query: req.query, Config });
-	})
-	.get("/", async (req, res) => {
-		const { boxes, cursor } = await boxesClient.list(
-			res.locals.email.id,
-			false,
-			Math.max(
-				Config.MINIMUM_PAGE_SIZE,
-				Math.min(Number(req.query.take) || Config.DEFAULT_PAGE_SIZE, Config.MAXIMUM_PAGE_SIZE),
-			),
-			typeof req.query.cursor === "string" ? req.query.cursor : undefined,
-		);
-		return res.render("pages/toolbox/boxes/index", { boxes, cursor, query: req.query, Config });
-	});
+	.get("/archive", getBoxes(true, "pages/toolbox/boxes/archive"))
+	.get("/", getBoxes(false, "pages/toolbox/boxes/index"));
 
-const counterAdminViews = express().get("/", (req, res) => res.render("pages/toolbox/counters/index"));
+const getCounters = (deleted: boolean, view: string) => async (req: Request, res: Response) => {
+	const { counters, cursor } = await countersClient.list(
+		res.locals.email.id,
+		deleted,
+		Math.max(
+			Config.MINIMUM_PAGE_SIZE,
+			Math.min(Number(req.query.take) || Config.DEFAULT_PAGE_SIZE, Config.MAXIMUM_PAGE_SIZE),
+		),
+		typeof req.query.cursor === "string" ? req.query.cursor : undefined,
+	);
+	return res.render(view, {
+		counters,
+		cursor,
+		query: req.query,
+		Config,
+	});
+};
+
+const counterAdminViews = express()
+	.get("/create", async (req, res) => res.render("pages/toolbox/counters/create", { Config }))
+	.post("/create", async (req, res) =>
+		match(parse(createCounterSchema, req.body))
+			.with(Ok(P.select()), async ({ name, origin }) => {
+				const id = await countersClient.create({
+					name,
+					origin,
+					ownerId: res.locals.email.id,
+				});
+				return res.redirect(`/toolbox/counters/admin/${id}`);
+			})
+			.otherwise(() => res.sendStatus(400)),
+	)
+	.get("/admin/:id", async (req, res) => {
+		return match(await countersClient.get(req.params.id, res.locals.email.id))
+			.with(Some(P.select()), async (result) =>
+				res.render("pages/toolbox/counters/admin", {
+					...result,
+					message: typeof req.query.message === "string" ? req.query.message : "",
+					Config,
+				}),
+			)
+			.otherwise(() => res.sendStatus(404));
+	})
+	.get("/", getCounters(false, "pages/toolbox/counters/index"));
 
 const postsAdminViews = express()
 	.post("/posts/:id/unsubscribe", subscribedProcedure(false))
