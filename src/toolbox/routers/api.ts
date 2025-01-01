@@ -12,6 +12,7 @@ import { deletePost } from "../operations/deletePost";
 import { Failure } from "../../types/failure";
 import counters from "../storage/counters";
 import bodyParser from "body-parser";
+import slowDown from "express-slow-down";
 
 const allowOrigin =
 	<Params>(getOrigin: (params: Params) => Promise<Option<string>>) =>
@@ -27,6 +28,12 @@ const allowOrigin =
 				return next();
 			})
 			.otherwise(next);
+
+const limiter = slowDown({
+	windowMs: 15 * 60 * 1000, // 15 minutes
+	delayAfter: 5, // Allow 5 requests per 15 minutes.
+	delayMs: (hits) => hits * 100, // Add 100 ms of delay to every request after the 5th one.
+});
 
 export const api = express()
 	.use(bodyParser.json({ type: "application/json" }))
@@ -69,14 +76,14 @@ export const api = express()
 			)
 			.otherwise(() => res.sendStatus(400)),
 	)
-	.get("/counters/:counter", async (req, res) =>
+	.get("/counters/:counter", limiter, async (req, res) =>
 		// this is a peek
 		// return counter;
 		match(await counters.get(req.params.counter))
 			.with(Some(P.select()), (count) => res.send(count))
 			.otherwise(() => res.sendStatus(404)),
 	)
-	.post("/counters/:counter", async (req, res) =>
+	.post("/counters/:counter", limiter, async (req, res) =>
 		// this is an inc
 		// return ++counter;
 		match(await counters.get(req.params.counter))
