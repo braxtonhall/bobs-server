@@ -47,24 +47,42 @@ model Subscription {
 }
 
 model Counter {
-  sort    Int           @id @default(autoincrement())
-  id      String        @unique @default(cuid())
-  deleted Boolean       @default(false)
-  name    String
-  origin  String?
-  owner   Email         @relation(fields: [ownerId], references: [id])
-  ownerId String
-  count   Int           @default(0)
-  unique  Boolean
-  views   CounterView[]
+  sort       Int            @id @default(autoincrement())
+  id         String         @unique @default(cuid())
+  deleted    Boolean        @default(false)
+  name       String
+  origin     String?
+  owner      Email          @relation(fields: [ownerId], references: [id])
+  ownerId    String
+  increments Int            @default(0)
+  value      Int            @default(0)
+  unique     Boolean
+  views      CounterView[]
+  images     CounterImage[]
+
+  incrementAmount Int     @default(1)
+  allowApiInc     Boolean @default(true)
+  allowApiSet     Boolean @default(false)
+  allowApiGet     Boolean @default(true)
+}
+
+model CounterImage {
+  sort      Int     @id @default(autoincrement())
+  id        String  @unique @default(cuid())
+  counterId String
+  counter   Counter @relation(fields: [counterId], references: [id], onDelete: Cascade)
+
+  /// 'NOOP' | 'INC' | 'SET'
+  viewBehaviour String
+  /// only applies to the SET behaviour
+  amount        Int
 }
 
 model CounterView {
   counterId String
-  counter   Counter @relation(fields: [counterId], references: [id])
+  counter   Counter @relation(fields: [counterId], references: [id], onDelete: Cascade)
   posterId  Int
   poster    Poster  @relation(fields: [posterId], references: [id])
-  count     Int     @default(1)
 
   @@id(name: "id", [counterId, posterId])
 }

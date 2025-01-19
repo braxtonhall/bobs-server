@@ -1,0 +1,15 @@
+<table>
+	<tr>
+		<th>behaviour</th>
+		<th>manage</th>
+		<th>link</th>
+	</tr>
+
+	<% for (const image of counter.images) { %>
+	<pre><%=JSON.stringify(image, null, '\t')%></pre>
+
+	<tr></tr>
+	<% } %>
+</table>
+
+<%- include('page-controls', {query, params: ['take'], cursor, cursorName: 'cursor'}); %>

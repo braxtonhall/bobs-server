@@ -3,66 +3,65 @@ import { match, P } from "ts-pattern";
 import { None, Option, Some } from "../../types/option";
 import { HashedString } from "../../types/hashed";
 import posters from "./posters";
+import { Counter, CounterImage } from "@prisma/client";
 
-const updateAndGet = (counterId: string, ip: HashedString): Promise<Option<number>> =>
+type Where = Partial<Counter> & { id: string };
+
+const increment = async (where: Where, ip: HashedString): Promise<Option<number>> =>
 	transaction(async () => {
-		const counter = await db.counter.findUnique({
-			where: {
-				id: counterId,
-				deleted: false,
-			},
-		});
+		const counter = await db.counter.findUnique({ where: { ...where, deleted: false } });
 		if (!counter) {
 			return None();
 		}
-
 		const posterId = await posters.getId(ip);
-
-		const counterView = await db.counterView.upsert({
+		const existingCounterView = await db.counterView.findUnique({
 			where: {
 				id: {
-					counterId,
+					counterId: counter.id,
 					posterId,
 				},
 			},
-			create: {
-				counter: { connect: counter },
-				poster: {
-					connectOrCreate: {
-						where: { ip },
-						create: { ip },
-					},
-				},
-			},
-			update: {
-				count: {
-					increment: 1,
-				},
-			},
 		});
-
-		if (counter.unique === false || (counter.unique === true && counterView.count === 1)) {
-			const updatedCount = await db.counter.update({
-				where: {
-					id: counterId,
-					deleted: false,
-				},
+		existingCounterView ||
+			(await db.counterView.create({
 				data: {
-					count: {
-						increment: 1,
+					counter: { connect: counter },
+					poster: {
+						connectOrCreate: {
+							where: { ip },
+							create: { ip },
+						},
 					},
 				},
-				select: {
-					count: true,
-				},
-			});
-			return Some(updatedCount.count);
-		} else {
-			return Some(counter.count);
-		}
+			}));
+		const updatedCount = await db.counter.update({
+			where: {
+				id: counter.id,
+				deleted: false,
+			},
+			data: {
+				increments: { increment: 1 },
+				...((!counter.unique || (counter.unique && existingCounterView === null)) && {
+					value: { increment: counter.incrementAmount },
+				}),
+			},
+			select: { value: true },
+		});
+		return Some(updatedCount.value);
+	});
+
+const set = async (where: Where, value: number): Promise<Option<number>> =>
+	transaction(async () => {
+		const { id } = await db.counter.findUniqueOrThrow({ where: { ...where, deleted: false } });
+		const { value: updated } = await db.counter.update({
+			where: { id, deleted: false },
+			data: { value },
+			select: { value: true },
+		});
+		return Some(updated);
 	}).catch(None);
 
-const getDetails = async (id: string, ownerId: string) =>
+const getDetails = async (id: string, ownerId: string, count: number, cursor?: string) =>
 	match(
 		await db.counter.findUnique({
 			where: {
@@ -71,27 +70,32 @@ const getDetails = async (id: string, ownerId: string) =>
 					id: ownerId,
 				},
 			},
-			select: {
-				id: true,
-				count: true,
-				name: true,
-				origin: true,
-				deleted: true,
-				unique: true,
+			include: {
+				images: {
+					cursor: typeof cursor === "string" ? { id: cursor } : undefined,
+					take: count + 1,
+					orderBy: {
+						sort: "desc",
+					},
+				},
+				_count: { select: { views: true } },
 			},
 		}),
 	)
-		.with(P.not(P.nullish), Some)
+		.with(P.not(P.nullish), (counter) =>
+			Some({
+				counter: {
+					...counter,
+					images: counter.images.slice(0, count),
+				},
+				cursor: counter.images[count]?.id,
+			}),
+		)
 		.otherwise(None);
 
-const get = async (id: string) =>
-	match(
-		await db.counter.findUnique({
-			where: { id },
-			select: { count: true },
-		}),
-	)
-		.with({ count: P.select() }, Some)
+const get = async (where: Where): Promise<Option<number>> =>
+	match(await db.counter.findUnique({ where: { ...where, deleted: false } }))
+		.with({ value: P.select() }, Some)
 		.otherwise(None);
 
 const getOrigin = async (id: string): Promise<Option<string>> =>
@@ -141,7 +145,7 @@ const list = async (ownerId: string, deleted: boolean, count: number, cursor?: s
 		select: {
 			id: true,
 			name: true,
-			count: true,
+			value: true,
 		},
 		cursor: typeof cursor === "string" ? { id: cursor } : undefined,
 		take: count + 1,
@@ -152,4 +156,9 @@ const list = async (ownerId: string, deleted: boolean, count: number, cursor?: s
 	return { counters: counters.slice(0, count), cursor: counters[count]?.id };
 };
 
-export default { updateAndGet, getDetails, get, getOrigin, create, edit, list };
+const getCounterImage = async (counterId: string, imageId: string): Promise<Option<CounterImage>> =>
+	match(await db.counterImage.findUnique({ where: { id: imageId, counter: { id: counterId, deleted: false } } }))
+		.with(P.not(P.nullish), Some)
+		.otherwise(None);
+
+export default { increment, getDetails, get, set, getOrigin, create, edit, list, getCounterImage };

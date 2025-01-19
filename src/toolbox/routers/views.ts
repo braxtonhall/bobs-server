@@ -23,14 +23,14 @@ import { getSubscriptions } from "../operations/getSubscriptions";
 import { deleteSubscription } from "../operations/deleteSubscription";
 import { settingsSchema } from "../../schema";
 import emails from "../storage/emails";
-import { createCounterImage } from "../operations/createCounterImage";
+import { getCounterImage } from "../operations/getCounterImage";
 import countersClient from "../storage/counters";
 import { createCounterSchema } from "../schema/createCounter";
 
 // TODO there is WAY too much repetition here... There must be a good way to get reuse a lot of code
 
-export const views = express()
-	.get("/boxes/:box", async (req, res) =>
+const boxesViews = express()
+	.get("/:box", async (req, res) =>
 		match([
 			// TODO use a parser that omits poorly formed queries
 			await getPosts(req.params.box, hashString(req.ip ?? ""), req.query),
@@ -48,7 +48,7 @@ export const views = express()
 			)
 			.otherwise(() => res.sendStatus(404)),
 	)
-	.post("/boxes/:box/posts", async (req, res) =>
+	.post("/:box/posts", async (req, res) =>
 		match([parse(createPostSchema, req.body), req.ip])
 			.with([Ok(P.select("post")), P.string.select("ip")], async ({ ip, post }) =>
 				match(await createPost(req.params.box, post, hashString(ip)))
@@ -60,7 +60,7 @@ export const views = express()
 			.with([Err(P.select()), P._], (message) => res.send(message).status(400))
 			.otherwise(() => res.sendStatus(400)),
 	)
-	.post("/boxes/:box/posts/:id/delete", async (req, res) =>
+	.post("/:box/posts/:id/delete", async (req, res) =>
 		match(req.ip)
 			.with(P.string, async (ip) =>
 				match(await deletePost(hashString(ip), req.params.box, req.params.id))
@@ -72,7 +72,7 @@ export const views = express()
 			)
 			.otherwise(() => res.sendStatus(400)),
 	)
-	.post("/boxes/:box/subscribe", async (req, res) =>
+	.post("/:box/subscribe", async (req, res) =>
 		match(parse(subscribeSchema, req.body))
 			.with(Ok(P.select()), async ({ email }) =>
 				match(await addSubscriber({ address: email, boxId: req.params.box }))
@@ -83,18 +83,21 @@ export const views = express()
 					.exhaustive(),
 			)
 			.otherwise(() => res.sendStatus(400)),
-	)
-	.get("/counters/:counter/png", async (req, res) =>
-		match(await createCounterImage(req.params.counter, hashString(req.ip ?? "")))
-			.with(Some(P.select()), (buffer) => {
-				res.writeHead(200, {
-					"Content-Type": "image/png",
-					"Content-Length": buffer.length,
-				});
-				res.end(buffer);
-			})
-			.otherwise(() => res.sendStatus(404)),
 	);
+
+const counterViews = express().get("/counters/:counter/png/:image", async (req, res) =>
+	match(await getCounterImage(req.params.counter, req.params.image, hashString(req.ip ?? "")))
+		.with(Some(P.select()), (buffer) => {
+			res.writeHead(200, {
+				"Content-Type": "image/png",
+				"Content-Length": buffer.length,
+			});
+			res.end(buffer);
+		})
+		.otherwise(() => res.sendStatus(404)),
+);
+
+export const views = express().use("/boxes", boxesViews).use("/counters", counterViews);
 
 const killProcedure = (dead: boolean) => async (req: Request<{ postId: string; boxId: string }>, res: Response) =>
 	match(await posts.setDeadAndGetPosterId(req.params.postId, res.locals.email.id, dead))
@@ -277,10 +280,22 @@ const counterAdminViews = express()
 			.otherwise(() => res.sendStatus(400)),
 	)
 	.get("/admin/:id", async (req, res) => {
-		return match(await countersClient.getDetails(req.params.id, res.locals.email.id))
-			.with(Some(P.select()), async (result) =>
+		return match(
+			await countersClient.getDetails(
+				req.params.id,
+				res.locals.email.id,
+				Math.max(
+					Config.MINIMUM_PAGE_SIZE,
+					Math.min(Number(req.query.take) || Config.DEFAULT_PAGE_SIZE, Config.MAXIMUM_PAGE_SIZE),
+				),
+				typeof req.query.cursor === "string" ? req.query.cursor : undefined,
+			),
+		)
+			.with(Some(P.select()), async ({ counter, cursor }) =>
 				res.render("pages/toolbox/counters/admin", {
-					...result,
+					query: req.query,
+					counter,
+					cursor,
 					message: typeof req.query.message === "string" ? req.query.message : "",
 					Config,
 				}),
