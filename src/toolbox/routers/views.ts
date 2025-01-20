@@ -23,9 +23,11 @@ import { getSubscriptions } from "../operations/getSubscriptions";
 import { deleteSubscription } from "../operations/deleteSubscription";
 import { settingsSchema } from "../../schema";
 import emails from "../storage/emails";
-import { getCounterImage } from "../operations/getCounterImage";
+import { peekCounterImage, updateAndGetCounterImage } from "../operations/getCounterImage";
 import countersClient from "../storage/counters";
 import { createCounterSchema } from "../schema/createCounter";
+import { editCounterImageSchema } from "../schema/editCounterImage";
+import { editCounterSchema } from "../schema/editCounter";
 
 // TODO there is WAY too much repetition here... There must be a good way to get reuse a lot of code
 
@@ -85,8 +87,8 @@ const boxesViews = express()
 			.otherwise(() => res.sendStatus(400)),
 	);
 
-const counterViews = express().get("/counters/:counter/png/:image", async (req, res) =>
-	match(await getCounterImage(req.params.counter, req.params.image, hashString(req.ip ?? "")))
+const counterViews = express().get("/:counter/png/:image", async (req, res) => {
+	match(await updateAndGetCounterImage(req.params.counter, req.params.image, hashString(req.ip ?? "")))
 		.with(Some(P.select()), (buffer) => {
 			res.writeHead(200, {
 				"Content-Type": "image/png",
@@ -94,8 +96,8 @@ const counterViews = express().get("/counters/:counter/png/:image", async (req, 
 			});
 			res.end(buffer);
 		})
-		.otherwise(() => res.sendStatus(404)),
-);
+		.otherwise(() => res.sendStatus(404));
+});
 
 export const views = express().use("/boxes", boxesViews).use("/counters", counterViews);
 
@@ -279,8 +281,8 @@ const counterAdminViews = express()
 			})
 			.otherwise(() => res.sendStatus(400)),
 	)
-	.get("/admin/:id", async (req, res) => {
-		return match(
+	.get("/admin/:id", async (req, res) =>
+		match(
 			await countersClient.getDetails(
 				req.params.id,
 				res.locals.email.id,
@@ -300,8 +302,101 @@ const counterAdminViews = express()
 					Config,
 				}),
 			)
-			.otherwise(() => res.sendStatus(404));
-	})
+			.otherwise(() => res.sendStatus(404)),
+	)
+	.post("/admin/:id/edit", (req, res) =>
+		match(parse(editCounterSchema, req.body))
+			.with(Ok(P.select()), async (payload) =>
+				match(
+					await countersClient.edit(req.params.id, res.locals.email.id, {
+						allowApiGet: payload.allowApiGet,
+						allowApiInc: payload.allowApiInc,
+						allowApiSet: payload.allowApiSet,
+						incrementAmount: payload.increment,
+						name: payload.name,
+						origin: payload.origin,
+						unique: payload.unique,
+						value: payload.value,
+					}),
+				)
+					.with(Ok(P._), () => res.redirect(`/toolbox/counters/admin/${req.params.id}?message=success`))
+					.with(Err(Failure.FORBIDDEN), () => res.sendStatus(403))
+					.with(Err(Failure.MISSING_DEPENDENCY), () => res.sendStatus(404))
+					.exhaustive(),
+			)
+			.otherwise(() => res.sendStatus(400)),
+	)
+	.post("/admin/:id/png/create", async (req, res) =>
+		match(await countersClient.images.create(req.params.id, res.locals.email.id))
+			.with(Some(P.select()), ({ id, counterId }) =>
+				res.redirect(`/toolbox/counters/admin/${counterId}/png/admin/${id}`),
+			)
+			.otherwise(() => res.sendStatus(400)),
+	)
+	.get("/admin/:counterId/png/admin/:imageId", async (req, res) =>
+		match(
+			await countersClient.images.getDetails({
+				ownerId: res.locals.email.id,
+				counterId: req.params.counterId,
+				imageId: req.params.imageId,
+			}),
+		)
+			.with(Some(P.select()), (image) =>
+				res.render("pages/toolbox/counters/image", {
+					message: typeof req.query.message === "string" ? req.query.message : "",
+					image,
+					Config,
+				}),
+			)
+			.otherwise(() => res.sendStatus(404)),
+	)
+	.post("/admin/:counterId/png/admin/:imageId/edit", (req, res) =>
+		match(parse(editCounterImageSchema, req.body))
+			.with(Ok(P.select()), async ({ behaviour, amount }) =>
+				match(
+					await countersClient.images.edit({
+						behaviour,
+						amount,
+						counterId: req.params.counterId,
+						imageId: req.params.imageId,
+						ownerId: res.locals.email.id,
+					}),
+				)
+					.with(Ok(P._), () =>
+						res.redirect(
+							`/toolbox/counters/admin/${req.params.counterId}/png/admin/${req.params.imageId}?message=success`,
+						),
+					) // TODO express-session here
+					.with(Err(Failure.FORBIDDEN), () => res.sendStatus(403))
+					.with(Err(Failure.MISSING_DEPENDENCY), () => res.sendStatus(404))
+					.exhaustive(),
+			)
+			.otherwise(() => res.sendStatus(400)),
+	)
+	.post("/admin/:counterId/png/admin/:imageId/delete", async (req, res) =>
+		match(
+			await countersClient.images.delete({
+				counterId: req.params.counterId,
+				imageId: req.params.imageId,
+				ownerId: res.locals.email.id,
+			}),
+		)
+			.with(Ok(P._), () => res.redirect(`/toolbox/counters/admin/${req.params.counterId}?message=success`)) // TODO express-session here
+			.with(Err(Failure.FORBIDDEN), () => res.sendStatus(403))
+			.with(Err(Failure.MISSING_DEPENDENCY), () => res.sendStatus(404))
+			.exhaustive(),
+	)
+	.get("/admin/:counterId/png/admin/:imageId/preview", async (req, res) =>
+		match(await peekCounterImage(req.params.counterId, req.params.imageId, res.locals.email.id))
+			.with(Some(P.select()), (buffer) => {
+				res.writeHead(200, {
+					"Content-Type": "image/png",
+					"Content-Length": buffer.length,
+				});
+				res.end(buffer);
+			})
+			.otherwise(() => res.sendStatus(404)),
+	)
 	.get("/", getCounters(false, "pages/toolbox/counters/index"));
 
 const postsAdminViews = express()

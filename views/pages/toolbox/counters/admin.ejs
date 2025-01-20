@@ -56,7 +56,7 @@
 				<input
 					class="increment-amount"
 					id="increment-amount"
-					name="increment-amount"
+					name="increment"
 					value="<%= counter.incrementAmount; %>"
 					type="number"
 				/>
@@ -72,7 +72,7 @@
 					class="<%=skewer%>-input"
 					id="<%=skewer%>"
 					type="checkbox"
-					name="<%=skewer%>"
+					name="<%=camel%>"
 					title="<%=skewer%>"
 					checked
 				/>
@@ -81,7 +81,7 @@
 					class="<%=skewer%>-input"
 					id="<%=skewer%>"
 					type="checkbox"
-					name="<%=skewer%>"
+					name="<%=camel%>"
 					title="<%=skewer%>"
 				/>
 				<% } %>
@@ -91,7 +91,7 @@
 				<input
 					class="current-value"
 					id="current-value-input"
-					name="current-value"
+					name="value"
 					value="<%= counter.value; %>"
 					type="number"
 				/>
@@ -100,6 +100,11 @@
 			</form>
 			<hr />
 			images:
+
+			<form name="create-image-form" method="post" action="/toolbox/counters/admin/<%=counter.id%>/png/create">
+				<button class="create-image-save">create a new image</button>
+			</form>
+
 			<a href="/toolbox/counters/<%=counter.id%>/png/create">create a new counter image</a>
 			<%- include('../../../partials/counters/counter-images-table'); %>
 		</main>

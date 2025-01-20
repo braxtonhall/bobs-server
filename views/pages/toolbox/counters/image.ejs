@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<%- include('../../../partials/head'); %>
+
+		<style>
+			#behaviour:has(> option[value="set"]:checked) ~ .hidden-on-set {
+				display: none;
+			}
+
+			#behaviour:not(:has(> option[value="set"]:checked)) ~ .shown-on-set {
+				display: none;
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<%- include('../../../partials/header'); %>
+		</header>
+
+		<main>
+			<div>hello! this is the admin page for a counter's image</div>
+			<% if (message) { %>
+			<%= message; %>
+			<% } %>
+
+			<form method="post" class="delete" action="<%= image.id %>/delete">
+				<button class="delete-save">delete</button>
+			</form>
+
+			<form method="post" class="edit-form" action="<%= image.id %>/edit">
+				<label for="behaviour">behaviour</label>
+				<select name="behaviour" id="behaviour">
+					<% if (image.viewBehaviour === 'set') { %><
+					<option id="set" value="set" selected>set</option>
+					%}else{%>
+					<option id="set" value="set">set</option>
+					<% } %>
+					<% if (image.viewBehaviour === 'inc') { %><
+					<option id="inc" value="inc" selected>set</option>
+					%}else{%>
+					<option id="inc" value="inc">set</option>
+					<% } %><% if (image.viewBehaviour === 'noop') { %><
+					<option id="noop" value="noop" selected>set</option>
+					%}else{%>
+					<option id="noop" value="noop">set</option>
+					<% } %>
+				</select>
+
+				<label for="amount" class="amount-label shown-on-set">set amount</label>
+				<input
+					class="amount shown-on-set"
+					id="amount"
+					name="amount"
+					value="<%= image.amount; %>"
+					type="number"
+				/>
+
+				<label for="amount-disabled" class="amount-disabled-label hidden-on-set">set amount</label>
+				<input class="amount-disabled hidden-on-set" id="amount-disabled" value="n/a" disabled />
+
+				<button class="edit-save">submit</button>
+			</form>
+			<hr />
+			preview:
+			<iframe id="preview" src="<%= image.id %>/preview"></iframe>
+			<button onclick="document.getElementById('preview').src = document.getElementById('preview').src">
+				refresh (requires js)
+			</button>
+		</main>
+	</body>
+</html>

@@ -96,7 +96,7 @@ const countersApi = express()
 			return res.sendStatus(400);
 		}
 	})
-	.post("/:counter/inc", async (req, res) =>
+	.post("/:counter", async (req, res) =>
 		// this is an inc
 		// return ++counter;
 		match(await counters.increment({ id: req.params.counter, allowApiInc: true }, hashString(req.ip ?? "")))

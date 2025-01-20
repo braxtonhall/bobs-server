@@ -4,6 +4,9 @@ import { None, Option, Some } from "../../types/option";
 import { HashedString } from "../../types/hashed";
 import posters from "./posters";
 import { Counter, CounterImage } from "@prisma/client";
+import { ImageViewBehaviour } from "../schema/ImageViewBehaviour";
+import { Err, Ok, Result } from "../../types/result";
+import { Failure } from "../../types/failure";
 
 type Where = Partial<Counter> & { id: string };
 
@@ -122,19 +125,37 @@ const create = async (data: { name: string; origin?: string; ownerId: string; un
 		})
 		.then(({ id }) => id);
 
-const edit = async (id: string, address: string, data: { name?: string; origin?: string }): Promise<void> =>
-	// TODO should let the user know if the counter did not exist or if they are not authorized
-	db.counter
-		.update({
+const edit = async (
+	id: string,
+	ownerId: string,
+	data: {
+		name: string;
+		origin: string | undefined;
+		value: number;
+		unique: boolean;
+		incrementAmount: number;
+		allowApiInc: boolean;
+		allowApiSet: boolean;
+		allowApiGet: boolean;
+	},
+): Promise<Result<Counter, Failure.MISSING_DEPENDENCY | Failure.FORBIDDEN>> => {
+	if (await db.counter.findUnique({ where: { id, deleted: false, ownerId } })) {
+		const result = await db.counter.update({
 			where: {
 				id,
-				owner: {
-					address,
-				},
+				ownerId,
 			},
 			data,
-		})
-		.then();
+		});
+		if (result) {
+			return Ok(result);
+		} else {
+			return Err(Failure.FORBIDDEN);
+		}
+	} else {
+		return Err(Failure.MISSING_DEPENDENCY);
+	}
+};
 
 const list = async (ownerId: string, deleted: boolean, count: number, cursor?: string) => {
 	const counters = await db.counter.findMany({
@@ -156,9 +177,92 @@ const list = async (ownerId: string, deleted: boolean, count: number, cursor?: s
 	return { counters: counters.slice(0, count), cursor: counters[count]?.id };
 };
 
-const getCounterImage = async (counterId: string, imageId: string): Promise<Option<CounterImage>> =>
-	match(await db.counterImage.findUnique({ where: { id: imageId, counter: { id: counterId, deleted: false } } }))
+const getCounterImage = async (counterId: string, imageId: string, ownerId?: string): Promise<Option<CounterImage>> =>
+	match(
+		await db.counterImage.findUnique({
+			where: { id: imageId, counter: { id: counterId, deleted: false, ...(ownerId && { ownerId }) } },
+		}),
+	)
 		.with(P.not(P.nullish), Some)
 		.otherwise(None);
 
-export default { increment, getDetails, get, set, getOrigin, create, edit, list, getCounterImage };
+const createCounterImage = async (counterId: string, ownerId: string): Promise<Option<CounterImage>> =>
+	db.counterImage
+		.create({
+			data: {
+				counter: { connect: { id: counterId, ownerId, deleted: false } },
+				viewBehaviour: ImageViewBehaviour.INC,
+				amount: 1,
+			},
+		})
+		.then(Some)
+		.catch(None);
+
+const getCounterImageDetails = async (env: { counterId: string; imageId: string; ownerId: string }) =>
+	db.counterImage
+		.findUniqueOrThrow({
+			where: {
+				id: env.imageId,
+				counter: { id: env.counterId, ownerId: env.ownerId, deleted: false },
+			},
+			include: { counter: true },
+		})
+		.then(Some)
+		.catch(None);
+
+const editCounterImage = async (env: {
+	imageId: string;
+	counterId: string;
+	ownerId: string;
+	amount: number;
+	behaviour: ImageViewBehaviour;
+}): Promise<Result<CounterImage, Failure.MISSING_DEPENDENCY | Failure.FORBIDDEN>> => {
+	if (await db.counterImage.findUnique({ where: { id: env.imageId, counterId: env.counterId } })) {
+		const result = await db.counterImage.update({
+			where: {
+				id: env.imageId,
+				counter: { ownerId: env.ownerId, id: env.counterId, deleted: false },
+			},
+			data: { amount: env.amount, viewBehaviour: env.behaviour },
+		});
+		if (result) {
+			return Ok(result);
+		} else {
+			return Err(Failure.FORBIDDEN);
+		}
+	} else {
+		return Err(Failure.MISSING_DEPENDENCY);
+	}
+};
+
+const deleteCounterImage = async (env: {
+	imageId: string;
+	counterId: string;
+	ownerId: string;
+}): Promise<Result<void, Failure.MISSING_DEPENDENCY | Failure.FORBIDDEN>> => {
+	if (await db.counterImage.findUnique({ where: { id: env.imageId, counterId: env.counterId } })) {
+		const result = await db.counterImage.delete({
+			where: {
+				id: env.imageId,
+				counter: { ownerId: env.ownerId, id: env.counterId, deleted: false },
+			},
+		});
+		if (result) {
+			return Ok();
+		} else {
+			return Err(Failure.FORBIDDEN);
+		}
+	} else {
+		return Err(Failure.MISSING_DEPENDENCY);
+	}
+};
+
+const images = {
+	get: getCounterImage,
+	create: createCounterImage,
+	getDetails: getCounterImageDetails,
+	edit: editCounterImage,
+	delete: deleteCounterImage,
+};
+
+export default { increment, getDetails, get, set, getOrigin, create, edit, list, images };
