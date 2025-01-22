@@ -8,8 +8,4 @@ export const editCounterSchema = z.object({
 	origin: originSchema,
 	value: z.coerce.number().int(),
 	unique: checkboxSchema,
-	increment: z.coerce.number().int(),
-	allowApiInc: checkboxSchema,
-	allowApiSet: checkboxSchema,
-	allowApiGet: checkboxSchema,
 });

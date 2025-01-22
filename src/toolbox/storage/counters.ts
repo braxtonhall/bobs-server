@@ -3,57 +3,84 @@ import { match, P } from "ts-pattern";
 import { None, Option, Some } from "../../types/option";
 import { HashedString } from "../../types/hashed";
 import posters from "./posters";
-import { Counter, CounterImage } from "@prisma/client";
-import { ImageViewBehaviour } from "../schema/ImageViewBehaviour";
+import { Counter, Action } from "@prisma/client";
+import { ACTION_DEFAULTS, Behaviour, EditActionPayload } from "../schema/action";
 import { Err, Ok, Result } from "../../types/result";
 import { Failure } from "../../types/failure";
+import tinycolor from "tinycolor2";
 
-type Where = Partial<Counter> & { id: string };
+type WhereCounter = Partial<Counter> & { id: string };
+type WhereAction = Partial<Action> & { id: string; counter: WhereCounter };
 
-const increment = async (where: Where, ip: HashedString): Promise<Option<number>> =>
-	transaction(async () => {
-		const counter = await db.counter.findUnique({ where: { ...where, deleted: false } });
-		if (!counter) {
-			return None();
-		}
-		const posterId = await posters.getId(ip);
-		const existingCounterView = await db.counterView.findUnique({
-			where: {
-				id: {
-					counterId: counter.id,
-					posterId,
-				},
+const viewCounter = async (
+	counter: Counter,
+	poster: { id: number; ip: HashedString },
+): Promise<{ firstCounterView: boolean }> => {
+	const existingCounterView = await db.counterView.findUnique({
+		where: {
+			id: {
+				counterId: counter.id,
+				posterId: poster.id,
 			},
-		});
-		existingCounterView ||
-			(await db.counterView.create({
-				data: {
-					counter: { connect: counter },
-					poster: {
-						connectOrCreate: {
-							where: { ip },
-							create: { ip },
-						},
+		},
+	});
+	existingCounterView ||
+		(await db.counterView.create({
+			data: {
+				counter: { connect: { id: counter.id } },
+				poster: {
+					connectOrCreate: {
+						where: { ip: poster.ip },
+						create: { ip: poster.ip },
 					},
 				},
-			}));
-		const updatedCount = await db.counter.update({
-			where: {
-				id: counter.id,
-				deleted: false,
 			},
-			data: {
-				increments: { increment: 1 },
-				...((!counter.unique || (counter.unique && existingCounterView === null)) && {
-					value: { increment: counter.incrementAmount },
-				}),
-			},
-			select: { value: true },
-		});
-		return Some(updatedCount.value);
+		}));
+	await db.counter.update({
+		where: { id: counter.id, deleted: false },
+		data: { views: { increment: 1 } },
+		select: { value: true },
 	});
+	return { firstCounterView: !existingCounterView };
+};
 
-const set = async (where: Where, value: number): Promise<Option<number>> =>
+const viewAction = async (
+	action: Action,
+	poster: { id: number; ip: HashedString },
+): Promise<{ firstActionView: boolean }> => {
+	const existingActionView = await db.actionView.findUnique({
+		where: {
+			id: {
+				actionId: action.id,
+				posterId: poster.id,
+			},
+		},
+	});
+	existingActionView ||
+		(await db.actionView.create({
+			data: {
+				action: { connect: { id: action.id } },
+				poster: {
+					connectOrCreate: {
+						where: { ip: poster.ip },
+						create: { ip: poster.ip },
+					},
+				},
+			},
+		}));
+	await db.action.update({
+		where: {
+			id: action.id,
+			counter: { id: action.counterId, deleted: false },
+		},
+		data: {
+			views: { increment: 1 },
+		},
+	});
+	return { firstActionView: !existingActionView };
+};
+
+const set = async (where: WhereCounter, value: number): Promise<Option<number>> =>
 	transaction(async () => {
 		const { id } = await db.counter.findUniqueOrThrow({ where: { ...where, deleted: false } });
 		const { value: updated } = await db.counter.update({
@@ -74,14 +101,17 @@ const getDetails = async (id: string, ownerId: string, count: number, cursor?: s
 				},
 			},
 			include: {
-				images: {
+				actions: {
 					cursor: typeof cursor === "string" ? { id: cursor } : undefined,
 					take: count + 1,
 					orderBy: {
 						sort: "desc",
 					},
+					include: {
+						_count: { select: { viewers: true } },
+					},
 				},
-				_count: { select: { views: true } },
+				_count: { select: { viewers: true } },
 			},
 		}),
 	)
@@ -89,14 +119,14 @@ const getDetails = async (id: string, ownerId: string, count: number, cursor?: s
 			Some({
 				counter: {
 					...counter,
-					images: counter.images.slice(0, count),
+					actions: counter.actions.slice(0, count),
 				},
-				cursor: counter.images[count]?.id,
+				cursor: counter.actions[count]?.id,
 			}),
 		)
 		.otherwise(None);
 
-const get = async (where: Where): Promise<Option<number>> =>
+const get = async (where: WhereCounter): Promise<Option<number>> =>
 	match(await db.counter.findUnique({ where: { ...where, deleted: false } }))
 		.with({ value: P.select() }, Some)
 		.otherwise(None);
@@ -133,10 +163,6 @@ const edit = async (
 		origin: string | undefined;
 		value: number;
 		unique: boolean;
-		incrementAmount: number;
-		allowApiInc: boolean;
-		allowApiSet: boolean;
-		allowApiGet: boolean;
 	},
 ): Promise<Result<Counter, Failure.MISSING_DEPENDENCY | Failure.FORBIDDEN>> => {
 	if (await db.counter.findUnique({ where: { id, deleted: false, ownerId } })) {
@@ -177,53 +203,66 @@ const list = async (ownerId: string, deleted: boolean, count: number, cursor?: s
 	return { counters: counters.slice(0, count), cursor: counters[count]?.id };
 };
 
-const getCounterImage = async (counterId: string, imageId: string, ownerId?: string): Promise<Option<CounterImage>> =>
+const getCounterAction = async (where: WhereAction): Promise<Option<Action & { counter: Counter }>> =>
 	match(
-		await db.counterImage.findUnique({
-			where: { id: imageId, counter: { id: counterId, deleted: false, ...(ownerId && { ownerId }) } },
+		await db.action.findUnique({
+			where: { ...where, counter: { ...where.counter, deleted: false } },
+			include: { counter: true },
 		}),
 	)
 		.with(P.not(P.nullish), Some)
 		.otherwise(None);
 
-const createCounterImage = async (counterId: string, ownerId: string): Promise<Option<CounterImage>> =>
-	db.counterImage
+const createCounterAction = async (counterId: string, ownerId: string): Promise<Option<Action>> =>
+	db.action
 		.create({
 			data: {
+				...ACTION_DEFAULTS,
 				counter: { connect: { id: counterId, ownerId, deleted: false } },
-				viewBehaviour: ImageViewBehaviour.INC,
-				amount: 1,
 			},
 		})
 		.then(Some)
 		.catch(None);
 
-const getCounterImageDetails = async (env: { counterId: string; imageId: string; ownerId: string }) =>
-	db.counterImage
+const getCounterActionDetails = async (env: { counterId: string; actionId: string; ownerId: string }) =>
+	db.action
 		.findUniqueOrThrow({
 			where: {
-				id: env.imageId,
+				id: env.actionId,
 				counter: { id: env.counterId, ownerId: env.ownerId, deleted: false },
 			},
-			include: { counter: true },
+			include: { counter: true, _count: { select: { viewers: true } } },
 		})
-		.then(Some)
+		.then((action) =>
+			Some({
+				...action,
+				color: tinycolor({
+					r: action.colorR,
+					g: action.colorG,
+					b: action.colorB,
+				}).toString("hex"),
+				backgroundColor: tinycolor({
+					r: action.backgroundColorR,
+					g: action.backgroundColorG,
+					b: action.backgroundColorB,
+				}).toString("hex"),
+			}),
+		)
 		.catch(None);
 
-const editCounterImage = async (env: {
-	imageId: string;
+const editCounterAction = async (env: {
+	actionId: string;
 	counterId: string;
 	ownerId: string;
-	amount: number;
-	behaviour: ImageViewBehaviour;
-}): Promise<Result<CounterImage, Failure.MISSING_DEPENDENCY | Failure.FORBIDDEN>> => {
-	if (await db.counterImage.findUnique({ where: { id: env.imageId, counterId: env.counterId } })) {
-		const result = await db.counterImage.update({
+	payload: EditActionPayload;
+}): Promise<Result<Action, Failure.MISSING_DEPENDENCY | Failure.FORBIDDEN>> => {
+	if (await db.action.findUnique({ where: { id: env.actionId, counterId: env.counterId } })) {
+		const result = await db.action.update({
 			where: {
-				id: env.imageId,
+				id: env.actionId,
 				counter: { ownerId: env.ownerId, id: env.counterId, deleted: false },
 			},
-			data: { amount: env.amount, viewBehaviour: env.behaviour },
+			data: env.payload,
 		});
 		if (result) {
 			return Ok(result);
@@ -235,15 +274,15 @@ const editCounterImage = async (env: {
 	}
 };
 
-const deleteCounterImage = async (env: {
-	imageId: string;
+const deleteCounterAction = async (env: {
+	actionId: string;
 	counterId: string;
 	ownerId: string;
 }): Promise<Result<void, Failure.MISSING_DEPENDENCY | Failure.FORBIDDEN>> => {
-	if (await db.counterImage.findUnique({ where: { id: env.imageId, counterId: env.counterId } })) {
-		const result = await db.counterImage.delete({
+	if (await db.action.findUnique({ where: { id: env.actionId, counterId: env.counterId } })) {
+		const result = await db.action.delete({
 			where: {
-				id: env.imageId,
+				id: env.actionId,
 				counter: { ownerId: env.ownerId, id: env.counterId, deleted: false },
 			},
 		});
@@ -257,12 +296,53 @@ const deleteCounterImage = async (env: {
 	}
 };
 
-const images = {
-	get: getCounterImage,
-	create: createCounterImage,
-	getDetails: getCounterImageDetails,
-	edit: editCounterImage,
-	delete: deleteCounterImage,
+const selectValue = (action: Action) => {
+	const behaviour = action.behaviour as Behaviour;
+	switch (behaviour) {
+		case Behaviour.NOOP:
+			return {};
+		case Behaviour.INC:
+			return { value: { increment: action.amount } };
+		case Behaviour.SET:
+			return { value: action.amount };
+		default:
+			throw new Error(`Unrecognized behaviour: ${behaviour satisfies never}`);
+	}
 };
 
-export default { increment, getDetails, get, set, getOrigin, create, edit, list, images };
+const actUponCounterAction = async (
+	where: WhereAction,
+	ip: HashedString,
+): Promise<Option<{ action: Action; value: number }>> =>
+	transaction(async () =>
+		match(await getCounterAction(where))
+			.with(Some(P.select()), async (action): Promise<Option<{ action: Action; value: number }>> => {
+				const poster = { id: await posters.getId(ip), ip };
+				const [{ firstActionView }, { firstCounterView }] = await Promise.all([
+					viewAction(action, poster),
+					viewCounter(action.counter, poster),
+				]);
+				const shouldAct = (!action.unique || firstActionView) && (!action.counter.unique || firstCounterView);
+				if (shouldAct && action.behaviour !== Behaviour.NOOP) {
+					const counter = await db.counter.update({
+						where: { id: action.counterId, deleted: false },
+						data: selectValue(action),
+					});
+					return Some({ action, value: counter.value });
+				} else {
+					return Some({ action, value: action.counter.value });
+				}
+			})
+			.otherwise(None),
+	);
+
+const actions = {
+	get: getCounterAction,
+	create: createCounterAction,
+	getDetails: getCounterActionDetails,
+	edit: editCounterAction,
+	delete: deleteCounterAction,
+	act: actUponCounterAction,
+};
+
+export default { getDetails, get, set, getOrigin, create, edit, list, actions };

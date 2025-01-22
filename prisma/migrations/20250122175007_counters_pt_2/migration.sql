@@ -6,13 +6,42 @@
 
 */
 -- CreateTable
-CREATE TABLE "CounterImage" (
+CREATE TABLE "Action" (
     "sort" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "id" TEXT NOT NULL,
     "counterId" TEXT NOT NULL,
-    "viewBehaviour" TEXT NOT NULL,
-    "amount" INTEGER NOT NULL,
-    CONSTRAINT "CounterImage_counterId_fkey" FOREIGN KEY ("counterId") REFERENCES "Counter" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    "views" INTEGER NOT NULL DEFAULT 0,
+    "unique" BOOLEAN NOT NULL,
+    "behaviour" TEXT NOT NULL,
+    "amount" INTEGER NOT NULL DEFAULT 1,
+    "colorR" INTEGER NOT NULL,
+    "colorG" INTEGER NOT NULL,
+    "colorB" INTEGER NOT NULL,
+    "colorA" INTEGER NOT NULL,
+    "backgroundColorR" INTEGER NOT NULL,
+    "backgroundColorG" INTEGER NOT NULL,
+    "backgroundColorB" INTEGER NOT NULL,
+    "backgroundColorA" INTEGER NOT NULL,
+    "width" INTEGER NOT NULL,
+    "height" INTEGER NOT NULL,
+    "textAlign" TEXT NOT NULL,
+    "textBaseline" TEXT NOT NULL,
+    "fontFamily" TEXT NOT NULL,
+    "fontSize" INTEGER NOT NULL,
+    "fontStyle" TEXT NOT NULL,
+    "fontWeight" INTEGER NOT NULL,
+    "mimeType" TEXT NOT NULL,
+    CONSTRAINT "Action_counterId_fkey" FOREIGN KEY ("counterId") REFERENCES "Counter" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "ActionView" (
+    "actionId" TEXT NOT NULL,
+    "posterId" INTEGER NOT NULL,
+
+    PRIMARY KEY ("actionId", "posterId"),
+    CONSTRAINT "ActionView_actionId_fkey" FOREIGN KEY ("actionId") REFERENCES "Action" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "ActionView_posterId_fkey" FOREIGN KEY ("posterId") REFERENCES "Poster" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- RedefineTables
@@ -25,13 +54,9 @@ CREATE TABLE "new_Counter" (
     "name" TEXT NOT NULL,
     "origin" TEXT,
     "ownerId" TEXT NOT NULL,
-    "increments" INTEGER NOT NULL DEFAULT 0,
+    "views" INTEGER NOT NULL DEFAULT 0,
     "value" INTEGER NOT NULL DEFAULT 0,
     "unique" BOOLEAN NOT NULL,
-    "incrementAmount" INTEGER NOT NULL DEFAULT 1,
-    "allowApiInc" BOOLEAN NOT NULL DEFAULT true,
-    "allowApiSet" BOOLEAN NOT NULL DEFAULT false,
-    "allowApiGet" BOOLEAN NOT NULL DEFAULT true,
     CONSTRAINT "Counter_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "Email" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 INSERT INTO "new_Counter" ("deleted", "id", "name", "origin", "ownerId", "sort", "unique") SELECT "deleted", "id", "name", "origin", "ownerId", "sort", "unique" FROM "Counter";
@@ -53,4 +78,4 @@ PRAGMA foreign_keys=ON;
 PRAGMA defer_foreign_keys=OFF;
 
 -- CreateIndex
-CREATE UNIQUE INDEX "CounterImage_id_key" ON "CounterImage"("id");
+CREATE UNIQUE INDEX "Action_id_key" ON "Action"("id");

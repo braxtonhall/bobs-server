@@ -26,7 +26,15 @@ import emails from "../storage/emails";
 import { peekCounterImage, updateAndGetCounterImage } from "../operations/getCounterImage";
 import countersClient from "../storage/counters";
 import { createCounterSchema } from "../schema/createCounter";
-import { editCounterImageSchema } from "../schema/editCounterImage";
+import {
+	Behaviour,
+	editActionSchema,
+	FontFamily,
+	FontStyle,
+	MimeType,
+	TextAlign,
+	TextBaseline,
+} from "../schema/action";
 import { editCounterSchema } from "../schema/editCounter";
 
 // TODO there is WAY too much repetition here... There must be a good way to get reuse a lot of code
@@ -87,11 +95,17 @@ const boxesViews = express()
 			.otherwise(() => res.sendStatus(400)),
 	);
 
-const counterViews = express().get("/:counter/png/:image", async (req, res) => {
-	match(await updateAndGetCounterImage(req.params.counter, req.params.image, hashString(req.ip ?? "")))
-		.with(Some(P.select()), (buffer) => {
+const counterViews = express().get("/:counter/actions/:action", async (req, res) => {
+	match(
+		await updateAndGetCounterImage({
+			counterId: req.params.counter,
+			actionId: req.params.action,
+			ip: hashString(req.ip ?? ""),
+		}),
+	)
+		.with(Some(P.select()), ({ buffer, mime }) => {
 			res.writeHead(200, {
-				"Content-Type": "image/png",
+				"Content-Type": `image/${mime}`,
 				"Content-Length": buffer.length,
 			});
 			res.end(buffer);
@@ -309,10 +323,6 @@ const counterAdminViews = express()
 			.with(Ok(P.select()), async (payload) =>
 				match(
 					await countersClient.edit(req.params.id, res.locals.email.id, {
-						allowApiGet: payload.allowApiGet,
-						allowApiInc: payload.allowApiInc,
-						allowApiSet: payload.allowApiSet,
-						incrementAmount: payload.increment,
 						name: payload.name,
 						origin: payload.origin,
 						unique: payload.unique,
@@ -326,58 +336,66 @@ const counterAdminViews = express()
 			)
 			.otherwise(() => res.sendStatus(400)),
 	)
-	.post("/admin/:id/png/create", async (req, res) =>
-		match(await countersClient.images.create(req.params.id, res.locals.email.id))
+	.post("/admin/:id/actions/create", async (req, res) =>
+		match(await countersClient.actions.create(req.params.id, res.locals.email.id))
 			.with(Some(P.select()), ({ id, counterId }) =>
-				res.redirect(`/toolbox/counters/admin/${counterId}/png/admin/${id}`),
+				res.redirect(`/toolbox/counters/admin/${counterId}/actions/admin/${id}`),
 			)
 			.otherwise(() => res.sendStatus(400)),
 	)
-	.get("/admin/:counterId/png/admin/:imageId", async (req, res) =>
+	.get("/admin/:counterId/actions/admin/:actionId", async (req, res) =>
 		match(
-			await countersClient.images.getDetails({
+			await countersClient.actions.getDetails({
 				ownerId: res.locals.email.id,
 				counterId: req.params.counterId,
-				imageId: req.params.imageId,
+				actionId: req.params.actionId,
 			}),
 		)
-			.with(Some(P.select()), (image) =>
-				res.render("pages/toolbox/counters/image", {
+			.with(Some(P.select()), (action) =>
+				res.render("pages/toolbox/counters/action", {
+					Behaviour,
+					TextAlign,
+					TextBaseline,
+					FontFamily,
+					FontStyle,
+					MimeType,
 					message: typeof req.query.message === "string" ? req.query.message : "",
-					image,
+					action,
 					Config,
 				}),
 			)
 			.otherwise(() => res.sendStatus(404)),
 	)
-	.post("/admin/:counterId/png/admin/:imageId/edit", (req, res) =>
-		match(parse(editCounterImageSchema, req.body))
-			.with(Ok(P.select()), async ({ behaviour, amount }) =>
+	.post("/admin/:counterId/actions/admin/:actionId/edit", (req, res) =>
+		match(parse(editActionSchema, req.body))
+			.with(Ok(P.select()), async (payload) =>
 				match(
-					await countersClient.images.edit({
-						behaviour,
-						amount,
+					await countersClient.actions.edit({
 						counterId: req.params.counterId,
-						imageId: req.params.imageId,
+						actionId: req.params.actionId,
 						ownerId: res.locals.email.id,
+						payload,
 					}),
 				)
 					.with(Ok(P._), () =>
 						res.redirect(
-							`/toolbox/counters/admin/${req.params.counterId}/png/admin/${req.params.imageId}?message=success`,
+							`/toolbox/counters/admin/${req.params.counterId}/actions/admin/${req.params.actionId}?message=success`,
 						),
 					) // TODO express-session here
 					.with(Err(Failure.FORBIDDEN), () => res.sendStatus(403))
 					.with(Err(Failure.MISSING_DEPENDENCY), () => res.sendStatus(404))
 					.exhaustive(),
 			)
-			.otherwise(() => res.sendStatus(400)),
+			.otherwise((error) => {
+				console.log(error);
+				res.sendStatus(400);
+			}),
 	)
-	.post("/admin/:counterId/png/admin/:imageId/delete", async (req, res) =>
+	.post("/admin/:counterId/actions/admin/:actionId/delete", async (req, res) =>
 		match(
-			await countersClient.images.delete({
+			await countersClient.actions.delete({
 				counterId: req.params.counterId,
-				imageId: req.params.imageId,
+				actionId: req.params.actionId,
 				ownerId: res.locals.email.id,
 			}),
 		)
@@ -386,11 +404,12 @@ const counterAdminViews = express()
 			.with(Err(Failure.MISSING_DEPENDENCY), () => res.sendStatus(404))
 			.exhaustive(),
 	)
-	.get("/admin/:counterId/png/admin/:imageId/preview", async (req, res) =>
-		match(await peekCounterImage(req.params.counterId, req.params.imageId, res.locals.email.id))
-			.with(Some(P.select()), (buffer) => {
+	.get("/preview", (req, res) =>
+		// TODO this should take query params!!!
+		match(peekCounterImage())
+			.with(Some(P.select()), ({ buffer, mime }) => {
 				res.writeHead(200, {
-					"Content-Type": "image/png",
+					"Content-Type": `image/${mime}`,
 					"Content-Length": buffer.length,
 				});
 				res.end(buffer);

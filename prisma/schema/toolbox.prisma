@@ -47,35 +47,18 @@ model Subscription {
 }
 
 model Counter {
-  sort       Int            @id @default(autoincrement())
-  id         String         @unique @default(cuid())
-  deleted    Boolean        @default(false)
-  name       String
-  origin     String?
-  owner      Email          @relation(fields: [ownerId], references: [id])
-  ownerId    String
-  increments Int            @default(0)
-  value      Int            @default(0)
-  unique     Boolean
-  views      CounterView[]
-  images     CounterImage[]
-
-  incrementAmount Int     @default(1)
-  allowApiInc     Boolean @default(true)
-  allowApiSet     Boolean @default(false)
-  allowApiGet     Boolean @default(true)
-}
-
-model CounterImage {
-  sort      Int     @id @default(autoincrement())
-  id        String  @unique @default(cuid())
-  counterId String
-  counter   Counter @relation(fields: [counterId], references: [id], onDelete: Cascade)
-
-  /// 'NOOP' | 'INC' | 'SET'
-  viewBehaviour String
-  /// only applies to the SET behaviour
-  amount        Int
+  sort    Int           @id @default(autoincrement())
+  id      String        @unique @default(cuid())
+  deleted Boolean       @default(false)
+  name    String
+  origin  String?
+  owner   Email         @relation(fields: [ownerId], references: [id])
+  ownerId String
+  views   Int           @default(0)
+  value   Int           @default(0)
+  unique  Boolean
+  viewers CounterView[]
+  actions Action[]
 }
 
 model CounterView {
@@ -87,12 +70,63 @@ model CounterView {
   @@id(name: "id", [counterId, posterId])
 }
 
+model Action {
+  sort      Int          @id @default(autoincrement())
+  id        String       @unique @default(cuid())
+  counterId String
+  counter   Counter      @relation(fields: [counterId], references: [id], onDelete: Cascade)
+  views     Int          @default(0)
+  viewers   ActionView[]
+  unique    Boolean
+  /// 'noop' | 'inc' | 'set'
+  behaviour String
+  /// only applies to the SET behaviour
+  amount    Int          @default(1)
+
+  // style
+  colorR           Int
+  colorG           Int
+  colorB           Int
+  colorA           Int
+  backgroundColorR Int
+  backgroundColorG Int
+  backgroundColorB Int
+  backgroundColorA Int
+  /// px
+  width            Int
+  /// px
+  height           Int
+  /// left|right|center
+  textAlign        String // browser defaults to left
+  /// alphabetic|top|hanging|middle|ideographic|bottom
+  textBaseline     String // browser defaults to alphabetic
+  fontFamily       String
+  /// pt
+  fontSize         Int // browser defaults to 12
+  /// normal|italic|oblique
+  fontStyle        String // browser defaults to normal
+  /// 100-900
+  fontWeight       Int // browser defaults to 400
+  /// png|jpeg
+  mimeType         String
+}
+
+model ActionView {
+  actionId String
+  action   Action @relation(fields: [actionId], references: [id], onDelete: Cascade)
+  posterId Int
+  poster   Poster @relation(fields: [posterId], references: [id])
+
+  @@id(name: "id", [actionId, posterId])
+}
+
 model Poster {
-  id    Int           @id @default(autoincrement())
-  ip    String        @unique
-  posts Post[]
-  views CounterView[]
-  karma Int           @default(0)
+  id           Int           @id @default(autoincrement())
+  ip           String        @unique
+  posts        Post[]
+  counterViews CounterView[]
+  actionViews  ActionView[]
+  karma        Int           @default(0)
 }
 
 model Post {

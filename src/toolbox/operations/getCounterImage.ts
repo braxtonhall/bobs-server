@@ -1,62 +1,50 @@
 import counters from "../storage/counters";
 import { createCanvas } from "canvas";
 import { match, P } from "ts-pattern";
-import { None, Option, Some, unsafeUnwrap, map } from "../../types/option";
+import { None, Option, Some, map } from "../../types/option";
 import Config from "../../Config";
 import { HashedString } from "../../types/hashed";
 import { transaction } from "../../db";
-import { ImageViewBehaviour } from "../schema/ImageViewBehaviour";
-import { CounterImage } from "@prisma/client";
+import { ACTION_DEFAULTS, MimeType, TextAlign, TextBaseline } from "../schema/action";
+import { Action } from "@prisma/client";
 
-const actOnView = (image: CounterImage, ip: HashedString) => {
-	const behaviour = image.viewBehaviour as ImageViewBehaviour;
-	switch (behaviour) {
-		case ImageViewBehaviour.INC:
-			return counters.increment({ id: image.counterId }, ip);
-		case ImageViewBehaviour.SET:
-			return counters.set({ id: image.counterId }, image.amount);
-		case ImageViewBehaviour.NOOP:
-			return counters.get({ id: image.counterId });
-		default:
-			throw new Error(`Unrecognized behaviour: ${behaviour satisfies never}`);
-	}
-};
+const getCounterImage = (
+	result: Option<{ image: Pick<Action, keyof typeof ACTION_DEFAULTS>; value: number }>,
+): Option<{ buffer: Buffer; mime: MimeType }> =>
+	map(result, ({ image, value }) => {
+		const imageWidth = Math.min(image.width, Config.MAX_COUNTER_IMG_WIDTH);
+		const imageHeight = Math.min(image.height, Config.MAX_COUNTER_IMG_HEIGHT);
 
-const getUpdatedCount = async (image: CounterImage, ip: HashedString): Promise<number> =>
-	unsafeUnwrap(await actOnView(image, ip));
-
-const getCounterImage = (image: Option<{ image: CounterImage; count: number }>): Option<Buffer> =>
-	map(image, ({ count }) => {
-		const imageCanvas = createCanvas(Config.COUNTER_IMG_WIDTH, Config.COUNTER_IMG_HEIGHT);
+		const imageCanvas = createCanvas(imageWidth, imageHeight);
 		const context = imageCanvas.getContext("2d");
 
-		context.fillStyle = "rgba(0,0,0,0)";
-		context.fillRect(0, 0, Config.COUNTER_IMG_WIDTH, Config.COUNTER_IMG_HEIGHT);
-		context.fillStyle = "#000000";
-		context.font = "300 30pt Helvetica Georgia, serif";
-		context.textAlign = "center";
-		context.textBaseline = "middle";
-		context.fillText(String(count), Config.COUNTER_IMG_WIDTH / 2, Config.COUNTER_IMG_HEIGHT / 2);
+		context.fillStyle = `rgba(${image.backgroundColorR},${image.backgroundColorG},${image.backgroundColorB},${image.backgroundColorA / 100})`;
+		context.fillRect(0, 0, imageWidth, imageHeight);
 
-		return imageCanvas.toBuffer("image/png");
+		context.fillStyle = `rgba(${image.colorR},${image.colorG},${image.colorB},${image.colorA / 100})`;
+		context.font = `$${image.fontStyle} ${image.fontWeight} ${image.fontSize}pt ${image.fontFamily}`; // TODO
+		context.textAlign = image.textAlign as TextAlign;
+		context.textBaseline = image.textBaseline as TextBaseline;
+		context.fillText(String(value), imageWidth / 2, imageHeight / 2);
+
+		const mimeType: "image/png" | "image/jpeg" = `image/${image.mimeType as MimeType}`;
+		return { buffer: imageCanvas.toBuffer(mimeType as any), mime: image.mimeType as MimeType };
 	});
 
-export const peekCounterImage = (counterId: string, imageId: string, ownerId: string): Promise<Option<Buffer>> =>
-	counters.images
-		.get(counterId, imageId, ownerId)
-		.then((result) => map(result, (image) => ({ image, count: 12345 })))
-		.then(getCounterImage);
+export const peekCounterImage = (): Option<{ buffer: Buffer; mime: MimeType }> =>
+	getCounterImage(Some({ value: 12345, image: { ...ACTION_DEFAULTS } }));
 
-export const updateAndGetCounterImage = (
-	counterId: string,
-	imageId: string,
-	ip: HashedString,
-): Promise<Option<Buffer>> =>
+export const updateAndGetCounterImage = ({
+	counterId,
+	actionId,
+	ip,
+}: {
+	counterId: string;
+	actionId: string;
+	ip: HashedString;
+}): Promise<Option<{ buffer: Buffer; mime: MimeType }>> =>
 	transaction(async () =>
-		match(await counters.images.get(counterId, imageId))
-			.with(Some(P.select()), async (image) => {
-				const count = await getUpdatedCount(image, ip);
-				return getCounterImage(Some({ image, count }));
-			})
+		match(await counters.actions.act({ id: actionId, counter: { id: counterId } }, ip))
+			.with(Some(P.select()), async ({ action, value }) => getCounterImage(Some({ image: action, value })))
 			.otherwise(None),
 	);

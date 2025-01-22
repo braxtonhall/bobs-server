@@ -1,21 +1,27 @@
 <table>
 	<tr>
 		<th>behaviour</th>
+		<th>amount</th>
+		<th>total views</th>
+		<th>unique views</th>
 		<th>manage</th>
-		<th>link</th>
+		<th>image</th>
 	</tr>
 
-	<% for (const image of counter.images) { %>
+	<% for (const action of counter.actions) { %>
 
 	<tr>
-		<td><%=image.viewBehaviour%></td>
+		<td><%=action.behaviour%></td>
+		<td><%=action.behaviour === 'noop' ? null : action.amount%></td>
+		<td><%=action.views%></td>
+		<td><%=action._count.viewers%></td>
 		<td>
-			<a href="<%=counter.id%>/png/admin/<%=image.id%>">
+			<a href="<%=counter.id%>/actions/admin/<%=action.id%>">
 				<span>manage</span>
 			</a>
 		</td>
 		<td>
-			<a href="/counters/<%=counter.id%>/png/<%=image.id%>"><span>link</span></a>
+			<a href="/counters/<%=counter.id%>/actions/<%=action.id%>"><span>link</span></a>
 		</td>
 	</tr>
 

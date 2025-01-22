@@ -14,8 +14,8 @@
 			<%= message; %>
 			<% } %>
 
-			<p>total increments: <%= counter.increments; %></p>
-			<p>unique increments: <%= counter._count.views; %></p>
+			<p>total views: <%= counter.views; %></p>
+			<p>unique views: <%= counter._count.viewers; %></p>
 
 			<% const action = counter.deleted ? "restore" : "archive"; %>
 			<form
@@ -52,41 +52,6 @@
 				<input class="unique-input" id="unique" type="checkbox" name="unique" title="unique" />
 				<% } %>
 
-				<label for="increment-amount" class="increment-amount-label">increment amount</label>
-				<input
-					class="increment-amount"
-					id="increment-amount"
-					name="increment"
-					value="<%= counter.incrementAmount; %>"
-					type="number"
-				/>
-
-				<% for (const {camel, skewer, name} of [
-                    {camel: 'allowApiInc', skewer: "allow-api-inc", name: 'allow api increment'},
-                    {camel: 'allowApiSet', skewer: "allow-api-set", name: 'allow api set'},
-                    {camel: 'allowApiGet', skewer: "allow-api-get", name: 'allow api get'}
-                ]) {%>
-				<label for="<%=skewer%>" class="<%=skewer%>-label"><%=name%></label>
-				<% if (counter[camel]) { %>
-				<input
-					class="<%=skewer%>-input"
-					id="<%=skewer%>"
-					type="checkbox"
-					name="<%=camel%>"
-					title="<%=skewer%>"
-					checked
-				/>
-				<% } else { %>
-				<input
-					class="<%=skewer%>-input"
-					id="<%=skewer%>"
-					type="checkbox"
-					name="<%=camel%>"
-					title="<%=skewer%>"
-				/>
-				<% } %>
-				<% } %>
-
 				<label for="current-value-input" class="current-value-label">current amount</label>
 				<input
 					class="current-value"
@@ -99,13 +64,16 @@
 				<button class="edit-save">submit</button>
 			</form>
 			<hr />
-			images:
+			actions:
 
-			<form name="create-image-form" method="post" action="/toolbox/counters/admin/<%=counter.id%>/png/create">
-				<button class="create-image-save">create a new image</button>
+			<form
+				name="create-image-form"
+				method="post"
+				action="/toolbox/counters/admin/<%=counter.id%>/actions/create"
+			>
+				<button class="create-image-save">create a new action</button>
 			</form>
 
-			<a href="/toolbox/counters/<%=counter.id%>/png/create">create a new counter image</a>
 			<%- include('../../../partials/counters/counter-images-table'); %>
 		</main>
 	</body>

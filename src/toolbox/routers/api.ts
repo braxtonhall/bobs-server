@@ -1,11 +1,10 @@
-import express, { Request, Response, NextFunction } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import { match, P } from "ts-pattern";
 import boxes from "../storage/boxes";
 import { Option, Some } from "../../types/option";
 import { getPosts } from "../operations/getPosts";
 import { hashString } from "../../util";
 import { createPostSchema } from "../schema/createPost";
-import { putCounterValue } from "../schema/putCounterValue";
 import { parse } from "../../parse";
 import { Err, Ok } from "../../types/result";
 import { createPost } from "../operations/createPost";
@@ -14,6 +13,7 @@ import { Failure } from "../../types/failure";
 import counters from "../storage/counters";
 import bodyParser from "body-parser";
 import slowDown from "express-slow-down";
+import { Behaviour } from "../schema/action";
 
 const allowOrigin =
 	<Params>(getOrigin: (params: Params) => Promise<Option<string>>) =>
@@ -73,36 +73,25 @@ const boxesApi = express()
 			.otherwise(() => res.sendStatus(400)),
 	);
 
+const act = (behaviour: Behaviour) => async (req: Request, res: Response) =>
+	match(
+		await counters.actions.act(
+			{ id: req.params.action, behaviour, counter: { id: req.params.counter } },
+			hashString(req.ip ?? ""),
+		),
+	)
+		.with(Some(P.select()), (value) => res.send(value))
+		.otherwise(() => res.sendStatus(404));
+
 const countersApi = express()
 	.all(
 		"/:counter/*",
 		limiter,
 		allowOrigin<{ counter: string }>((params) => counters.getOrigin(params.counter)),
 	)
-	.get("/:counter", async (req, res) =>
-		// this is a peek
-		// return counter;
-		match(await counters.get({ id: req.params.counter, allowApiGet: true }))
-			.with(Some(P.select()), (value) => res.send(value))
-			.otherwise(() => res.sendStatus(404)),
-	)
-	.put("/:counter", async (req, res) => {
-		try {
-			const { value } = putCounterValue.parse(req.body);
-			return match(await counters.set({ id: req.params.counter, allowApiSet: true }, value))
-				.with(Some(P.select()), (value) => res.send(value))
-				.otherwise(() => res.sendStatus(404));
-		} catch {
-			return res.sendStatus(400);
-		}
-	})
-	.post("/:counter", async (req, res) =>
-		// this is an inc
-		// return ++counter;
-		match(await counters.increment({ id: req.params.counter, allowApiInc: true }, hashString(req.ip ?? "")))
-			.with(Some(P.select()), (count) => res.send({ count }))
-			.otherwise(() => res.sendStatus(404)),
-	);
+	.get("/:counter/actions/:action", act(Behaviour.NOOP))
+	.put("/:counter/actions/:action", act(Behaviour.SET))
+	.post("/:counter/actions/:action", act(Behaviour.INC));
 
 export const api = express()
 	.use(bodyParser.json({ type: "application/json" }))
