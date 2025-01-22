@@ -1,11 +1,11 @@
 import counters from "../storage/counters";
 import { createCanvas } from "canvas";
 import { match, P } from "ts-pattern";
-import { None, Option, Some, map } from "../../types/option";
+import { None, Option, Some, map, unsafeUnwrap } from "../../types/option";
 import Config from "../../Config";
 import { HashedString } from "../../types/hashed";
 import { transaction } from "../../db";
-import { ACTION_DEFAULTS, MimeType, TextAlign, TextBaseline } from "../schema/action";
+import { ACTION_DEFAULTS, EditActionPayload, MimeType, TextAlign, TextBaseline } from "../schema/action";
 import { Action } from "@prisma/client";
 
 const getCounterImage = (
@@ -31,8 +31,8 @@ const getCounterImage = (
 		return { buffer: imageCanvas.toBuffer(mimeType as any), mime: image.mimeType as MimeType };
 	});
 
-export const peekCounterImage = (): Option<{ buffer: Buffer; mime: MimeType }> =>
-	getCounterImage(Some({ value: 12345, image: { ...ACTION_DEFAULTS } }));
+export const peekCounterImage = (action: EditActionPayload): { buffer: Buffer; mime: MimeType } =>
+	unsafeUnwrap(getCounterImage(Some({ value: 12345, image: action })));
 
 export const updateAndGetCounterImage = ({
 	counterId,

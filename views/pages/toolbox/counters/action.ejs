@@ -11,6 +11,20 @@
 			#behaviour:not(:has(> option[value="noop"]:checked)) ~ .shown-on-noop {
 				display: none;
 			}
+
+			#preview-container {
+				background-color: white;
+				background-size: 6px 6px;
+				background-position:
+					0 0,
+					3px 0,
+					3px -3px,
+					0 3px;
+				background-image: linear-gradient(45deg, #ccc 26%, transparent 26%),
+					linear-gradient(135deg, #ccc 26%, transparent 26%),
+					linear-gradient(45deg, transparent 75%, #ccc 75%),
+					linear-gradient(135deg, transparent 75%, #ccc 75%);
+			}
 		</style>
 	</head>
 	<body>
@@ -164,22 +178,26 @@
 			image:
 			<pre>https://<%=Config.HOST%>/counters/<%=action.counter.id%>/actions/<%=action.id%></pre>
 
-			<div id="preview-container" style="display: none">
+			<div id="preview-section" style="display: none">
 				preview:
-				<iframe id="preview" src="/toolbox/counters/preview"></iframe>
+				<br />
+				<div
+					id="preview-container"
+					style="width: <%=Config.MAX_COUNTER_IMG_WIDTH%>px; height: <%=Config.MAX_COUNTER_IMG_HEIGHT%>px"
+				></div>
 			</div>
 			<script type="text/javascript">
-				document.getElementById("preview-container").style.display = "unset";
+				document.getElementById("preview-section").style.display = "unset";
 				function refresh() {
 					const entries = Array.from(document.querySelectorAll("input[name], select[name]")).map(
 						({ name, value }) => [name, value],
 					);
 					const urlSearchParams = new URLSearchParams(Object.fromEntries(entries));
-					document.getElementById("preview").remove();
-					const newIframe = document.createElement("iframe");
-					newIframe.src = `/toolbox/counters/preview?${urlSearchParams.toString()}`;
-					newIframe.id = "preview";
-					document.getElementById("preview-container").append(newIframe);
+					document.getElementById("preview")?.remove();
+					const newImage = document.createElement("img");
+					newImage.src = `/toolbox/counters/preview?${urlSearchParams.toString()}`;
+					newImage.id = "preview";
+					document.getElementById("preview-container").append(newImage);
 				}
 				refresh();
 			</script>

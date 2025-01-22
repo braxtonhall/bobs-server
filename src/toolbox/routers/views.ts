@@ -405,16 +405,16 @@ const counterAdminViews = express()
 			.exhaustive(),
 	)
 	.get("/preview", (req, res) =>
-		// TODO this should take query params!!!
-		match(peekCounterImage())
-			.with(Some(P.select()), ({ buffer, mime }) => {
+		match(parse(editActionSchema, req.query))
+			.with(Ok(P.select()), (action) => {
+				const { buffer, mime } = peekCounterImage(action);
 				res.writeHead(200, {
 					"Content-Type": `image/${mime}`,
 					"Content-Length": buffer.length,
 				});
 				res.end(buffer);
 			})
-			.otherwise(() => res.sendStatus(404)),
+			.otherwise(() => res.sendStatus(400)),
 	)
 	.get("/", getCounters(false, "pages/toolbox/counters/index"));
 
