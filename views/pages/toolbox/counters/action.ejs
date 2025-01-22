@@ -173,7 +173,7 @@
 			</form>
 			<hr />
 			api:
-			<pre><%= ({[Behaviour.NOOP]: 'GET', [Behaviour.SET]: 'PUT', [Behaviour.INC]: 'POST'})[action.behaviour] %> https://<%=Config.HOST%>/counters/<%=action.counter.id%>/actions/<%=action.id%></pre>
+			<pre><%= ({[Behaviour.NOOP]: 'GET', [Behaviour.SET]: 'PUT', [Behaviour.INC]: 'POST'})[action.behaviour] %> https://<%=Config.HOST%>/api/counters/<%=action.counter.id%>/actions/<%=action.id%></pre>
 
 			image:
 			<pre>https://<%=Config.HOST%>/counters/<%=action.counter.id%>/actions/<%=action.id%></pre>
