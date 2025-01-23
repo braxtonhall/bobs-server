@@ -91,6 +91,29 @@ const set = async (where: WhereCounter, value: number): Promise<Option<number>> 
 		return Some(updated);
 	}).catch(None);
 
+const setDeletion = ({
+	id,
+	ownerId,
+	deleted,
+}: {
+	id: string;
+	ownerId: string;
+	deleted: boolean;
+}): Promise<Result<void, Failure.FORBIDDEN | Failure.MISSING_DEPENDENCY>> =>
+	transaction(async () => {
+		const counter = await db.counter.findUnique({ where: { id } });
+		if (counter) {
+			if (counter.ownerId === ownerId) {
+				await db.counter.update({ where: { id, ownerId }, data: { deleted } });
+				return Ok();
+			} else {
+				return Err(Failure.FORBIDDEN);
+			}
+		} else {
+			return Err(Failure.MISSING_DEPENDENCY);
+		}
+	});
+
 const getDetails = async (id: string, ownerId: string, count: number, cursor?: string) =>
 	match(
 		await db.counter.findUnique({
@@ -345,4 +368,4 @@ const actions = {
 	act: actUponCounterAction,
 };
 
-export default { getDetails, get, set, getOrigin, create, edit, list, actions };
+export default { getDetails, get, set, getOrigin, create, edit, list, setDeletion, actions };

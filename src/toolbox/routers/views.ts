@@ -126,7 +126,7 @@ const killProcedure = (dead: boolean) => async (req: Request<{ postId: string; b
 		.with(Err(Failure.FORBIDDEN), () => res.sendStatus(403))
 		.exhaustive();
 
-const deleteProcedure = (deleted: boolean) => async (req: Request<{ id: string }>, res: Response) =>
+const deleteBoxProcedure = (deleted: boolean) => async (req: Request<{ id: string }>, res: Response) =>
 	match(await boxesClient.setBoxDeletion(req.params.id, res.locals.email.id, deleted))
 		.with(Ok(), () => res.redirect(`/toolbox/boxes/admin/${req.params.id}`)) // TODO capture query params
 		.with(Err(Failure.FORBIDDEN), () => res.sendStatus(403))
@@ -255,8 +255,8 @@ const boxAdminViews = express()
 			)
 			.otherwise(() => res.sendStatus(400)),
 	)
-	.post("/admin/:id/archive", deleteProcedure(true))
-	.post("/admin/:id/restore", deleteProcedure(false))
+	.post("/admin/:id/archive", deleteBoxProcedure(true))
+	.post("/admin/:id/restore", deleteBoxProcedure(false))
 	.post("/admin/:boxId/posts/:postId/hide", killProcedure(true))
 	.post("/admin/:boxId/posts/:postId/unhide", killProcedure(false))
 	.get("/archive", getBoxes(true, "pages/toolbox/boxes/archive"))
@@ -279,6 +279,13 @@ const getCounters = (deleted: boolean, view: string) => async (req: Request, res
 		Config,
 	});
 };
+
+const deleteCounterProcedure = (deleted: boolean) => async (req: Request<{ id: string }>, res: Response) =>
+	match(await countersClient.setDeletion({ id: req.params.id, ownerId: res.locals.email.id, deleted }))
+		.with(Ok(P._), () => res.redirect(`/toolbox/counters/admin/${req.params.id}`)) // TODO capture query params
+		.with(Err(Failure.FORBIDDEN), () => res.sendStatus(403))
+		.with(Err(Failure.MISSING_DEPENDENCY), () => res.sendStatus(404))
+		.exhaustive();
 
 const counterAdminViews = express()
 	.get("/create", async (req, res) => res.render("pages/toolbox/counters/create", { Config }))
@@ -336,6 +343,8 @@ const counterAdminViews = express()
 			)
 			.otherwise(() => res.sendStatus(400)),
 	)
+	.post("/admin/:id/archive", deleteCounterProcedure(true))
+	.post("/admin/:id/restore", deleteCounterProcedure(false))
 	.post("/admin/:id/actions/create", async (req, res) =>
 		match(await countersClient.actions.create(req.params.id, res.locals.email.id))
 			.with(Some(P.select()), ({ id, counterId }) =>
@@ -416,6 +425,7 @@ const counterAdminViews = express()
 			})
 			.otherwise(() => res.sendStatus(400)),
 	)
+	.get("/archive", getCounters(true, "pages/toolbox/counters/archive"))
 	.get("/", getCounters(false, "pages/toolbox/counters/index"));
 
 const postsAdminViews = express()

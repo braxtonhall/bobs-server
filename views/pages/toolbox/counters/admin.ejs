@@ -9,7 +9,12 @@
 		</header>
 
 		<main>
-			<div>hello! this is the admin page for a counter</div>
+			<div>
+				hello! this is the
+				<%=counter.deleted ? 'archive' : 'admin'%>
+				page for
+				<%=counter.name%>
+			</div>
 			<% if (message) { %>
 			<%= message; %>
 			<% } %>
@@ -25,6 +30,8 @@
 			>
 				<button class="<%= action; %>-save"><%= action; %></button>
 			</form>
+
+			<%if (!counter.deleted) {%>
 
 			<form method="post" class="edit-form" action="/toolbox/counters/admin/<%= counter.id; %>/edit">
 				<label for="name" class="name-label">name</label>
@@ -63,6 +70,7 @@
 
 				<button class="edit-save">submit</button>
 			</form>
+
 			<hr />
 			actions:
 
@@ -75,6 +83,7 @@
 			</form>
 
 			<%- include('../../../partials/counters/counter-images-table'); %>
+			<%}%>
 		</main>
 	</body>
 </html>

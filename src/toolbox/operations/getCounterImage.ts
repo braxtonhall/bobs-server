@@ -5,11 +5,11 @@ import { None, Option, Some, map, unsafeUnwrap } from "../../types/option";
 import Config from "../../Config";
 import { HashedString } from "../../types/hashed";
 import { transaction } from "../../db";
-import { ACTION_DEFAULTS, EditActionPayload, MimeType, TextAlign, TextBaseline } from "../schema/action";
+import { EditActionPayload, MimeType, TextAlign, TextBaseline } from "../schema/action";
 import { Action } from "@prisma/client";
 
 const getCounterImage = (
-	result: Option<{ image: Pick<Action, keyof typeof ACTION_DEFAULTS>; value: number }>,
+	result: Option<{ image: Pick<Action, keyof EditActionPayload>; value: number }>,
 ): Option<{ buffer: Buffer; mime: MimeType }> =>
 	map(result, ({ image, value }) => {
 		const imageWidth = Math.min(image.width, Config.MAX_COUNTER_IMG_WIDTH);
