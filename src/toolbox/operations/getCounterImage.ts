@@ -22,7 +22,7 @@ const getCounterImage = (
 		context.fillRect(0, 0, imageWidth, imageHeight);
 
 		context.fillStyle = `rgba(${image.colorR},${image.colorG},${image.colorB},${image.colorA / 100})`;
-		context.font = `$${image.fontStyle} ${image.fontWeight} ${image.fontSize}pt ${image.fontFamily}`; // TODO
+		context.font = `${image.fontStyle} ${image.fontWeight} ${image.fontSize}pt ${image.fontFamily}`;
 		context.textAlign = image.textAlign as TextAlign;
 		context.textBaseline = image.textBaseline as TextBaseline;
 		context.fillText(String(value), imageWidth / 2, imageHeight / 2);

@@ -25,7 +25,22 @@ export enum TextBaseline {
 }
 
 export enum FontFamily {
-	HELVETICA = "Helvetica Georgia, serif",
+	// common web-safe fonts
+	ARIAL = "Arial",
+	VERANDA = "Verdana",
+	TAHOMA = "Tahoma",
+	TREBUCHET_MS = '"Trebuchet MS"',
+	TIMES_NEW_ROMAN = '"Times New Roman"',
+	GEORGIA = "Georgia",
+	GARAMOND = "Garamond", // TODO does not work on my machine
+	COURIER_NEW = '"Courier New"',
+	BRUSH_SCRIPT_MT = '"Brush Script MT"',
+	// generic fallback fonts
+	SERIF = "serif",
+	SANS_SERIF = "sans-serif",
+	CURSIVE = "cursive", // TODO does not work on my machine
+	FANTASY = "fantasy",
+	MONOSPACE = "monospace",
 }
 
 export enum FontStyle {
@@ -98,7 +113,7 @@ export const ACTION_DEFAULTS: EditActionPayload = {
 	height: Config.DEFAULT_COUNTER_IMG_HEIGHT,
 	textAlign: TextAlign.LEFT,
 	textBaseline: TextBaseline.ALPHABETIC,
-	fontFamily: FontFamily.HELVETICA,
+	fontFamily: FontFamily.COURIER_NEW,
 	fontSize: 12,
 	fontStyle: FontStyle.NORMAL,
 	fontWeight: 400,
