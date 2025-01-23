@@ -4,10 +4,11 @@ import { sendBoxUpdates } from "./toolbox/jobs/sendBoxUpdates";
 import { sendReplyUpdates } from "./toolbox/jobs/sendReplyUpdates";
 import AsyncPool from "./util/AsyncPool";
 import { sendReminders } from "./secret-dj/jobs/sendReminders";
+import { loadFonts } from "./toolbox/canvas/fonts";
 
 export type Job = { callback: () => unknown; interval: number };
 
-const jobs: Job[] = [archiveSeasons, removeTokens, sendBoxUpdates, sendReplyUpdates, sendReminders];
+const jobs: Job[] = [loadFonts, archiveSeasons, removeTokens, sendBoxUpdates, sendReplyUpdates, sendReminders];
 const scheduledJobs = new Set<NodeJS.Timeout>();
 const pool = new AsyncPool(jobs.length);
 

@@ -136,7 +136,7 @@
 				<%- include('../../../partials/util/select', {name: "textBaseline",
 				options: Object.values(TextBaseline), selected: action.textBaseline, onchange: "refresh()"}) %>
 				<%-
-				include('../../../partials/util/select', {name: "fontFamily", options: Object.values(FontFamily),
+				include('../../../partials/util/select', {name: "fontFamily", options: fontFamilies,
 				selected: action.fontFamily, onchange: "refresh()"}) %>
 				<%- include('../../../partials/util/select', {name: "fontStyle",
 				options: Object.values(FontStyle), selected: action.fontStyle, onchange: "refresh()"}) %>

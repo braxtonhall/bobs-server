@@ -26,16 +26,9 @@ import emails from "../storage/emails";
 import { peekCounterImage, updateAndGetCounterImage } from "../operations/getCounterImage";
 import countersClient from "../storage/counters";
 import { createCounterSchema } from "../schema/createCounter";
-import {
-	Behaviour,
-	editActionSchema,
-	FontFamily,
-	FontStyle,
-	MimeType,
-	TextAlign,
-	TextBaseline,
-} from "../schema/action";
+import { Behaviour, editActionSchema, FontStyle, MimeType, TextAlign, TextBaseline } from "../schema/action";
 import { editCounterSchema } from "../schema/editCounter";
+import { fontFamilies } from "../canvas/fonts";
 
 // TODO there is WAY too much repetition here... There must be a good way to get reuse a lot of code
 
@@ -365,7 +358,7 @@ const counterAdminViews = express()
 					Behaviour,
 					TextAlign,
 					TextBaseline,
-					FontFamily,
+					fontFamilies,
 					FontStyle,
 					MimeType,
 					message: typeof req.query.message === "string" ? req.query.message : "",

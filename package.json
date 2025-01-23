@@ -14,6 +14,7 @@
 		"@types/luxon": "^3.4.2",
 		"@types/node": "^22.5.5",
 		"@types/tinycolor2": "^1.4.6",
+		"@types/unzipper": "^0.10.10",
 		"@typescript-eslint/eslint-plugin": "^7.3.1",
 		"@typescript-eslint/parser": "^7.3.1",
 		"eslint": "^8.57.0",
@@ -40,7 +41,8 @@
 		"prepare": "husky",
 		"test": "jest -i",
 		"build": "tsc",
-		"formatting": "prettier . --check && eslint ."
+		"formatting": "prettier . --check && eslint .",
+		"download-fonts": "node dist/src/toolbox/canvas/fonts.js"
 	},
 	"prettier": {
 		"useTabs": true,
@@ -96,6 +98,7 @@
 		"prisma": "^5.19.0",
 		"tinycolor2": "^1.6.0",
 		"ts-pattern": "^5.0.8",
+		"unzipper": "^0.12.3",
 		"zod": "^3.22.4"
 	}
 }

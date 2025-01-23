@@ -2,6 +2,7 @@ import tinycolor from "tinycolor2";
 import { z } from "zod";
 import Config from "../../Config";
 import { checkboxSchema } from "../../schema";
+import { fontFamilies } from "../canvas/fonts";
 
 export enum Behaviour {
 	NOOP = "noop",
@@ -22,25 +23,6 @@ export enum TextBaseline {
 	MIDDLE = "middle",
 	IDEOGRAPHIC = "ideographic",
 	BOTTOM = "bottom",
-}
-
-export enum FontFamily {
-	// common web-safe fonts
-	ARIAL = "Arial",
-	VERDANA = "Verdana",
-	TAHOMA = "Tahoma",
-	TREBUCHET_MS = '"Trebuchet MS"',
-	TIMES_NEW_ROMAN = '"Times New Roman"',
-	GEORGIA = "Georgia",
-	GARAMOND = "Garamond", // TODO does not work on my machine
-	COURIER_NEW = '"Courier New"',
-	BRUSH_SCRIPT_MT = '"Brush Script MT"',
-	// generic fallback fonts
-	SERIF = "serif",
-	SANS_SERIF = "sans-serif",
-	CURSIVE = "cursive", // TODO does not work on my machine
-	FANTASY = "fantasy",
-	MONOSPACE = "monospace",
 }
 
 export enum FontStyle {
@@ -75,7 +57,7 @@ export const editActionSchema = z
 		height: z.coerce.number().int().min(0).max(Config.MAX_COUNTER_IMG_HEIGHT),
 		textAlign: z.nativeEnum(TextAlign),
 		textBaseline: z.nativeEnum(TextBaseline),
-		fontFamily: z.nativeEnum(FontFamily),
+		fontFamily: z.enum(fontFamilies),
 		fontSize: z.coerce.number().int().min(0),
 		fontStyle: z.nativeEnum(FontStyle),
 		fontWeight: z.coerce.number().int().multipleOf(100).min(100).max(900),
@@ -113,7 +95,7 @@ export const ACTION_DEFAULTS: EditActionPayload = {
 	height: Config.DEFAULT_COUNTER_IMG_HEIGHT,
 	textAlign: TextAlign.LEFT,
 	textBaseline: TextBaseline.ALPHABETIC,
-	fontFamily: FontFamily.COURIER_NEW,
+	fontFamily: fontFamilies[0],
 	fontSize: 12,
 	fontStyle: FontStyle.NORMAL,
 	fontWeight: 400,
