@@ -27,7 +27,7 @@ export enum TextBaseline {
 export enum FontFamily {
 	// common web-safe fonts
 	ARIAL = "Arial",
-	VERANDA = "Verdana",
+	VERDANA = "Verdana",
 	TAHOMA = "Tahoma",
 	TREBUCHET_MS = '"Trebuchet MS"',
 	TIMES_NEW_ROMAN = '"Times New Roman"',
