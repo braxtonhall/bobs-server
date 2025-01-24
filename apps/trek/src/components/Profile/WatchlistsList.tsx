@@ -3,6 +3,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { API } from "../../util/api";
 import { Link } from "react-router-dom";
 import { FavoriteRounded, PlayCircleOutlineRounded, VisibilityRounded } from "@mui/icons-material";
+import { useMemo } from "react";
 
 type WatchlistsProcedure = (cursor?: string) => ReturnType<API["getWatchlists"]["query"]>;
 
@@ -61,12 +62,12 @@ export const WatchlistsList = (props: { getWatchlists: WatchlistsProcedure; quer
 		initialPageParam: undefined as undefined | string,
 		getNextPageParam: (lastPage) => lastPage.cursor,
 	});
-
+	const watchlists = useMemo(() => data?.pages.flatMap(({ watchlists }) => watchlists) ?? [], [data]);
 	return (
 		<>
-			{data?.pages.flatMap((page) =>
-				page.watchlists.map((watchlist) => <WatchlistEntry watchlist={watchlist} key={watchlist.id} />),
-			)}
+			{watchlists.map((watchlist) => (
+				<WatchlistEntry watchlist={watchlist} key={watchlist.id} />
+			))}
 
 			{hasNextPage ? (
 				<Button disabled={isFetching} onClick={() => fetchNextPage()}>
@@ -75,6 +76,8 @@ export const WatchlistsList = (props: { getWatchlists: WatchlistsProcedure; quer
 			) : (
 				<></>
 			)}
+
+			{!watchlists.length && !hasNextPage && !isFetching && "... none"}
 		</>
 	);
 };
