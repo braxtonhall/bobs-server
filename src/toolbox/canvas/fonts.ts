@@ -12,12 +12,18 @@ import { multiply } from "../../util/multiply";
 
 // fonts come from https://fontsource.org/
 export const fonts = [
+	{ family: "Inter", slug: "inter" },
 	{ family: "EB Garamond", slug: "eb-garamond" },
 	{ family: "Courier Prime", slug: "courier-prime" },
 	{ family: "Montserrat", slug: "montserrat" },
 	{ family: "Roboto", slug: "roboto" },
 	{ family: "Merriweather", slug: "merriweather" },
 	{ family: "Parisienne", slug: "parisienne" },
+	{ family: "Raleway", slug: "raleway" },
+	{ family: "Cedarville Cursive", slug: "cedarville-cursive" },
+	{ family: "Anton", slug: "anton" },
+	{ family: "DSEG7 Classic", slug: "dseg7-classic" },
+	{ family: "Poiret One", slug: "poiret-one" },
 ] as const satisfies { family: string; slug: string }[];
 
 type Families<A extends { family: unknown }[]> = A extends []
