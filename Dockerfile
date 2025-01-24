@@ -32,7 +32,6 @@ RUN apk add pixman-dev \
     pango-dev \
     build-base
 
-COPY --from=builder /app/fonts ./fonts/
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/yarn.lock ./
 COPY --from=builder /app/node_modules ./node_modules/
@@ -40,6 +39,7 @@ COPY --from=builder /app/node_modules ./node_modules/
 COPY --from=builder /app/prisma/ ./prisma/
 
 COPY --from=builder /app/dist/src/ ./dist/src/
+COPY --from=builder /app/fonts ./fonts/
 
 COPY views/ ./views/
 COPY public/ ./public/
