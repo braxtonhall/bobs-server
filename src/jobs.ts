@@ -12,7 +12,7 @@ import { loadFonts } from "./toolbox/canvas/fonts";
 export type Job = { callback: () => unknown; interval: number };
 
 const jobs: Job[] = [
-  loadFonts,
+	loadFonts,
 	archiveSeasons,
 	removeTokens,
 	sendBoxUpdates,
