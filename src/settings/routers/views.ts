@@ -7,7 +7,7 @@ import { Ok } from "../../types/result";
 import emails from "../../toolbox/storage/emails";
 
 export const views = express()
-	.get("/settings", (req, res) =>
+	.get("/", (req, res) =>
 		res.render("pages/settings", {
 			subscribed: res.locals.email.subscribed,
 			error: "",
@@ -15,7 +15,7 @@ export const views = express()
 			Config,
 		}),
 	)
-	.post("/settings", async (req, res) => {
+	.post("/", async (req, res) => {
 		const result = parse(settingsSchema, req.body);
 		return match(result)
 			.with(Ok(P.select()), async ({ subscribed }) => {
