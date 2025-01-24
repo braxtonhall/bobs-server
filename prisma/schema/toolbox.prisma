@@ -1,0 +1,150 @@
+model Message {
+  id         Int       @id @default(autoincrement())
+  address    String
+  subject    String
+  html       String
+  persona    String
+  expiration DateTime?
+}
+
+model Box {
+  sort          Int            @id @default(autoincrement())
+  id            String         @unique @default(cuid())
+  name          String
+  origin        String?
+  owner         Email?         @relation(fields: [ownerId], references: [id])
+  ownerId       String?
+  posts         Post[]
+  deleted       Boolean        @default(false)
+  stylesheet    String?
+  season        Season?
+  entry         Entry?
+  permissions   Permission[]
+  subscriptions Subscription[]
+}
+
+model Permission {
+  boxId             String
+  box               Box     @relation(fields: [boxId], references: [id])
+  emailId           String
+  email             Email   @relation(fields: [emailId], references: [id])
+  canSetDetails     Boolean @default(false)
+  canKill           Boolean @default(false)
+  canDelete         Boolean @default(false)
+  canSetPermissions Boolean @default(false)
+
+  @@id(name: "id", [boxId, emailId])
+}
+
+model Subscription {
+  boxId     String
+  box       Box      @relation(fields: [boxId], references: [id])
+  emailId   String
+  email     Email    @relation(fields: [emailId], references: [id])
+  updatedAt DateTime @default(now())
+
+  @@id(name: "id", [boxId, emailId])
+}
+
+model Counter {
+  sort    Int           @id @default(autoincrement())
+  id      String        @unique @default(cuid())
+  deleted Boolean       @default(false)
+  name    String
+  origin  String?
+  owner   Email         @relation(fields: [ownerId], references: [id])
+  ownerId String
+  views   Int           @default(0)
+  value   Int           @default(0)
+  unique  Boolean
+  viewers CounterView[]
+  actions Action[]
+}
+
+model CounterView {
+  counterId String
+  counter   Counter @relation(fields: [counterId], references: [id], onDelete: Cascade)
+  posterId  Int
+  poster    Poster  @relation(fields: [posterId], references: [id])
+
+  @@id(name: "id", [counterId, posterId])
+}
+
+model Action {
+  sort      Int          @id @default(autoincrement())
+  id        String       @unique @default(cuid())
+  counterId String
+  counter   Counter      @relation(fields: [counterId], references: [id], onDelete: Cascade)
+  views     Int          @default(0)
+  viewers   ActionView[]
+  unique    Boolean
+  /// 'noop' | 'inc' | 'set'
+  behaviour String
+  /// only applies to the SET behaviour
+  amount    Int          @default(1)
+
+  // style
+  colorR           Int
+  colorG           Int
+  colorB           Int
+  colorA           Int
+  backgroundColorR Int
+  backgroundColorG Int
+  backgroundColorB Int
+  backgroundColorA Int
+  /// px
+  width            Int
+  /// px
+  height           Int
+  /// left|right|center
+  textAlign        String // browser defaults to left
+  /// alphabetic|top|hanging|middle|ideographic|bottom
+  textBaseline     String // browser defaults to alphabetic
+  fontFamily       String
+  /// pt
+  fontSize         Int // browser defaults to 12
+  /// normal|italic|oblique
+  fontStyle        String // browser defaults to normal
+  /// 100-900
+  fontWeight       Int // browser defaults to 400
+  /// png|jpeg
+  mimeType         String
+}
+
+model ActionView {
+  actionId String
+  action   Action @relation(fields: [actionId], references: [id], onDelete: Cascade)
+  posterId Int
+  poster   Poster @relation(fields: [posterId], references: [id])
+
+  @@id(name: "id", [actionId, posterId])
+}
+
+model Poster {
+  id           Int           @id @default(autoincrement())
+  ip           String        @unique
+  posts        Post[]
+  counterViews CounterView[]
+  actionViews  ActionView[]
+  karma        Int           @default(0)
+}
+
+model Post {
+  sort       Int      @id @default(autoincrement())
+  id         String   @unique @default(cuid())
+  createdAt  DateTime @default(now())
+  from       String
+  dead       Boolean  @default(false)
+  content    String
+  subscribed Boolean  @default(true)
+  poster     Poster   @relation(fields: [posterId], references: [id])
+  posterId   Int
+  email      Email?   @relation(fields: [emailId], references: [id])
+  emailId    String?
+  box        Box      @relation(fields: [boxId], references: [id])
+  boxId      String
+  children   Post[]   @relation("PostChildren")
+  parent     Post?    @relation("PostChildren", fields: [parentId], references: [id])
+  parentId   String?
+  notified   Boolean  @default(false)
+}

@@ -1,0 +1,16 @@
+<table>
+	<tr>
+		<th>name</th>
+		<th>count</th>
+		<th>manage</th>
+	</tr>
+
+	<% for (const counter of counters) { %>
+	<tr>
+		<td><%=counter.name%></td>
+		<td><%=counter.count%></td>
+		<td><a href="/toolbox/counters/admin/<%= counter.id %>">manage</a></td>
+	</tr>
+	<% } %>
+</table>
+<%- include('page-controls', {query, params: ['take'], cursor, cursorName: 'cursor'}); %>

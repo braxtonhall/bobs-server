@@ -1,3 +1,4 @@
+<% if (recipient) { %>
 <% if (recipient?.submissionUrl)  { %>
 <h3>your playlist has been curated by <a href="/secret-dj/djs/<%= recipient.dj.id %>"><%= recipient.dj.name %></a></h3>
 <% if (recipient.rules.length) {%>
@@ -18,4 +19,5 @@
 <% } else { %>
 <h4>no playlist was submitted for you. hopefully someone will provide one in the comments</h4>
 <iframe class="comments embed" src="/boxes/<%=recipient.boxId%>"></iframe>
+<% } %>
 <% } %>

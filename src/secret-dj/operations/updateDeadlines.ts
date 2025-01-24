@@ -26,8 +26,9 @@ type Entry = {
 const toMessages = (seasonId: string, entries: Entry[], softDeadline: Date | null): Promise<Message[]> => {
 	const link = `https://${Config.HOST}/login?next=${encodeURIComponent(`/secret-dj/games/${seasonId}`)}`;
 	const futureMessages = entries
-		.filter((entry): entry is Entry & { dj: NonNullable<Entry["dj"]> } => !!entry.dj)
-		.map(async ({ dj }) => {
+		.map((entry) => entry.dj)
+		.filter((dj) => !!dj)
+		.map(async (dj) => {
 			const { link: unsub } = await getUnsubLink(dj.email.address);
 			const html = await ejs.renderFile("views/emails/deadline.ejs", {
 				name: dj.name,
