@@ -38,5 +38,10 @@ export default z
 		MINIMUM_GRACE_DAYS: z.coerce.number().nonnegative().default(7),
 		TREK_PROFILE_RECENTLY_MAX: z.coerce.number().positive().default(10),
 		TREK_FAVOURITES_MAX: z.coerce.number().positive().default(4),
+		NODE_ENV: z.enum(["development", "production", "test"]),
+		DEFAULT_COUNTER_IMG_WIDTH: z.coerce.number().positive().default(200),
+		MAX_COUNTER_IMG_WIDTH: z.coerce.number().positive().default(800),
+		DEFAULT_COUNTER_IMG_HEIGHT: z.coerce.number().positive().default(100),
+		MAX_COUNTER_IMG_HEIGHT: z.coerce.number().positive().default(400),
 	})
 	.parse(process.env);

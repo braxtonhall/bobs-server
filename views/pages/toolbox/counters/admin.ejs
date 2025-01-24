@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<%- include('../../../partials/head'); %>
+	</head>
+	<body>
+		<header>
+			<%- include('../../../partials/header'); %>
+		</header>
+
+		<main>
+			<div>
+				hello! this is the
+				<%=counter.deleted ? 'archive' : 'admin'%>
+				page for
+				<%=counter.name%>
+			</div>
+			<% if (message) { %>
+			<%= message; %>
+			<% } %>
+
+			<p>total views: <%= counter.views; %></p>
+			<p>unique views: <%= counter._count.viewers; %></p>
+
+			<% const action = counter.deleted ? "restore" : "archive"; %>
+			<form
+				method="post"
+				class="<%= action; %>"
+				action="/toolbox/counters/admin/<%= counter.id; %>/<%= action; %>"
+			>
+				<button class="<%= action; %>-save"><%= action; %></button>
+			</form>
+
+			<%if (!counter.deleted) {%>
+
+			<form method="post" class="edit-form" action="/toolbox/counters/admin/<%= counter.id; %>/edit">
+				<label for="name" class="name-label">name</label>
+				<input
+					class="name-input"
+					id="name"
+					name="name"
+					value="<%= counter.name; %>"
+					required
+					maxlength="<%= Config.DEFAULT_MAX_LENGTH; %>"
+				/>
+
+				<label for="origin" class="origin-label">origin</label>
+				<input
+					class="origin-input"
+					id="origin"
+					name="origin"
+					value="<%= counter.origin; %>"
+					maxlength="<%= Config.DEFAULT_MAX_LENGTH; %>"
+				/>
+				<label for="unique" class="unique-label">unique</label>
+				<% if (counter.unique) { %>
+				<input class="unique-input" id="unique" type="checkbox" name="unique" title="unique" checked />
+				<% } else { %>
+				<input class="unique-input" id="unique" type="checkbox" name="unique" title="unique" />
+				<% } %>
+
+				<label for="current-value-input" class="current-value-label">current amount</label>
+				<input
+					class="current-value"
+					id="current-value-input"
+					name="value"
+					value="<%= counter.value; %>"
+					type="number"
+				/>
+
+				<button class="edit-save">submit</button>
+			</form>
+
+			<hr />
+			actions:
+
+			<form
+				name="create-image-form"
+				method="post"
+				action="/toolbox/counters/admin/<%=counter.id%>/actions/create"
+			>
+				<button class="create-image-save">create a new action</button>
+			</form>
+
+			<%- include('../../../partials/counters/counter-images-table'); %>
+			<%}%>
+		</main>
+	</body>
+</html>

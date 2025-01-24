@@ -12,12 +12,8 @@ import { views as secretDjViews } from "./secret-dj/routers/views";
 import { views as trekViews } from "./trek/routers/views";
 import { api as trekApi } from "./trek/routers/api";
 import { adminViews } from "./toolbox/routers/views";
-import emails from "./toolbox/storage/emails";
-import { parse } from "./parse";
-import { match, P } from "ts-pattern";
-import { Ok } from "./types/result";
+import { views as settingsViews } from "./settings/routers/views";
 import session from "express-session";
-import { settingsSchema } from "./schema";
 import { gateKeepInvalidURIs } from "./common/middlewares/gateKeepInvalidURIs";
 
 // TODO would be great to also serve a javascript client
@@ -27,7 +23,15 @@ const views = express()
 	.set("view engine", "ejs")
 	.use("/public", express.static("public"))
 	.use(gateKeepInvalidURIs)
-	.use(session({ secret: Config.SESSION_SECRET, cookie: { maxAge: 60000 }, resave: true, saveUninitialized: true }))
+	// as any needed because https://github.com/expressjs/session/issues/1007
+	.use(
+		session({
+			secret: Config.SESSION_SECRET,
+			cookie: { maxAge: 60000 },
+			resave: true,
+			saveUninitialized: true,
+		}) as any,
+	)
 	.post("/*", bodyParser.urlencoded({ extended: true }))
 	.use(cookieParser())
 	.use(authenticateCookie)
@@ -37,30 +41,7 @@ const views = express()
 	.use(unauthenticatedViews)
 	.use("/toolbox", enforceLoggedIn, adminViews)
 	.use(enforceLoggedIn)
-	.get("/settings", (req, res) =>
-		res.render("pages/settings", {
-			subscribed: res.locals.email.subscribed,
-			error: "",
-			success: "",
-			Config,
-		}),
-	)
-	.post("/settings", async (req, res) => {
-		const result = parse(settingsSchema, req.body);
-		return match(result)
-			.with(Ok(P.select()), async ({ subscribed }) => {
-				await emails.updateSettings(res.locals.email.id, subscribed);
-				return res.render("pages/settings", { subscribed, error: "", success: "saved", Config });
-			})
-			.otherwise(() =>
-				res.render("pages/settings", {
-					subscribed: res.locals.email.subscribed,
-					error: "that didn't work",
-					success: "",
-					Config,
-				}),
-			);
-	})
+	.use("/settings", settingsViews)
 	.get("/", (req, res) => res.render("pages/index"))
 	.get("/*", (req, res) => res.sendStatus(404));
 

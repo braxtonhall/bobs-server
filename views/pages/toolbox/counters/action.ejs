@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<%- include('../../../partials/head'); %>
+
+		<style>
+			#behaviour:has(> option[value="noop"]:checked) ~ .hidden-on-noop {
+				display: none;
+			}
+
+			#behaviour:not(:has(> option[value="noop"]:checked)) ~ .shown-on-noop {
+				display: none;
+			}
+
+			#preview-container {
+				background-color: white;
+				background-size: 6px 6px;
+				background-position:
+					0 0,
+					3px 0,
+					3px -3px,
+					0 3px;
+				background-image: linear-gradient(45deg, #ccc 26%, transparent 26%),
+					linear-gradient(135deg, #ccc 26%, transparent 26%),
+					linear-gradient(45deg, transparent 75%, #ccc 75%),
+					linear-gradient(135deg, transparent 75%, #ccc 75%);
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<%- include('../../../partials/header'); %>
+		</header>
+
+		<main>
+			<div>hello! this is the admin page for a counter's action</div>
+			<% if (message) { %>
+			<%= message; %>
+			<% } %>
+
+			<p>total views: <%= action.views; %></p>
+			<p>unique views: <%= action._count.viewers; %></p>
+
+			<form method="post" class="delete" action="<%= action.id %>/delete">
+				<button class="delete-save">delete</button>
+			</form>
+
+			<form method="post" class="edit-form" action="<%= action.id %>/edit">
+				<%- include('../../../partials/util/select', {name: "behaviour", options: Object.values(Behaviour),
+				selected: action.behaviour, onchange: ""}) %>
+
+				<label for="amount" class="amount-label hidden-on-noop">amount</label>
+				<input
+					class="amount hidden-on-noop"
+					id="amount"
+					name="amount"
+					step="1"
+					value="<%= action.amount; %>"
+					type="number"
+				/>
+
+				<label for="amount-disabled" class="amount-disabled-label shown-on-noop">amount</label>
+				<input class="amount-disabled shown-on-noop" id="amount-disabled" value="n/a" disabled />
+
+				<label for="unique" class="unique-label">unique</label>
+				<% if (action.unique) { %>
+				<input class="unique-input" id="unique" type="checkbox" name="unique" title="unique" checked />
+				<% } else { %>
+				<input class="unique-input" id="unique" type="checkbox" name="unique" title="unique" />
+				<% } %>
+
+				<label for="width" class="width-label">width</label>
+				<input
+					class="width"
+					id="width"
+					name="width"
+					step="1"
+					min="0"
+					max="<%=Config.MAX_COUNTER_IMG_WIDTH%>"
+					value="<%= action.width; %>"
+					type="number"
+					onchange="refresh()"
+				/>
+
+				<label for="height" class="height-label">height</label>
+				<input
+					class="height"
+					id="height"
+					name="height"
+					step="1"
+					min="0"
+					max="<%=Config.MAX_COUNTER_IMG_HEIGHT%>"
+					value="<%= action.height; %>"
+					type="number"
+					onchange="refresh()"
+				/>
+
+				<label for="color" class="color-label">color</label>
+				<input type="color" id="color" name="color" value="<%=action.color%>" onchange="refresh()" />
+
+				<label for="colorA" class="colorA-label">color alpha</label>
+				<input
+					name="colorA"
+					type="range"
+					min="0"
+					max="100"
+					value="<%=action.colorA%>"
+					class="slider"
+					id="colorA"
+					onchange="refresh()"
+				/>
+
+				<label for="backgroundColor" class="backgroundColor-label">background colour</label>
+				<input
+					type="color"
+					id="backgroundColor"
+					name="backgroundColor"
+					value="<%=action.backgroundColor%>"
+					onchange="refresh()"
+				/>
+
+				<label for="backgroundColorA" class="backgroundColorA-label">background color alpha</label>
+				<input
+					name="backgroundColorA"
+					type="range"
+					min="0"
+					max="100"
+					value="<%=action.backgroundColorA%>"
+					class="slider"
+					id="backgroundColorA"
+					onchange="refresh()"
+				/>
+
+				<%- include('../../../partials/util/select', {name: "textAlign", options: Object.values(TextAlign),
+				selected: action.textAlign, onchange: "refresh()"}) %>
+				<%- include('../../../partials/util/select', {name: "textBaseline",
+				options: Object.values(TextBaseline), selected: action.textBaseline, onchange: "refresh()"}) %>
+				<%-
+				include('../../../partials/util/select', {name: "fontFamily", options: fontFamilies,
+				selected: action.fontFamily, onchange: "refresh()"}) %>
+				<%- include('../../../partials/util/select', {name: "fontStyle",
+				options: Object.values(FontStyle), selected: action.fontStyle, onchange: "refresh()"}) %>
+				<%-
+				include('../../../partials/util/select', {name: "mimeType", options: Object.values(MimeType), selected:
+				action.mimeType, onchange: "refresh()"}) %>
+
+				<label for="font-size" class="font-size-label">font-size</label>
+				<input
+					class="font-size"
+					id="font-size"
+					name="fontSize"
+					min="0"
+					step="1"
+					value="<%= action.fontSize; %>"
+					type="number"
+					onchange="refresh()"
+				/>
+
+				<label for="font-weight" class="font-weight-label">font-weight</label>
+				<input
+					class="font-weight"
+					id="font-weight"
+					name="fontWeight"
+					min="100"
+					max="900"
+					step="100"
+					value="<%= action.fontWeight; %>"
+					type="number"
+					onchange="refresh()"
+				/>
+
+				<button class="edit-save">submit</button>
+			</form>
+			<hr />
+			api:
+			<pre><%= ({[Behaviour.NOOP]: 'GET', [Behaviour.SET]: 'PUT', [Behaviour.INC]: 'POST'})[action.behaviour] %> https://<%=Config.HOST%>/api/counters/<%=action.counter.id%>/actions/<%=action.id%></pre>
+
+			image:
+			<pre>https://<%=Config.HOST%>/counters/<%=action.counter.id%>/actions/<%=action.id%></pre>
+
+			<div id="preview-section" style="display: none">
+				preview:
+				<br />
+				<div
+					id="preview-container"
+					style="width: <%=Config.MAX_COUNTER_IMG_WIDTH%>px; height: <%=Config.MAX_COUNTER_IMG_HEIGHT%>px"
+				></div>
+			</div>
+			<script type="text/javascript">
+				document.getElementById("preview-section").style.display = "unset";
+				function refresh() {
+					const entries = Array.from(document.querySelectorAll("input[name], select[name]")).map(
+						({ name, value }) => [name, value],
+					);
+					const urlSearchParams = new URLSearchParams(Object.fromEntries(entries));
+					document.getElementById("preview")?.remove();
+					const newImage = document.createElement("img");
+					newImage.src = `/toolbox/counters/preview?${urlSearchParams.toString()}`;
+					newImage.id = "preview";
+					document.getElementById("preview-container").append(newImage);
+				}
+				refresh();
+			</script>
+		</main>
+	</body>
+</html>
