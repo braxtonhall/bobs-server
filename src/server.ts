@@ -21,7 +21,15 @@ const views = express()
 	.set("view engine", "ejs")
 	.use("/public", express.static("public"))
 	.use(gateKeepInvalidURIs)
-	.use(session({ secret: Config.SESSION_SECRET, cookie: { maxAge: 60000 }, resave: true, saveUninitialized: true }))
+	// as any needed because https://github.com/expressjs/session/issues/1007
+	.use(
+		session({
+			secret: Config.SESSION_SECRET,
+			cookie: { maxAge: 60000 },
+			resave: true,
+			saveUninitialized: true,
+		}) as any,
+	)
 	.post("/*", bodyParser.urlencoded({ extended: true }))
 	.use(cookieParser())
 	.use(authenticateCookie)
