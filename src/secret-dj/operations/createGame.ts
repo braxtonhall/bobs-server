@@ -39,7 +39,14 @@ export const createGame = async ({
 				data: { boxId: box.id, emailId },
 			}),
 			db.permission.create({
-				data: { boxId: box.id, emailId, canDelete: true, canKill: true },
+				data: {
+					boxId: box.id,
+					emailId,
+					canDelete: true,
+					canKill: true,
+					canSetDetails: !!(process.env.NODE_ENV === "development"),
+					canSetPermissions: !!(process.env.NODE_ENV === "development"),
+				},
 			}),
 			db.season.create({
 				data: {
