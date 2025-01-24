@@ -1,0 +1,9 @@
+<label for="<%=name%>"><%=name%></label>
+<select name="<%=name%>" id="<%=name%>" onchange="<%=onchange%>">
+	<%for (const option of options) {%> <% if (selected === option) { %>
+	<option id="<%=option%>" value="<%=option%>" selected><%=option%></option>
+	<%}else{%>
+	<option id="<%=option%>" value="<%=option%>"><%=option%></option>
+	<% } %>
+	<%}%>
+</select>

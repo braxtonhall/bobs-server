@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<%- include('../../../partials/head'); %>
+	</head>
+	<body>
+		<header>
+			<%- include('../../../partials/header'); %>
+		</header>
+
+		<main>
+			<div>
+				<h2>create a new counter</h2>
+				<form name="create-form" method="post">
+					<label for="name" class="name-label">name</label>
+					<input
+						class="name-input"
+						id="name"
+						name="name"
+						required
+						maxlength="<%=Config.DEFAULT_MAX_LENGTH%>"
+					/>
+
+					<label for="unique" class="unique-label">unique</label>
+					<input class="unique-input" id="unique" type="checkbox" name="unique" title="unique" />
+
+					<label for="origin" class="origin-label">origin</label>
+					<input class="origin-input" id="origin" name="origin" maxlength="<%=Config.DEFAULT_MAX_LENGTH%>" />
+
+					<button class="create-save">submit</button>
+				</form>
+			</div>
+		</main>
+	</body>
+</html>

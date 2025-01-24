@@ -1,0 +1,31 @@
+<table>
+	<tr>
+		<th>behaviour</th>
+		<th>amount</th>
+		<th>total views</th>
+		<th>unique views</th>
+		<th>manage</th>
+		<th>image</th>
+	</tr>
+
+	<% for (const action of counter.actions) { %>
+
+	<tr>
+		<td><%=action.behaviour%></td>
+		<td><%=action.behaviour === 'noop' ? null : action.amount%></td>
+		<td><%=action.views%></td>
+		<td><%=action._count.viewers%></td>
+		<td>
+			<a href="<%=counter.id%>/actions/admin/<%=action.id%>">
+				<span>manage</span>
+			</a>
+		</td>
+		<td>
+			<a href="/counters/<%=counter.id%>/actions/<%=action.id%>"><span>link</span></a>
+		</td>
+	</tr>
+
+	<% } %>
+</table>
+
+<%- include('page-controls', {query, params: ['take'], cursor, cursorName: 'cursor'}); %>

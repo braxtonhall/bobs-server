@@ -36,5 +36,9 @@ export default z
 		SEASON_ARCHIVE_INTERVAL_HOURS: z.coerce.number().nonnegative().default(4),
 		MINIMUM_GAME_DAYS: z.coerce.number().nonnegative().default(7),
 		MINIMUM_GRACE_DAYS: z.coerce.number().nonnegative().default(7),
+		DEFAULT_COUNTER_IMG_WIDTH: z.coerce.number().positive().default(200),
+		MAX_COUNTER_IMG_WIDTH: z.coerce.number().positive().default(800),
+		DEFAULT_COUNTER_IMG_HEIGHT: z.coerce.number().positive().default(100),
+		MAX_COUNTER_IMG_HEIGHT: z.coerce.number().positive().default(400),
 	})
 	.parse(process.env);

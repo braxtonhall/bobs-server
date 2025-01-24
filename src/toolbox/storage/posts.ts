@@ -27,7 +27,7 @@ type Query = {
 
 export type InternalPost = Awaited<ReturnType<typeof listInternal>>[number];
 
-const internalCreate = ({ emailId, content, posterId, boxId, from, parentId }: CreatePost) =>
+const create = ({ emailId, content, posterId, boxId, from, parentId }: CreatePost) =>
 	transaction(async () => {
 		const result = await db.box.findUnique({ where: { id: boxId }, select: { deleted: true } });
 		if (result === null) {
@@ -57,15 +57,7 @@ const internalCreate = ({ emailId, content, posterId, boxId, from, parentId }: C
 			},
 		});
 		return Ok(post);
-	});
-
-const create = async (createPost: CreatePost) => {
-	try {
-		return await internalCreate(createPost);
-	} catch (error) {
-		return Err(Failure.MISSING_DEPENDENCY);
-	}
-};
+	}).catch(() => Err(Failure.MISSING_DEPENDENCY));
 
 type DeletePostQuery = {
 	boxId: string;
