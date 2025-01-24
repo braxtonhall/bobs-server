@@ -7,11 +7,17 @@ import { createWriteStream } from "node:fs";
 import { finished } from "node:stream/promises";
 import { Readable } from "node:stream";
 import * as unzipper from "unzipper";
+import { z } from "zod";
+import { multiply } from "../../util/multiply";
 
 // fonts come from https://fontsource.org/
 export const fonts = [
 	{ family: "EB Garamond", slug: "eb-garamond" },
 	{ family: "Courier Prime", slug: "courier-prime" },
+	{ family: "Montserrat", slug: "montserrat" },
+	{ family: "Roboto", slug: "roboto" },
+	{ family: "Merriweather", slug: "merriweather" },
+	{ family: "Parisienne", slug: "parisienne" },
 ] as const satisfies { family: string; slug: string }[];
 
 type Families<A extends { family: unknown }[]> = A extends []
@@ -22,16 +28,19 @@ type Families<A extends { family: unknown }[]> = A extends []
 
 export const fontFamilies = fonts.map(({ family }) => family) as Families<typeof fonts>;
 
-export type Font = {
-	family: string;
-	style: string;
-	weight: string;
-	path: string;
-};
+const manifestSchema = z.array(
+	z.object({
+		family: z.string(),
+		weight: z.string(),
+		style: z.string(),
+		path: z.string(),
+	}),
+);
 
 export const loadFonts = {
 	callback: async () => {
-		const manifest = JSON.parse(await fs.readFile("fonts/manifest.json", "utf-8")) as Font[];
+		const contents = await fs.readFile("fonts/manifest.json", "utf-8");
+		const manifest = manifestSchema.parse(JSON.parse(contents));
 		for (const { family, weight, style, ...entry } of manifest) {
 			registerFont(path.resolve(entry.path), { family, weight, style });
 		}
@@ -39,18 +48,10 @@ export const loadFonts = {
 	interval: Infinity,
 } satisfies Job;
 
-function* multiply<A, B>(as: A[], bs: B[]): Generator<[A, B], void, unknown> {
-	for (const a of as) {
-		for (const b of bs) {
-			yield [a, b];
-		}
-	}
-}
-
 if (require.main === module) {
 	const weights = [100, 200, 300, 400, 500, 600, 700, 800, 900];
-
 	const styles = ["normal", "italic", "oblique"];
+	const concurrency = 3;
 
 	const exists = (filename: string): Promise<boolean> =>
 		fs
@@ -58,43 +59,52 @@ if (require.main === module) {
 			.then(() => true)
 			.catch(() => false);
 
-	type ManifestEntry = { family: string; weight: string; style: string; path: string };
+	const download = async (url: string, destination: string) => {
+		const zip = createWriteStream(destination, { flags: "w" });
+		const response = await fetch(url);
+		await finished(Readable.fromWeb(response.body!).pipe(zip));
+	};
 
-	(async () => {
+	const unzip = async (zipPath: string, destination: string) => {
+		const directory = await unzipper.Open.file(zipPath);
+		await directory.extract({ path: destination });
+	};
+
+	const listFonts = async ({ family, slug }: { family: string; slug: string }) => {
+		const fonts = await AsyncPool.map(
+			multiply(styles, weights),
+			async ([style, weight]) => {
+				const path = `fonts/${slug}/ttf/${slug}-latin-${weight}-${style}.ttf`;
+				if (await exists(path)) {
+					return { family, style, weight: String(weight), path };
+				} else {
+					return null;
+				}
+			},
+			concurrency,
+		);
+		return fonts.flat().filter((font) => !!font);
+	};
+
+	const downloadFamilyAndListFonts = async ({ family, slug }: { family: string; slug: string }) => {
+		const zipPath = `fonts/${slug}.zip`;
+		const fontUrl = `https://r2.fontsource.org/fonts/${slug}@latest/download.zip`;
+		const unzipPath = `fonts/${slug}`;
+
+		await download(fontUrl, zipPath);
+		await unzip(zipPath, unzipPath);
+		await fs.unlink(zipPath);
+
+		return listFonts({ family, slug });
+	};
+
+	const main = async () => {
 		if (!(await exists("fonts"))) {
 			await fs.mkdir("fonts");
 		}
-		const manifest: ManifestEntry[] = [];
-		await AsyncPool.map(
-			fonts,
-			async ({ family, slug }) => {
-				const zipPath = `fonts/${slug}.zip`;
-				const zip = createWriteStream(zipPath, { flags: "w" });
-				const response = await fetch(`https://r2.fontsource.org/fonts/${slug}@latest/download.zip`);
-				await finished(Readable.fromWeb(response.body!).pipe(zip));
-
-				const directory = await unzipper.Open.file(zipPath);
-				await directory.extract({ path: `fonts/${slug}` });
-				await fs.unlink(zipPath);
-
-				await AsyncPool.map(
-					multiply(styles, weights),
-					async ([style, weight]) => {
-						const path = `fonts/${slug}/ttf/${slug}-latin-${weight}-${style}.ttf`;
-						if (await exists(path)) {
-							manifest.push({
-								family,
-								style,
-								weight: String(weight),
-								path,
-							});
-						}
-					},
-					3,
-				);
-			},
-			3,
-		);
+		const families = await AsyncPool.map(fonts, downloadFamilyAndListFonts, concurrency);
+		const manifest = families.flat() satisfies z.output<typeof manifestSchema>;
 		await fs.writeFile("fonts/manifest.json", JSON.stringify(manifest, null, "\t"));
-	})();
+	};
+	void main();
 }
