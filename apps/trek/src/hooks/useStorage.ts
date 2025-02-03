@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import storage from "../util/storage";
-import { isThemeMode, ThemeMode } from "../util/themeMode";
+import storage from "../util/storage.js";
+import { isThemeMode, ThemeMode } from "../util/themeMode.js";
 
 type StoreOptions<T> = {
 	serialize: (input: T) => string;

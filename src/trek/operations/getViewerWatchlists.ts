@@ -1,4 +1,4 @@
-import { db } from "../../db";
+import { db } from "../../db.js";
 
 const PAGE_SIZE = 100;
 

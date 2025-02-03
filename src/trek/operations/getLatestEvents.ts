@@ -1,6 +1,6 @@
-import { db } from "../../db";
-import { Scope } from "../types";
-import Config from "../../Config";
+import { db } from "../../db.js";
+import { Scope } from "../types.js";
+import Config from "../../Config.js";
 import { Prisma } from "@prisma/client";
 
 const hasFollower = (viewerId: string) => ({ followers: { some: { followerId: viewerId } } }) as const;

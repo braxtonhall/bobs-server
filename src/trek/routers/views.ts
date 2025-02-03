@@ -1,10 +1,10 @@
 import express from "express";
-import { checkViewing, getViewing } from "../middlewares/checkViewing";
-import { enforceLoggedIn } from "../../auth/middlewares/authenticate";
-import Config from "../../Config";
+import { checkViewing, getViewing } from "../middlewares/checkViewing.js";
+import { enforceLoggedIn } from "../../auth/middlewares/authenticate.js";
+import Config from "../../Config.js";
 import { Email } from "@prisma/client";
-import { signupPayloadSchema } from "../schemas";
-import { setViewing } from "../operations/setViewing";
+import { signupPayloadSchema } from "../schemas.js";
+import { setViewing } from "../operations/setViewing.js";
 
 export const views = express()
 	.use(getViewing)

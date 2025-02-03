@@ -1,4 +1,4 @@
-import { Episode, SeriesCollection, Viewings } from "../types";
+import { Episode, SeriesCollection, Viewings } from "../types.js";
 
 export const mergeViewingWithContent = (input: {
 	viewing: Viewings[number];

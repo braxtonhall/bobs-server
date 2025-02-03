@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { AsyncLocalStorage } from "node:async_hooks";
 import { ITXClientDenyList } from "@prisma/client/runtime/library";
-import { hashAddress } from "./util/hashAddress";
+import { hashAddress } from "./util/hashAddress.js";
 
 const prisma = new PrismaClient().$extends({
 	query: {

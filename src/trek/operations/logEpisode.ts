@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { db, transaction } from "../../db";
-import { incrementCursor, updateCursor } from "./updateCursor";
+import { db, transaction } from "../../db.js";
+import { incrementCursor, updateCursor } from "./updateCursor.js";
 import { DateTime } from "luxon";
-import Config from "../../Config";
+import Config from "../../Config.js";
 
 export type LogEpisodePayload = z.infer<typeof logEpisodeSchema>;
 

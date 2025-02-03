@@ -1,13 +1,13 @@
-import { archiveSeasons } from "./secret-dj/jobs/archiveSeasons";
-import { removeTokens } from "./auth/jobs";
-import { sendBoxUpdates } from "./toolbox/jobs/sendBoxUpdates";
-import { sendReplyUpdates } from "./toolbox/jobs/sendReplyUpdates";
-import AsyncPool from "./util/AsyncPool";
-import { sendReminders } from "./secret-dj/jobs/sendReminders";
-import { loadContent } from "./trek/jobs/loadContent";
-import { deleteBadEvents } from "./trek/jobs/deleteBadEvents";
-import { ensureHashes } from "./trek/jobs/ensureHashes";
-import { loadFonts } from "./toolbox/canvas/fonts";
+import { archiveSeasons } from "./secret-dj/jobs/archiveSeasons.js";
+import { removeTokens } from "./auth/jobs.js";
+import { sendBoxUpdates } from "./toolbox/jobs/sendBoxUpdates.js";
+import { sendReplyUpdates } from "./toolbox/jobs/sendReplyUpdates.js";
+import AsyncPool from "./util/AsyncPool.js";
+import { sendReminders } from "./secret-dj/jobs/sendReminders.js";
+import { loadContent } from "./trek/jobs/loadContent.js";
+import { deleteBadEvents } from "./trek/jobs/deleteBadEvents.js";
+import { ensureHashes } from "./trek/jobs/ensureHashes.js";
+import { loadFonts } from "./toolbox/canvas/fonts.js";
 
 export type Job = { callback: () => unknown; interval: number };
 

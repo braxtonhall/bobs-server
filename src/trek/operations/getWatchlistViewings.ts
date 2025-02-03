@@ -1,5 +1,5 @@
-import { db } from "../../db";
-import Config from "../../Config";
+import { db } from "../../db.js";
+import Config from "../../Config.js";
 
 export const getWatchlistViewings = async ({
 	watchlistId,

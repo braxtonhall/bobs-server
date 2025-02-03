@@ -1,5 +1,5 @@
-import { db, transaction } from "../../db";
-import { ViewingState } from "../types";
+import { db, transaction } from "../../db.js";
+import { ViewingState } from "../types.js";
 
 export const start = async ({ viewerId, watchlistId }: { viewerId: string; watchlistId: string }) => {
 	const watchlist = await db.watchlist.findUniqueOrThrow({

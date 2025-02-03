@@ -1,5 +1,5 @@
-import { db, transaction } from "../../db";
-import { ViewingState } from "../types";
+import { db, transaction } from "../../db.js";
+import { ViewingState } from "../types.js";
 
 export const getWatchlistRelationship = ({ watchlistId, viewerId }: { watchlistId: string; viewerId: string }) =>
 	transaction(async () => {

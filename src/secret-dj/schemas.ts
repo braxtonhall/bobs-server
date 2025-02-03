@@ -1,6 +1,6 @@
 import { z } from "zod";
-import Config from "../Config";
-import { checkboxSchema } from "../schema";
+import Config from "../Config.js";
+import { checkboxSchema } from "../schema.js";
 import { DateTime } from "luxon";
 
 export const signupPayloadSchema = z.object({

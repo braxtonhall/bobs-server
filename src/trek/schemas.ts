@@ -1,5 +1,5 @@
 import { z } from "zod";
-import Config from "../Config";
+import Config from "../Config.js";
 
 export const signupPayloadSchema = z.object({
 	name: z.string().min(1).max(Config.DEFAULT_MAX_LENGTH),

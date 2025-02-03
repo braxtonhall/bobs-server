@@ -1,9 +1,9 @@
-import { db, transaction } from "../../db";
-import { Err, Ok } from "../../types/result";
-import { Failure } from "../../types/failure";
-import { startVerificationForSubscription } from "../../auth/operations";
-import { sendQueuedMessages } from "../../email";
-import { hashAddress } from "../../util/hashAddress";
+import { db, transaction } from "../../db.js";
+import { Err, Ok } from "../../types/result.js";
+import { Failure } from "../../types/failure.js";
+import { startVerificationForSubscription } from "../../auth/operations.js";
+import { sendQueuedMessages } from "../../email.js";
+import { hashAddress } from "../../util/hashAddress.js";
 
 export const addSubscriber = ({ boxId, address }: { boxId: string; address: string }) =>
 	transaction(async () => {

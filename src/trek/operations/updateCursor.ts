@@ -1,4 +1,4 @@
-import { db, transaction } from "../../db";
+import { db, transaction } from "../../db.js";
 
 export const incrementCursor = async (env: { viewerId: string; viewingId: string }) =>
 	transaction(async () => {

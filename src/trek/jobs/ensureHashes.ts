@@ -1,6 +1,6 @@
-import { Job } from "../../jobs";
-import { db } from "../../db";
-import { hashAddress } from "../../util/hashAddress";
+import { Job } from "../../jobs.js";
+import { db } from "../../db.js";
+import { hashAddress } from "../../util/hashAddress.js";
 
 export const ensureHashes = {
 	callback: async () => {

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { Email } from "@prisma/client";
-import { db } from "../../db";
+import { db } from "../../db.js";
 
 export const getViewing = async (req: Request, res: Response, next: NextFunction) => {
 	if (res.locals.logged) {

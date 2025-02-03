@@ -1,11 +1,11 @@
-import { db, transaction } from "../../db";
-import { HashedString } from "../../types/hashed";
-import Config from "../../Config";
-import { Err, Ok, Result } from "../../types/result";
+import { db, transaction } from "../../db.js";
+import { HashedString } from "../../types/hashed.js";
+import Config from "../../Config.js";
+import { Err, Ok, Result } from "../../types/result.js";
 import { match, P } from "ts-pattern";
-import { Failure } from "../../types/failure";
-import boxes from "./boxes";
-import { None, Option, Some } from "../../types/option";
+import { Failure } from "../../types/failure.js";
+import boxes from "./boxes.js";
+import { None, Option, Some } from "../../types/option.js";
 import { DateTime } from "luxon";
 
 type CreatePost = {

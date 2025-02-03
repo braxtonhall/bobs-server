@@ -1,5 +1,5 @@
-import { db } from "../../db";
-import { SeasonState } from "../SeasonState";
+import { db } from "../../db.js";
+import { SeasonState } from "../SeasonState.js";
 
 export const getActiveGames = () =>
 	db.season.findMany({

@@ -1,19 +1,19 @@
 import express, { NextFunction, Request, Response } from "express";
 import { match, P } from "ts-pattern";
-import boxes from "../storage/boxes";
-import { Option, Some } from "../../types/option";
-import { getPosts } from "../operations/getPosts";
-import { hashString } from "../../util";
-import { createPostSchema } from "../schema/createPost";
-import { parse } from "../../parse";
-import { Err, Ok } from "../../types/result";
-import { createPost } from "../operations/createPost";
-import { deletePost } from "../operations/deletePost";
-import { Failure } from "../../types/failure";
-import counters from "../storage/counters";
+import boxes from "../storage/boxes.js";
+import { Option, Some } from "../../types/option.js";
+import { getPosts } from "../operations/getPosts.js";
+import { hashString } from "../../util.js";
+import { createPostSchema } from "../schema/createPost.js";
+import { parse } from "../../parse.js";
+import { Err, Ok } from "../../types/result.js";
+import { createPost } from "../operations/createPost.js";
+import { deletePost } from "../operations/deletePost.js";
+import { Failure } from "../../types/failure.js";
+import counters from "../storage/counters.js";
 import bodyParser from "body-parser";
 import slowDown from "express-slow-down";
-import { Behaviour } from "../schema/action";
+import { Behaviour } from "../schema/action.js";
 
 const allowOrigin =
 	<Params>(getOrigin: (params: Params) => Promise<Option<string>>) =>

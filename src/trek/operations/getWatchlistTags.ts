@@ -1,5 +1,5 @@
-import { db } from "../../db";
-import Config from "../../Config";
+import { db } from "../../db.js";
+import Config from "../../Config.js";
 
 export const getWatchlistTags = async ({ watchlistId, cursor }: { watchlistId: string; cursor?: string }) => {
 	const watchlist = await db.watchlist.findUnique({

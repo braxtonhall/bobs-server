@@ -1,6 +1,6 @@
-import { db } from "../../db";
-import { ViewingState } from "../types";
-import Config from "../../Config";
+import { db } from "../../db.js";
+import { ViewingState } from "../types.js";
+import Config from "../../Config.js";
 
 export const getCurrentlyWatching = async (viewerId: string, cursor: string | undefined) => {
 	const viewings = await db.viewing.findMany({

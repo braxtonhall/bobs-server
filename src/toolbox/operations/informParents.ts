@@ -1,10 +1,10 @@
-import { db, transaction } from "../../db";
-import Config from "../../Config";
+import { db, transaction } from "../../db.js";
+import Config from "../../Config.js";
 import { DateTime } from "luxon";
-import { getUnsubLink } from "../../auth/operations";
+import { getUnsubLink } from "../../auth/operations.js";
 import ejs from "ejs";
-import { EmailPersona, enqueue, sendQueuedMessages } from "../../email";
-import AsyncPool from "../../util/AsyncPool";
+import { EmailPersona, enqueue, sendQueuedMessages } from "../../email.js";
+import AsyncPool from "../../util/AsyncPool.js";
 
 const MAX_CONCURRENT_PROMISES = 10;
 

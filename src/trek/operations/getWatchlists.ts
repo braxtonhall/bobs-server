@@ -1,6 +1,6 @@
-import { db } from "../../db";
-import Config from "../../Config";
-import { ViewingState } from "../types";
+import { db } from "../../db.js";
+import Config from "../../Config.js";
+import { ViewingState } from "../types.js";
 
 export const getWatchlists = async ({
 	requestorId,

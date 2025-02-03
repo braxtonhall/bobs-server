@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { authenticate } from "../operations";
+import { authenticate } from "../operations.js";
 
 const authenticateToken = async (token: string, res: Response, next: NextFunction) => {
 	try {

@@ -1,4 +1,4 @@
-import { db } from "../../db";
+import { db } from "../../db.js";
 import { getEpisode as getEpisodeQuery } from "@prisma/client/sql";
 
 export const getEpisode = async ({

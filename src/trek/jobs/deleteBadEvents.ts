@@ -1,5 +1,5 @@
-import { Job } from "../../jobs";
-import { db } from "../../db";
+import { Job } from "../../jobs.js";
+import { db } from "../../db.js";
 
 type FindMany = typeof db.event.findMany;
 type FindManyInput = Parameters<FindMany>[0];

@@ -1,4 +1,4 @@
-import { useUserContext } from "../contexts/UserContext";
+import { useUserContext } from "../contexts/UserContext.js";
 import { useMemo } from "react";
 
 const defaultColour = "#ffffff00";

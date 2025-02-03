@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { emailSchema } from "./email";
-import { checkboxSchema } from "../../schema";
+import { emailSchema } from "./email.js";
+import { checkboxSchema } from "../../schema.js";
 
 export const removeMaintainerPayloadSchema = z.object({
 	email: emailSchema,

@@ -1,7 +1,7 @@
 import { parse } from "csv-parse";
-import { db } from "../../db";
-import { loadResource } from "../../util/loadResource";
-import { Job } from "../../jobs";
+import { db } from "../../db.js";
+import { loadResource } from "../../util/loadResource.js";
+import { Job } from "../../jobs.js";
 import { DateTime } from "luxon";
 
 type Show = { ID: string; NAME: string };

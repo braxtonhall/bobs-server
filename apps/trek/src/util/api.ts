@@ -1,4 +1,4 @@
-import type { TrekRouter } from "../../../../src/trek/routers/api";
+import type { TrekRouter } from "../../../../src/trek/routers/api.js";
 import { createTRPCProxyClient, httpBatchLink } from "@trpc/client";
 
 export const api = createTRPCProxyClient<TrekRouter>({

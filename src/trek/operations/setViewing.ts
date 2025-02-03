@@ -1,4 +1,4 @@
-import { db, transaction } from "../../db";
+import { db, transaction } from "../../db.js";
 
 type Environment = {
 	emailId: string;

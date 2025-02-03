@@ -1,5 +1,5 @@
-import { db } from "../../db";
-import { ViewingState } from "../types";
+import { db } from "../../db.js";
+import { ViewingState } from "../types.js";
 
 export const getWatchlist = async ({ watchlistId, viewerId }: { watchlistId: string; viewerId?: string }) =>
 	db.watchlist

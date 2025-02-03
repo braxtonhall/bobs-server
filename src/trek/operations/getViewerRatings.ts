@@ -1,4 +1,4 @@
-import { db } from "../../db";
+import { db } from "../../db.js";
 import { getUserRatings as getUserRatingsQuery } from "@prisma/client/sql";
 
 export const getViewerRatings = async (viewerId: string) => {

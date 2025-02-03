@@ -1,4 +1,4 @@
-import { db } from "../../db";
+import { db } from "../../db.js";
 import { Episode, Opinion } from "@prisma/client";
 
 const include = (viewerId: string) =>

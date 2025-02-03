@@ -1,20 +1,20 @@
 import express from "express";
 import https from "https";
 import fs from "fs/promises";
-import Config from "./Config";
+import Config from "./Config.js";
 import http from "http";
 import cookieParser from "cookie-parser";
-import { views as authViews } from "./auth/routers/views";
+import { views as authViews } from "./auth/routers/views.js";
 import bodyParser from "body-parser";
-import { authenticateCookie, enforceLoggedIn } from "./auth/middlewares/authenticate";
-import { api as unauthenticatedApi, views as unauthenticatedViews } from "./toolbox/routers/unauthenticated";
-import { views as secretDjViews } from "./secret-dj/routers/views";
-import { views as trekViews } from "./trek/routers/views";
-import { api as trekApi } from "./trek/routers/api";
-import { adminViews } from "./toolbox/routers/views";
-import { views as settingsViews } from "./settings/routers/views";
+import { authenticateCookie, enforceLoggedIn } from "./auth/middlewares/authenticate.js";
+import { api as unauthenticatedApi, views as unauthenticatedViews } from "./toolbox/routers/unauthenticated.js";
+import { views as secretDjViews } from "./secret-dj/routers/views.js";
+import { views as trekViews } from "./trek/routers/views.js";
+import { api as trekApi } from "./trek/routers/api.js";
+import { adminViews } from "./toolbox/routers/views.js";
+import { views as settingsViews } from "./settings/routers/views.js";
 import session from "express-session";
-import { gateKeepInvalidURIs } from "./common/middlewares/gateKeepInvalidURIs";
+import { gateKeepInvalidURIs } from "./common/middlewares/gateKeepInvalidURIs.js";
 
 // TODO would be great to also serve a javascript client
 // TODO this whole system is a mess...

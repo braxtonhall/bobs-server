@@ -1,4 +1,4 @@
-import { db } from "../../db";
+import { db } from "../../db.js";
 import { Series } from "@prisma/client";
 
 export type SeriesCollection = Record<string, Series>;

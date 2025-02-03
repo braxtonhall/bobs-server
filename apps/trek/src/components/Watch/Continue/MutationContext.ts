@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import { API } from "../../../util/api";
+import { API } from "../../../util/api.js";
 
 export const MutationContext = createContext<{
 	setCursor: (opts: Parameters<API["updateCursor"]["mutate"]>[0]) => void;
