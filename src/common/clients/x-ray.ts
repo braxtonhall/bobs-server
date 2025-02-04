@@ -7,6 +7,8 @@ export default XRay({
 		normalizeWhitespace: (value) => (typeof value === "string" ? value.replace(/\s+/g, " ") : value),
 		parseInt: (value) => (typeof value === "string" ? parseInt(value.replace(/[^0-9]/g, "")) : value),
 		exists: (value) => !!value,
+		afterColon: (value) => (typeof value === "string" ? value.split(":").pop() : value),
+		beforeColon: (value) => (typeof value === "string" ? value.split(":").unshift() : value),
 	},
 })
 	.concurrency(10)
