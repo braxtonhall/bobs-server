@@ -43,5 +43,6 @@ export default z
 		MAX_COUNTER_IMG_WIDTH: z.coerce.number().positive().default(800),
 		DEFAULT_COUNTER_IMG_HEIGHT: z.coerce.number().positive().default(100),
 		MAX_COUNTER_IMG_HEIGHT: z.coerce.number().positive().default(400),
+		TMDB_API_KEY: z.string(),
 	})
 	.parse(process.env);
