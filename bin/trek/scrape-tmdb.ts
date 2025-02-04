@@ -1,6 +1,6 @@
-import { tmdb } from "../src/common/clients/tmdb.js";
+import { tmdb } from "../../src/common/clients/tmdb.js";
 import fs from "fs/promises";
-import AsyncPool from "../src/util/AsyncPool.js";
+import AsyncPool from "../../src/util/AsyncPool.js";
 
 const shows: number[] = [
 	253, // tos
