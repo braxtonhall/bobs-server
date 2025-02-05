@@ -28,7 +28,7 @@ const allowOrigin =
 				);
 				return next();
 			})
-			.otherwise(next);
+			.otherwise(() => next());
 
 const limiter = slowDown({
 	windowMs: 15 * 60 * 1000, // 15 minutes
