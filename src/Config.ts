@@ -36,7 +36,7 @@ export default z
 		SEASON_ARCHIVE_INTERVAL_HOURS: z.coerce.number().nonnegative().default(4),
 		MINIMUM_GAME_DAYS: z.coerce.number().nonnegative().default(7),
 		MINIMUM_GRACE_DAYS: z.coerce.number().nonnegative().default(7),
-		TREK_PROFILE_RECENTLY_MAX: z.coerce.number().positive().default(10),
+		TREK_PROFILE_RECENTLY_MAX: z.coerce.number().positive().default(40),
 		TREK_FAVOURITES_MAX: z.coerce.number().positive().default(4),
 		NODE_ENV: z.enum(["development", "production", "test"]),
 		DEFAULT_COUNTER_IMG_WIDTH: z.coerce.number().positive().default(200),

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { api } from "../../util/api";
+import { API, api } from "../../util/api";
 import {
 	Box,
 	Container,
@@ -16,6 +16,7 @@ import {
 	Typography,
 	IconButton,
 	useTheme,
+	ThemeProvider,
 } from "@mui/material";
 import {
 	FavoriteRounded,
@@ -31,6 +32,9 @@ import { useProfileContext } from "../../contexts/ProfileContext";
 import { RatingHistogram } from "../misc/RatingHistogram";
 import { useQuery } from "@tanstack/react-query";
 import { Gravatar } from "../misc/Gravatar";
+import { useColour } from "../../hooks/useColour";
+import { isDark, overlay } from "../../util/colour";
+import { darkTheme, lightTheme } from "../../themes";
 
 const Favourite = styled(Paper)(({ theme }) => ({
 	backgroundColor: "#fff", // TODO
@@ -54,16 +58,34 @@ const Statistic = styled(Box)(({ theme }) => ({
 	}),
 }));
 
-const LatestEntry = styled(Paper)(({ theme }) => ({
-	backgroundColor: "#fff", // TODO
+const StyledBox = styled(Box)(({ theme }) => ({
 	...theme.typography.body2,
 	padding: theme.spacing(1),
 	textAlign: "center",
-	color: theme.palette.text.secondary,
-	...theme.applyStyles("dark", {
-		backgroundColor: "#1A2027", // TODO
-	}),
+	justifyContent: "center",
+	display: "grid",
+	color: "rgba(0,0,0,0)",
+	transition: "100ms",
+	"&:hover": { color: theme.palette.text.secondary },
 }));
+
+type View = NonNullable<Awaited<ReturnType<API["getViewer"]["query"]>>>["viewer"]["views"][number];
+
+const LatestEntry = ({ view }: { view: View }) => {
+	const theme = useTheme();
+	const colour = useColour(view.episode);
+	const useDarkTheme = isDark(overlay(theme.palette.background.default, colour));
+	const viewTheme = useDarkTheme ? darkTheme : lightTheme;
+	// TODO this should expand on hover, and clicking should bring you to the entry
+	// TODO on mobile this is just for decoration
+	return (
+		<ThemeProvider theme={viewTheme}>
+			<StyledBox bgcolor={colour}>
+				{view.episode.season}/{view.episode.production}
+			</StyledBox>
+		</ThemeProvider>
+	);
+};
 
 const StyledListItem = styled(ListItem)(({ theme }) => ({
 	color: theme.palette.text.primary,
@@ -170,20 +192,21 @@ export const Profile = () => {
 							</Grid>
 						</Box>
 					)}
-					{viewer.views.length > 0 && (
+					{viewer.views.length > 0 ? (
 						<Box>
-							recently (mobile)
-							<Grid container spacing={1} columns={4}>
-								{viewer.views.slice(0, 4).map((view) => (
+							<Grid container spacing={0} columns={viewer.views.length}>
+								{viewer.views.map((view) => (
 									<Grid size={1} key={view.id}>
-										<LatestEntry>{view.episode.seriesId}</LatestEntry>
+										<LatestEntry view={view} />
 									</Grid>
 								))}
 							</Grid>
 						</Box>
+					) : (
+						<Divider />
 					)}
 				</Box>
-				<Divider />
+
 				<Box margin="0.5em">
 					{ratings ? (
 						<RatingHistogram
