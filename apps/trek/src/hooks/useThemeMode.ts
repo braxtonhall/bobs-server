@@ -1,6 +1,6 @@
-import { ThemeMode } from "../util/themeMode.js";
+import { ThemeMode } from "../util/themeMode";
 import { useMediaQuery } from "@mui/material";
-import { darkTheme, lightTheme } from "../themes.js";
+import { darkTheme, lightTheme } from "../themes";
 
 export const useThemeMode = (mode: ThemeMode) => {
 	const systemPrefersDark = useMediaQuery("(prefers-color-scheme: dark)");

@@ -1,5 +1,5 @@
 import { useQueries } from "@tanstack/react-query";
-import { API, api } from "../util/api.js";
+import { API, api } from "../util/api";
 import { useCallback } from "react";
 
 export type Episode = Awaited<ReturnType<API["getEpisodeRelationships"]["query"]>>[number];

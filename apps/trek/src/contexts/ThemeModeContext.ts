@@ -1,4 +1,4 @@
-import { ThemeMode } from "../util/themeMode.js";
+import { ThemeMode } from "../util/themeMode";
 import { createContext } from "react";
 
 type ThemeModeContextContent = {

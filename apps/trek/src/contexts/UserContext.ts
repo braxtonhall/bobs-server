@@ -1,6 +1,6 @@
 import { createContext } from "react";
-import { API } from "../util/api.js";
-import { useSafeContext } from "../hooks/useSafeContext.js";
+import { API } from "../util/api";
+import { useSafeContext } from "../hooks/useSafeContext";
 
 type Settings = NonNullable<Awaited<ReturnType<API["getSelf"]["query"]>>["settings"]>;
 
