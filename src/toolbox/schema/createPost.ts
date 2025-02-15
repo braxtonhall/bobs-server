@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { emailSchema } from "./email";
-import { Option, None, Some } from "../../types/option";
-import Config from "../../Config";
+import { emailSchema } from "./email.js";
+import { Option, None, Some } from "../../types/option.js";
+import Config from "../../Config.js";
 
 export const createPostSchema = z.object({
 	from: z.string().trim().max(Config.DEFAULT_MAX_LENGTH),

@@ -1,4 +1,4 @@
-import { multiply } from "../../src/util/multiply";
+import { multiply } from "../../src/util/multiply.js";
 
 describe("multiply", () => {
 	it("should multiply 1 list", () => {

@@ -1,8 +1,8 @@
 import tinycolor from "tinycolor2";
 import { z } from "zod";
-import Config from "../../Config";
-import { checkboxSchema } from "../../schema";
-import { fontFamilies } from "../canvas/fonts";
+import Config from "../../Config.js";
+import { checkboxSchema } from "../../schema.js";
+import { fontFamilies } from "../canvas/fonts.js";
 
 export enum Behaviour {
 	NOOP = "noop",

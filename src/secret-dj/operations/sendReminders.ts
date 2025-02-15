@@ -1,11 +1,11 @@
-import { db, transaction } from "../../db";
+import { db, transaction } from "../../db.js";
 import { DateTime } from "luxon";
-import { SeasonState } from "../SeasonState";
-import Config from "../../Config";
-import { EmailPersona, enqueue, Message, sendQueuedMessages } from "../../email";
-import { getUnsubLink } from "../../auth/operations";
+import { SeasonState } from "../SeasonState.js";
+import Config from "../../Config.js";
+import { EmailPersona, enqueue, Message, sendQueuedMessages } from "../../email.js";
+import { getUnsubLink } from "../../auth/operations.js";
 import ejs from "ejs";
-import { Deadlines } from "../schemas";
+import { Deadlines } from "../schemas.js";
 
 type ReminderEntry = { season: { id: string } & Deadlines; dj: { name: string; email: { address: string } } };
 

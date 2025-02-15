@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import Config from "../Config";
+import Config from "../Config.js";
 
 const encode = (tokenId: number): string =>
 	jwt.sign({ id: tokenId }, Config.JWT_SECRET, {

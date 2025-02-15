@@ -1,8 +1,8 @@
 import { PrismaClient } from "@prisma/client";
-import { getServers } from "./server";
-import Config from "./Config";
-import * as jobs from "./jobs";
-import { sendQueuedMessages } from "./email";
+import { getServers } from "./server.js";
+import Config from "./Config.js";
+import * as jobs from "./jobs.js";
+import { sendQueuedMessages } from "./email.js";
 
 const prisma = new PrismaClient();
 

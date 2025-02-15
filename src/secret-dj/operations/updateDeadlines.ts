@@ -1,10 +1,10 @@
-import { Deadlines } from "../schemas";
-import { db, transaction } from "../../db";
-import { SeasonState } from "../SeasonState";
-import { EmailPersona, enqueue, Message, sendQueuedMessages } from "../../email";
-import { assertDeadlinesAreReasonable, assertHardDeadlineIsReasonable } from "../util/assertDeadlinesAreReasonable";
-import Config from "../../Config";
-import { getUnsubLink } from "../../auth/operations";
+import { Deadlines } from "../schemas.js";
+import { db, transaction } from "../../db.js";
+import { SeasonState } from "../SeasonState.js";
+import { EmailPersona, enqueue, Message, sendQueuedMessages } from "../../email.js";
+import { assertDeadlinesAreReasonable, assertHardDeadlineIsReasonable } from "../util/assertDeadlinesAreReasonable.js";
+import Config from "../../Config.js";
+import { getUnsubLink } from "../../auth/operations.js";
 import ejs from "ejs";
 
 type Environment = {

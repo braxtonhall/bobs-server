@@ -1,13 +1,13 @@
-import { db } from "../../src/db";
-import posts from "../../src/toolbox/storage/posts";
-import { createTestData, dropTables } from "../util";
+import { db } from "../../src/db.js";
+import posts from "../../src/toolbox/storage/posts.js";
+import { createTestData, dropTables } from "../util.js";
 import * as time from "jest-date-mock";
 import { randomUUID } from "crypto";
-import { Err, Ok, unsafeUnwrap } from "../../src/types/result";
-import { Failure } from "../../src/types/failure";
-import Config from "../../src/Config";
-import { hashString } from "../../src/util";
-import { None, Some } from "../../src/types/option";
+import { Err, Ok, unsafeUnwrap } from "../../src/types/result.js";
+import { Failure } from "../../src/types/failure.js";
+import Config from "../../src/Config.js";
+import { hashString } from "../../src/util.js";
+import { None, Some } from "../../src/types/option.js";
 import { Duration } from "luxon";
 
 describe("posts", () => {

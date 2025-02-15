@@ -1,5 +1,5 @@
 import { z } from "zod";
-import Config from "../../Config";
+import Config from "../../Config.js";
 
 export const originSchema = z
 	.string()

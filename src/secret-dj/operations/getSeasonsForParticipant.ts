@@ -1,6 +1,6 @@
-import { db } from "../../db";
+import { db } from "../../db.js";
 import { Season } from "@prisma/client";
-import { SeasonState } from "../SeasonState";
+import { SeasonState } from "../SeasonState.js";
 
 type Environment = {
 	participantId: string;

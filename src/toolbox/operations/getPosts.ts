@@ -1,9 +1,9 @@
-import { HashedString } from "../../types/hashed";
-import posts, { InternalPost } from "../storage/posts";
-import Config from "../../Config";
-import { Post } from "../schema/post";
-import { Ok, Result } from "../../types/result";
-import { Failure } from "../../types/failure";
+import { HashedString } from "../../types/hashed.js";
+import posts, { InternalPost } from "../storage/posts.js";
+import Config from "../../Config.js";
+import { Post } from "../schema/post.js";
+import { Ok, Result } from "../../types/result.js";
+import { Failure } from "../../types/failure.js";
 import { match, P } from "ts-pattern";
 import { DateTime } from "luxon";
 

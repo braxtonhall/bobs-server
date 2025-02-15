@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { originSchema } from "./origin";
-import Config from "../../Config";
-import { checkboxSchema } from "../../schema";
+import { originSchema } from "./origin.js";
+import Config from "../../Config.js";
+import { checkboxSchema } from "../../schema.js";
 
 export const createCounterSchema = z.object({
 	origin: originSchema.optional(),

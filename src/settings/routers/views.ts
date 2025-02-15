@@ -1,10 +1,10 @@
 import express from "express";
-import Config from "../../Config";
-import { parse } from "../../parse";
-import { settingsSchema } from "../../schema";
+import Config from "../../Config.js";
+import { parse } from "../../parse.js";
+import { settingsSchema } from "../../schema.js";
 import { match, P } from "ts-pattern";
-import { Ok } from "../../types/result";
-import emails from "../../toolbox/storage/emails";
+import { Ok } from "../../types/result.js";
+import emails from "../../toolbox/storage/emails.js";
 
 export const views = express()
 	.get("/", (req, res) =>

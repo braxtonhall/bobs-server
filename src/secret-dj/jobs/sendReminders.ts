@@ -1,6 +1,6 @@
-import { sendReminders as callback } from "../operations/sendReminders";
-import type { Job } from "../../jobs";
-import Config from "../../Config";
+import { sendReminders as callback } from "../operations/sendReminders.js";
+import type { Job } from "../../jobs.js";
+import Config from "../../Config.js";
 import { Duration } from "luxon";
 
 export const sendReminders = {

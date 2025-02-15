@@ -1,8 +1,8 @@
-import { db, transaction } from "../../db";
-import { SeasonState } from "../SeasonState";
-import Config from "../../Config";
-import { EmailPersona, enqueue, Message, sendQueuedMessages } from "../../email";
-import { getUnsubLink } from "../../auth/operations";
+import { db, transaction } from "../../db.js";
+import { SeasonState } from "../SeasonState.js";
+import Config from "../../Config.js";
+import { EmailPersona, enqueue, Message, sendQueuedMessages } from "../../email.js";
+import { getUnsubLink } from "../../auth/operations.js";
 import ejs from "ejs";
 
 type RecipientEntry = { recipient: { email: { address: string; subscribed: boolean }; name: string } };

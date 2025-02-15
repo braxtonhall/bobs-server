@@ -1,9 +1,10 @@
-import { db, transaction } from "../../db";
+import { db, transaction } from "../../db.js";
 import { match } from "ts-pattern";
-import { None, Option, Some } from "../../types/option";
-import { Err, Ok, Result } from "../../types/result";
-import { Failure } from "../../types/failure";
+import { None, Option, Some } from "../../types/option.js";
+import { Err, Ok, Result } from "../../types/result.js";
+import { Failure } from "../../types/failure.js";
 import { Email, Permission } from "@prisma/client";
+import { hashAddress } from "../../util/hashAddress.js";
 
 const getOrigin = async (id: string): Promise<Option<string>> =>
 	match(
@@ -255,7 +256,7 @@ const setMaintainer = async ({
 		ifCanEditBox({ userId, boxId }, "canSetPermissions", async ({ ownerId }) => {
 			const { id: emailId } = await db.email.upsert({
 				where: { address },
-				create: { address },
+				create: { address, gravatar: hashAddress(address) },
 				update: {},
 				select: { id: true },
 			});

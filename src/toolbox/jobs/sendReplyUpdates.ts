@@ -1,7 +1,7 @@
-import { informParents } from "../operations/informParents";
+import { informParents } from "../operations/informParents.js";
 import { Duration } from "luxon";
-import Config from "../../Config";
-import type { Job } from "../../jobs";
+import Config from "../../Config.js";
+import type { Job } from "../../jobs.js";
 
 export const sendReplyUpdates = {
 	callback: informParents,

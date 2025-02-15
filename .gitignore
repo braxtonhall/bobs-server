@@ -6,4 +6,5 @@ dist
 coverage
 *.log
 certs
+public/trek
 fonts

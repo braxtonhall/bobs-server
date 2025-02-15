@@ -1,6 +1,6 @@
-import type { Job } from "../../jobs";
-import { updateSubscribers } from "../operations/updateSubscribers";
-import Config from "../../Config";
+import type { Job } from "../../jobs.js";
+import { updateSubscribers } from "../operations/updateSubscribers.js";
+import Config from "../../Config.js";
 import { Duration } from "luxon";
 
 export const sendBoxUpdates = {

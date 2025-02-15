@@ -1,6 +1,6 @@
 import express from "express";
-import { getParticipation, enforceParticipation, checkParticipation } from "../middlewares/checkParticipation";
-import { setParticipant } from "../operations/setParticipant";
+import { getParticipation, enforceParticipation, checkParticipation } from "../middlewares/checkParticipation.js";
+import { setParticipant } from "../operations/setParticipant.js";
 import { Email, Participant } from "@prisma/client";
 import {
 	createSeasonPayloadSchema,
@@ -10,26 +10,26 @@ import {
 	signupPayloadSchema,
 	submitPlaylistPayloadSchema,
 	submitRulesSchema,
-} from "../schemas";
-import { getJoinableGames } from "../operations/getJoinableGames";
-import { getSeasonsForParticipant } from "../operations/getSeasonsForParticipant";
-import { getArchivedSeasons } from "../operations/getArchivedSeasons";
-import { createGame } from "../operations/createGame";
-import { getSeason } from "../operations/getSeason";
-import { getParticipantEntriesForSeason } from "../operations/getParticipantEntriesForSeason";
-import { getEntry } from "../operations/getEntry";
-import { submitPlaylist } from "../operations/submitPlaylist";
-import { deleteGame } from "../operations/deleteGame";
-import { startGame } from "../operations/startGame";
-import { editGame } from "../operations/editGame";
-import Config from "../../Config";
-import { getDjEntries } from "../operations/getDjEntries";
-import { setRules } from "../operations/setRules";
-import { leaveGame } from "../operations/leaveGame";
-import { enforceLoggedIn } from "../../auth/middlewares/authenticate";
-import { clearMessagesAndSet, getMessagesAndClear } from "./sessionUtils";
+} from "../schemas.js";
+import { getJoinableGames } from "../operations/getJoinableGames.js";
+import { getSeasonsForParticipant } from "../operations/getSeasonsForParticipant.js";
+import { getArchivedSeasons } from "../operations/getArchivedSeasons.js";
+import { createGame } from "../operations/createGame.js";
+import { getSeason } from "../operations/getSeason.js";
+import { getParticipantEntriesForSeason } from "../operations/getParticipantEntriesForSeason.js";
+import { getEntry } from "../operations/getEntry.js";
+import { submitPlaylist } from "../operations/submitPlaylist.js";
+import { deleteGame } from "../operations/deleteGame.js";
+import { startGame } from "../operations/startGame.js";
+import { editGame } from "../operations/editGame.js";
+import Config from "../../Config.js";
+import { getDjEntries } from "../operations/getDjEntries.js";
+import { setRules } from "../operations/setRules.js";
+import { leaveGame } from "../operations/leaveGame.js";
+import { enforceLoggedIn } from "../../auth/middlewares/authenticate.js";
+import { clearMessagesAndSet, getMessagesAndClear } from "./sessionUtils.js";
 import { DateTime } from "luxon";
-import { updateDeadlines } from "../operations/updateDeadlines";
+import { updateDeadlines } from "../operations/updateDeadlines.js";
 
 export const views = express()
 	.use(getParticipation)

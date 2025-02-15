@@ -1,16 +1,16 @@
-import { CreatePost } from "../schema/createPost";
-import { Err, Ok, Result } from "../../types/result";
-import posts from "../storage/posts";
-import posters from "../storage/posters";
-import emails from "../storage/emails";
-import { Failure } from "../../types/failure";
-import { HashedString } from "../../types/hashed";
-import { Some, unwrapOr } from "../../types/option";
+import { CreatePost } from "../schema/createPost.js";
+import { Err, Ok, Result } from "../../types/result.js";
+import posts from "../storage/posts.js";
+import posters from "../storage/posters.js";
+import emails from "../storage/emails.js";
+import { Failure } from "../../types/failure.js";
+import { HashedString } from "../../types/hashed.js";
+import { Some, unwrapOr } from "../../types/option.js";
 import { match, P } from "ts-pattern";
-import { Post } from "../schema/post";
-import { startVerificationForReplies } from "../../auth/operations";
-import { sendQueuedMessages } from "../../email";
-import { transaction } from "../../db";
+import { Post } from "../schema/post.js";
+import { startVerificationForReplies } from "../../auth/operations.js";
+import { sendQueuedMessages } from "../../email.js";
+import { transaction } from "../../db.js";
 
 export const createPost = async (
 	boxId: string,

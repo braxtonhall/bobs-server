@@ -1,12 +1,12 @@
-import { db, transaction } from "../../db";
-import { SeasonState } from "../SeasonState";
-import { EmailPersona, enqueue, Message, sendQueuedMessages } from "../../email";
-import Config from "../../Config";
-import { getUnsubLink } from "../../auth/operations";
+import { db, transaction } from "../../db.js";
+import { SeasonState } from "../SeasonState.js";
+import { EmailPersona, enqueue, Message, sendQueuedMessages } from "../../email.js";
+import Config from "../../Config.js";
+import { getUnsubLink } from "../../auth/operations.js";
 import { Entry } from "@prisma/client";
 import ejs from "ejs";
-import { Deadlines } from "../schemas";
-import { assertDeadlinesAreReasonable } from "../util/assertDeadlinesAreReasonable";
+import { Deadlines } from "../schemas.js";
+import { assertDeadlinesAreReasonable } from "../util/assertDeadlinesAreReasonable.js";
 
 type Pair = { recipient: Entry; dj: Entry };
 

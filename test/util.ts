@@ -1,7 +1,7 @@
-import { db } from "../src/db";
-import boxes from "../src/toolbox/storage/boxes";
-import posters from "../src/toolbox/storage/posters";
-import { hashString } from "../src/util";
+import { db } from "../src/db.js";
+import boxes from "../src/toolbox/storage/boxes.js";
+import posters from "../src/toolbox/storage/posters.js";
+import { hashString } from "../src/util.js";
 
 export const dropTables = async () => {
 	await db.subscription.deleteMany();

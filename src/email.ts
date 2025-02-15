@@ -1,7 +1,7 @@
 import sendgrid from "@sendgrid/mail";
-import Config from "./Config";
+import Config from "./Config.js";
 import { Message as PrismaMessage } from "@prisma/client";
-import { db } from "./db";
+import { db } from "./db.js";
 import { setTimeout } from "timers/promises";
 
 sendgrid.setApiKey(Config.SENDGRID_API_KEY);

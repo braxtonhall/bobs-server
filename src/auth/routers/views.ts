@@ -1,8 +1,8 @@
 import express from "express";
-import { authorize, completeVerification, deauthenticate, login } from "../operations";
-import Config from "../../Config";
-import { checkLoggedIn } from "../middlewares/authenticate";
-import { authorizePayloadSchema } from "../schemas";
+import { authorize, completeVerification, deauthenticate, login } from "../operations.js";
+import Config from "../../Config.js";
+import { checkLoggedIn } from "../middlewares/authenticate.js";
+import { authorizePayloadSchema } from "../schemas.js";
 import { Duration } from "luxon";
 
 const tokenMaxAge = Duration.fromObject({ hour: Config.API_TOKEN_EXPIRATION_HOURS }).toMillis();

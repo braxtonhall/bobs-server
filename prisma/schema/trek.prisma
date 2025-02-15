@@ -1,0 +1,228 @@
+model Series {
+  id       String       @id
+  // memoryAlphaUrl String // TODO
+  name     String
+  episodes Episode[]
+  seasons  TrekSeason[]
+}
+
+model TrekSeason {
+  // memoryAlphaUrl String // TODO
+
+  seriesId String
+  series   Series    @relation(fields: [seriesId], references: [id], onDelete: Restrict)
+  number   Int
+  episodes Episode[]
+
+  @@id([seriesId, number])
+}
+
+model Episode {
+  id String @id @default(cuid())
+
+  // memoryAlphaUrl String // TODO
+  name         String
+  abbreviation String?
+  runtime      Int
+  release      String
+  starDate     Float?
+  season       Int
+  production   Int
+  description  String
+
+  seriesId   String
+  series     Series           @relation(fields: [seriesId], references: [id], onDelete: Restrict)
+  trekSeason TrekSeason       @relation(fields: [seriesId, season], references: [seriesId, number], onDelete: Restrict)
+  views      View[]
+  opinions   Opinion[]
+  entries    WatchlistEntry[]
+  viewings   Viewing[]
+  favourites Favourite[]
+
+  // Each is a unique int. This is the default episode order
+  // Not adding @unique tho becuase i want to easily update these
+  sort Int
+
+  @@unique([seriesId, season, production])
+}
+
+model Watchlist {
+  id String @id @default(cuid())
+
+  ownerId     String?
+  owner       Viewer?          @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+  viewings    Viewing[]
+  name        String
+  description String
+  entries     WatchlistEntry[]
+  tags        Tag[]
+
+  createdAtId Int?   @unique
+  createdAt   Event? @relation(fields: [createdAtId], references: [id], onDelete: Restrict)
+
+  likes WatchlistLike[]
+}
+
+model WatchlistEntry {
+  watchlistId String
+  watchlist   Watchlist @relation(fields: [watchlistId], references: [id], onDelete: Cascade)
+  rank        Int
+  episodeId   String
+  episode     Episode   @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+
+  @@id([watchlistId, rank])
+  @@unique([watchlistId, episodeId])
+}
+
+model Viewer {
+  id         String      @id @default(cuid())
+  email      Email       @relation("ViewerEmail", fields: [emailId], references: [id], onDelete: Cascade)
+  emailId    String      @unique
+  gravatar   Boolean     @default(false)
+  name       String
+  about      String      @default("")
+  views      View[]
+  opinions   Opinion[]
+  watchlists Watchlist[]
+  viewings   Viewing[]
+  following  Follow[]    @relation("Follower")
+  followers  Follow[]    @relation("Followed")
+  favourites Favourite[]
+
+  watchlistLikes WatchlistLike[]
+  viewLikes      ViewLike[]
+
+  createdAtId Int   @unique
+  createdAt   Event @relation(fields: [createdAtId], references: [id], onDelete: Restrict)
+
+  // settings
+  /// JSON formatted string for the user's colour settings
+  colours                                 String  @default("{}")
+  isSpoilerEpisodeName                    Boolean @default(false)
+  isSpoilerEpisodePicture                 Boolean @default(false)
+  isSpoilerEpisodeDescription             Boolean @default(false)
+  isSpoilerEpisodeReviewComment           Boolean @default(false)
+  isSpoilerEpisodeReviewScore             Boolean @default(false)
+  isSpoilerEpisodeReviewCommentSpoilerTag Boolean @default(true)
+  isSpoilerEpisodeRating                  Boolean @default(false)
+}
+
+model Favourite {
+  viewerId String
+  viewer   Viewer @relation(fields: [viewerId], references: [id], onDelete: Cascade)
+  rank     Int
+
+  episodeId String
+  episode   Episode @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+
+  @@id([viewerId, rank])
+}
+
+model Viewing {
+  id          String    @id @default(cuid())
+  state       String
+  viewerId    String
+  viewer      Viewer    @relation(fields: [viewerId], references: [id], onDelete: Cascade)
+  cursor      String?
+  episode     Episode?  @relation(fields: [cursor], references: [id], onDelete: SetNull)
+  watchlistId String
+  watchlist   Watchlist @relation(fields: [watchlistId], references: [id], onDelete: Cascade)
+
+  startedAtId Int   @unique
+  startedAt   Event @relation("StartedViewing", fields: [startedAtId], references: [id], onDelete: Restrict)
+
+  finishedAtId Int?   @unique
+  finishedAt   Event? @relation("FinishedViewing", fields: [finishedAtId], references: [id], onDelete: Restrict)
+}
+
+model WatchlistLike {
+  viewerId    String
+  viewer      Viewer    @relation(fields: [viewerId], references: [id], onDelete: Cascade)
+  watchlistId String
+  watchlist   Watchlist @relation(fields: [watchlistId], references: [id], onDelete: Cascade)
+
+  createdAtId Int   @unique
+  createdAt   Event @relation(fields: [createdAtId], references: [id], onDelete: Restrict)
+
+  @@id([viewerId, watchlistId])
+}
+
+model Opinion {
+  viewerId  String
+  viewer    Viewer  @relation(fields: [viewerId], references: [id], onDelete: Cascade)
+  episodeId String
+  episode   Episode @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+
+  liked  Boolean
+  rating Int?
+
+  @@id([viewerId, episodeId])
+}
+
+model View {
+  id String @id @default(cuid())
+
+  viewerId String
+  viewer   Viewer @relation(fields: [viewerId], references: [id], onDelete: Cascade)
+
+  episodeId String
+  episode   Episode @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+
+  liked    Boolean
+  rating   Int?
+  comment  String?
+  spoiler  Boolean
+  viewedOn String?
+
+  createdAtId Int   @unique
+  createdAt   Event @relation(fields: [createdAtId], references: [id], onDelete: Restrict)
+
+  tags Tag[]
+
+  likes ViewLike[]
+}
+
+model ViewLike {
+  viewerId String
+  viewer   Viewer @relation(fields: [viewerId], references: [id], onDelete: Cascade)
+  viewId   String
+  view     View   @relation(fields: [viewId], references: [id], onDelete: Cascade)
+
+  createdAtId Int   @unique
+  createdAt   Event @relation(fields: [createdAtId], references: [id], onDelete: Restrict)
+
+  @@id([viewerId, viewId])
+}
+
+model Follow {
+  followerId String
+  follower   Viewer @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
+
+  followedId String
+  followed   Viewer @relation("Followed", fields: [followedId], references: [id], onDelete: Cascade)
+
+  createdAtId Int   @unique
+  createdAt   Event @relation(fields: [createdAtId], references: [id], onDelete: Restrict)
+
+  @@id([followerId, followedId])
+}
+
+model Tag {
+  name       String      @id
+  views      View[]
+  watchlists Watchlist[]
+}
+
+model Event {
+  id   Int      @id @default(autoincrement())
+  time DateTime @default(now())
+
+  view            View?
+  watchlist       Watchlist?
+  startedViewing  Viewing?       @relation("StartedViewing")
+  finishedViewing Viewing?       @relation("FinishedViewing")
+  viewLike        ViewLike?
+  watchlistLike   WatchlistLike?
+  follow          Follow?
+  viewer          Viewer?
+}

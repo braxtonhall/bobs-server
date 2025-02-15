@@ -1,18 +1,20 @@
 import express from "express";
 import https from "https";
 import fs from "fs/promises";
-import Config from "./Config";
+import Config from "./Config.js";
 import http from "http";
 import cookieParser from "cookie-parser";
-import { views as authViews } from "./auth/routers/views";
+import { views as authViews } from "./auth/routers/views.js";
 import bodyParser from "body-parser";
-import { authenticateCookie, enforceLoggedIn } from "./auth/middlewares/authenticate";
-import { api as unauthenticatedApi, views as unauthenticatedViews } from "./toolbox/routers/unauthenticated";
-import { views as secretDjViews } from "./secret-dj/routers/views";
-import { adminViews } from "./toolbox/routers/views";
-import { views as settingsViews } from "./settings/routers/views";
+import { authenticateCookie, enforceLoggedIn } from "./auth/middlewares/authenticate.js";
+import { api as unauthenticatedApi, views as unauthenticatedViews } from "./toolbox/routers/unauthenticated.js";
+import { views as secretDjViews } from "./secret-dj/routers/views.js";
+import { views as trekViews } from "./trek/routers/views.js";
+import { api as trekApi } from "./trek/routers/api.js";
+import { adminViews } from "./toolbox/routers/views.js";
+import { views as settingsViews } from "./settings/routers/views.js";
 import session from "express-session";
-import { gateKeepInvalidURIs } from "./common/middlewares/gateKeepInvalidURIs";
+import { gateKeepInvalidURIs } from "./common/middlewares/gateKeepInvalidURIs.js";
 
 // TODO would be great to also serve a javascript client
 // TODO this whole system is a mess...
@@ -21,20 +23,13 @@ const views = express()
 	.set("view engine", "ejs")
 	.use("/public", express.static("public"))
 	.use(gateKeepInvalidURIs)
-	// as any needed because https://github.com/expressjs/session/issues/1007
-	.use(
-		session({
-			secret: Config.SESSION_SECRET,
-			cookie: { maxAge: 60000 },
-			resave: true,
-			saveUninitialized: true,
-		}) as any,
-	)
+	.use(session({ secret: Config.SESSION_SECRET, cookie: { maxAge: 60000 }, resave: true, saveUninitialized: true }))
 	.post("/*", bodyParser.urlencoded({ extended: true }))
 	.use(cookieParser())
 	.use(authenticateCookie)
 	.use(authViews)
 	.use("/secret-dj", secretDjViews)
+	.use("/trek", trekViews)
 	.use(unauthenticatedViews)
 	.use("/toolbox", enforceLoggedIn, adminViews)
 	.use(enforceLoggedIn)
@@ -46,6 +41,7 @@ const api = express().use(
 	"/api",
 	express()
 		.use(unauthenticatedApi)
+		.use("/trek", trekApi)
 		.get("/", (req, res) => res.send("API")),
 );
 

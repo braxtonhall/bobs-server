@@ -1,8 +1,9 @@
-import { db } from "../../db";
-import { None, Option, Some } from "../../types/option";
+import { db } from "../../db.js";
+import { None, Option, Some } from "../../types/option.js";
 import { match, P } from "ts-pattern";
-import { Failure } from "../../types/failure";
-import { Err, Ok, Result } from "../../types/result";
+import { Failure } from "../../types/failure.js";
+import { Err, Ok, Result } from "../../types/result.js";
+import { hashAddress } from "../../util/hashAddress.js";
 
 export type Email = Awaited<ReturnType<typeof internalGet>>;
 
@@ -12,9 +13,7 @@ const internalGet = (address: string) =>
 			address,
 		},
 		update: {},
-		create: {
-			address,
-		},
+		create: { address, gravatar: hashAddress(address) },
 		select: {
 			id: true,
 			confirmed: true,
