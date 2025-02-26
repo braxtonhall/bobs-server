@@ -14,8 +14,8 @@ const getCounterImage = (
 	map(result, ({ image, value }) => {
 		const imageWidth = Math.min(image.width, Config.MAX_COUNTER_IMG_WIDTH);
 		const imageHeight = Math.min(image.height, Config.MAX_COUNTER_IMG_HEIGHT);
-		const textPositionX = Math.min(image.textX ?? imageWidth / 2, Config.MAX_COUNTER_IMG_WIDTH);
-		const textPositionY = Math.min(image.textY ?? imageHeight / 2, Config.MAX_COUNTER_IMG_HEIGHT);
+		const textPositionX = image.textX ?? imageWidth / 2;
+		const textPositionY = image.textY ?? imageHeight / 2;
 
 		const imageCanvas = createCanvas(imageWidth, imageHeight);
 		const context = imageCanvas.getContext("2d");

@@ -63,8 +63,8 @@ export const editActionSchema = z
 		fontWeight: z.coerce.number().int().multipleOf(100).min(100).max(900),
 		mimeType: z.nativeEnum(MimeType),
 		unique: checkboxSchema,
-		textX: z.coerce.number().int().min(0).max(Config.MAX_COUNTER_IMG_WIDTH),
-		textY: z.coerce.number().int().min(0).max(Config.MAX_COUNTER_IMG_HEIGHT),
+		textX: z.coerce.number().int(),
+		textY: z.coerce.number().int(),
 	})
 	.transform(({ color, backgroundColor, ...action }) => {
 		const { r: colorR, g: colorG, b: colorB } = tinycolor(color).toRgb();
