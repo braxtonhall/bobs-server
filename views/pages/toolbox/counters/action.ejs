@@ -95,6 +95,28 @@
 					onchange="refresh()"
 				/>
 
+				<label for="x" class="x-label">x</label>
+				<input
+					class="x"
+					id="x"
+					name="textX"
+					step="1"
+					value="<%= action.textX; %>"
+					type="number"
+					onchange="refresh()"
+				/>
+
+				<label for="y" class="y-label">y</label>
+				<input
+					class="y"
+					id="y"
+					name="textY"
+					step="1"
+					value="<%= action.textY; %>"
+					type="number"
+					onchange="refresh()"
+				/>
+
 				<label for="color" class="color-label">color</label>
 				<input type="color" id="color" name="color" value="<%=action.color%>" onchange="refresh()" />
 

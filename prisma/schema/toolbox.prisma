@@ -109,6 +109,10 @@ model Action {
   fontWeight       Int // browser defaults to 400
   /// png|jpeg
   mimeType         String
+  /// px
+  textX            Int?
+  /// px
+  textY            Int?
 }
 
 model ActionView {

@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Action" ADD COLUMN "textX" INTEGER;
+ALTER TABLE "Action" ADD COLUMN "textY" INTEGER;
