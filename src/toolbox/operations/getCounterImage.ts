@@ -14,6 +14,8 @@ const getCounterImage = (
 	map(result, ({ image, value }) => {
 		const imageWidth = Math.min(image.width, Config.MAX_COUNTER_IMG_WIDTH);
 		const imageHeight = Math.min(image.height, Config.MAX_COUNTER_IMG_HEIGHT);
+		const textPositionX = Math.min(image.textX ?? imageWidth / 2, Config.MAX_COUNTER_IMG_WIDTH);
+		const textPositionY = Math.min(image.textY ?? imageHeight / 2, Config.MAX_COUNTER_IMG_HEIGHT);
 
 		const imageCanvas = createCanvas(imageWidth, imageHeight);
 		const context = imageCanvas.getContext("2d");
@@ -25,7 +27,7 @@ const getCounterImage = (
 		context.font = `${image.fontStyle} ${image.fontWeight} ${image.fontSize}pt "${image.fontFamily}"`;
 		context.textAlign = image.textAlign as TextAlign;
 		context.textBaseline = image.textBaseline as TextBaseline;
-		context.fillText(String(value), imageWidth / 2, imageHeight / 2);
+		context.fillText(String(value), textPositionX, textPositionY);
 
 		const mimeType: "image/png" | "image/jpeg" = `image/${image.mimeType as MimeType}`;
 		return { buffer: imageCanvas.toBuffer(mimeType as any), mime: image.mimeType as MimeType };
