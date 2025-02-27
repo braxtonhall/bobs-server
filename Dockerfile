@@ -21,8 +21,6 @@ RUN yarn db:generate
 COPY src/ ./src/
 RUN yarn build
 
-RUN yarn download-fonts
-
 FROM node:20.9.0-alpine as runner
 
 WORKDIR /app
@@ -39,7 +37,6 @@ COPY --from=builder /app/node_modules ./node_modules/
 COPY --from=builder /app/prisma/ ./prisma/
 
 COPY --from=builder /app/dist/src/ ./dist/src/
-COPY --from=builder /app/fonts ./fonts/
 
 COPY views/ ./views/
 COPY public/ ./public/
