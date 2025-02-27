@@ -56,13 +56,7 @@ export const loadFonts = {
 if (require.main === module) {
 	const weights = [100, 200, 300, 400, 500, 600, 700, 800, 900];
 	const styles = ["normal", "italic", "oblique"];
-	const concurrency = 3;
-
-	const exists = (filename: string): Promise<boolean> =>
-		fs
-			.stat(filename)
-			.then(() => true)
-			.catch(() => false);
+	const concurrency = 10;
 
 	const download = async (url: string, destination: string) => {
 		const response = await fetch(url);
