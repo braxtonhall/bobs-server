@@ -22,6 +22,6 @@
 		"files": true,
 		"preferTsExts": true
 	},
-	"include": ["src", "scripts", "test"],
+	"include": ["src", "package.json", "test"],
 	"exclude": ["node_modules"]
 }
