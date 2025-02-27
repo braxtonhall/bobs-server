@@ -37,7 +37,6 @@ type Manifest = { family: string; weight: string; style: string; path: string }[
 
 const weights = [100, 200, 300, 400, 500, 600, 700, 800, 900];
 const styles = ["normal", "italic", "oblique"];
-const formats = ["woff2", "woff", "ttf"];
 const concurrency = 3;
 
 const exists = (filename: string): Promise<boolean> =>
@@ -50,13 +49,12 @@ const listFonts = async ({ family, slug }: { family: string; slug: string }) => 
 	const fonts = await AsyncPool.map(
 		multiply(styles, weights),
 		async ([style, weight]) => {
-			for (const format of formats) {
-				const path = `node_modules/@fontsource/${slug}/files/${slug}-latin-${weight}-${style}.${format}`;
-				if (await exists(path)) {
-					return { family, style, weight: String(weight), path };
-				}
+			const path = `node_modules/@fontsource/${slug}/files/${slug}-latin-${weight}-${style}.woff`;
+			if (await exists(path)) {
+				return { family, style, weight: String(weight), path };
+			} else {
+				return null;
 			}
-			return null;
 		},
 		concurrency,
 	);
