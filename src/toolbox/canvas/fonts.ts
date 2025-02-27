@@ -3,12 +3,11 @@ import path from "node:path";
 import { Job } from "../../jobs";
 import { registerFont } from "canvas";
 import AsyncPool from "../../util/AsyncPool";
-import { createWriteStream } from "node:fs";
-import { finished } from "node:stream/promises";
-import { Readable } from "node:stream";
-import * as unzipper from "unzipper";
-import { z } from "zod";
 import { multiply } from "../../util/multiply";
+import manifest from "../../../package.json";
+
+type SlugOf<S extends `@fontsource/${string}`> = S extends `@fontsource/${infer Slug}` ? Slug : never;
+type FontSlug = SlugOf<`@fontsource/${string}` & keyof typeof manifest.dependencies>;
 
 // fonts come from https://fontsource.org/
 export const fonts = [
@@ -24,7 +23,7 @@ export const fonts = [
 	{ family: "Anton", slug: "anton" },
 	{ family: "DSEG7 Classic", slug: "dseg7-classic" },
 	{ family: "Poiret One", slug: "poiret-one" },
-] as const satisfies { family: string; slug: string }[];
+] as const satisfies { family: string; slug: FontSlug }[];
 
 type Families<A extends { family: unknown }[]> = A extends []
 	? []
@@ -34,83 +33,43 @@ type Families<A extends { family: unknown }[]> = A extends []
 
 export const fontFamilies = fonts.map(({ family }) => family) as Families<typeof fonts>;
 
-const manifestSchema = z.array(
-	z.object({
-		family: z.string(),
-		weight: z.string(),
-		style: z.string(),
-		path: z.string(),
-	}),
-);
+type Manifest = { family: string; weight: string; style: string; path: string }[];
+
+const weights = [100, 200, 300, 400, 500, 600, 700, 800, 900];
+const styles = ["normal", "italic", "oblique"];
+const formats = ["woff2", "woff", "ttf"];
+const concurrency = 3;
+
+const exists = (filename: string): Promise<boolean> =>
+	fs
+		.stat(filename)
+		.then(() => true)
+		.catch(() => false);
+
+const listFonts = async ({ family, slug }: { family: string; slug: string }) => {
+	const fonts = await AsyncPool.map(
+		multiply(styles, weights),
+		async ([style, weight]) => {
+			for (const format of formats) {
+				const path = `node_modules/@fontsource/${slug}/files/${slug}-latin-${weight}-${style}.${format}`;
+				if (await exists(path)) {
+					return { family, style, weight: String(weight), path };
+				}
+			}
+			return null;
+		},
+		concurrency,
+	);
+	return fonts.flat().filter((font) => !!font);
+};
 
 export const loadFonts = {
 	callback: async () => {
-		const contents = await fs.readFile("fonts/manifest.json", "utf-8");
-		const manifest = manifestSchema.parse(JSON.parse(contents));
+		const families = await AsyncPool.map(fonts, listFonts, concurrency);
+		const manifest: Manifest = families.flat();
 		for (const { family, weight, style, ...entry } of manifest) {
 			registerFont(path.resolve(entry.path), { family, weight, style });
 		}
 	},
 	interval: Infinity,
 } satisfies Job;
-
-if (require.main === module) {
-	const weights = [100, 200, 300, 400, 500, 600, 700, 800, 900];
-	const styles = ["normal", "italic", "oblique"];
-	const concurrency = 3;
-
-	const exists = (filename: string): Promise<boolean> =>
-		fs
-			.stat(filename)
-			.then(() => true)
-			.catch(() => false);
-
-	const download = async (url: string, destination: string) => {
-		const zip = createWriteStream(destination, { flags: "w" });
-		const response = await fetch(url);
-		await finished(Readable.fromWeb(response.body!).pipe(zip));
-	};
-
-	const unzip = async (zipPath: string, destination: string) => {
-		const directory = await unzipper.Open.file(zipPath);
-		await directory.extract({ path: destination });
-	};
-
-	const listFonts = async ({ family, slug }: { family: string; slug: string }) => {
-		const fonts = await AsyncPool.map(
-			multiply(styles, weights),
-			async ([style, weight]) => {
-				const path = `fonts/${slug}/ttf/${slug}-latin-${weight}-${style}.ttf`;
-				if (await exists(path)) {
-					return { family, style, weight: String(weight), path };
-				} else {
-					return null;
-				}
-			},
-			concurrency,
-		);
-		return fonts.flat().filter((font) => !!font);
-	};
-
-	const downloadFamilyAndListFonts = async ({ family, slug }: { family: string; slug: string }) => {
-		const zipPath = `fonts/${slug}.zip`;
-		const fontUrl = `https://r2.fontsource.org/fonts/${slug}@latest/download.zip`;
-		const unzipPath = `fonts/${slug}`;
-
-		await download(fontUrl, zipPath);
-		await unzip(zipPath, unzipPath);
-		await fs.unlink(zipPath);
-
-		return listFonts({ family, slug });
-	};
-
-	const main = async () => {
-		if (!(await exists("fonts"))) {
-			await fs.mkdir("fonts");
-		}
-		const families = await AsyncPool.map(fonts, downloadFamilyAndListFonts, concurrency);
-		const manifest = families.flat() satisfies z.output<typeof manifestSchema>;
-		await fs.writeFile("fonts/manifest.json", JSON.stringify(manifest, null, "\t"));
-	};
-	void main();
-}
