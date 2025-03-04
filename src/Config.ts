@@ -41,5 +41,6 @@ export default z
 		MAX_COUNTER_IMG_WIDTH: z.coerce.number().positive().default(800),
 		DEFAULT_COUNTER_IMG_HEIGHT: z.coerce.number().positive().default(100),
 		MAX_COUNTER_IMG_HEIGHT: z.coerce.number().positive().default(400),
+		MAX_ACTIVE_LOGIN_TOKENS: z.coerce.number().int().positive().default(3),
 	})
 	.parse(process.env);

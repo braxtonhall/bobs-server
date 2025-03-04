@@ -29,6 +29,7 @@ import { createCounterSchema } from "../schema/createCounter";
 import { Behaviour, editActionSchema, FontStyle, MimeType, TextAlign, TextBaseline } from "../schema/action";
 import { editCounterSchema } from "../schema/editCounter";
 import { fontFamilies } from "../canvas/fonts";
+import slowDown from "express-slow-down";
 
 // TODO there is WAY too much repetition here... There must be a good way to get reuse a lot of code
 
@@ -75,17 +76,24 @@ const boxesViews = express()
 			)
 			.otherwise(() => res.sendStatus(400)),
 	)
-	.post("/:box/subscribe", async (req, res) =>
-		match(parse(subscribeSchema, req.body))
-			.with(Ok(P.select()), async ({ email }) =>
-				match(await addSubscriber({ address: email, boxId: req.params.box }))
-					.with(Ok(), () =>
-						res.redirect(`/boxes/${req.params.box}?${new URLSearchParams(req.body).toString()}`),
-					)
-					.with(Err(Failure.MISSING_DEPENDENCY), () => res.sendStatus(404))
-					.exhaustive(),
-			)
-			.otherwise(() => res.sendStatus(400)),
+	.post(
+		"/:box/subscribe",
+		slowDown({
+			windowMs: 15 * 60 * 1000, // 15 minutes
+			delayAfter: 5, // Allow 5 requests per 15 minutes.
+			delayMs: (hits) => hits * 100, // Add 100 ms of delay to every request after the 5th one.
+		}),
+		async (req, res) =>
+			match(parse(subscribeSchema, req.body))
+				.with(Ok(P.select()), async ({ email }) =>
+					match(await addSubscriber({ address: email, boxId: req.params.box }))
+						.with(Ok(), () =>
+							res.redirect(`/boxes/${req.params.box}?${new URLSearchParams(req.body).toString()}`),
+						)
+						.with(Err(Failure.MISSING_DEPENDENCY), () => res.sendStatus(404))
+						.exhaustive(),
+				)
+				.otherwise(() => res.sendStatus(400)),
 	);
 
 const counterViews = express().get("/:counter/actions/:action", async (req, res) => {
