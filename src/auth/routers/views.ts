@@ -5,6 +5,7 @@ import { checkLoggedIn } from "../middlewares/authenticate";
 import { authorizePayloadSchema } from "../schemas";
 import { Duration } from "luxon";
 import slowDown from "express-slow-down";
+import { emailSchema } from "../../toolbox/schema/email";
 
 const tokenMaxAge = Duration.fromObject({ hour: Config.API_TOKEN_EXPIRATION_HOURS }).toMillis();
 
@@ -37,8 +38,8 @@ export const views = express()
 		}),
 		checkLoggedIn,
 		async (req, res) => {
-			const email: string = req.body.email;
 			try {
+				const email = emailSchema.parse(req.body.email);
 				await login({
 					email,
 					next: typeof req.body.next === "string" ? req.body.next : undefined,
