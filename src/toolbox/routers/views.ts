@@ -30,10 +30,21 @@ import { Behaviour, editActionSchema, FontStyle, MimeType, TextAlign, TextBaseli
 import { editCounterSchema } from "../schema/editCounter";
 import { fontFamilies } from "../canvas/fonts";
 import slowDown from "express-slow-down";
+import { allowOrigin } from "../middlewares/allowOrigin";
+import counters from "../storage/counters";
+import boxes from "../storage/boxes";
 
 // TODO there is WAY too much repetition here... There must be a good way to get reuse a lot of code
 
 const boxesViews = express()
+	.all(
+		"/:box",
+		allowOrigin<{ box: string }>((params) => boxes.getOrigin(params.box)),
+	)
+	.all(
+		"/:box/*",
+		allowOrigin<{ box: string }>((params) => boxes.getOrigin(params.box)),
+	)
 	.get("/:box", async (req, res) =>
 		match([
 			// TODO use a parser that omits poorly formed queries
@@ -96,23 +107,28 @@ const boxesViews = express()
 				.otherwise(() => res.sendStatus(400)),
 	);
 
-const counterViews = express().get("/:counter/actions/:action", async (req, res) => {
-	match(
-		await updateAndGetCounterImage({
-			counterId: req.params.counter,
-			actionId: req.params.action,
-			ip: hashString(req.ip ?? ""),
-		}),
+const counterViews = express()
+	.all(
+		"/:counter/*",
+		allowOrigin<{ counter: string }>((params) => counters.getOrigin(params.counter)),
 	)
-		.with(Some(P.select()), ({ buffer, mime }) => {
-			res.writeHead(200, {
-				"Content-Type": `image/${mime}`,
-				"Content-Length": buffer.length,
-			});
-			res.end(buffer);
-		})
-		.otherwise(() => res.sendStatus(404));
-});
+	.get("/:counter/actions/:action", async (req, res) => {
+		match(
+			await updateAndGetCounterImage({
+				counterId: req.params.counter,
+				actionId: req.params.action,
+				ip: hashString(req.ip ?? ""),
+			}),
+		)
+			.with(Some(P.select()), ({ buffer, mime }) => {
+				res.writeHead(200, {
+					"Content-Type": `image/${mime}`,
+					"Content-Length": buffer.length,
+				});
+				res.end(buffer);
+			})
+			.otherwise(() => res.sendStatus(404));
+	});
 
 export const views = express().use("/boxes", boxesViews).use("/counters", counterViews);
 
