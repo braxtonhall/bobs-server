@@ -2,6 +2,12 @@
 <html lang="en">
 	<head>
 		<%- include('../partials/head'); %>
+		<script src="https://www.google.com/recaptcha/api.js"></script>
+		<script>
+			function onSubmit(_) {
+				document.getElementById("login-form").submit();
+			}
+		</script>
 	</head>
 	<body>
 		<header>
@@ -13,7 +19,7 @@
 				<h1>login</h1>
 				to begin logging in, enter your email and click submit. a one time password will be sent to your email
 				address.
-				<form class="login-form" method="post" action="/login">
+				<form id="login-form" class="login-form" method="post" action="/login">
 					<label for="email" class="email-label">email</label>
 					<input
 						class="email-input"
@@ -26,7 +32,14 @@
 						maxlength="<%=Config.DEFAULT_MAX_LENGTH%>"
 					/>
 					<input type="hidden" name="next" value="<%= query.next ?? '' %>" readonly />
-					<button class="login-submit">submit</button>
+					<button
+						class="login-submit g-recaptcha"
+						data-sitekey="<%=Config.RECAPTCHA_SITE_KEY%>"
+						data-callback="onSubmit"
+						data-action="submit"
+					>
+						submit
+					</button>
 				</form>
 			</div>
 		</main>
