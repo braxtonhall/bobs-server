@@ -2,10 +2,10 @@ import express from "express";
 import { authorize, completeVerification, deauthenticate, login } from "../operations";
 import Config from "../../Config";
 import { checkLoggedIn } from "../middlewares/authenticate";
-import { authorizePayloadSchema } from "../schemas";
+import { authorizePayloadSchema, loginPayloadSchema } from "../schemas";
 import { Duration } from "luxon";
 import slowDown from "express-slow-down";
-import { emailSchema } from "../../toolbox/schema/email";
+import { recaptcha } from "../middlewares/recaptcha";
 
 const tokenMaxAge = Duration.fromObject({ hour: Config.API_TOKEN_EXPIRATION_HOURS }).toMillis();
 
@@ -37,9 +37,10 @@ export const views = express()
 			delayMs: (hits) => hits * 1000, // Add 1s of delay to every request after the 2nd one.
 		}),
 		checkLoggedIn,
+		recaptcha,
 		async (req, res) => {
 			try {
-				const email = emailSchema.parse(req.body.email);
+				const { email } = loginPayloadSchema.parse(req.body);
 				await login({
 					email,
 					next: typeof req.body.next === "string" ? req.body.next : undefined,
@@ -70,7 +71,7 @@ export const views = express()
 			});
 		}
 	})
-	.get("/logout", async (req, res) => {
+	.get("/logout", async (_, res) => {
 		res.locals.logged && (await deauthenticate(res.locals.token).catch(() => {}));
 		res.clearCookie("token");
 		return res.redirect("/login");
