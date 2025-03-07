@@ -1,7 +1,7 @@
-import express, { NextFunction, Request, Response } from "express";
+import express, { Request, Response } from "express";
 import { match, P } from "ts-pattern";
 import boxes from "../storage/boxes";
-import { Option, Some } from "../../types/option";
+import { Some } from "../../types/option";
 import { getPosts } from "../operations/getPosts";
 import { hashString } from "../../util";
 import { createPostSchema } from "../schema/createPost";
@@ -14,21 +14,7 @@ import counters from "../storage/counters";
 import bodyParser from "body-parser";
 import slowDown from "express-slow-down";
 import { Behaviour } from "../schema/action";
-
-const allowOrigin =
-	<Params>(getOrigin: (params: Params) => Promise<Option<string>>) =>
-	async (req: Request<Params>, res: Response, next: NextFunction): Promise<unknown> =>
-		match(await getOrigin(req.params))
-			.with(Some(P.select()), (origin) => {
-				res.header("Access-Control-Allow-Origin", origin);
-				res.header("Access-Control-Allow-Credentials", "true");
-				res.header(
-					"Access-Control-Allow-Headers",
-					"Access-Control-Allow-Headers,Origin,Accept,X-Requested-With,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers",
-				);
-				return next();
-			})
-			.otherwise(() => next());
+import { allowOrigin } from "../middlewares/allowOrigin";
 
 const limiter = slowDown({
 	windowMs: 15 * 60 * 1000, // 15 minutes
