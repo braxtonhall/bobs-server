@@ -38,6 +38,10 @@ import boxes from "../storage/boxes";
 
 const boxesViews = express()
 	.all(
+		"/:box",
+		allowOrigin<{ box: string }>((params) => boxes.getOrigin(params.box)),
+	)
+	.all(
 		"/:box/*",
 		allowOrigin<{ box: string }>((params) => boxes.getOrigin(params.box)),
 	)
