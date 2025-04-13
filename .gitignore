@@ -8,3 +8,4 @@ coverage
 certs
 public/trek
 fonts
+.npmrc

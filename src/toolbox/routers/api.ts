@@ -28,7 +28,7 @@ const allowOrigin =
 				);
 				return next();
 			})
-			.otherwise(next);
+			.otherwise(() => next());
 
 const limiter = slowDown({
 	windowMs: 15 * 60 * 1000, // 15 minutes
@@ -80,7 +80,7 @@ const act = (behaviour: Behaviour) => async (req: Request, res: Response) =>
 			hashString(req.ip ?? ""),
 		),
 	)
-		.with(Some(P.select()), (value) => res.send(value))
+		.with(Some(P.select()), ({ value }) => res.send({ value }))
 		.otherwise(() => res.sendStatus(404));
 
 const countersApi = express()

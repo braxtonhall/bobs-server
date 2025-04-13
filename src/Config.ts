@@ -44,5 +44,8 @@ export default z
 		DEFAULT_COUNTER_IMG_HEIGHT: z.coerce.number().positive().default(100),
 		MAX_COUNTER_IMG_HEIGHT: z.coerce.number().positive().default(400),
 		TMDB_API_KEY: z.string(),
+		MAX_ACTIVE_LOGIN_TOKENS: z.coerce.number().int().positive().default(3),
+		RECAPTCHA_SITE_KEY: z.string(),
+		RECAPTCHA_SECRET_KEY: z.string(),
 	})
 	.parse(process.env);

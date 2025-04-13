@@ -2,8 +2,10 @@ import express from "express";
 import { authorize, completeVerification, deauthenticate, login } from "../operations.js";
 import Config from "../../Config.js";
 import { checkLoggedIn } from "../middlewares/authenticate.js";
-import { authorizePayloadSchema } from "../schemas.js";
+import { authorizePayloadSchema, loginPayloadSchema } from "../schemas.js";
 import { Duration } from "luxon";
+import slowDown from "express-slow-down";
+import { recaptcha } from "../middlewares/recaptcha.js";
 
 const tokenMaxAge = Duration.fromObject({ hour: Config.API_TOKEN_EXPIRATION_HOURS }).toMillis();
 
@@ -27,16 +29,30 @@ export const views = express()
 		}
 	})
 	.get("/login", checkLoggedIn, (req, res) => res.render("pages/login", { query: req.query, Config }))
-	.post("/login", checkLoggedIn, async (req, res) => {
-		const email: string = req.body.email;
-		await login({
-			email,
-			next: typeof req.body.next === "string" ? req.body.next : undefined,
-		}).catch(console.error);
-		return res.redirect(
-			`/authorize?${new URLSearchParams({ email, ...(req.body.next && { next: req.body.next }) })}`,
-		);
-	})
+	.post(
+		"/login",
+		slowDown({
+			windowMs: 15 * 60 * 1000, // 15 minutes
+			delayAfter: 2, // Allow 2 requests per 15 minutes.
+			delayMs: (hits) => hits * 1000, // Add 1s of delay to every request after the 2nd one.
+		}),
+		checkLoggedIn,
+		recaptcha,
+		async (req, res) => {
+			try {
+				const { email } = loginPayloadSchema.parse(req.body);
+				await login({
+					email,
+					next: typeof req.body.next === "string" ? req.body.next : undefined,
+				});
+				return res.redirect(
+					`/authorize?${new URLSearchParams({ email, ...(req.body.next && { next: req.body.next }) })}`,
+				);
+			} catch (error) {
+				return res.sendStatus(400);
+			}
+		},
+	)
 	.get("/authorize", checkLoggedIn, async (req, res) => {
 		const result = authorizePayloadSchema.safeParse(req.query);
 		if (!result.success) {
@@ -55,7 +71,7 @@ export const views = express()
 			});
 		}
 	})
-	.get("/logout", async (req, res) => {
+	.get("/logout", async (_, res) => {
 		res.locals.logged && (await deauthenticate(res.locals.token).catch(() => {}));
 		res.clearCookie("token");
 		return res.redirect("/login");

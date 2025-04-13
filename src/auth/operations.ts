@@ -182,8 +182,18 @@ export const completeVerification = async ({
 
 export const login = async ({ email: address, next }: { email: string; next?: string }) => {
 	await transaction(async () => {
-		const temporaryToken = randomUUID();
 		const expiration = DateTime.now().plus({ minute: Config.LOGIN_TOKEN_EXPIRATION_MIN }).toJSDate();
+		const existing = await db.token.count({
+			where: {
+				type: TokenType.LOGIN,
+				expiration: { gte: expiration },
+				email: { address },
+			},
+		});
+		if (existing > Config.MAX_ACTIVE_LOGIN_TOKENS) {
+			throw new Error("Too many active login tokens");
+		}
+		const temporaryToken = randomUUID();
 		const { email } = await db.token.create({
 			data: {
 				type: TokenType.LOGIN,
