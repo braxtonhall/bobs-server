@@ -1,0 +1,250 @@
+<head lang="en">
+	<%/* I don't understand why i can't use ejs in
+	<title />
+	*/%>
+	<title>bob's trek</title>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+	<script src="https://cdn.datatables.net/2.1.7/js/dataTables.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="https://cdn.datatables.net/2.1.7/css/dataTables.dataTables.min.css" />
+
+	<style>
+		.tos {
+			background-color: gold !important;
+		}
+		.tas {
+			background-color: bisque !important;
+		}
+		.tosm {
+			background-color: goldenrod !important;
+		}
+		.tng {
+			background-color: dodgerblue !important;
+		}
+		.tngm {
+			background-color: blue !important;
+		}
+		.ds9 {
+			background-color: lavender !important;
+		}
+		.voy {
+			background-color: tomato !important;
+		}
+		.ent {
+			background-color: mediumseagreen !important;
+		}
+		.episode {
+			cursor: pointer;
+		}
+		.card {
+			width: 100%;
+			border: dotted;
+			border-radius: 4px;
+			margin-bottom: 1em;
+		}
+
+		.dt-type-numeric {
+			max-width: 70px;
+		}
+	</style>
+</head>
+<body>
+	star trek
+	<pre> <%= JSON.stringify(locals, null, '\t') %> </pre>
+
+	<div class="container">
+		<h2>Dynamic Tabs</h2>
+		<p>
+			To make the tabs toggleable, add the data-toggle="tab" attribute to each link. Then add a .tab-pane class
+			with a unique ID for every tab and wrap them inside a div element with class .tab-content.
+		</p>
+
+		<ul class="nav nav-tabs">
+			<li class="active"><a data-toggle="tab" href="#watch">Watch</a></li>
+			<li><a data-toggle="tab" href="#random">Random</a></li>
+			<li><a data-toggle="tab" href="#activity">Activity</a></li>
+			<li><a data-toggle="tab" href="#list">List</a></li>
+			<li><a data-toggle="tab" href="#settings">Settings</a></li>
+		</ul>
+
+		<div class="tab-content">
+			<div id="watch" class="tab-pane fade in active">
+				<h3>Watch</h3>
+				<div id="watch-content" class="after-load" style="display: none">
+					<div class="card" id="last" style="display: none">last</div>
+					<div class="card" id="current" style="display: none">current</div>
+					<div class="card" id="next" style="display: none">next</div>
+					<div class="card" id="next-next" style="display: none">next next</div>
+				</div>
+			</div>
+			<div id="random" class="tab-pane fade">
+				<h3>Random</h3>
+				<p>Here is where you will see a random episode, and some buttons for "the pool"</p>
+			</div>
+			<div id="activity" class="tab-pane fade">
+				<h3>Activity</h3>
+				<p>Here is where you will see views from you and everyone else</p>
+			</div>
+			<div id="list" class="tab-pane fade">
+				<h3>List</h3>
+				<div class="after-load" style="display: none">
+					<div>
+						<button data-sort="bobs" class="episode-sort">sort by bob's sort</button>
+						<form id="series-filters"></form>
+						<table id="episodes">
+							<thead>
+								<tr>
+									<th>Series</th>
+									<th></th>
+									<th>Series</th>
+									<th>Season</th>
+									<th>Episode</th>
+									<th>Name</th>
+									<th>Stardate</th>
+									<th>Airdate</th>
+									<th>Sort</th>
+									<th>Count</th>
+								</tr>
+							</thead>
+							<tfoot>
+								<tr>
+									<th>Series</th>
+									<th>Abbr</th>
+									<th>Series</th>
+									<th>Season</th>
+									<th>Episode</th>
+									<th>Name</th>
+									<th>Stardate</th>
+									<th>Airdate</th>
+									<th>Sort</th>
+									<th>Count</th>
+								</tr>
+							</tfoot>
+							<tbody></tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<div id="settings" class="tab-pane fade">
+				<h3>Settings</h3>
+				<p>Here you can choose your settings, like what you consider a "spoiler" etc.</p>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		$(() => {
+			const $table = $("#episodes");
+			const $tbody = $("#episodes > tbody");
+			const $filters = $("#series-filters");
+			const headers = {
+				Authorization: "Bearer <%=locals.token%>",
+			};
+			fetch("https://<%=Config.HOST%>/api/trek/content", { headers })
+				.then((response) => response.json())
+				.then(({ episodes, series }) => {
+					for (const row of episodes) {
+						$tbody.append(
+							$("<tr>")
+								.attr("class", `episode ${row.seriesId.toLowerCase()}`)
+								.attr("data-episode", JSON.stringify(row))
+								.append(
+									$("<td>").text(row.seriesId),
+									$("<td>").text(row.abbreviation ?? row.seriesId),
+									$("<td>").text(series[row.seriesId].name),
+									$("<td>").text(Number(row.season) || ""),
+									$("<td>").text(Number(row.production) || ""),
+									$("<td>").text(row.name),
+									$("<td>").text(row.starDate),
+									$("<td>").text(row.release.slice(0, 10)),
+									$("<td>").text(row.bobsSort),
+									$("<td>").text(row.views.length),
+								),
+						);
+					}
+					for (const { id, name } of Object.values(series)) {
+						$filters.append(
+							$("<input>")
+								.attr("type", "checkbox")
+								.attr("checked", true)
+								.attr("class", "series-filter")
+								.attr("data-id", id),
+							$("<label>").text(name),
+						);
+					}
+					const table = $table.DataTable({
+						paging: false,
+						order: [[8, "asc"]],
+						columnDefs: [
+							{
+								target: 0,
+								orderable: false,
+								visible: false,
+								searchable: false,
+							},
+							{
+								target: 1,
+								orderable: false,
+							},
+							{
+								target: 2,
+								visible: false,
+							},
+							{
+								target: 8,
+								visible: false,
+								searchable: false,
+							},
+						],
+						initComplete: function () {
+							this.api()
+								.columns()
+								.every(function () {
+									let column = this;
+									let title = column.footer().textContent;
+
+									// Create input element
+									let input = document.createElement("input");
+									input.placeholder = title;
+									column.footer().replaceChildren(input);
+
+									// Event listener for user input
+									input.addEventListener("keyup", () => {
+										if (column.search() !== this.value) {
+											column.search(input.value).draw();
+										}
+									});
+								});
+						},
+					});
+					$table.on("click", "tbody tr", function (event) {
+						alert(JSON.stringify(table.row($(event.target)).data()));
+					});
+					const onDraw = () => {
+						const rows = Array.from(table.rows({ order: "current", search: "applied" }).data());
+						const firstUnseenIndex = rows.findIndex((row) => row[9] === "0");
+
+						const handle = (id, row) => {
+							const $element = $(id);
+							if (row) {
+								$element.show();
+							} else {
+								$element.hide();
+							}
+							$element.text(row?.[5] ?? "");
+						};
+						handle("#last", rows[firstUnseenIndex - 1]);
+						handle("#current", rows[firstUnseenIndex]);
+						handle("#next", rows[firstUnseenIndex + 1]);
+						handle("#next-next", rows[firstUnseenIndex + 2]);
+					};
+
+					table.on("draw", onDraw);
+					onDraw();
+					$(".after-load").show();
+				});
+		});
+	</script>
+</body>

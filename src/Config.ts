@@ -23,7 +23,7 @@ export default z
 		DELETION_TIME_MIN: z.coerce.number().nonnegative().default(10),
 		KARMA_KILL_THRESHOLD: z.coerce.number().positive().default(5),
 		EMAIL_DISABLED: z
-			.string()
+			.enum(["true", "false"])
 			.optional()
 			.transform((string) => string === "true"),
 		DEFAULT_MAX_LENGTH: z.coerce.number().int().positive().default(100),
@@ -36,11 +36,14 @@ export default z
 		SEASON_ARCHIVE_INTERVAL_HOURS: z.coerce.number().nonnegative().default(4),
 		MINIMUM_GAME_DAYS: z.coerce.number().nonnegative().default(7),
 		MINIMUM_GRACE_DAYS: z.coerce.number().nonnegative().default(7),
+		TREK_PROFILE_RECENTLY_MAX: z.coerce.number().positive().default(40),
+		TREK_FAVOURITES_MAX: z.coerce.number().positive().default(4),
 		NODE_ENV: z.enum(["development", "production", "test"]),
 		DEFAULT_COUNTER_IMG_WIDTH: z.coerce.number().positive().default(200),
 		MAX_COUNTER_IMG_WIDTH: z.coerce.number().positive().default(800),
 		DEFAULT_COUNTER_IMG_HEIGHT: z.coerce.number().positive().default(100),
 		MAX_COUNTER_IMG_HEIGHT: z.coerce.number().positive().default(400),
+		TMDB_API_KEY: z.string(),
 		MAX_ACTIVE_LOGIN_TOKENS: z.coerce.number().int().positive().default(3),
 		RECAPTCHA_SITE_KEY: z.string(),
 		RECAPTCHA_SECRET_KEY: z.string(),

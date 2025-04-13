@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { z } from "zod";
 import axios from "axios";
-import Config from "../../Config";
+import Config from "../../Config.js";
 
 const RESPONSE_KEY = "g-recaptcha-response";
 

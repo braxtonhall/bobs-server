@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { originSchema } from "./origin";
-import { stylesheetSchema } from "./stylesheet";
-import Config from "../../Config";
+import { originSchema } from "./origin.js";
+import { stylesheetSchema } from "./stylesheet.js";
+import Config from "../../Config.js";
 
 export const editBoxSchema = z.object({
 	stylesheet: stylesheetSchema.optional(),

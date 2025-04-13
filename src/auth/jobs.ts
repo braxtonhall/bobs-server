@@ -1,6 +1,6 @@
-import type { Job } from "../jobs";
-import Config from "../Config";
-import { db } from "../db";
+import type { Job } from "../jobs.js";
+import Config from "../Config.js";
+import { db } from "../db.js";
 import { DateTime, Duration } from "luxon";
 
 export const removeTokens = {

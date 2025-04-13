@@ -1,4 +1,4 @@
-import { db } from "../../db";
+import { db } from "../../db.js";
 
 type Environment = { address: string; cursor?: string; take: number };
 

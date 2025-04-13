@@ -1,5 +1,5 @@
 import { Participant } from "@prisma/client";
-import { db } from "../../db";
+import { db } from "../../db.js";
 
 type Environment = {
 	emailId: string;

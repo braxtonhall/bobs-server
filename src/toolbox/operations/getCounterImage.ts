@@ -1,11 +1,11 @@
-import counters from "../storage/counters";
+import counters from "../storage/counters.js";
 import { createCanvas } from "canvas";
 import { match, P } from "ts-pattern";
-import { None, Option, Some, map, unsafeUnwrap } from "../../types/option";
-import Config from "../../Config";
-import { HashedString } from "../../types/hashed";
-import { transaction } from "../../db";
-import { EditActionPayload, MimeType, TextAlign, TextBaseline } from "../schema/action";
+import { None, Option, Some, map, unsafeUnwrap } from "../../types/option.js";
+import Config from "../../Config.js";
+import { HashedString } from "../../types/hashed.js";
+import { transaction } from "../../db.js";
+import { EditActionPayload, MimeType, TextAlign, TextBaseline } from "../schema/action.js";
 import { Action } from "@prisma/client";
 
 const getCounterImage = (

@@ -1,0 +1,1848 @@
+{
+	"adult": false,
+	"backdrop_path": "/3LWAdtoKksNX9Crr7vD8hszQPS0.jpg",
+	"created_by": [
+		{
+			"id": 1745,
+			"credit_id": "52571e4019c2957114103cf5",
+			"name": "Gene Roddenberry",
+			"original_name": "Gene Roddenberry",
+			"gender": 2,
+			"profile_path": "/qY3gWqAMDrrvNVUrwZ8lSa4IKtS.jpg"
+		}
+	],
+	"episode_run_time": [24],
+	"first_air_date": "1973-09-08",
+	"genres": [
+		{
+			"id": 16,
+			"name": "Animation"
+		},
+		{
+			"id": 18,
+			"name": "Drama"
+		},
+		{
+			"id": 10765,
+			"name": "Sci-Fi & Fantasy"
+		}
+	],
+	"homepage": "https://intl.startrek.com/shows/star-trek-the-animated-series",
+	"id": 1992,
+	"in_production": false,
+	"languages": ["en"],
+	"last_air_date": "1974-10-12",
+	"last_episode_to_air": {
+		"id": 136187,
+		"name": "The Counter-Clock Incident",
+		"overview": "With Commodore Robert April (the first commander of the Enterprise) on board, Kirk pursues a ship plunging into a supernova, and enters a universe where time runs backwards.",
+		"vote_average": 7.5,
+		"vote_count": 4,
+		"air_date": "1974-10-12",
+		"episode_number": 6,
+		"episode_type": "finale",
+		"production_code": "22023",
+		"runtime": 24,
+		"season_number": 2,
+		"show_id": 1992,
+		"still_path": "/iskcnkxwRW9q4DOmhptOO1AuujE.jpg"
+	},
+	"name": "Star Trek",
+	"next_episode_to_air": null,
+	"networks": [
+		{
+			"id": 6,
+			"logo_path": "/cm111bsDVlYaC1foL0itvEI4yLG.png",
+			"name": "NBC",
+			"origin_country": "US"
+		}
+	],
+	"number_of_episodes": 22,
+	"number_of_seasons": 2,
+	"origin_country": ["US"],
+	"original_language": "en",
+	"original_name": "Star Trek",
+	"overview": "The animated adventures of Captain Kirk, Mr. Spock and the crew of the Starship Enterprise.",
+	"popularity": 19.463,
+	"poster_path": "/kvWG0bsLVQt23gZO6DI1mPosLxZ.jpg",
+	"production_companies": [
+		{
+			"id": 9223,
+			"logo_path": "/40qzTBM38vokoWhLKurficZ5syV.png",
+			"name": "Paramount Television",
+			"origin_country": "US"
+		},
+		{
+			"id": 1506,
+			"logo_path": "/kn81D1txpA73a90z7CWJPvlP6iP.png",
+			"name": "Filmation Associates",
+			"origin_country": "US"
+		},
+		{
+			"id": 41097,
+			"logo_path": null,
+			"name": "Norway Productions",
+			"origin_country": ""
+		}
+	],
+	"production_countries": [
+		{
+			"iso_3166_1": "US",
+			"name": "United States of America"
+		}
+	],
+	"seasons": [
+		{
+			"_id": "52571e3a19c29571141036e3",
+			"air_date": "2006-11-21",
+			"episodes": [
+				{
+					"air_date": "2006-11-21",
+					"crew": [],
+					"episode_number": 1,
+					"guest_stars": [],
+					"name": "Drawn to the Final Frontier: The Making of Star Trek: The Animated Series",
+					"overview": "The Making of Star Trek: The Animated Series",
+					"id": 136189,
+					"production_code": "",
+					"runtime": 24,
+					"season_number": 0,
+					"still_path": "/8DG383WLHqbiVgnqvbLiEK99M3r.jpg",
+					"vote_average": 0,
+					"vote_count": 0
+				},
+				{
+					"air_date": "2006-11-21",
+					"crew": [],
+					"episode_number": 2,
+					"guest_stars": [],
+					"name": "What's the Star Trek Connection",
+					"overview": "",
+					"id": 136190,
+					"production_code": "",
+					"runtime": 25,
+					"season_number": 0,
+					"still_path": "/m0xjCC9iqnspsDRI7vwK2gOdhZc.jpg",
+					"vote_average": 0,
+					"vote_count": 0
+				}
+			],
+			"name": "Specials",
+			"overview": "",
+			"id": 5914,
+			"poster_path": "/kN55PL2HVvIkYFYwcjN1AyRq0MY.jpg",
+			"season_number": 0,
+			"vote_average": 0,
+			"cast": [
+				{
+					"adult": false,
+					"gender": 2,
+					"id": 1748,
+					"known_for_department": "Acting",
+					"name": "William Shatner",
+					"original_name": "William Shatner",
+					"popularity": 15.556,
+					"profile_path": "/7lsjbNFMGj3kYYWoMk1LNnl4p5P.jpg",
+					"character": "James T. Kirk (voice)",
+					"credit_id": "52571e3f19c2957114103c15",
+					"order": 0
+				},
+				{
+					"adult": false,
+					"gender": 2,
+					"id": 1749,
+					"known_for_department": "Acting",
+					"name": "Leonard Nimoy",
+					"original_name": "Leonard Nimoy",
+					"popularity": 12.438,
+					"profile_path": "/eKhw3oK8ak5LDB29X9zQDLIqRhw.jpg",
+					"character": "Spock (voice)",
+					"credit_id": "52571e3f19c2957114103c31",
+					"order": 1
+				},
+				{
+					"adult": false,
+					"gender": 2,
+					"id": 1750,
+					"known_for_department": "Acting",
+					"name": "DeForest Kelley",
+					"original_name": "DeForest Kelley",
+					"popularity": 12.566,
+					"profile_path": "/qbcWkyGWvv5GKnbCqq9Pne09imA.jpg",
+					"character": "Leonard McCoy (voice)",
+					"credit_id": "52571e3f19c2957114103c4d",
+					"order": 2
+				},
+				{
+					"adult": false,
+					"gender": 2,
+					"id": 1752,
+					"known_for_department": "Acting",
+					"name": "George Takei",
+					"original_name": "George Takei",
+					"popularity": 5.915,
+					"profile_path": "/kfpkgfcuxcOrw2OCoAyQpPamQVv.jpg",
+					"character": "Hikaru Sulu (voice)",
+					"credit_id": "52571e3f19c2957114103c69",
+					"order": 3
+				},
+				{
+					"adult": false,
+					"gender": 1,
+					"id": 1753,
+					"known_for_department": "Acting",
+					"name": "Nichelle Nichols",
+					"original_name": "Nichelle Nichols",
+					"popularity": 6.943,
+					"profile_path": "/qg2dDkUWxW2amNacsnFKefZ6kWA.jpg",
+					"character": "Uhura (voice)",
+					"credit_id": "52571e3f19c2957114103c85",
+					"order": 4
+				},
+				{
+					"adult": false,
+					"gender": 2,
+					"id": 1751,
+					"known_for_department": "Acting",
+					"name": "James Doohan",
+					"original_name": "James Doohan",
+					"popularity": 9.652,
+					"profile_path": "/lsI15wIkmcKVTM8qu8ooukaLShi.jpg",
+					"character": "Montgomery Scott (voice)",
+					"credit_id": "52571e4019c2957114103ca1",
+					"order": 5
+				},
+				{
+					"adult": false,
+					"gender": 1,
+					"id": 1755,
+					"known_for_department": "Acting",
+					"name": "Majel Barrett",
+					"original_name": "Majel Barrett",
+					"popularity": 7.522,
+					"profile_path": "/uTnxd737sEFgc6hVrFgUC5TwzfW.jpg",
+					"character": "Christine Chapel / Starfleet Computer (voice)",
+					"credit_id": "52571e4019c2957114103cbd",
+					"order": 6
+				}
+			],
+			"crew": [
+				{
+					"adult": false,
+					"gender": 2,
+					"id": 1213644,
+					"known_for_department": "Production",
+					"name": "Norm Prescott",
+					"original_name": "Norm Prescott",
+					"popularity": 0.704,
+					"profile_path": null,
+					"credit_id": "52571e4019c2957114103d57",
+					"department": "Production",
+					"job": "Producer"
+				},
+				{
+					"adult": false,
+					"gender": 2,
+					"id": 176055,
+					"known_for_department": "Production",
+					"name": "Lou Scheimer",
+					"original_name": "Lou Scheimer",
+					"popularity": 1.626,
+					"profile_path": "/4tIrsOTcDVzE7LNyAIDr1fA5Q8z.jpg",
+					"credit_id": "52571e4019c2957114103d39",
+					"department": "Production",
+					"job": "Producer"
+				},
+				{
+					"adult": false,
+					"gender": 2,
+					"id": 1745,
+					"known_for_department": "Writing",
+					"name": "Gene Roddenberry",
+					"original_name": "Gene Roddenberry",
+					"popularity": 6.684,
+					"profile_path": "/qY3gWqAMDrrvNVUrwZ8lSa4IKtS.jpg",
+					"credit_id": "52571e4019c2957114103cfd",
+					"department": "Writing",
+					"job": "Writer"
+				},
+				{
+					"adult": false,
+					"gender": 2,
+					"id": 1745,
+					"known_for_department": "Writing",
+					"name": "Gene Roddenberry",
+					"original_name": "Gene Roddenberry",
+					"popularity": 6.684,
+					"profile_path": "/qY3gWqAMDrrvNVUrwZ8lSa4IKtS.jpg",
+					"credit_id": "52571e4019c2957114103d1b",
+					"department": "Production",
+					"job": "Producer"
+				},
+				{
+					"adult": false,
+					"gender": 1,
+					"id": 1214886,
+					"known_for_department": "Writing",
+					"name": "D.C. Fontana",
+					"original_name": "D.C. Fontana",
+					"popularity": 1.33,
+					"profile_path": null,
+					"credit_id": "52571e4019c2957114103d73",
+					"department": "Production",
+					"job": "Producer"
+				},
+				{
+					"adult": false,
+					"gender": 0,
+					"id": 3355786,
+					"known_for_department": "Art",
+					"name": "Don Christensen",
+					"original_name": "Don Christensen",
+					"popularity": 0.001,
+					"profile_path": null,
+					"credit_id": "61c3bac837b3a9001d769828",
+					"department": "Art",
+					"job": "Art Direction"
+				}
+			]
+		},
+		{
+			"_id": "52571e3a19c29571141036c0",
+			"air_date": "1973-09-08",
+			"episodes": [
+				{
+					"air_date": "1973-09-08",
+					"crew": [
+						{
+							"department": "Directing",
+							"job": "Director",
+							"credit_id": "52571e3a19c295711410373f",
+							"adult": false,
+							"gender": 2,
+							"id": 1221317,
+							"known_for_department": "Directing",
+							"name": "Hal Sutherland",
+							"original_name": "Hal Sutherland",
+							"popularity": 0.725,
+							"profile_path": "/dOVHWBBLlbXfi5KU7XOpVXaKKWK.jpg"
+						},
+						{
+							"department": "Writing",
+							"job": "Writer",
+							"credit_id": "52571e3b19c29571141037d9",
+							"adult": false,
+							"gender": 2,
+							"id": 15631,
+							"known_for_department": "Writing",
+							"name": "Samuel A. Peeples",
+							"original_name": "Samuel A. Peeples",
+							"popularity": 1.562,
+							"profile_path": null
+						}
+					],
+					"episode_number": 1,
+					"guest_stars": [],
+					"name": "Beyond the Farthest Star",
+					"overview": "In orbit around a dead star, the Enterprise comes across a huge starship inhabited by a parasitic life form that threatens the entire ship.",
+					"id": 136167,
+					"production_code": "22004",
+					"runtime": 24,
+					"season_number": 1,
+					"still_path": "/dQibE5mizZNGL1qXb79F5zhmKDo.jpg",
+					"vote_average": 7.455,
+					"vote_count": 11
+				},
+				{
+					"air_date": "1973-09-15",
+					"crew": [
+						{
+							"department": "Directing",
+							"job": "Director",
+							"credit_id": "52571e3a19c295711410373f",
+							"adult": false,
+							"gender": 2,
+							"id": 1221317,
+							"known_for_department": "Directing",
+							"name": "Hal Sutherland",
+							"original_name": "Hal Sutherland",
+							"popularity": 0.725,
+							"profile_path": "/dOVHWBBLlbXfi5KU7XOpVXaKKWK.jpg"
+						},
+						{
+							"department": "Writing",
+							"job": "Writer",
+							"credit_id": "52571e3a19c29571141037a7",
+							"adult": false,
+							"gender": 1,
+							"id": 1214886,
+							"known_for_department": "Writing",
+							"name": "D.C. Fontana",
+							"original_name": "D.C. Fontana",
+							"popularity": 1.33,
+							"profile_path": null
+						}
+					],
+					"episode_number": 2,
+					"guest_stars": [
+						{
+							"character": "Sarek (voice) (uncredited)",
+							"credit_id": "52571e3a19c2957114103783",
+							"order": 504,
+							"adult": false,
+							"gender": 2,
+							"id": 1820,
+							"known_for_department": "Acting",
+							"name": "Mark Lenard",
+							"original_name": "Mark Lenard",
+							"popularity": 4.442,
+							"profile_path": "/wnQUfhWRDSQ7533hKeLngmJRYDl.jpg"
+						},
+						{
+							"character": "Young Spock (voice) (uncredited)",
+							"credit_id": "6093d16ba06efe005998da5d",
+							"order": 508,
+							"adult": false,
+							"gender": 0,
+							"id": 3080931,
+							"known_for_department": "Acting",
+							"name": "Billy Simpson",
+							"original_name": "Billy Simpson",
+							"popularity": 0.001,
+							"profile_path": null
+						},
+						{
+							"character": "Young Sepek (voice) (uncredited)",
+							"credit_id": "6093d1973f8ede002a45d78a",
+							"order": 509,
+							"adult": false,
+							"gender": 0,
+							"id": 3080932,
+							"known_for_department": "Acting",
+							"name": "Keith Sutherland",
+							"original_name": "Keith Sutherland",
+							"popularity": 0.001,
+							"profile_path": null
+						}
+					],
+					"name": "Yesteryear",
+					"overview": "Spock travels back in time to prevent his death as a young Vulcan.",
+					"id": 136166,
+					"production_code": "22003",
+					"runtime": 24,
+					"season_number": 1,
+					"still_path": "/uYUA1GLMx8mKa4KzE5sfa3POyvL.jpg",
+					"vote_average": 7.7,
+					"vote_count": 10
+				},
+				{
+					"air_date": "1973-09-22",
+					"crew": [
+						{
+							"department": "Directing",
+							"job": "Director",
+							"credit_id": "52571e3a19c295711410373f",
+							"adult": false,
+							"gender": 2,
+							"id": 1221317,
+							"known_for_department": "Directing",
+							"name": "Hal Sutherland",
+							"original_name": "Hal Sutherland",
+							"popularity": 0.725,
+							"profile_path": "/dOVHWBBLlbXfi5KU7XOpVXaKKWK.jpg"
+						},
+						{
+							"job": "Writer",
+							"department": "Writing",
+							"credit_id": "5fd5966ea84ff700408ab19c",
+							"adult": false,
+							"gender": 2,
+							"id": 141194,
+							"known_for_department": "Directing",
+							"name": "Marc Daniels",
+							"original_name": "Marc Daniels",
+							"popularity": 1.298,
+							"profile_path": null
+						}
+					],
+					"episode_number": 3,
+					"guest_stars": [],
+					"name": "One of Our Planets Is Missing",
+					"overview": "The crew of the Enterprise races to find a way to stop a cloud from destroying inhabited planets.",
+					"id": 136163,
+					"production_code": "22007",
+					"runtime": 24,
+					"season_number": 1,
+					"still_path": "/paEw3P3ybMgW9IpFxOUJXto32RB.jpg",
+					"vote_average": 7.25,
+					"vote_count": 8
+				},
+				{
+					"air_date": "1973-09-29",
+					"crew": [
+						{
+							"department": "Directing",
+							"job": "Director",
+							"credit_id": "52571e3a19c295711410373f",
+							"adult": false,
+							"gender": 2,
+							"id": 1221317,
+							"known_for_department": "Directing",
+							"name": "Hal Sutherland",
+							"original_name": "Hal Sutherland",
+							"popularity": 0.725,
+							"profile_path": "/dOVHWBBLlbXfi5KU7XOpVXaKKWK.jpg"
+						},
+						{
+							"job": "Writer",
+							"department": "Writing",
+							"credit_id": "65cc39b5894ed6017c2740d2",
+							"adult": false,
+							"gender": 1,
+							"id": 1626846,
+							"known_for_department": "Writing",
+							"name": "Margaret Armen",
+							"original_name": "Margaret Armen",
+							"popularity": 0.49,
+							"profile_path": null
+						}
+					],
+					"episode_number": 4,
+					"guest_stars": [],
+					"name": "The Lorelei Signal",
+					"overview": "Female crew members must take over the Enterprise when the men are incapacitated by a race of sirens.",
+					"id": 136165,
+					"production_code": "22006",
+					"runtime": 24,
+					"season_number": 1,
+					"still_path": "/zp3bjqKkP26n4E23QJQNvOyrBVq.jpg",
+					"vote_average": 7,
+					"vote_count": 7
+				},
+				{
+					"air_date": "1973-10-06",
+					"crew": [
+						{
+							"department": "Directing",
+							"job": "Director",
+							"credit_id": "52571e3a19c295711410373f",
+							"adult": false,
+							"gender": 2,
+							"id": 1221317,
+							"known_for_department": "Directing",
+							"name": "Hal Sutherland",
+							"original_name": "Hal Sutherland",
+							"popularity": 0.725,
+							"profile_path": "/dOVHWBBLlbXfi5KU7XOpVXaKKWK.jpg"
+						},
+						{
+							"department": "Writing",
+							"job": "Writer",
+							"credit_id": "52571e3b19c295711410386f",
+							"adult": false,
+							"gender": 0,
+							"id": 1214913,
+							"known_for_department": "Writing",
+							"name": "David Gerrold",
+							"original_name": "David Gerrold",
+							"popularity": 0.974,
+							"profile_path": "/ldHCMRSMVvpvALukZQDvDqEXKdJ.jpg"
+						}
+					],
+					"episode_number": 5,
+					"guest_stars": [
+						{
+							"character": "Cyrano Jones (voice) (uncredited)",
+							"credit_id": "52571e3b19c295711410383b",
+							"order": 500,
+							"adult": false,
+							"gender": 2,
+							"id": 1947,
+							"known_for_department": "Acting",
+							"name": "Stanley Adams",
+							"original_name": "Stanley Adams",
+							"popularity": 8.879,
+							"profile_path": "/zcOvq0nh5llUce33ozlqD8r1Eyc.jpg"
+						},
+						{
+							"character": "Security Ensign (voice) (uncredited)",
+							"credit_id": "52571e3b19c2957114103851",
+							"order": 506,
+							"adult": false,
+							"gender": 0,
+							"id": 1214913,
+							"known_for_department": "Writing",
+							"name": "David Gerrold",
+							"original_name": "David Gerrold",
+							"popularity": 0.974,
+							"profile_path": "/ldHCMRSMVvpvALukZQDvDqEXKdJ.jpg"
+						}
+					],
+					"name": "More Tribbles, More Troubles",
+					"overview": "Cyrano Jones introduces tribbles that cannot reproduce.",
+					"id": 136169,
+					"production_code": "22001",
+					"runtime": 24,
+					"season_number": 1,
+					"still_path": "/rQfQmaeezO2IEo8vgsVV9hOUE2k.jpg",
+					"vote_average": 7.714,
+					"vote_count": 7
+				},
+				{
+					"air_date": "1973-10-13",
+					"crew": [
+						{
+							"department": "Directing",
+							"job": "Director",
+							"credit_id": "52571e3a19c295711410373f",
+							"adult": false,
+							"gender": 2,
+							"id": 1221317,
+							"known_for_department": "Directing",
+							"name": "Hal Sutherland",
+							"original_name": "Hal Sutherland",
+							"popularity": 0.725,
+							"profile_path": "/dOVHWBBLlbXfi5KU7XOpVXaKKWK.jpg"
+						},
+						{
+							"job": "Writer",
+							"department": "Writing",
+							"credit_id": "65cc3be14d23dd017c653237",
+							"adult": false,
+							"gender": 2,
+							"id": 1433440,
+							"known_for_department": "Writing",
+							"name": "James Schmerer",
+							"original_name": "James Schmerer",
+							"popularity": 0.717,
+							"profile_path": "/18a7AnHvV0Eg8LLFYEi6aewzeHU.jpg"
+						}
+					],
+					"episode_number": 6,
+					"guest_stars": [
+						{
+							"character": "Vendorian / Carter Winston (voice) (uncredited)",
+							"credit_id": "52571e3b19c2957114103803",
+							"order": 502,
+							"adult": false,
+							"gender": 2,
+							"id": 71146,
+							"known_for_department": "Acting",
+							"name": "Ted Knight",
+							"original_name": "Ted Knight",
+							"popularity": 6.501,
+							"profile_path": "/KQ1T3PD20c238GYwBQt6Ph7sFZ.jpg"
+						}
+					],
+					"name": "The Survivor",
+					"overview": "The Enterprise finds a long-lost explorer.",
+					"id": 136168,
+					"production_code": "22005",
+					"runtime": 24,
+					"season_number": 1,
+					"still_path": "/u1SXuOUIL17zKXJS0v5Q8zqzqvQ.jpg",
+					"vote_average": 7.2,
+					"vote_count": 6
+				},
+				{
+					"air_date": "1973-10-20",
+					"crew": [
+						{
+							"department": "Directing",
+							"job": "Director",
+							"credit_id": "52571e3a19c295711410373f",
+							"adult": false,
+							"gender": 2,
+							"id": 1221317,
+							"known_for_department": "Directing",
+							"name": "Hal Sutherland",
+							"original_name": "Hal Sutherland",
+							"popularity": 0.725,
+							"profile_path": "/dOVHWBBLlbXfi5KU7XOpVXaKKWK.jpg"
+						},
+						{
+							"department": "Writing",
+							"job": "Writer",
+							"credit_id": "52571e3b19c29571141038a1",
+							"adult": false,
+							"gender": 2,
+							"id": 1754,
+							"known_for_department": "Acting",
+							"name": "Walter Koenig",
+							"original_name": "Walter Koenig",
+							"popularity": 7.586,
+							"profile_path": "/zIZQwfxikwkPtZp8BqlzD1Gw2JC.jpg"
+						}
+					],
+					"episode_number": 7,
+					"guest_stars": [],
+					"name": "The Infinite Vulcan",
+					"overview": "A race of plant people, and their master, have a plan to force peace onto the galaxy.",
+					"id": 136170,
+					"production_code": "22002",
+					"runtime": 24,
+					"season_number": 1,
+					"still_path": "/A7sZDzuKK0zvj57F0DUU1xGfuuy.jpg",
+					"vote_average": 6.667,
+					"vote_count": 6
+				},
+				{
+					"air_date": "1973-10-27",
+					"crew": [
+						{
+							"department": "Directing",
+							"job": "Director",
+							"credit_id": "52571e3a19c295711410373f",
+							"adult": false,
+							"gender": 2,
+							"id": 1221317,
+							"known_for_department": "Directing",
+							"name": "Hal Sutherland",
+							"original_name": "Hal Sutherland",
+							"popularity": 0.725,
+							"profile_path": "/dOVHWBBLlbXfi5KU7XOpVXaKKWK.jpg"
+						},
+						{
+							"department": "Writing",
+							"job": "Writer",
+							"credit_id": "52571e3c19c29571141038ff",
+							"adult": false,
+							"gender": 2,
+							"id": 1220909,
+							"known_for_department": "Writing",
+							"name": "Larry Brody",
+							"original_name": "Larry Brody",
+							"popularity": 1.655,
+							"profile_path": null
+						}
+					],
+					"episode_number": 8,
+					"guest_stars": [
+						{
+							"character": "Asmodeus (voice) (uncredited)",
+							"credit_id": "52571e3b19c29571141038cb",
+							"order": 503,
+							"adult": false,
+							"gender": 2,
+							"id": 108277,
+							"known_for_department": "Acting",
+							"name": "Ed Bishop",
+							"original_name": "Ed Bishop",
+							"popularity": 5.576,
+							"profile_path": "/uLLoKf4BknxuF1SOSD0EBB4gSmc.jpg"
+						}
+					],
+					"name": "The Magicks of Megas-tu",
+					"overview": "At the center of the galaxy, the Enterprise discovers a race of powerful aliens.",
+					"id": 136171,
+					"production_code": "22009",
+					"runtime": 24,
+					"season_number": 1,
+					"still_path": "/zqg0m310rS2USDRlUUU2YBW12nm.jpg",
+					"vote_average": 7.25,
+					"vote_count": 4
+				},
+				{
+					"air_date": "1973-11-03",
+					"crew": [
+						{
+							"department": "Directing",
+							"job": "Director",
+							"credit_id": "52571e3a19c295711410373f",
+							"adult": false,
+							"gender": 2,
+							"id": 1221317,
+							"known_for_department": "Directing",
+							"name": "Hal Sutherland",
+							"original_name": "Hal Sutherland",
+							"popularity": 0.725,
+							"profile_path": "/dOVHWBBLlbXfi5KU7XOpVXaKKWK.jpg"
+						},
+						{
+							"department": "Writing",
+							"job": "Writer",
+							"credit_id": "52571e3c19c295711410393d",
+							"adult": false,
+							"gender": 2,
+							"id": 1227373,
+							"known_for_department": "Writing",
+							"name": "Chuck Menville",
+							"original_name": "Chuck Menville",
+							"popularity": 0.405,
+							"profile_path": null
+						}
+					],
+					"episode_number": 9,
+					"guest_stars": [],
+					"name": "Once Upon a Planet",
+					"overview": "Kirk returns to the \"shore leave\" planet, but it's not as peaceful as it was when they last saw it.",
+					"id": 136173,
+					"production_code": "22017",
+					"runtime": 24,
+					"season_number": 1,
+					"still_path": "/k5F96bT0KdRfTnElVQn5DVEbVm8.jpg",
+					"vote_average": 6.75,
+					"vote_count": 4
+				},
+				{
+					"air_date": "1973-11-10",
+					"crew": [
+						{
+							"department": "Directing",
+							"job": "Director",
+							"credit_id": "52571e3a19c295711410373f",
+							"adult": false,
+							"gender": 2,
+							"id": 1221317,
+							"known_for_department": "Directing",
+							"name": "Hal Sutherland",
+							"original_name": "Hal Sutherland",
+							"popularity": 0.725,
+							"profile_path": "/dOVHWBBLlbXfi5KU7XOpVXaKKWK.jpg"
+						},
+						{
+							"job": "Writer",
+							"department": "Writing",
+							"credit_id": "65cc3cb615c636012fe4b545",
+							"adult": false,
+							"gender": 2,
+							"id": 140458,
+							"known_for_department": "Writing",
+							"name": "Stephen Kandel",
+							"original_name": "Stephen Kandel",
+							"popularity": 2.362,
+							"profile_path": "/39ng7T9J2cRDNDmtyH2Ab1y9qKM.jpg"
+						}
+					],
+					"episode_number": 10,
+					"guest_stars": [
+						{
+							"character": "Harcourt Fenton Mudd (voice) (uncredited)",
+							"credit_id": "52571e3c19c29571141039c1",
+							"order": 501,
+							"adult": false,
+							"gender": 2,
+							"id": 122004,
+							"known_for_department": "Acting",
+							"name": "Roger C. Carmel",
+							"original_name": "Roger C. Carmel",
+							"popularity": 3.734,
+							"profile_path": "/6JZgOpDoYmjAomrfmvF5bfNoJbk.jpg"
+						}
+					],
+					"name": "Mudd's Passion",
+					"overview": "Space con artist Harry Mudd returns, selling a fake love potion.",
+					"id": 136178,
+					"production_code": "22008",
+					"runtime": 24,
+					"season_number": 1,
+					"still_path": "/4YGz8rZ5an3ES9w6FjoYE2L4GwR.jpg",
+					"vote_average": 7.2,
+					"vote_count": 5
+				},
+				{
+					"air_date": "1973-11-17",
+					"crew": [
+						{
+							"department": "Directing",
+							"job": "Director",
+							"credit_id": "52571e3a19c295711410373f",
+							"adult": false,
+							"gender": 2,
+							"id": 1221317,
+							"known_for_department": "Directing",
+							"name": "Hal Sutherland",
+							"original_name": "Hal Sutherland",
+							"popularity": 0.725,
+							"profile_path": "/dOVHWBBLlbXfi5KU7XOpVXaKKWK.jpg"
+						},
+						{
+							"department": "Writing",
+							"job": "Writer",
+							"credit_id": "52571e3c19c295711410396f",
+							"adult": false,
+							"gender": 2,
+							"id": 178275,
+							"known_for_department": "Writing",
+							"name": "Paul Schneider",
+							"original_name": "Paul Schneider",
+							"popularity": 0.674,
+							"profile_path": null
+						}
+					],
+					"episode_number": 11,
+					"guest_stars": [],
+					"name": "The Terratin Incident",
+					"overview": "The Enterprise crew begins to shrink after radiation exposure.",
+					"id": 136175,
+					"production_code": "22015",
+					"runtime": 24,
+					"season_number": 1,
+					"still_path": "/esuSWbXo0RHmPYGTfo1sMcQuDM3.jpg",
+					"vote_average": 7.2,
+					"vote_count": 5
+				},
+				{
+					"air_date": "1973-11-24",
+					"crew": [
+						{
+							"department": "Directing",
+							"job": "Director",
+							"credit_id": "52571e3a19c295711410373f",
+							"adult": false,
+							"gender": 2,
+							"id": 1221317,
+							"known_for_department": "Directing",
+							"name": "Hal Sutherland",
+							"original_name": "Hal Sutherland",
+							"popularity": 0.725,
+							"profile_path": "/dOVHWBBLlbXfi5KU7XOpVXaKKWK.jpg"
+						},
+						{
+							"job": "Writer",
+							"department": "Writing",
+							"credit_id": "65cc3da1ed2ac20186ae8c4e",
+							"adult": false,
+							"gender": 1,
+							"id": 95112,
+							"known_for_department": "Acting",
+							"name": "Joyce Perry",
+							"original_name": "Joyce Perry",
+							"popularity": 0.493,
+							"profile_path": null
+						}
+					],
+					"episode_number": 12,
+					"guest_stars": [],
+					"name": "The Time Trap",
+					"overview": "The Enterprise crew must work with Klingons to escape from a pocket universe.",
+					"id": 136179,
+					"production_code": "22010",
+					"runtime": 24,
+					"season_number": 1,
+					"still_path": "/sTEnZNtMrAoijLf5FnTWin9WAIO.jpg",
+					"vote_average": 7,
+					"vote_count": 4
+				},
+				{
+					"air_date": "1973-12-01",
+					"crew": [
+						{
+							"department": "Directing",
+							"job": "Director",
+							"credit_id": "52571e3a19c295711410373f",
+							"adult": false,
+							"gender": 2,
+							"id": 1221317,
+							"known_for_department": "Directing",
+							"name": "Hal Sutherland",
+							"original_name": "Hal Sutherland",
+							"popularity": 0.725,
+							"profile_path": "/dOVHWBBLlbXfi5KU7XOpVXaKKWK.jpg"
+						},
+						{
+							"job": "Writer",
+							"department": "Writing",
+							"credit_id": "65cc39b5894ed6017c2740d2",
+							"adult": false,
+							"gender": 1,
+							"id": 1626846,
+							"known_for_department": "Writing",
+							"name": "Margaret Armen",
+							"original_name": "Margaret Armen",
+							"popularity": 0.49,
+							"profile_path": null
+						}
+					],
+					"episode_number": 13,
+					"guest_stars": [
+						{
+							"character": "Lemus / Aquan Harvester (voice) (uncredited)",
+							"credit_id": "6093d2cafd4f800057f3ab6b",
+							"order": 510,
+							"adult": false,
+							"gender": 2,
+							"id": 176055,
+							"known_for_department": "Production",
+							"name": "Lou Scheimer",
+							"original_name": "Lou Scheimer",
+							"popularity": 1.626,
+							"profile_path": "/4tIrsOTcDVzE7LNyAIDr1fA5Q8z.jpg"
+						}
+					],
+					"name": "The Ambergris Element",
+					"overview": "While exploring the planet Argo, Kirk and Spock are turned into water breathers.",
+					"id": 136177,
+					"production_code": "22013",
+					"runtime": 24,
+					"season_number": 1,
+					"still_path": "/fkARxf5CRmMtYQE8rK39kqdEdlf.jpg",
+					"vote_average": 7.5,
+					"vote_count": 4
+				},
+				{
+					"air_date": "1973-12-15",
+					"crew": [
+						{
+							"department": "Directing",
+							"job": "Director",
+							"credit_id": "52571e3a19c295711410373f",
+							"adult": false,
+							"gender": 2,
+							"id": 1221317,
+							"known_for_department": "Directing",
+							"name": "Hal Sutherland",
+							"original_name": "Hal Sutherland",
+							"popularity": 0.725,
+							"profile_path": "/dOVHWBBLlbXfi5KU7XOpVXaKKWK.jpg"
+						},
+						{
+							"department": "Writing",
+							"job": "Writer",
+							"credit_id": "52571e3d19c2957114103a4b",
+							"adult": false,
+							"gender": 2,
+							"id": 1222464,
+							"known_for_department": "Writing",
+							"name": "Larry Niven",
+							"original_name": "Larry Niven",
+							"popularity": 0.407,
+							"profile_path": "/suLU1rNPhEA6y8VfezeyW6dqpUK.jpg"
+						}
+					],
+					"episode_number": 14,
+					"guest_stars": [],
+					"name": "The Slaver Weapon",
+					"overview": "Spock, Sulu, and Uhura discover a time capsule from an ancient and technologically advanced race. However, it draws some unwanted attention.",
+					"id": 136181,
+					"production_code": "22011",
+					"runtime": 24,
+					"season_number": 1,
+					"still_path": "/sIU0sxroS8LX5if3Yobucpme3B4.jpg",
+					"vote_average": 7,
+					"vote_count": 4
+				},
+				{
+					"air_date": "1974-01-05",
+					"crew": [
+						{
+							"department": "Directing",
+							"job": "Director",
+							"credit_id": "52571e3a19c295711410373f",
+							"adult": false,
+							"gender": 2,
+							"id": 1221317,
+							"known_for_department": "Directing",
+							"name": "Hal Sutherland",
+							"original_name": "Hal Sutherland",
+							"popularity": 0.725,
+							"profile_path": "/dOVHWBBLlbXfi5KU7XOpVXaKKWK.jpg"
+						},
+						{
+							"job": "Writer",
+							"department": "Writing",
+							"credit_id": "65cc3fc6fba62501640112d4",
+							"adult": false,
+							"gender": 2,
+							"id": 131748,
+							"known_for_department": "Writing",
+							"name": "David P. Harmon",
+							"original_name": "David P. Harmon",
+							"popularity": 1.191,
+							"profile_path": null
+						}
+					],
+					"episode_number": 15,
+					"guest_stars": [],
+					"name": "The Eye of the Beholder",
+					"overview": "Telepathic aliens put Kirk, Spock and McCoy in a zoo.",
+					"id": 136180,
+					"production_code": "22016",
+					"runtime": 24,
+					"season_number": 1,
+					"still_path": "/oLKwTOPxqYT7DbftlSzGUoinrgF.jpg",
+					"vote_average": 8.25,
+					"vote_count": 4
+				},
+				{
+					"air_date": "1974-01-12",
+					"crew": [
+						{
+							"department": "Directing",
+							"job": "Director",
+							"credit_id": "52571e3a19c295711410373f",
+							"adult": false,
+							"gender": 2,
+							"id": 1221317,
+							"known_for_department": "Directing",
+							"name": "Hal Sutherland",
+							"original_name": "Hal Sutherland",
+							"popularity": 0.725,
+							"profile_path": "/dOVHWBBLlbXfi5KU7XOpVXaKKWK.jpg"
+						},
+						{
+							"job": "Writer",
+							"department": "Writing",
+							"credit_id": "65cc3cb615c636012fe4b545",
+							"adult": false,
+							"gender": 2,
+							"id": 140458,
+							"known_for_department": "Writing",
+							"name": "Stephen Kandel",
+							"original_name": "Stephen Kandel",
+							"popularity": 2.362,
+							"profile_path": "/39ng7T9J2cRDNDmtyH2Ab1y9qKM.jpg"
+						}
+					],
+					"episode_number": 16,
+					"guest_stars": [
+						{
+							"character": "EM / 3 / Green (voice) (uncredited)",
+							"credit_id": "6093d30f3fe797002902a0ed",
+							"order": 511,
+							"adult": false,
+							"gender": 0,
+							"id": 1214913,
+							"known_for_department": "Writing",
+							"name": "David Gerrold",
+							"original_name": "David Gerrold",
+							"popularity": 0.974,
+							"profile_path": "/ldHCMRSMVvpvALukZQDvDqEXKdJ.jpg"
+						},
+						{
+							"character": "Lara / Vedala Female (voice) (uncredited)",
+							"credit_id": "6093d34054508d005919e67f",
+							"order": 512,
+							"adult": false,
+							"gender": 0,
+							"id": 3080938,
+							"known_for_department": "Acting",
+							"name": "Jane Webb",
+							"original_name": "Jane Webb",
+							"popularity": 0.001,
+							"profile_path": null
+						}
+					],
+					"name": "The Jihad",
+					"overview": "Kirk and Spock are recruited for a heist to recover a stolen relic, which if not recovered could spark an galactic jihad.",
+					"id": 136182,
+					"production_code": "22014",
+					"runtime": 24,
+					"season_number": 1,
+					"still_path": "/wGRJY0b5EnNFBsNv6AIbQLGlYAf.jpg",
+					"vote_average": 6.75,
+					"vote_count": 4
+				}
+			],
+			"name": "Season 1",
+			"overview": "",
+			"id": 5912,
+			"poster_path": "/4HzSH3fsCqA09HEXSyQNmtD5MhY.jpg",
+			"season_number": 1,
+			"vote_average": 7.2,
+			"cast": [
+				{
+					"adult": false,
+					"gender": 2,
+					"id": 1748,
+					"known_for_department": "Acting",
+					"name": "William Shatner",
+					"original_name": "William Shatner",
+					"popularity": 15.556,
+					"profile_path": "/7lsjbNFMGj3kYYWoMk1LNnl4p5P.jpg",
+					"character": "James T. Kirk (voice)",
+					"credit_id": "52571e3f19c2957114103c15",
+					"order": 0
+				},
+				{
+					"adult": false,
+					"gender": 2,
+					"id": 1749,
+					"known_for_department": "Acting",
+					"name": "Leonard Nimoy",
+					"original_name": "Leonard Nimoy",
+					"popularity": 12.438,
+					"profile_path": "/eKhw3oK8ak5LDB29X9zQDLIqRhw.jpg",
+					"character": "Spock (voice)",
+					"credit_id": "52571e3f19c2957114103c31",
+					"order": 1
+				},
+				{
+					"adult": false,
+					"gender": 2,
+					"id": 1750,
+					"known_for_department": "Acting",
+					"name": "DeForest Kelley",
+					"original_name": "DeForest Kelley",
+					"popularity": 12.566,
+					"profile_path": "/qbcWkyGWvv5GKnbCqq9Pne09imA.jpg",
+					"character": "Leonard McCoy (voice)",
+					"credit_id": "52571e3f19c2957114103c4d",
+					"order": 2
+				},
+				{
+					"adult": false,
+					"gender": 2,
+					"id": 1752,
+					"known_for_department": "Acting",
+					"name": "George Takei",
+					"original_name": "George Takei",
+					"popularity": 5.915,
+					"profile_path": "/kfpkgfcuxcOrw2OCoAyQpPamQVv.jpg",
+					"character": "Hikaru Sulu (voice)",
+					"credit_id": "52571e3f19c2957114103c69",
+					"order": 3
+				},
+				{
+					"adult": false,
+					"gender": 1,
+					"id": 1753,
+					"known_for_department": "Acting",
+					"name": "Nichelle Nichols",
+					"original_name": "Nichelle Nichols",
+					"popularity": 6.943,
+					"profile_path": "/qg2dDkUWxW2amNacsnFKefZ6kWA.jpg",
+					"character": "Uhura (voice)",
+					"credit_id": "52571e3f19c2957114103c85",
+					"order": 4
+				},
+				{
+					"adult": false,
+					"gender": 2,
+					"id": 1751,
+					"known_for_department": "Acting",
+					"name": "James Doohan",
+					"original_name": "James Doohan",
+					"popularity": 9.652,
+					"profile_path": "/lsI15wIkmcKVTM8qu8ooukaLShi.jpg",
+					"character": "Montgomery Scott (voice)",
+					"credit_id": "52571e4019c2957114103ca1",
+					"order": 5
+				},
+				{
+					"adult": false,
+					"gender": 1,
+					"id": 1755,
+					"known_for_department": "Acting",
+					"name": "Majel Barrett",
+					"original_name": "Majel Barrett",
+					"popularity": 7.522,
+					"profile_path": "/uTnxd737sEFgc6hVrFgUC5TwzfW.jpg",
+					"character": "Christine Chapel / Starfleet Computer (voice)",
+					"credit_id": "52571e4019c2957114103cbd",
+					"order": 6
+				}
+			],
+			"crew": [
+				{
+					"adult": false,
+					"gender": 2,
+					"id": 1745,
+					"known_for_department": "Writing",
+					"name": "Gene Roddenberry",
+					"original_name": "Gene Roddenberry",
+					"popularity": 6.684,
+					"profile_path": "/qY3gWqAMDrrvNVUrwZ8lSa4IKtS.jpg",
+					"credit_id": "52571e4019c2957114103cfd",
+					"department": "Writing",
+					"job": "Writer"
+				},
+				{
+					"adult": false,
+					"gender": 2,
+					"id": 1745,
+					"known_for_department": "Writing",
+					"name": "Gene Roddenberry",
+					"original_name": "Gene Roddenberry",
+					"popularity": 6.684,
+					"profile_path": "/qY3gWqAMDrrvNVUrwZ8lSa4IKtS.jpg",
+					"credit_id": "52571e4019c2957114103d1b",
+					"department": "Production",
+					"job": "Producer"
+				},
+				{
+					"adult": false,
+					"gender": 2,
+					"id": 176055,
+					"known_for_department": "Production",
+					"name": "Lou Scheimer",
+					"original_name": "Lou Scheimer",
+					"popularity": 1.626,
+					"profile_path": "/4tIrsOTcDVzE7LNyAIDr1fA5Q8z.jpg",
+					"credit_id": "52571e4019c2957114103d39",
+					"department": "Production",
+					"job": "Producer"
+				},
+				{
+					"adult": false,
+					"gender": 2,
+					"id": 1213644,
+					"known_for_department": "Production",
+					"name": "Norm Prescott",
+					"original_name": "Norm Prescott",
+					"popularity": 0.704,
+					"profile_path": null,
+					"credit_id": "52571e4019c2957114103d57",
+					"department": "Production",
+					"job": "Producer"
+				},
+				{
+					"adult": false,
+					"gender": 1,
+					"id": 1214886,
+					"known_for_department": "Writing",
+					"name": "D.C. Fontana",
+					"original_name": "D.C. Fontana",
+					"popularity": 1.33,
+					"profile_path": null,
+					"credit_id": "52571e4019c2957114103d73",
+					"department": "Production",
+					"job": "Producer"
+				},
+				{
+					"adult": false,
+					"gender": 0,
+					"id": 3355786,
+					"known_for_department": "Art",
+					"name": "Don Christensen",
+					"original_name": "Don Christensen",
+					"popularity": 0.001,
+					"profile_path": null,
+					"credit_id": "61c3bac837b3a9001d769828",
+					"department": "Art",
+					"job": "Art Direction"
+				}
+			]
+		},
+		{
+			"_id": "52571e3a19c29571141036d3",
+			"air_date": "1974-09-07",
+			"episodes": [
+				{
+					"air_date": "1974-09-07",
+					"crew": [
+						{
+							"department": "Directing",
+							"job": "Director",
+							"credit_id": "52571e3d19c2957114103ac3",
+							"adult": false,
+							"gender": 2,
+							"id": 162311,
+							"known_for_department": "Directing",
+							"name": "Bill Reed",
+							"original_name": "Bill Reed",
+							"popularity": 1.132,
+							"profile_path": "/tEfTMPkMUqnmpnSrsBFxeRCrgwc.jpg"
+						},
+						{
+							"job": "Writer",
+							"department": "Writing",
+							"credit_id": "65cc33f0fba625017d015aef",
+							"adult": false,
+							"gender": 2,
+							"id": 4535263,
+							"known_for_department": "Writing",
+							"name": "Howard Weinstein",
+							"original_name": "Howard Weinstein",
+							"popularity": 0.001,
+							"profile_path": "/qoia397NQasPEYFncLh6QzCY7zz.jpg"
+						}
+					],
+					"episode_number": 1,
+					"guest_stars": [
+						{
+							"character": "Orion lieutenant / Orion ensign (voice) (uncredited)",
+							"credit_id": "6093d4f5a06efe0042171e79",
+							"order": 513,
+							"adult": false,
+							"gender": 2,
+							"id": 1213644,
+							"known_for_department": "Production",
+							"name": "Norm Prescott",
+							"original_name": "Norm Prescott",
+							"popularity": 0.704,
+							"profile_path": null
+						}
+					],
+					"name": "The Pirates of Orion",
+					"overview": "With Spock stricken down by a fatal disease, the Enterprise must track down the drug that can cure him before it is too late.",
+					"id": 136185,
+					"production_code": "22020",
+					"runtime": 24,
+					"season_number": 2,
+					"still_path": "/9FAjUHiW4M3rSbG9RxGh48t14Va.jpg",
+					"vote_average": 7.167,
+					"vote_count": 6
+				},
+				{
+					"air_date": "1974-09-14",
+					"crew": [
+						{
+							"department": "Writing",
+							"job": "Writer",
+							"credit_id": "52571e3b19c295711410386f",
+							"adult": false,
+							"gender": 0,
+							"id": 1214913,
+							"known_for_department": "Writing",
+							"name": "David Gerrold",
+							"original_name": "David Gerrold",
+							"popularity": 0.974,
+							"profile_path": "/ldHCMRSMVvpvALukZQDvDqEXKdJ.jpg"
+						},
+						{
+							"department": "Directing",
+							"job": "Director",
+							"credit_id": "52571e3d19c2957114103ac3",
+							"adult": false,
+							"gender": 2,
+							"id": 162311,
+							"known_for_department": "Directing",
+							"name": "Bill Reed",
+							"original_name": "Bill Reed",
+							"popularity": 1.132,
+							"profile_path": "/tEfTMPkMUqnmpnSrsBFxeRCrgwc.jpg"
+						}
+					],
+					"episode_number": 2,
+					"guest_stars": [],
+					"name": "Bem",
+					"overview": "The Enterprise crew is joined by a unpredictable alien called Ari bn Bem, an independent observer from the planet Pandro.",
+					"id": 136184,
+					"production_code": "22018",
+					"runtime": 24,
+					"season_number": 2,
+					"still_path": "/3oKdgiGPXPreQPuxcYpg14doUsz.jpg",
+					"vote_average": 6.25,
+					"vote_count": 5
+				},
+				{
+					"air_date": "1974-09-21",
+					"crew": [
+						{
+							"department": "Writing",
+							"job": "Writer",
+							"credit_id": "52571e3c19c295711410393d",
+							"adult": false,
+							"gender": 2,
+							"id": 1227373,
+							"known_for_department": "Writing",
+							"name": "Chuck Menville",
+							"original_name": "Chuck Menville",
+							"popularity": 0.405,
+							"profile_path": null
+						},
+						{
+							"department": "Directing",
+							"job": "Director",
+							"credit_id": "52571e3d19c2957114103ac3",
+							"adult": false,
+							"gender": 2,
+							"id": 162311,
+							"known_for_department": "Directing",
+							"name": "Bill Reed",
+							"original_name": "Bill Reed",
+							"popularity": 1.132,
+							"profile_path": "/tEfTMPkMUqnmpnSrsBFxeRCrgwc.jpg"
+						}
+					],
+					"episode_number": 3,
+					"guest_stars": [
+						{
+							"character": "Romulan Crewman (voice) (uncredited)",
+							"credit_id": "52571e3d19c2957114103aa3",
+							"order": 505,
+							"adult": false,
+							"gender": 2,
+							"id": 176055,
+							"known_for_department": "Production",
+							"name": "Lou Scheimer",
+							"original_name": "Lou Scheimer",
+							"popularity": 1.626,
+							"profile_path": "/4tIrsOTcDVzE7LNyAIDr1fA5Q8z.jpg"
+						},
+						{
+							"character": "Romulan Commander (voice) (uncredited)",
+							"credit_id": "52571e3e19c2957114103b41",
+							"order": 507,
+							"adult": false,
+							"gender": 2,
+							"id": 1213644,
+							"known_for_department": "Production",
+							"name": "Norm Prescott",
+							"original_name": "Norm Prescott",
+							"popularity": 0.704,
+							"profile_path": null
+						}
+					],
+					"name": "The Practical Joker",
+					"overview": "The computer of the Enterprise gains partial sentience and starts playing practical jokes on the crew.",
+					"id": 136186,
+					"production_code": "22021",
+					"runtime": 24,
+					"season_number": 2,
+					"still_path": "/8sVUts5Vns2JFWoeNcqrX0GJovA.jpg",
+					"vote_average": 7.667,
+					"vote_count": 4
+				},
+				{
+					"air_date": "1974-09-28",
+					"crew": [
+						{
+							"department": "Directing",
+							"job": "Director",
+							"credit_id": "52571e3d19c2957114103ac3",
+							"adult": false,
+							"gender": 2,
+							"id": 162311,
+							"known_for_department": "Directing",
+							"name": "Bill Reed",
+							"original_name": "Bill Reed",
+							"popularity": 1.132,
+							"profile_path": "/tEfTMPkMUqnmpnSrsBFxeRCrgwc.jpg"
+						},
+						{
+							"job": "Writer",
+							"department": "Writing",
+							"credit_id": "65cba14212970c0148c57f97",
+							"adult": false,
+							"gender": 0,
+							"id": 4451267,
+							"known_for_department": "Writing",
+							"name": "Dario Finelli",
+							"original_name": "Dario Finelli",
+							"popularity": 0.001,
+							"profile_path": null
+						}
+					],
+					"episode_number": 4,
+					"guest_stars": [
+						{
+							"character": "Demos / Dramian Guard (voice) (uncredited)",
+							"credit_id": "6093d5535f4b73002a9bde94",
+							"order": 514,
+							"adult": false,
+							"gender": 2,
+							"id": 176055,
+							"known_for_department": "Production",
+							"name": "Lou Scheimer",
+							"original_name": "Lou Scheimer",
+							"popularity": 1.626,
+							"profile_path": "/4tIrsOTcDVzE7LNyAIDr1fA5Q8z.jpg"
+						}
+					],
+					"name": "Albatross",
+					"overview": "Dr. McCoy is arrested and held responsible for causing a plague that ravaged the planet Dramia II, where he performed a mass-innoculation 19 years earlier.",
+					"id": 136183,
+					"production_code": "22019",
+					"runtime": 24,
+					"season_number": 2,
+					"still_path": "/lt4pBfEnJa5DOR6dPCbakYwgmz9.jpg",
+					"vote_average": 7,
+					"vote_count": 4
+				},
+				{
+					"air_date": "1974-10-05",
+					"crew": [
+						{
+							"department": "Directing",
+							"job": "Director",
+							"credit_id": "52571e3d19c2957114103ac3",
+							"adult": false,
+							"gender": 2,
+							"id": 162311,
+							"known_for_department": "Directing",
+							"name": "Bill Reed",
+							"original_name": "Bill Reed",
+							"popularity": 1.132,
+							"profile_path": "/tEfTMPkMUqnmpnSrsBFxeRCrgwc.jpg"
+						},
+						{
+							"job": "Writer",
+							"department": "Writing",
+							"credit_id": "54fb92e192514123a0000050",
+							"adult": false,
+							"gender": 2,
+							"id": 1213955,
+							"known_for_department": "Writing",
+							"name": "David Wise",
+							"original_name": "David Wise",
+							"popularity": 1.149,
+							"profile_path": "/eRJE41pLdtUOtGiqS0C2AewtEvY.jpg"
+						},
+						{
+							"job": "Writer",
+							"department": "Writing",
+							"credit_id": "65cc2fe8e210230162c2e7cb",
+							"adult": false,
+							"gender": 0,
+							"id": 4051579,
+							"known_for_department": "Writing",
+							"name": "Russell Bates",
+							"original_name": "Russell Bates",
+							"popularity": 0.001,
+							"profile_path": null
+						}
+					],
+					"episode_number": 5,
+					"guest_stars": [],
+					"name": "How Sharper Than a Serpent's Tooth",
+					"overview": "The Enterprise runs into a being that once visited Earth and influenced the Mayan culture.",
+					"id": 136188,
+					"production_code": "22022",
+					"runtime": 24,
+					"season_number": 2,
+					"still_path": "/rHZfgfFTcm8we1OOpdh1yFLxJRZ.jpg",
+					"vote_average": 7.5,
+					"vote_count": 4
+				},
+				{
+					"air_date": "1974-10-12",
+					"crew": [
+						{
+							"department": "Directing",
+							"job": "Director",
+							"credit_id": "52571e3d19c2957114103ac3",
+							"adult": false,
+							"gender": 2,
+							"id": 162311,
+							"known_for_department": "Directing",
+							"name": "Bill Reed",
+							"original_name": "Bill Reed",
+							"popularity": 1.132,
+							"profile_path": "/tEfTMPkMUqnmpnSrsBFxeRCrgwc.jpg"
+						},
+						{
+							"department": "Writing",
+							"job": "Writer",
+							"credit_id": "52571e3f19c2957114103b9f",
+							"adult": false,
+							"gender": 2,
+							"id": 1219371,
+							"known_for_department": "Writing",
+							"name": "Fred Bronson",
+							"original_name": "Fred Bronson",
+							"popularity": 0.316,
+							"profile_path": null
+						}
+					],
+					"episode_number": 6,
+					"guest_stars": [],
+					"name": "The Counter-Clock Incident",
+					"overview": "With Commodore Robert April (the first commander of the Enterprise) on board, Kirk pursues a ship plunging into a supernova, and enters a universe where time runs backwards.",
+					"id": 136187,
+					"production_code": "22023",
+					"runtime": 24,
+					"season_number": 2,
+					"still_path": "/iskcnkxwRW9q4DOmhptOO1AuujE.jpg",
+					"vote_average": 7.5,
+					"vote_count": 4
+				}
+			],
+			"name": "Season 2",
+			"overview": "",
+			"id": 5913,
+			"poster_path": "/wiRoqHvTUNeBGbVRWkpAkAJGreQ.jpg",
+			"season_number": 2,
+			"vote_average": 7.2,
+			"cast": [
+				{
+					"adult": false,
+					"gender": 2,
+					"id": 1748,
+					"known_for_department": "Acting",
+					"name": "William Shatner",
+					"original_name": "William Shatner",
+					"popularity": 15.556,
+					"profile_path": "/7lsjbNFMGj3kYYWoMk1LNnl4p5P.jpg",
+					"character": "James T. Kirk (voice)",
+					"credit_id": "52571e3f19c2957114103c15",
+					"order": 0
+				},
+				{
+					"adult": false,
+					"gender": 2,
+					"id": 1749,
+					"known_for_department": "Acting",
+					"name": "Leonard Nimoy",
+					"original_name": "Leonard Nimoy",
+					"popularity": 12.438,
+					"profile_path": "/eKhw3oK8ak5LDB29X9zQDLIqRhw.jpg",
+					"character": "Spock (voice)",
+					"credit_id": "52571e3f19c2957114103c31",
+					"order": 1
+				},
+				{
+					"adult": false,
+					"gender": 2,
+					"id": 1750,
+					"known_for_department": "Acting",
+					"name": "DeForest Kelley",
+					"original_name": "DeForest Kelley",
+					"popularity": 12.566,
+					"profile_path": "/qbcWkyGWvv5GKnbCqq9Pne09imA.jpg",
+					"character": "Leonard McCoy (voice)",
+					"credit_id": "52571e3f19c2957114103c4d",
+					"order": 2
+				},
+				{
+					"adult": false,
+					"gender": 2,
+					"id": 1752,
+					"known_for_department": "Acting",
+					"name": "George Takei",
+					"original_name": "George Takei",
+					"popularity": 5.915,
+					"profile_path": "/kfpkgfcuxcOrw2OCoAyQpPamQVv.jpg",
+					"character": "Hikaru Sulu (voice)",
+					"credit_id": "52571e3f19c2957114103c69",
+					"order": 3
+				},
+				{
+					"adult": false,
+					"gender": 1,
+					"id": 1753,
+					"known_for_department": "Acting",
+					"name": "Nichelle Nichols",
+					"original_name": "Nichelle Nichols",
+					"popularity": 6.943,
+					"profile_path": "/qg2dDkUWxW2amNacsnFKefZ6kWA.jpg",
+					"character": "Uhura (voice)",
+					"credit_id": "52571e3f19c2957114103c85",
+					"order": 4
+				},
+				{
+					"adult": false,
+					"gender": 2,
+					"id": 1751,
+					"known_for_department": "Acting",
+					"name": "James Doohan",
+					"original_name": "James Doohan",
+					"popularity": 9.652,
+					"profile_path": "/lsI15wIkmcKVTM8qu8ooukaLShi.jpg",
+					"character": "Montgomery Scott (voice)",
+					"credit_id": "52571e4019c2957114103ca1",
+					"order": 5
+				},
+				{
+					"adult": false,
+					"gender": 1,
+					"id": 1755,
+					"known_for_department": "Acting",
+					"name": "Majel Barrett",
+					"original_name": "Majel Barrett",
+					"popularity": 7.522,
+					"profile_path": "/uTnxd737sEFgc6hVrFgUC5TwzfW.jpg",
+					"character": "Christine Chapel / Starfleet Computer (voice)",
+					"credit_id": "52571e4019c2957114103cbd",
+					"order": 6
+				}
+			],
+			"crew": [
+				{
+					"adult": false,
+					"gender": 0,
+					"id": 2426512,
+					"known_for_department": "Editing",
+					"name": "Joseph Simon",
+					"original_name": "Joseph Simon",
+					"popularity": 0.001,
+					"profile_path": null,
+					"credit_id": "61c3c4df7eb5f2008be7be2b",
+					"department": "Editing",
+					"job": "Editorial Consultant"
+				},
+				{
+					"adult": false,
+					"gender": 2,
+					"id": 176055,
+					"known_for_department": "Production",
+					"name": "Lou Scheimer",
+					"original_name": "Lou Scheimer",
+					"popularity": 1.626,
+					"profile_path": "/4tIrsOTcDVzE7LNyAIDr1fA5Q8z.jpg",
+					"credit_id": "52571e4019c2957114103d39",
+					"department": "Production",
+					"job": "Producer"
+				},
+				{
+					"adult": false,
+					"gender": 2,
+					"id": 1213644,
+					"known_for_department": "Production",
+					"name": "Norm Prescott",
+					"original_name": "Norm Prescott",
+					"popularity": 0.704,
+					"profile_path": null,
+					"credit_id": "52571e4019c2957114103d57",
+					"department": "Production",
+					"job": "Producer"
+				},
+				{
+					"adult": false,
+					"gender": 2,
+					"id": 1745,
+					"known_for_department": "Writing",
+					"name": "Gene Roddenberry",
+					"original_name": "Gene Roddenberry",
+					"popularity": 6.684,
+					"profile_path": "/qY3gWqAMDrrvNVUrwZ8lSa4IKtS.jpg",
+					"credit_id": "52571e4019c2957114103cfd",
+					"department": "Writing",
+					"job": "Writer"
+				},
+				{
+					"adult": false,
+					"gender": 2,
+					"id": 1745,
+					"known_for_department": "Writing",
+					"name": "Gene Roddenberry",
+					"original_name": "Gene Roddenberry",
+					"popularity": 6.684,
+					"profile_path": "/qY3gWqAMDrrvNVUrwZ8lSa4IKtS.jpg",
+					"credit_id": "52571e4019c2957114103d1b",
+					"department": "Production",
+					"job": "Producer"
+				},
+				{
+					"adult": false,
+					"gender": 1,
+					"id": 1214886,
+					"known_for_department": "Writing",
+					"name": "D.C. Fontana",
+					"original_name": "D.C. Fontana",
+					"popularity": 1.33,
+					"profile_path": null,
+					"credit_id": "52571e4019c2957114103d73",
+					"department": "Production",
+					"job": "Producer"
+				},
+				{
+					"adult": false,
+					"gender": 0,
+					"id": 3355786,
+					"known_for_department": "Art",
+					"name": "Don Christensen",
+					"original_name": "Don Christensen",
+					"popularity": 0.001,
+					"profile_path": null,
+					"credit_id": "61c3bac837b3a9001d769828",
+					"department": "Art",
+					"job": "Art Direction"
+				}
+			]
+		}
+	],
+	"spoken_languages": [
+		{
+			"english_name": "English",
+			"iso_639_1": "en",
+			"name": "English"
+		}
+	],
+	"status": "Ended",
+	"tagline": "",
+	"type": "Scripted",
+	"vote_average": 6.809,
+	"vote_count": 136
+}

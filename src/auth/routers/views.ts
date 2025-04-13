@@ -1,11 +1,11 @@
 import express from "express";
-import { authorize, completeVerification, deauthenticate, login } from "../operations";
-import Config from "../../Config";
-import { checkLoggedIn } from "../middlewares/authenticate";
-import { authorizePayloadSchema, loginPayloadSchema } from "../schemas";
+import { authorize, completeVerification, deauthenticate, login } from "../operations.js";
+import Config from "../../Config.js";
+import { checkLoggedIn } from "../middlewares/authenticate.js";
+import { authorizePayloadSchema, loginPayloadSchema } from "../schemas.js";
 import { Duration } from "luxon";
 import slowDown from "express-slow-down";
-import { recaptcha } from "../middlewares/recaptcha";
+import { recaptcha } from "../middlewares/recaptcha.js";
 
 const tokenMaxAge = Duration.fromObject({ hour: Config.API_TOKEN_EXPIRATION_HOURS }).toMillis();
 

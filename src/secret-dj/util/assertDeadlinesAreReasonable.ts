@@ -1,6 +1,6 @@
-import { Deadlines } from "../schemas";
+import { Deadlines } from "../schemas.js";
 import { DateTime } from "luxon";
-import Config from "../../Config";
+import Config from "../../Config.js";
 
 export const assertDeadlinesAreReasonable = ({ hardDeadline, softDeadline }: Deadlines): void => {
 	if (softDeadline === null) {

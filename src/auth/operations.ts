@@ -1,12 +1,13 @@
 import { Email, Token } from "@prisma/client";
-import { decode, encode } from "./token";
-import { db, transaction } from "../db";
-import { TokenType } from "./TokenType";
+import { decode, encode } from "./token.js";
+import { db, transaction } from "../db.js";
+import { TokenType } from "./TokenType.js";
 import { randomUUID } from "crypto";
 import { DateTime } from "luxon";
-import Config from "../Config";
-import { AuthorizePayload } from "./schemas";
-import { EmailPersona, enqueue, sendQueuedMessages } from "../email";
+import Config from "../Config.js";
+import { AuthorizePayload } from "./schemas.js";
+import { EmailPersona, enqueue, sendQueuedMessages } from "../email.js";
+import { hashAddress } from "../util/hashAddress.js";
 
 type Confirmation = {
 	address: string;
@@ -119,7 +120,7 @@ export const getVerificationToken = async (address: string): Promise<{ expiratio
 				email: {
 					connectOrCreate: {
 						where: { address },
-						create: { address },
+						create: { address, gravatar: hashAddress(address) },
 					},
 				},
 			},
@@ -201,7 +202,7 @@ export const login = async ({ email: address, next }: { email: string; next?: st
 				email: {
 					connectOrCreate: {
 						where: { address },
-						create: { address },
+						create: { address, gravatar: hashAddress(address) },
 					},
 				},
 			},

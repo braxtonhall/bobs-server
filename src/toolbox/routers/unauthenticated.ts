@@ -1,6 +1,5 @@
 // import express from "express";
-// import subdomain from "express-subdomain";
-import { api } from "./api";
-import { views } from "./views";
+import { api } from "./api.js";
+import { views } from "./views.js";
 
 export { api, views };

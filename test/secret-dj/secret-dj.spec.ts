@@ -1,17 +1,17 @@
-import { db } from "../../src/db";
-import { createGame } from "../../src/secret-dj/operations/createGame";
-import { getActiveGames } from "../../src/secret-dj/operations/getActiveGames";
-import { setRules } from "../../src/secret-dj/operations/setRules";
-import { startGame } from "../../src/secret-dj/operations/startGame";
-import { getGamesForParticipant } from "../../src/secret-dj/operations/getGamesForParticipant";
-import { SeasonState } from "../../src/secret-dj/SeasonState";
-import { dropTables } from "../util";
-import { setParticipant } from "../../src/secret-dj/operations/setParticipant";
+import { db } from "../../src/db.js";
+import { createGame } from "../../src/secret-dj/operations/createGame.js";
+import { getActiveGames } from "../../src/secret-dj/operations/getActiveGames.js";
+import { setRules } from "../../src/secret-dj/operations/setRules.js";
+import { startGame } from "../../src/secret-dj/operations/startGame.js";
+import { getGamesForParticipant } from "../../src/secret-dj/operations/getGamesForParticipant.js";
+import { SeasonState } from "../../src/secret-dj/SeasonState.js";
+import { dropTables } from "../util.js";
+import { setParticipant } from "../../src/secret-dj/operations/setParticipant.js";
 import { Email, Participant } from "@prisma/client";
-import { deleteGame } from "../../src/secret-dj/operations/deleteGame";
-import { getSeason } from "../../src/secret-dj/operations/getSeason";
-import { submitPlaylist } from "../../src/secret-dj/operations/submitPlaylist";
-import { endFinishedSeasons } from "../../src/secret-dj/operations/endFinishedSeasons";
+import { deleteGame } from "../../src/secret-dj/operations/deleteGame.js";
+import { getSeason } from "../../src/secret-dj/operations/getSeason.js";
+import { submitPlaylist } from "../../src/secret-dj/operations/submitPlaylist.js";
+import { endFinishedSeasons } from "../../src/secret-dj/operations/endFinishedSeasons.js";
 
 describe("Basic flow", () => {
 	let email: Awaited<ReturnType<typeof db.email.create>>;

@@ -1,5 +1,5 @@
-import { dropTables } from "../util";
-import { db, transaction } from "../../src/db";
+import { dropTables } from "../util.js";
+import { db, transaction } from "../../src/db.js";
 import { Email } from "@prisma/client";
 
 describe("transactions", () => {
@@ -40,6 +40,7 @@ describe("email", () => {
 			subscribed: true,
 			address: "foo@bar.ca",
 			confirmed: false,
+			gravatar: expect.any(String),
 		} satisfies Email);
 	});
 
@@ -50,6 +51,7 @@ describe("email", () => {
 			subscribed: true,
 			address: "foo@bar.ca",
 			confirmed: false,
+			gravatar: expect.any(String),
 		} satisfies Email);
 	});
 
@@ -64,6 +66,7 @@ describe("email", () => {
 			subscribed: true,
 			address: "foo@bar.ca",
 			confirmed: false,
+			gravatar: expect.any(String),
 		} satisfies Email);
 	});
 
@@ -74,6 +77,7 @@ describe("email", () => {
 			subscribed: true,
 			address: "Bar@Foo.ca",
 			confirmed: false,
+			gravatar: expect.any(String),
 		} satisfies Email);
 	});
 });

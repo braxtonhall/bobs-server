@@ -1,5 +1,5 @@
-import { db, transaction } from "../../db";
-import Config from "../../Config";
+import { db, transaction } from "../../db.js";
+import Config from "../../Config.js";
 
 type Environment = {
 	name: string;

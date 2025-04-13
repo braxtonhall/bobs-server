@@ -1,6 +1,6 @@
-import { endFinishedSeasons } from "../operations/endFinishedSeasons";
-import type { Job } from "../../jobs";
-import Config from "../../Config";
+import { endFinishedSeasons } from "../operations/endFinishedSeasons.js";
+import type { Job } from "../../jobs.js";
+import Config from "../../Config.js";
 import { Duration } from "luxon";
 
 export const archiveSeasons = {

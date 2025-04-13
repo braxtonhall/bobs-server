@@ -1,4 +1,4 @@
-import * as Token from "../../src/auth/token";
+import * as Token from "../../src/auth/token.js";
 
 describe("token", () => {
 	it("should be able to encode a token", () => expect(Token.encode(0)).toEqual(expect.any(String)));

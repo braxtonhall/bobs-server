@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { emailSchema } from "../toolbox/schema/email";
-import Config from "../Config";
+import { emailSchema } from "../toolbox/schema/email.js";
+import Config from "../Config.js";
 
 export const loginPayloadSchema = z.object({
 	email: emailSchema,

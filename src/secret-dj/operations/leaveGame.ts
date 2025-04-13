@@ -1,5 +1,5 @@
-import { db, transaction } from "../../db";
-import { SeasonState } from "../SeasonState";
+import { db, transaction } from "../../db.js";
+import { SeasonState } from "../SeasonState.js";
 
 type Environment = {
 	seasonId: string;
