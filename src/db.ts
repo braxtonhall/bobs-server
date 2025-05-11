@@ -4,6 +4,8 @@ import { ITXClientDenyList } from "@prisma/client/runtime/library";
 
 const prisma = new PrismaClient();
 
+export const shutdownPrisma = () => prisma.$disconnect();
+
 type Client = Omit<PrismaClient, ITXClientDenyList>;
 
 const storage = new AsyncLocalStorage<Client>();

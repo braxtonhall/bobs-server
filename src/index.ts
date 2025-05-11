@@ -1,16 +1,8 @@
-import { PrismaClient } from "@prisma/client";
 import { getServers } from "./server";
 import Config from "./Config";
 import * as jobs from "./jobs";
 import { sendQueuedMessages } from "./email";
-
-const prisma = new PrismaClient();
-
-const shutdown = async (code: 0 | 1) => {
-	await prisma.$disconnect();
-	await jobs.stop();
-	process.exit(code);
-};
+import { shutdown } from "./shutdown";
 
 const main = async () => {
 	const { http, https } = await getServers();
