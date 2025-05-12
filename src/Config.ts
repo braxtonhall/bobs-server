@@ -44,5 +44,6 @@ export default z
 		MAX_ACTIVE_LOGIN_TOKENS: z.coerce.number().int().positive().default(3),
 		RECAPTCHA_SITE_KEY: z.string(),
 		RECAPTCHA_SECRET_KEY: z.string(),
+		DOCUMENT_DIR: z.string(),
 	})
 	.parse(process.env);

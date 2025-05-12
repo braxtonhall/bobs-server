@@ -152,3 +152,24 @@ model Post {
   parentId   String?
   notified   Boolean  @default(false)
 }
+
+model Document {
+  sort           Int             @id @default(autoincrement())
+  id             String          @unique @default(cuid())
+  name           String
+  origin         String?
+  owner          Email?          @relation(fields: [ownerId], references: [id])
+  ownerId        String?
+  deleted        Boolean         @default(false)
+  visibility     String
+  collaborations Collaboration[]
+}
+
+model Collaboration {
+  documentId String
+  document   Document @relation(fields: [documentId], references: [id])
+  emailId    String
+  email      Email    @relation(fields: [emailId], references: [id])
+
+  @@id(name: "id", [documentId, emailId])
+}

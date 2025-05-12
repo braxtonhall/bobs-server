@@ -10,11 +10,13 @@ services:
       DATABASE_URL: file://app/db/main.sqlite
       SSL_CERT_PATH: /etc/ssl/fullchain.pem
       SSL_KEY_PATH: /etc/ssl/privkey.pem
+      DOCUMENT_DIR: /app/docs
     env_file: .env
     volumes:
       - "${HOST_DB_DIR}:/app/db"
       - "${SSL_CERT_PATH}:/etc/ssl/fullchain.pem"
       - "${SSL_KEY_PATH}:/etc/ssl/privkey.pem"
+      - "${DOCUMENT_DIR}:/app/docs"
   dev-server:
     build:
       context: ./
