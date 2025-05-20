@@ -13,6 +13,7 @@ import { adminViews } from "./toolbox/routers/views";
 import { views as settingsViews } from "./settings/routers/views";
 import session from "express-session";
 import { gateKeepInvalidURIs } from "./common/middlewares/gateKeepInvalidURIs";
+import { ws } from "./toolbox/routers/ws";
 
 // TODO would be great to also serve a javascript client
 // TODO this whole system is a mess...
@@ -49,17 +50,21 @@ const api = express().use(
 		.get("/", (req, res) => res.send("API")),
 );
 
-export const getServers = async () => ({
-	https: https.createServer(
+export const getServers = async () => {
+	const httpsServer = https.createServer(
 		{
 			cert: await fs.readFile(Config.SSL_CERT_PATH),
 			key: await fs.readFile(Config.SSL_KEY_PATH),
 		},
 		express().use(api).use(views),
-	),
-	http: http.createServer(
+	);
+	const httpServer = http.createServer(
 		express()
 			.use(api)
 			.use((req, res) => res.redirect(`https://${Config.HOST}${req.originalUrl}`)),
-	),
-});
+	);
+
+	ws.attach(httpServer);
+
+	return { http: httpServer, https: httpsServer };
+};

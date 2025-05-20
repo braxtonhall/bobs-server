@@ -12,15 +12,14 @@ export enum DocumentVisibility {
 	PRIVATE = "private",
 }
 
-export const getDocument = async ({ documentId, emailId }: { documentId: string; emailId: string }) =>
+export const getDocument = async ({ documentId, emailId }: { documentId: string; emailId?: string }) =>
 	db.document.findUnique({
 		where: {
 			id: documentId,
 			deleted: false,
 			OR: [
 				{ visibility: DocumentVisibility.PUBLIC },
-				{ ownerId: emailId },
-				{ collaborations: { some: { emailId } } },
+				...(emailId ? [{ ownerId: emailId }, { collaborations: { some: { emailId } } }] : []),
 			],
 		},
 	});
