@@ -1,17 +1,21 @@
-import { WebSocketExpress } from "websocket-express";
-import { getDocument } from "../storage/document";
-import { setupWSConnection } from "../storage/docs";
+import { Request } from "express";
+import { getRepo, openDocument } from "../storage/document.js";
+import { Duplex } from "node:stream";
 
-export const ws = new WebSocketExpress();
-
-ws.ws("/documents/:document", async (req, res) => {
-	const documentId = req.params.document;
-
-	const document = await getDocument({ documentId });
-	if (document) {
-		const ws = await res.accept();
-		return setupWSConnection(ws, document.id);
-	} else {
-		return res.sendStatus(404);
+export const onUpgrade = async (req: Request, socket: Duplex, head: Buffer) => {
+	const match = req.url.match(/^\/repos\/([a-zA-Z0-9_-]+)$/);
+	if (!match) {
+		socket.destroy();
+		return;
 	}
-});
+
+	const repoName = match[1];
+	const repo = await getRepo({ documentId: repoName });
+	if (!repo) {
+		socket.destroy();
+		return;
+	}
+
+	const { wss } = await openDocument(repoName);
+	wss.handleUpgrade(req, socket, head, (socket) => wss.emit("connection", socket));
+};

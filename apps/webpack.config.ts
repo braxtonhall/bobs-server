@@ -58,7 +58,7 @@ module.exports = (_env: any, options: WebpackOptionsNormalized): Configuration =
 		],
 	},
 	resolve: {
-		extensions: [".tsx", ".ts", ".js"],
+		extensions: [".tsx", ".ts", ".js", ".mts"],
 	},
 	plugins: [
 		new HtmlWebpackPlugin({
@@ -67,4 +67,7 @@ module.exports = (_env: any, options: WebpackOptionsNormalized): Configuration =
 			chunks: ["index"],
 		}),
 	],
+	experiments: {
+		asyncWebAssembly: true,
+	},
 });

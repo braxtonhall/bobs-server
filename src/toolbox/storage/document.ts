@@ -1,18 +1,18 @@
-import * as Y from "yjs";
-import { LeveldbPersistence } from "y-leveldb";
-import Config from "../../Config";
-import { db } from "../../db";
-
-const storage = new LeveldbPersistence(Config.DOCUMENT_DIR);
-
-const activeDocuments = new Map<string, Promise<Y.Doc>>();
+import Config from "../../Config.js";
+import { db } from "../../db.js";
+import { Repo } from "@automerge/automerge-repo";
+import { WebSocketServerAdapter } from "@automerge/automerge-repo-network-websocket";
+import fs from "fs/promises";
+import path from "node:path";
+import { NodeFSStorageAdapter } from "@automerge/automerge-repo-storage-nodefs";
+import ws from "ws";
 
 export enum DocumentVisibility {
 	PUBLIC = "public",
 	PRIVATE = "private",
 }
 
-export const getDocument = async ({ documentId, emailId }: { documentId: string; emailId?: string }) =>
+export const getRepo = async ({ documentId, emailId }: { documentId: string; emailId?: string }) =>
 	db.document.findUnique({
 		where: {
 			id: documentId,
@@ -100,29 +100,18 @@ export const removeCollaborator = ({
 		},
 	});
 
-const openDocument = (id: string): Promise<Y.Doc> => {
-	if (!activeDocuments.has(id)) {
-		activeDocuments.set(
-			id,
-			storage.getYDoc(id).then((ydoc) => {
-				// TODO https://github.com/yjs/y-websocket-server/blob/main/src/utils.js
-				ydoc.gc = true;
-				ydoc.on("update", (update) => storage.storeUpdate(id, update));
-				return ydoc;
-			}),
-		);
+const repos = new Map<string, { repo: Repo; wss: any }>();
+
+export const openDocument = async (id: string) => {
+	if (!repos.has(id)) {
+		const persistence = path.join(Config.DOCUMENT_DIR, id);
+		await fs.mkdir(persistence).catch(() => void "do nothing");
+		const wss = new (ws as any).Server({ noServer: true });
+		const repo = new Repo({
+			network: [new WebSocketServerAdapter(wss as any)],
+			storage: new NodeFSStorageAdapter(persistence),
+		});
+		repos.set(id, { repo, wss });
 	}
-
-	return activeDocuments.get(id) as Promise<Y.Doc>;
-};
-
-const closeDocument = (id: string): void => {
-	const futureDocument = activeDocuments.get(id);
-	activeDocuments.delete(id);
-	void futureDocument?.then((document) => document.destroy());
-};
-
-export const openManagedDocument = async (id: string) => {
-	const document = await openDocument(id);
-	return { document, [Symbol.dispose]: () => closeDocument(id) };
+	return repos.get(id)!;
 };

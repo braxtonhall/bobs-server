@@ -13,7 +13,7 @@ import { adminViews } from "./toolbox/routers/views";
 import { views as settingsViews } from "./settings/routers/views";
 import session from "express-session";
 import { gateKeepInvalidURIs } from "./common/middlewares/gateKeepInvalidURIs";
-import { ws } from "./toolbox/routers/ws";
+import { onUpgrade } from "./toolbox/routers/ws";
 
 // TODO would be great to also serve a javascript client
 // TODO this whole system is a mess...
@@ -64,7 +64,8 @@ export const getServers = async () => {
 			.use((req, res) => res.redirect(`https://${Config.HOST}${req.originalUrl}`)),
 	);
 
-	ws.attach(httpServer);
+	httpServer.on("upgrade", onUpgrade);
+	httpsServer.on("upgrade", onUpgrade);
 
 	return { http: httpServer, https: httpsServer };
 };

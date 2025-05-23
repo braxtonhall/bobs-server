@@ -35,6 +35,7 @@
 		"printWidth": 120
 	},
 	"dependencies": {
+		"@automerge/automerge-repo-network-websocket": "^2.0.0",
 		"y-websocket": "^3.0.0",
 		"yjs": "^13.6.26"
 	}
