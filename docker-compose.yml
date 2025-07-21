@@ -7,7 +7,8 @@ services:
       - "443:443"
     restart: always
     environment:
-      DATABASE_URL: file://app/db/main.sqlite
+      # https://github.com/prisma/prisma/issues/25210#issuecomment-2396206794
+      DATABASE_URL: file://app/db/main.sqlite?connection_limit=1&socket_timeout=10
       SSL_CERT_PATH: /etc/ssl/fullchain.pem
       SSL_KEY_PATH: /etc/ssl/privkey.pem
     env_file: .env
