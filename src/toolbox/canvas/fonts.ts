@@ -62,7 +62,7 @@ if (require.main === module) {
 		const response = await fetch(url);
 		if (response.ok) {
 			const zip = createWriteStream(destination, { flags: "w" });
-			await finished(Readable.fromWeb(response.body as never).pipe(zip));
+			await finished(Readable.fromWeb(response.body!).pipe(zip));
 		} else {
 			throw Error("Could not download this font");
 		}

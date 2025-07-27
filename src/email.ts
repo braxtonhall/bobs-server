@@ -1,13 +1,14 @@
-import Mailgun from "mailgun.js";
 import Config from "./Config";
 import { Message as PrismaMessage } from "@prisma/client";
 import { db } from "./db";
 import { setTimeout } from "timers/promises";
 
-const mailgunClient = new Mailgun(FormData).client({
-	username: "api",
-	key: Config.MAILGUN_API_KEY,
-});
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const brevo = require("@getbrevo/brevo") as typeof import("@getbrevo/brevo");
+
+const apiInstance = new brevo.TransactionalEmailsApi();
+
+apiInstance.setApiKey(0 as any, Config.BREVO_API_KEY);
 
 export enum EmailPersona {
 	SECRET_DJ = "secret dj housemaster 💿",
@@ -55,19 +56,18 @@ const sendMessage = async (message: PrismaMessage): Promise<void> => {
 	if (Config.EMAIL_DISABLED) {
 		console.log(message);
 	} else {
-		await mailgunClient.messages
-			.create(Config.EMAIL_DOMAIN, {
-				from: `${message.persona} <${Config.EMAIL_FROM}>`,
-				to: [message.address],
-				subject: message.subject,
-				html: message.html,
-			})
-			.catch((error) => {
-				if (error?.code === 400) {
-					console.log("Bad request at", message.address);
-				} else {
-					throw error;
-				}
-			});
+		const sendSmtpEmail = new brevo.SendSmtpEmail();
+		sendSmtpEmail.sender = { name: message.persona, email: Config.EMAIL_FROM };
+		sendSmtpEmail.to = [{ email: message.address }];
+		sendSmtpEmail.subject = message.subject;
+		sendSmtpEmail.htmlContent = message.html;
+
+		await apiInstance.sendTransacEmail(sendSmtpEmail).catch((error: any) => {
+			if (error?.code === 400) {
+				console.log("Bad request at", message.address);
+			} else {
+				throw error;
+			}
+		});
 	}
 };
