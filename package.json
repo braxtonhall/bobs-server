@@ -81,6 +81,7 @@
 		"*.prisma": "prisma format"
 	},
 	"dependencies": {
+		"@getbrevo/brevo": "^2.5.0",
 		"@prisma/client": "^5.19.0",
 		"axios": "^1.8.2",
 		"body-parser": "^1.20.2",
@@ -95,7 +96,6 @@
 		"form-data": "^4.0.0",
 		"jsonwebtoken": "^9.0.2",
 		"luxon": "^3.4.4",
-		"mailgun.js": "^12.0.3",
 		"prisma": "^5.19.0",
 		"tinycolor2": "^1.6.0",
 		"ts-pattern": "^5.0.8",

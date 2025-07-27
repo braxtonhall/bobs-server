@@ -5,7 +5,7 @@ export default z
 	.object({
 		SSL_CERT_PATH: z.string(),
 		SSL_KEY_PATH: z.string(),
-		MAILGUN_API_KEY: z.string(),
+		BREVO_API_KEY: z.string(),
 		EMAIL_FROM: z.string(),
 		EMAIL_DOMAIN: z.string(),
 		JWT_SECRET: z.string(),
