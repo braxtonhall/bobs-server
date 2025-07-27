@@ -7,7 +7,6 @@ export default z
 		SSL_KEY_PATH: z.string(),
 		BREVO_API_KEY: z.string(),
 		EMAIL_FROM: z.string(),
-		EMAIL_DOMAIN: z.string(),
 		JWT_SECRET: z.string(),
 		SESSION_SECRET: z.string(),
 		HOST: z.string(),
