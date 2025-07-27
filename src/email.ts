@@ -1,10 +1,13 @@
-import sendgrid from "@sendgrid/mail";
+import Mailgun from "mailgun.js";
 import Config from "./Config";
 import { Message as PrismaMessage } from "@prisma/client";
 import { db } from "./db";
 import { setTimeout } from "timers/promises";
 
-sendgrid.setApiKey(Config.SENDGRID_API_KEY);
+const mailgunClient = new Mailgun(FormData).client({
+	username: "api",
+	key: Config.MAILGUN_API_KEY,
+});
 
 export enum EmailPersona {
 	SECRET_DJ = "secret dj housemaster 💿",
@@ -52,10 +55,10 @@ const sendMessage = async (message: PrismaMessage): Promise<void> => {
 	if (Config.EMAIL_DISABLED) {
 		console.log(message);
 	} else {
-		await sendgrid
-			.send({
+		await mailgunClient.messages
+			.create(Config.EMAIL_DOMAIN, {
 				from: `${message.persona} <${Config.EMAIL_FROM}>`,
-				to: message.address,
+				to: [message.address],
 				subject: message.subject,
 				html: message.html,
 			})
