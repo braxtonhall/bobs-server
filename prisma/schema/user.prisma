@@ -1,13 +1,15 @@
 model Email {
-  id            String         @id @default(cuid())
-  address       String         @unique
-  confirmed     Boolean        @default(false)
-  subscribed    Boolean        @default(true)
-  posts         Post[]
-  participant   Participant?   @relation("ParticipantEmail")
-  tokens        Token[]
-  boxes         Box[]
-  counters      Counter[]
-  permissions   Permission[]
-  subscriptions Subscription[]
+  id             String          @id @default(cuid())
+  address        String          @unique
+  confirmed      Boolean         @default(false)
+  subscribed     Boolean         @default(true)
+  posts          Post[]
+  participant    Participant?    @relation("ParticipantEmail")
+  tokens         Token[]
+  boxes          Box[]
+  counters       Counter[]
+  permissions    Permission[]
+  subscriptions  Subscription[]
+  documents      Document[]
+  collaborations Collaboration[]
 }

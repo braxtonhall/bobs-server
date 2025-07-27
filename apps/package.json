@@ -1,0 +1,42 @@
+{
+	"name": "ws-test",
+	"license": "MIT",
+	"devDependencies": {
+		"@types/node": "^22.14.1",
+		"css-loader": "^7.1.2",
+		"ejs-easy-loader": "^0.1.4",
+		"html-inline-script-webpack-plugin": "^3.2.1",
+		"html-webpack-plugin": "^5.6.3",
+		"node-html-parser": "^7.0.1",
+		"sass": "^1.86.3",
+		"sass-loader": "^16.0.5",
+		"style-loader": "^4.0.0",
+		"ts-loader": "^9.5.2",
+		"ts-node": "^10.9.2",
+		"typescript": "^5.8.3",
+		"webpack": "^5.99.5",
+		"webpack-cli": "^6.0.1"
+	},
+	"scripts": {
+		"clean": "rm -rf dist",
+		"webpack:dev": "webpack --watch --mode development",
+		"webpack:prod": "webpack --mode production",
+		"watch": "BUILD_ENV=web yarn webpack:dev",
+		"build": "BUILD_ENV=web yarn webpack:prod",
+		"lint": "eslint .",
+		"fix": "yarn lint --fix",
+		"pretty": "yarn prettier --write ."
+	},
+	"lint-staged": {
+		"*.{yml,md,json,ts,js,html,scss}": "prettier --write"
+	},
+	"prettier": {
+		"useTabs": true,
+		"printWidth": 120
+	},
+	"dependencies": {
+		"@automerge/automerge-repo-network-websocket": "^2.0.0",
+		"y-websocket": "^3.0.0",
+		"yjs": "^13.6.26"
+	}
+}

@@ -1,9 +1,8 @@
 {
 	"compilerOptions": {
 		"lib": ["esnext"],
-		"module": "CommonJS",
+		"module": "node16",
 		"target": "ESNext",
-		"moduleResolution": "node",
 		"strict": true,
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
@@ -20,7 +19,8 @@
 	},
 	"ts-node": {
 		"files": true,
-		"preferTsExts": true
+		"preferTsExts": true,
+		"esm": true
 	},
 	"include": ["src", "scripts", "test"],
 	"exclude": ["node_modules"]
