@@ -80,15 +80,15 @@ export const sendReminders = () =>
 				},
 			},
 		});
-		const entries: ReminderEntry[] = seasons
-			// prisma is broken so we are forced to do this in code instead of in query
-			.filter(({ remindedAt }) => remindedAt < remindedAtCutoff)
+		// prisma is broken so we are forced to do this in code instead of in query
+		const reminderSeasons = seasons.filter(({ remindedAt }) => remindedAt < remindedAtCutoff);
+		const entries: ReminderEntry[] = reminderSeasons
 			.flatMap((season) => season.entries.map(({ dj }) => ({ season, dj })))
 			.filter((entry): entry is typeof entry & ReminderEntry => !!entry.dj);
 		await enqueue(...(await toMessages(entries)));
 		await db.season.updateMany({
 			where: {
-				id: { in: seasons.map(({ id }) => id) },
+				id: { in: reminderSeasons.map(({ id }) => id) },
 			},
 			data: {
 				remindedAt: now.toJSDate(),
