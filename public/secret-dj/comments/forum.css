@@ -1,0 +1,185 @@
+html {
+	font-weight: normal;
+	text-shadow: 0 0 0.1px rgba(0, 0, 0, 0.5);
+	text-rendering: optimizeLegibility;
+	font-family: Georgia, serif;
+	-webkit-font-smoothing: subpixel-antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+table,
+th,
+td {
+	text-align: center;
+	vertical-align: middle;
+}
+
+th,
+td {
+	padding: 4px;
+}
+
+tr {
+	display: flex;
+	flex-direction: column;
+}
+
+form {
+	margin: 8px 0;
+	padding: 8px;
+	border: 1px dashed;
+}
+
+form.new-post-form {
+	display: flex;
+	flex-direction: column;
+}
+
+form.new-post-form > * {
+	margin-right: auto;
+}
+
+form > * {
+	margin: 4px 0;
+}
+
+form button:not(:first-child) {
+	margin-top: 1em;
+}
+
+form > button {
+	font-family: inherit;
+	border: 1px solid black;
+}
+
+form > button:hover {
+	cursor: pointer;
+}
+
+.more-controls-details,
+.box-name,
+.new-post-poster-label,
+.new-post-email,
+.new-post-email-label,
+.post-header {
+	display: none;
+}
+
+a.post-date-link {
+	color: unset;
+}
+
+tbody tr:first-child {
+	/* all borders for first comment */
+	border: 1px solid black;
+}
+
+tbody tr:not(first-child) {
+	/* no top border for subsequent comments */
+	border-left: 1px solid black;
+	border-right: 1px solid black;
+	border-bottom: 1px solid black;
+}
+
+tbody tr:last-child {
+	margin-bottom: 8px;
+}
+
+tr.post-row {
+	padding-bottom: 1em;
+}
+
+tr.post-row td {
+	text-align: left;
+}
+
+tr.post-row > td.post-delete {
+	padding: 0;
+}
+
+td.post-delete:not(:has(> form)) {
+	display: none;
+}
+
+tr.post-row td.post-delete > form {
+	padding: 0;
+	margin: 0;
+	width: unset;
+	border: none;
+}
+
+tr.post-row td.post-delete > form > button {
+	margin-left: 4px;
+	background: none;
+}
+
+td.post-message > .post-message-content,
+td.post-poster {
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+	word-break: normal;
+}
+
+div.post-message-content {
+	order: 0;
+}
+
+blockquote.post-parent-content {
+	order: 1;
+}
+
+table.post-table {
+	border: none;
+	width: 100%;
+}
+
+td.post-poster {
+	font-size: 14px;
+}
+
+td.post-date {
+	font-size: 12px;
+}
+
+td.post-reply {
+	font-size: 12px;
+}
+
+blockquote.post-parent-content {
+	font-size: 14px;
+	font-style: italic;
+	border: dotted;
+	padding: 0.5em;
+	margin: 0.5em;
+	color: #858a8f;
+}
+
+blockquote.post-parent-content > a {
+	color: #858a8f;
+}
+
+td.post-poster {
+	order: 0;
+	font-weight: bold;
+	margin-top: 8px;
+}
+
+td.post-date {
+	order: 1;
+}
+
+td.post-message {
+	display: flex;
+	flex-direction: column;
+	margin: 16px 0px;
+	order: 2;
+}
+
+td.post-delete {
+	order: 3;
+	margin-bottom: 8px;
+}
+
+td.post-reply {
+	order: 4;
+}

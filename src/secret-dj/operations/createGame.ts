@@ -27,7 +27,7 @@ export const createGame = async ({
 		const box = await db.box.create({
 			data: {
 				name: `secret dj/${name}`,
-				stylesheet: `https://${Config.HOST}/public/secret-dj/styles.css`,
+				stylesheet: `https://${Config.HOST}/public/secret-dj/comments/modern.css`,
 			},
 			select: {
 				id: true,
