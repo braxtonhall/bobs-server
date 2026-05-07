@@ -8,3 +8,5 @@ coverage
 certs
 fonts
 .npmrc
+**/*.db
+**/*.db-journal
