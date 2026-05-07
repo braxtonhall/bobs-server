@@ -13,6 +13,7 @@ import { adminViews } from "./toolbox/routers/views";
 import { views as settingsViews } from "./settings/routers/views";
 import session from "express-session";
 import { gateKeepInvalidURIs } from "./common/middlewares/gateKeepInvalidURIs";
+import { router as crdtApi } from "./crdt/routers/api";
 
 // TODO would be great to also serve a javascript client
 // TODO this whole system is a mess...
@@ -46,6 +47,7 @@ const api = express().use(
 	"/api",
 	express()
 		.use(unauthenticatedApi)
+		.use("/crdt", crdtApi)
 		.get("/", (req, res) => res.send("API")),
 );
 

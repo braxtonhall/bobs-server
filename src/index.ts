@@ -3,6 +3,7 @@ import { getServers } from "./server";
 import Config from "./Config";
 import * as jobs from "./jobs";
 import { sendQueuedMessages } from "./email";
+import { setupWebSocket } from "./crdt/routers/ws";
 
 const prisma = new PrismaClient();
 
@@ -16,6 +17,7 @@ const main = async () => {
 	const { http, https } = await getServers();
 	http.listen(Config.HTTP_PORT, () => console.log(`http server started on ${Config.HTTP_PORT}`));
 	https.listen(Config.HTTPS_PORT, () => console.log(`https server started on ${Config.HTTPS_PORT}`));
+	setupWebSocket(https);
 	jobs.start();
 	void sendQueuedMessages();
 };

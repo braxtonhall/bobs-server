@@ -1,0 +1,16 @@
+model CrdtDocument {
+  id         String          @id @default(cuid())
+  owner      Email           @relation("CrdtDocumentOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId    String
+  type       String          @default("private")
+  snapshot   Bytes?
+  operations CrdtOperation[]
+  createdAt  DateTime        @default(now())
+}
+
+model CrdtOperation {
+  id         Int          @id @default(autoincrement())
+  document   CrdtDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  documentId String
+  update     Bytes
+}

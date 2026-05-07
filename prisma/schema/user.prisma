@@ -10,4 +10,5 @@ model Email {
   counters      Counter[]
   permissions   Permission[]
   subscriptions Subscription[]
+  crdtDocuments CrdtDocument[] @relation("CrdtDocumentOwner")
 }

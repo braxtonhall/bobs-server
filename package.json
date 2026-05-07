@@ -15,6 +15,7 @@
 		"@types/node": "^22.5.5",
 		"@types/request": "^2.48.12",
 		"@types/tinycolor2": "^1.4.6",
+		"@types/ws": "^8.18.1",
 		"@typescript-eslint/eslint-plugin": "^7.3.1",
 		"@typescript-eslint/parser": "^7.3.1",
 		"eslint": "^8.57.0",
@@ -100,6 +101,8 @@
 		"prisma": "^5.19.0",
 		"tinycolor2": "^1.6.0",
 		"ts-pattern": "^5.0.8",
+		"ws": "^8.20.0",
+		"yjs": "^13.6.30",
 		"zod": "^3.22.4"
 	}
 }
