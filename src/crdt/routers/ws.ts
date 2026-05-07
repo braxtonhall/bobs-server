@@ -1,6 +1,6 @@
 import { WebSocketServer, WebSocket } from "ws";
 import * as Y from "yjs";
-import https from "https";
+import http from "http";
 import { IncomingMessage } from "http";
 import { authenticate } from "../../auth/operations";
 import { getDocumentState } from "../operations/getDocumentState";
@@ -112,7 +112,7 @@ const handleConnection = async (ws: WebSocket, req: IncomingMessage): Promise<vo
 	});
 };
 
-export const setupWebSocket = (server: https.Server): void => {
+export const setupWebSocket = (server: http.Server): void => {
 	const wss = new WebSocketServer({ noServer: true });
 
 	server.on("upgrade", (req, socket, head) => {
