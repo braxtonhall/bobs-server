@@ -39,18 +39,9 @@ const handleConnection = async (ws: WebSocket, req: IncomingMessage): Promise<vo
 	const url = new URL(req.url!, "https://localhost");
 	const documentId = url.pathname.split("/").pop() ?? "";
 
-	const cookies = parseCookies(req.headers.cookie);
-	let email;
-	try {
-		email = await authenticate(cookies.token);
-	} catch {
-		ws.close(4001, "Unauthorized");
-		return;
-	}
-
 	const docRecord = await db.crdtDocument.findUnique({
 		where: { id: documentId },
-		select: { type: true, ownerId: true },
+		select: { type: true, ownerId: true, collaborators: { select: { emailId: true } } },
 	});
 
 	if (!docRecord) {
@@ -58,9 +49,27 @@ const handleConnection = async (ws: WebSocket, req: IncomingMessage): Promise<vo
 		return;
 	}
 
-	if (docRecord.type === "private" && docRecord.ownerId !== email.id) {
-		ws.close(4003, "Forbidden");
-		return;
+	if (docRecord.type !== "public") {
+		const cookies = parseCookies(req.headers.cookie);
+		let email;
+		try {
+			email = await authenticate(cookies.token);
+		} catch {
+			ws.close(4001, "Unauthorized");
+			return;
+		}
+
+		const isOwner = docRecord.ownerId === email.id;
+		const isCollaborator = docRecord.collaborators.some((c) => c.emailId === email.id);
+
+		if (docRecord.type === "private" && !isOwner) {
+			ws.close(4003, "Forbidden");
+			return;
+		}
+		if (docRecord.type === "shared" && !isOwner && !isCollaborator) {
+			ws.close(4003, "Forbidden");
+			return;
+		}
 	}
 
 	const room = await getRoom(documentId);

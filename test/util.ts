@@ -13,6 +13,9 @@ export const dropTables = async () => {
 	await db.poster.deleteMany();
 	await db.entry.deleteMany();
 	await db.season.deleteMany();
+	await db.crdtCollaborator.deleteMany();
+	await db.crdtOperation.deleteMany();
+	await db.crdtDocument.deleteMany();
 	await db.box.deleteMany();
 	await db.participant.deleteMany();
 	await db.email.deleteMany();
