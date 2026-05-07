@@ -16,13 +16,15 @@
 	],
 	"scripts": {
 		"build": "tsc",
-		"prepare": "yarn run build"
+		"bundle": "esbuild src/index.ts --bundle --platform=browser --format=esm --outfile=dist/bundle.js",
+		"prepare": "yarn run build && yarn run bundle"
 	},
 	"dependencies": {
 		"@syncedstore/core": "^0.6.0",
 		"yjs": "^13.6.30"
 	},
 	"devDependencies": {
+		"esbuild": "^0.25.0",
 		"typescript": "^5.6.2"
 	},
 	"repository": {

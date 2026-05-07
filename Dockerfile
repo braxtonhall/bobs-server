@@ -18,6 +18,13 @@ RUN yarn install
 COPY prisma/ ./prisma/
 RUN yarn db:generate
 
+COPY apps/crdt-client/package.json ./apps/crdt-client/
+COPY apps/crdt-client/yarn.lock ./apps/crdt-client/
+RUN cd apps/crdt-client && yarn install --frozen-lockfile
+
+COPY apps/crdt-client/src/ ./apps/crdt-client/src/
+COPY apps/crdt-client/tsconfig.json ./apps/crdt-client/
+
 COPY src/ ./src/
 RUN yarn build
 
@@ -43,6 +50,7 @@ COPY --from=builder /app/fonts ./fonts/
 
 COPY views/ ./views/
 COPY public/ ./public/
+COPY --from=builder /app/public/crdt-client/ ./public/crdt-client/
 
 CMD ["yarn", "start:prod"]
 

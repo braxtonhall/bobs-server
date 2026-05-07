@@ -10,3 +10,4 @@ fonts
 .npmrc
 **/*.db
 **/*.db-journal
+public/crdt-client/*

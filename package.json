@@ -41,7 +41,9 @@
 		"db:deploy": "prisma migrate deploy",
 		"prepare": "husky",
 		"test": "jest -i",
-		"build": "tsc",
+		"build": "tsc && yarn build:crdt-client && yarn copy:resources",
+		"build:crdt-client": "apps/crdt-client/node_modules/.bin/tsc -p apps/crdt-client/tsconfig.json && apps/crdt-client/node_modules/.bin/esbuild apps/crdt-client/src/index.ts --bundle --platform=browser --format=esm --outfile=apps/crdt-client/dist/bundle.js",
+		"copy:resources": "mkdir -p public/crdt-client && cp apps/crdt-client/dist/bundle.js public/crdt-client/index.js",
 		"formatting": "prettier . --check && eslint .",
 		"download-fonts": "node dist/src/toolbox/canvas/fonts.js"
 	},
