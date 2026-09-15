@@ -6,4 +6,7 @@ model Token {
   temporaryToken String?  @unique
   valid          Boolean  @default(true)
   expiration     DateTime
+  familyId       String?
+
+  @@index([familyId])
 }

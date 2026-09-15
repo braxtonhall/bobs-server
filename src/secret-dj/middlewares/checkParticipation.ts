@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import { Email } from "@prisma/client";
+import { AuthenticatedEmail } from "../../auth/token";
 import { db } from "../../db";
 
 export const getParticipation = async (req: Request, res: Response, next: NextFunction) => {
 	if (res.locals.logged) {
-		const email: Email = res.locals.email;
+		const email: AuthenticatedEmail = res.locals.email;
 		const participant = await db.participant.findUnique({ where: { emailId: email.id } });
 		if (participant) {
 			res.locals.participant = participant;
