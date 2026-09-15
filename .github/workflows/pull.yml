@@ -46,3 +46,20 @@ jobs:
 
       - name: report coverage
         uses: MishaKav/jest-coverage-comment@main
+
+  deploy:
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: trust known host key
+        run: |
+          mkdir -p ~/.ssh
+          echo "bobs-server.net ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFKY8ALyTvnrEelcFVqbw9mLFcued5XtURan5EokkPsa" > ~/.ssh/known_hosts
+
+      - name: rebuild & restart server
+        run: |
+          install -m 600 /dev/null deploy_key
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > deploy_key
+          ssh -i deploy_key deploy@bobs-server.net
