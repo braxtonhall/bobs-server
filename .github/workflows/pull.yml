@@ -52,14 +52,19 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
+    env:
+      DEPLOY_HOST: ${{ vars.DEPLOY_HOST || 'bobs-server.net' }}
+      DEPLOY_USER: ${{ vars.DEPLOY_USER || 'deploy' }}
+      DEPLOY_HOST_KEY: ${{ vars.DEPLOY_HOST_KEY || 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFKY8ALyTvnrEelcFVqbw9mLFcued5XtURan5EokkPsa' }}
+
     steps:
       - name: trust known host key
         run: |
           mkdir -p ~/.ssh
-          echo "bobs-server.net ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFKY8ALyTvnrEelcFVqbw9mLFcued5XtURan5EokkPsa" > ~/.ssh/known_hosts
+          echo "$DEPLOY_HOST $DEPLOY_HOST_KEY" > ~/.ssh/known_hosts
 
       - name: rebuild & restart server
         run: |
           install -m 600 /dev/null deploy_key
           echo "${{ secrets.DEPLOY_SSH_KEY }}" > deploy_key
-          ssh -i deploy_key deploy@bobs-server.net
+          ssh -i deploy_key "$DEPLOY_USER@$DEPLOY_HOST"

@@ -83,10 +83,24 @@ chown deploy:deploy /home/deploy/.ssh/authorized_keys
 ### Wiring up GitHub Actions
 
 1. Add `deploy_key`'s contents (the private key) as a repo secret named `DEPLOY_SSH_KEY`
-   (Settings → Secrets and variables → Actions).
-2. The `deploy` job in `pull.yml` pins the box's SSH host key in `known_hosts` before connecting,
-   rather than trusting it on first connect. If the box is ever rebuilt/re-keyed, grab the new
-   host key with `ssh-keyscan bobs-server.net` and update that line in the workflow.
+   (Settings → Secrets and variables → Actions → Secrets).
+2. The `deploy` job pins the box's SSH host key in `known_hosts` before connecting, rather than
+   trusting it on first connect. The host, user, and host key are read from repo variables
+   (Settings → Secrets and variables → Actions → Variables), falling back to this repo's actual
+   values so nothing needs to change here by default:
+
+   | Variable          | Default (this repo)                                                                |
+   | ----------------- | ---------------------------------------------------------------------------------- |
+   | `DEPLOY_HOST`     | `bobs-server.net`                                                                  |
+   | `DEPLOY_USER`     | `deploy`                                                                           |
+   | `DEPLOY_HOST_KEY` | `ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFKY8ALyTvnrEelcFVqbw9mLFcued5XtURan5EokkPsa` |
+
+   If the box is ever rebuilt/re-keyed, grab the new host key with
+   `ssh-keyscan bobs-server.net` and update the `DEPLOY_HOST_KEY` variable (or the fallback in
+   `pull.yml`, if you'd rather not set the variable explicitly).
+
+A fork that wants its own deploy target just sets these three repo variables and its own
+`DEPLOY_SSH_KEY` secret pointing at a box set up per the steps above — no workflow edits needed.
 
 Because the SSH key can only ever run `deploy-bobs-server.sh`, a leaked `DEPLOY_SSH_KEY` secret
 lets an attacker rebuild/restart the container — not read secrets, access the shell, or reach
