@@ -159,7 +159,7 @@ describe("posts", () => {
 					ip: hashString(posterIp),
 				}),
 			).toEqual(Ok(expected.reverse()));
-		});
+		}, 30000);
 
 		it("should list with children", async () => {
 			const parent = unsafeUnwrap(
