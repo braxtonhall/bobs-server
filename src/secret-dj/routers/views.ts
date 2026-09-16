@@ -1,7 +1,8 @@
 import express from "express";
 import { getParticipation, enforceParticipation, checkParticipation } from "../middlewares/checkParticipation";
 import { setParticipant } from "../operations/setParticipant";
-import { Email, Participant } from "@prisma/client";
+import { Participant } from "@prisma/client";
+import { AuthenticatedEmail } from "../../auth/token";
 import {
 	createSeasonPayloadSchema,
 	deadlinesSchema,
@@ -38,7 +39,7 @@ export const views = express()
 	)
 	.post("/signup", enforceLoggedIn, checkParticipation, async (req, res) => {
 		try {
-			const email: Email = res.locals.email;
+			const email: AuthenticatedEmail = res.locals.email;
 			const { name } = signupPayloadSchema.parse(req.body);
 			await setParticipant({ emailId: email.id, name });
 			return res.redirect(req.originalUrl);
@@ -306,7 +307,7 @@ export const views = express()
 		try {
 			const { name, description, rules: ruleCount, unlisted } = createSeasonPayloadSchema.parse(req.body);
 			const participant: Participant = res.locals.participant;
-			const email: Email = res.locals.email;
+			const email: AuthenticatedEmail = res.locals.email;
 			const id = await createGame({
 				name,
 				description,
@@ -333,7 +334,7 @@ export const views = express()
 	.post("/settings", async (req, res) => {
 		try {
 			const { name } = settingsPayloadSchema.parse(req.body);
-			const email: Email = res.locals.email;
+			const email: AuthenticatedEmail = res.locals.email;
 			await setParticipant({ emailId: email.id, name });
 			return res.render("pages/secret-dj/settings", { name, error: "", success: "saved", Config });
 		} catch {

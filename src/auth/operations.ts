@@ -1,5 +1,5 @@
-import { Email, Token } from "@prisma/client";
-import { decode, encode } from "./token";
+import { Token } from "@prisma/client";
+import { AuthenticatedEmail, decode, encode } from "./token";
 import { db, transaction } from "../db";
 import { TokenType } from "./TokenType";
 import { randomUUID } from "crypto";
@@ -224,7 +224,7 @@ export const authorize = ({
 }: {
 	email: string;
 	temporaryToken: string;
-}): Promise<string> =>
+}): Promise<{ accessToken: string; refreshToken: string }> =>
 	transaction(async () => {
 		const token = await db.token.findUnique({
 			where: {
@@ -237,8 +237,10 @@ export const authorize = ({
 			include: {
 				email: {
 					select: {
+						id: true,
 						address: true,
 						confirmed: true,
+						subscribed: true,
 					},
 				},
 			},
@@ -248,10 +250,13 @@ export const authorize = ({
 			throw new Error("Token is not valid");
 		}
 
-		const apiToken = await db.token.create({
+		const refreshToken = randomUUID();
+		await db.token.create({
 			data: {
-				type: TokenType.JWT,
-				expiration: DateTime.now().plus({ hour: Config.API_TOKEN_EXPIRATION_HOURS }).toJSDate(),
+				type: TokenType.REFRESH,
+				temporaryToken: refreshToken,
+				familyId: randomUUID(),
+				expiration: DateTime.now().plus({ day: Config.REFRESH_TOKEN_EXPIRATION_DAYS }).toJSDate(),
 				email: {
 					connect: {
 						address,
@@ -275,28 +280,74 @@ export const authorize = ({
 			data: { valid: false },
 		});
 
-		return encode(apiToken.id);
+		return {
+			accessToken: encode({
+				sub: token.email.id,
+				email: token.email.address,
+				subscribed: token.email.subscribed,
+			}),
+			refreshToken,
+		};
 	});
 
-export const authenticate = async (token: string): Promise<Email> => {
-	const tokenId = decode(token);
-	const dbToken = await db.token.findUnique({
-		where: { id: tokenId, type: TokenType.JWT },
-		include: { email: true },
-	});
-
-	if (dbToken === null || !dbToken.valid || dbToken.expiration < new Date()) {
-		throw new Error("Token is not valid");
-	} else {
-		return dbToken.email;
-	}
+export const verifyAccessToken = (token: string): AuthenticatedEmail => {
+	const claims = decode(token);
+	return { id: claims.sub, address: claims.email, subscribed: claims.subscribed };
 };
 
-export const deauthenticate = async (token: string): Promise<void> => {
-	const tokenId = decode(token);
-	await db.token.update({
-		where: { id: tokenId, type: TokenType.JWT },
+export const rotateRefreshToken = async (
+	presented: string,
+): Promise<{ accessToken: string; refreshToken: string; email: AuthenticatedEmail }> => {
+	const stored = await db.token.findUnique({
+		where: { temporaryToken: presented, type: TokenType.REFRESH },
 		include: { email: true },
+	});
+
+	if (!stored) {
+		throw new Error("Refresh token not recognized");
+	}
+	if (!stored.valid) {
+		// reuse of an already-rotated token => compromise; kill the whole chain.
+		// Done outside any transaction that also throws, so the invalidation commits regardless.
+		await db.token.updateMany({
+			where: { familyId: stored.familyId, type: TokenType.REFRESH },
+			data: { valid: false },
+		});
+		throw new Error("Refresh token reuse detected");
+	}
+	if (stored.expiration < new Date()) {
+		throw new Error("Refresh token expired");
+	}
+
+	return transaction(async () => {
+		await db.token.update({ where: { id: stored.id }, data: { valid: false } });
+		const newSecret = randomUUID();
+		await db.token.create({
+			data: {
+				type: TokenType.REFRESH,
+				temporaryToken: newSecret,
+				familyId: stored.familyId,
+				expiration: DateTime.now().plus({ day: Config.REFRESH_TOKEN_EXPIRATION_DAYS }).toJSDate(),
+				email: { connect: { id: stored.emailId } },
+			},
+		});
+
+		const email: AuthenticatedEmail = {
+			id: stored.email.id,
+			address: stored.email.address,
+			subscribed: stored.email.subscribed,
+		};
+		return {
+			accessToken: encode({ sub: email.id, email: email.address, subscribed: email.subscribed }),
+			refreshToken: newSecret,
+			email,
+		};
+	});
+};
+
+export const deauthenticate = async (refreshToken: string): Promise<void> => {
+	await db.token.updateMany({
+		where: { temporaryToken: refreshToken, type: TokenType.REFRESH },
 		data: { valid: false },
 	});
 };

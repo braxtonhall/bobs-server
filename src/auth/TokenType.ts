@@ -1,5 +1,5 @@
 export enum TokenType {
-	JWT = "jwt",
+	REFRESH = "refresh",
 	LOGIN = "login",
 	VERIFY = "verify",
 }
