@@ -2,6 +2,8 @@ services:
   server:
     build:
       context: https://github.com/braxtonhall/bobs-server.git
+      args:
+        BUILDKIT_CONTEXT_KEEP_GIT_DIR: "1"
     ports:
       - "80:80"
       - "443:443"

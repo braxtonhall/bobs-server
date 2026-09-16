@@ -2,6 +2,7 @@ import express from "express";
 import https from "https";
 import fs from "fs/promises";
 import Config from "./Config";
+import commitSha from "./commitSha";
 import http from "http";
 import cookieParser from "cookie-parser";
 import { views as authViews } from "./auth/routers/views";
@@ -39,7 +40,7 @@ const views = express()
 	.use("/toolbox", enforceLoggedIn, adminViews)
 	.use(enforceLoggedIn)
 	.use("/settings", settingsViews)
-	.get("/", (req, res) => res.render("pages/index"))
+	.get("/", (req, res) => res.render("pages/index", { commitSha }))
 	.get("/*", (req, res) => res.sendStatus(404));
 
 const api = express().use(

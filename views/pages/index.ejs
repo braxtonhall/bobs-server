@@ -19,5 +19,9 @@
 				<li><a href="/logout">logout</a></li>
 			</ul>
 		</main>
+
+		<% if (commitSha) { %>
+		<div style="position: fixed; bottom: 0; left: 0"><%= commitSha %></div>
+		<% } %>
 	</body>
 </html>
