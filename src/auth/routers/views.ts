@@ -3,11 +3,9 @@ import { authorize, completeVerification, deauthenticate, login } from "../opera
 import Config from "../../Config";
 import { checkLoggedIn } from "../middlewares/authenticate";
 import { authorizePayloadSchema, loginPayloadSchema } from "../schemas";
-import { Duration } from "luxon";
 import slowDown from "express-slow-down";
 import { recaptcha } from "../middlewares/recaptcha";
-
-const tokenMaxAge = Duration.fromObject({ hour: Config.API_TOKEN_EXPIRATION_HOURS }).toMillis();
+import { REFRESH_TOKEN_COOKIE, clearAuthCookies, setAuthCookies } from "../cookies";
 
 export const views = express()
 	.get("/verify", async (req, res) => {
@@ -60,8 +58,8 @@ export const views = express()
 		}
 		try {
 			const { email, token: temporaryToken } = result.data;
-			const token = await authorize({ email, temporaryToken });
-			res.cookie("token", token, { sameSite: "none", secure: true, maxAge: tokenMaxAge });
+			const { accessToken, refreshToken } = await authorize({ email, temporaryToken });
+			setAuthCookies(res, { accessToken, refreshToken });
 			return res.redirect(req.originalUrl);
 		} catch {
 			return res.render("pages/authorize", {
@@ -71,8 +69,9 @@ export const views = express()
 			});
 		}
 	})
-	.get("/logout", async (_, res) => {
-		res.locals.logged && (await deauthenticate(res.locals.token).catch(() => {}));
-		res.clearCookie("token");
+	.get("/logout", async (req, res) => {
+		const refreshCookie = req.cookies[REFRESH_TOKEN_COOKIE];
+		refreshCookie && (await deauthenticate(refreshCookie).catch(() => {}));
+		clearAuthCookies(res);
 		return res.redirect("/login");
 	});
