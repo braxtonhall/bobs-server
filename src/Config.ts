@@ -1,10 +1,19 @@
 import "dotenv/config";
 import { z } from "zod";
 
+// An empty value, e.g. `TRUST_PROXY=` in .env, counts as unset.
+const optionalString = z
+	.string()
+	.optional()
+	.transform((string) => (string === "" ? undefined : string));
+
 export default z
 	.object({
-		SSL_CERT_PATH: z.string(),
-		SSL_KEY_PATH: z.string(),
+		// Without a certificate and key, serves plain HTTP on HTTP_PORT, for running behind a reverse proxy.
+		SSL_CERT_PATH: optionalString,
+		SSL_KEY_PATH: optionalString,
+		// Express's "trust proxy" setting, e.g. "uniquelocal" behind a proxy on a Docker network.
+		TRUST_PROXY: optionalString,
 		BREVO_API_KEY: z.string(),
 		EMAIL_FROM: z.string(),
 		JWT_SECRET: z.string(),
@@ -45,5 +54,20 @@ export default z
 		MAX_ACTIVE_LOGIN_TOKENS: z.coerce.number().int().positive().default(3),
 		RECAPTCHA_SITE_KEY: z.string(),
 		RECAPTCHA_SECRET_KEY: z.string(),
+		// Comma-separated callback URLs that /sso may redirect to. SSO is off unless this and the secret are set.
+		SSO_REDIRECTS: z
+			.string()
+			.optional()
+			.transform((string) =>
+				(string ?? "")
+					.split(",")
+					.map((url) => url.trim())
+					.filter((url) => url !== ""),
+			),
+		SSO_EXCHANGE_SECRET: optionalString,
+		SSO_CODE_EXPIRATION_SEC: z.coerce.number().positive().default(60),
+	})
+	.refine(({ SSL_CERT_PATH, SSL_KEY_PATH }) => (SSL_CERT_PATH === undefined) === (SSL_KEY_PATH === undefined), {
+		message: "SSL_CERT_PATH and SSL_KEY_PATH must be set together",
 	})
 	.parse(process.env);

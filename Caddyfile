@@ -1,0 +1,12 @@
+bobs-server.net, www.bobs-server.net, api.bobs-server.net {
+	# Only services on the Docker network may exchange SSO codes (docs/sso.md). Express also matches a
+	# trailing slash, hence the wildcard; Caddy's path matching ignores case, as Express's does.
+	@ssoExchange path /api/sso/exchange*
+	respond @ssoExchange 404
+
+	reverse_proxy server:80
+}
+
+docs.bobs-server.net {
+	reverse_proxy sink:8080
+}

@@ -7,6 +7,8 @@ model Token {
   valid          Boolean  @default(true)
   expiration     DateTime
   familyId       String?
+  // SSO codes only: the callback URL the code was issued for
+  redirect       String?
 
   @@index([familyId])
 }

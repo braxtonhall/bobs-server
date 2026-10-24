@@ -28,9 +28,13 @@ const authenticateToken = async (req: Request, res: Response, next: NextFunction
 export const authenticateCookie = async (req: Request, res: Response, next: NextFunction) =>
 	authenticateToken(req, res, next);
 
+/** Only paths on this site, so `?next=` can't send someone elsewhere after logging in. */
+export const isLocalPath = (path: unknown): path is string =>
+	typeof path === "string" && path.startsWith("/") && !path.startsWith("//") && !path.startsWith("/\\");
+
 export const checkLoggedIn = async (req: Request, res: Response, next: NextFunction) => {
 	if (res.locals.logged) {
-		if (req.query.next && typeof req.query.next === "string") {
+		if (isLocalPath(req.query.next)) {
 			return res.redirect(req.query.next);
 		} else {
 			return res.redirect("/");
