@@ -6,6 +6,7 @@ import commitSha from "./commitSha";
 import http from "http";
 import cookieParser from "cookie-parser";
 import { views as authViews } from "./auth/routers/views";
+import { api as ssoApi, views as ssoViews } from "./auth/routers/sso";
 import bodyParser from "body-parser";
 import { authenticateCookie, enforceLoggedIn } from "./auth/middlewares/authenticate";
 import { api as unauthenticatedApi, views as unauthenticatedViews } from "./toolbox/routers/unauthenticated";
@@ -35,6 +36,7 @@ const views = express()
 	.use(cookieParser())
 	.use(authenticateCookie)
 	.use(authViews)
+	.use(ssoViews)
 	.use("/secret-dj", secretDjViews)
 	.use(unauthenticatedViews)
 	.use("/toolbox", enforceLoggedIn, adminViews)
@@ -46,21 +48,36 @@ const views = express()
 const api = express().use(
 	"/api",
 	express()
+		.use(ssoApi)
 		.use(unauthenticatedApi)
 		.get("/", (req, res) => res.send("API")),
 );
 
-export const getServers = async () => ({
-	https: https.createServer(
-		{
-			cert: await fs.readFile(Config.SSL_CERT_PATH),
-			key: await fs.readFile(Config.SSL_KEY_PATH),
-		},
-		express().use(api).use(views),
-	),
-	http: http.createServer(
-		express()
-			.use(api)
-			.use((req, res) => res.redirect(`https://${Config.HOST}${req.originalUrl}`)),
-	),
-});
+export const createApp = () => {
+	const app = express().use(api).use(views);
+	if (Config.TRUST_PROXY !== undefined) {
+		app.set("trust proxy", Config.TRUST_PROXY);
+	}
+	return app;
+};
+
+export const getServers = async (): Promise<{ http: http.Server; https?: https.Server }> => {
+	if (Config.SSL_CERT_PATH === undefined || Config.SSL_KEY_PATH === undefined) {
+		// Behind a reverse proxy that terminates TLS.
+		return { http: http.createServer(createApp()) };
+	}
+	return {
+		https: https.createServer(
+			{
+				cert: await fs.readFile(Config.SSL_CERT_PATH),
+				key: await fs.readFile(Config.SSL_KEY_PATH),
+			},
+			createApp(),
+		),
+		http: http.createServer(
+			express()
+				.use(api)
+				.use((req, res) => res.redirect(`https://${Config.HOST}${req.originalUrl}`)),
+		),
+	};
+};

@@ -11,8 +11,22 @@ The box (`root@bobs-server.net`) has a clone of this repo at `/opt/boxes`, along
 file (populated from `.env.sample`) holding the real secrets (`JWT_SECRET`, `BREVO_API_KEY`,
 etc.) and paths to the SSL cert/key and the SQLite data directory.
 
-The `.env` file and TLS material are **not** in git — they're created by hand on first setup and
-never touched by deploys.
+The `.env` file is **not** in git — it's created by hand on first setup and never touched by deploys.
+The same goes for `sink.env` (from `sink.env.sample`), the environment of the bobs-sink service.
+
+## Services
+
+| Service      | What                                                                                          |
+| ------------ | --------------------------------------------------------------------------------------------- |
+| `caddy`      | Owns ports 80 and 443, gets TLS certificates automatically, and proxies by host (`Caddyfile`) |
+| `server`     | This repo, plain HTTP on the internal network                                                 |
+| `sink`       | [bobs-sink](https://github.com/braxtonhall/bobs-sink) at `docs.bobs-server.net`               |
+| `dev-server` | This repo from the local checkout, with its own TLS on 8080/8443                              |
+
+Caddy keeps its certificates in the `caddy-data` volume. `server` runs without `SSL_CERT_PATH` /
+`SSL_KEY_PATH` (compose blanks them, since `.env` still sets them for `dev-server`) and trusts Caddy's
+`X-Forwarded-For` (`TRUST_PROXY=uniquelocal`). Caddy refuses `/api/sso/exchange` from outside; `sink` calls
+it directly at `http://server/api/sso/exchange` (see [`sso.md`](./sso.md)).
 
 `docker-compose.yml`'s `server` service builds its image straight from
 `https://github.com/braxtonhall/bobs-server.git` (not from the local checkout), so a rebuild
@@ -23,13 +37,32 @@ always picks up the latest commit on `main`. The local clone at `/opt/boxes` exi
 
 ```bash
 cd /opt/boxes
-docker compose up -d server
+docker compose up -d caddy server sink
 ```
+
+### Moving an existing box behind Caddy
+
+Before Caddy, `server` bound 80 and 443 itself with certificate files from the host. Deploys don't update
+`/opt/boxes`, so the switch is by hand, after the code that supports plain HTTP is on `main`:
+
+```bash
+cd /opt/boxes
+git pull
+cp sink.env.sample sink.env   # then fill in real values
+# add SSO_REDIRECTS and SSO_EXCHANGE_SECRET to .env (the same secret goes in sink.env)
+docker compose build server sink
+docker compose up -d caddy server sink
+docker compose logs -f caddy  # certificates are issued on the first start
+```
+
+Add the `docs.bobs-server.net` DNS record ([`dns.md`](./dns.md)) first, so Caddy can get its certificate.
+The host's old certificate files are no longer used.
 
 ## Auto-deploy on merge to `main`
 
 Every push to `main` runs `.github/workflows/pull.yml`. After lint/tests pass, its `deploy` job
-SSHes into the box as a locked-down `deploy` user and runs:
+SSHes into the box as a locked-down `deploy` user and runs the following. It only rebuilds `server`;
+`sink` is rebuilt by hand (`docker compose build sink && docker compose up -d sink`) for now.
 
 ```bash
 cd /opt/boxes

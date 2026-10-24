@@ -1,23 +1,45 @@
 services:
+  # Terminates TLS for every site (certificates are automatic) and proxies to the services. See Caddyfile.
+  caddy:
+    image: caddy:2.10
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: always
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - server
+      - sink
   server:
     build:
       context: https://github.com/braxtonhall/bobs-server.git
       args:
         BUILDKIT_CONTEXT_KEEP_GIT_DIR: "1"
-    ports:
-      - "80:80"
-      - "443:443"
     restart: always
     environment:
       # https://github.com/prisma/prisma/issues/25210#issuecomment-2396206794
       DATABASE_URL: file://app/db/main.sqlite?connection_limit=1&socket_timeout=10
-      SSL_CERT_PATH: /etc/ssl/fullchain.pem
-      SSL_KEY_PATH: /etc/ssl/privkey.pem
+      # Plain HTTP behind Caddy. Empty overrides the paths in .env, which are only for dev-server.
+      SSL_CERT_PATH: ""
+      SSL_KEY_PATH: ""
+      HTTP_PORT: 80
+      TRUST_PROXY: uniquelocal
     env_file: .env
     volumes:
       - "${HOST_DB_DIR}:/app/db"
-      - "${SSL_CERT_PATH}:/etc/ssl/fullchain.pem"
-      - "${SSL_KEY_PATH}:/etc/ssl/privkey.pem"
+  # docs.bobs-server.net, https://github.com/braxtonhall/bobs-sink
+  sink:
+    build:
+      context: https://github.com/braxtonhall/bobs-sink.git
+    restart: always
+    environment:
+      TRUST_PROXY: "true"
+    env_file: sink.env
+    volumes:
+      - sink-data:/data
   dev-server:
     build:
       context: ./
@@ -35,3 +57,7 @@ services:
       - "${HOST_DB_DIR}:/app/db"
       - "${SSL_CERT_PATH}:/etc/ssl/fullchain.pem"
       - "${SSL_KEY_PATH}:/etc/ssl/privkey.pem"
+volumes:
+  caddy-data:
+  caddy-config:
+  sink-data:

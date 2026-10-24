@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { authenticateCookie } from "../../src/auth/middlewares/authenticate";
+import { authenticateCookie, checkLoggedIn } from "../../src/auth/middlewares/authenticate";
 import { authorize, login } from "../../src/auth/operations";
 import { ACCESS_TOKEN_COOKIE, REFRESH_TOKEN_COOKIE } from "../../src/auth/cookies";
 import { TokenType } from "../../src/auth/TokenType";
@@ -95,6 +95,34 @@ describe("authenticateCookie middleware", () => {
 
 		expect(res.locals.logged).toBe(false);
 		expect(res.clearCookie).not.toHaveBeenCalled();
+		expect(next).toHaveBeenCalled();
+	});
+});
+
+describe("checkLoggedIn middleware", () => {
+	const loggedIn = () =>
+		({ locals: { logged: true }, redirect: jest.fn() }) as unknown as Response & { redirect: jest.Mock };
+	const withNext = (next: unknown) => ({ query: { next } }) as unknown as Request;
+
+	it("sends a logged-in user to a local `next` path", async () => {
+		const res = loggedIn();
+		await checkLoggedIn(withNext("/sso?redirect=x&state=y"), res, jest.fn());
+		expect(res.redirect).toHaveBeenCalledWith("/sso?redirect=x&state=y");
+	});
+
+	it.each(["https://evil.example", "//evil.example", "/\\evil.example", "evil.example", ["/a", "/b"]])(
+		"sends a logged-in user home instead of to %p",
+		async (next) => {
+			const res = loggedIn();
+			await checkLoggedIn(withNext(next), res, jest.fn());
+			expect(res.redirect).toHaveBeenCalledWith("/");
+		},
+	);
+
+	it("lets a logged-out user through", async () => {
+		const res = { locals: { logged: false }, redirect: jest.fn() } as unknown as Response;
+		const next = jest.fn();
+		await checkLoggedIn(withNext("https://evil.example"), res, next);
 		expect(next).toHaveBeenCalled();
 	});
 });
