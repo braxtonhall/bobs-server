@@ -30,7 +30,7 @@ services:
     env_file: .env
     volumes:
       - "${HOST_DB_DIR}:/app/db"
-  # docs.bobs-server.net, https://github.com/braxtonhall/bobs-sink
+  # sink.bobs-server.net, https://github.com/braxtonhall/bobs-sink
   sink:
     build:
       context: https://github.com/braxtonhall/bobs-sink.git

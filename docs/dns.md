@@ -6,4 +6,4 @@
 | `bobs-server.net`      | `AAAA`      | `<IPv6 Address>`  |
 | `api.bobs-server.net`  | `CNAME`     | `bobs-server.net` |
 | `www.bobs-server.net`  | `CNAME`     | `bobs-server.net` |
-| `docs.bobs-server.net` | `CNAME`     | `bobs-server.net` |
+| `sink.bobs-server.net` | `CNAME`     | `bobs-server.net` |

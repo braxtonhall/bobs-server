@@ -7,6 +7,6 @@ bobs-server.net, www.bobs-server.net, api.bobs-server.net {
 	reverse_proxy server:80
 }
 
-docs.bobs-server.net {
+sink.bobs-server.net {
 	reverse_proxy sink:8080
 }
