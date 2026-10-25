@@ -20,7 +20,7 @@ The same goes for `sink.env` (from `sink.env.sample`), the environment of the bo
 | ------------ | --------------------------------------------------------------------------------------------- |
 | `caddy`      | Owns ports 80 and 443, gets TLS certificates automatically, and proxies by host (`Caddyfile`) |
 | `server`     | This repo, plain HTTP on the internal network                                                 |
-| `sink`       | [bobs-sink](https://github.com/braxtonhall/bobs-sink) at `docs.bobs-server.net`               |
+| `sink`       | [bobs-sink](https://github.com/braxtonhall/bobs-sink) at `sink.bobs-server.net`               |
 | `dev-server` | This repo from the local checkout, with its own TLS on 8080/8443                              |
 
 Caddy keeps its certificates in the `caddy-data` volume. `server` runs without `SSL_CERT_PATH` /
@@ -55,7 +55,7 @@ docker compose up -d caddy server sink
 docker compose logs -f caddy  # certificates are issued on the first start
 ```
 
-Add the `docs.bobs-server.net` DNS record ([`dns.md`](./dns.md)) first, so Caddy can get its certificate.
+Add the `sink.bobs-server.net` DNS record ([`dns.md`](./dns.md)) first, so Caddy can get its certificate.
 The host's old certificate files are no longer used.
 
 Then retire certbot, which used to renew those files. Its renewal (the `snap.certbot.renew` timer, standalone

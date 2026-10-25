@@ -1,6 +1,6 @@
 # SSO
 
-Other services (first: the bobs-sink operator console at `docs.bobs-server.net`) use bob's server's email
+Other services (first: the bobs-sink operator console at `sink.bobs-server.net`) use bob's server's email
 login instead of running their own. bob's server only says who the person is; each service decides what
 they may do.
 
