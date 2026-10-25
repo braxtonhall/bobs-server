@@ -37,12 +37,14 @@ services:
     restart: always
     environment:
       TRUST_PROXY: "true"
+      # Beside server's main.sqlite. The image runs as `node` (uid 1000), so HOST_DB_DIR must be writable by it.
+      DATABASE_PATH: /app/db/sink.sqlite
     # Optional so that a box without it (e.g. before the sink is set up) can still build and deploy server.
     env_file:
       - path: sink.env
         required: false
     volumes:
-      - sink-data:/data
+      - "${HOST_DB_DIR}:/app/db"
   dev-server:
     build:
       context: ./
@@ -63,4 +65,3 @@ services:
 volumes:
   caddy-data:
   caddy-config:
-  sink-data:

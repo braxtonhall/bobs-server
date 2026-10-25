@@ -28,6 +28,10 @@ Caddy keeps its certificates in the `caddy-data` volume. `server` runs without `
 `X-Forwarded-For` (`TRUST_PROXY=uniquelocal`). Caddy refuses `/api/sso/exchange` from outside; `sink` calls
 it directly at `http://server/api/sso/exchange` (see [`sso.md`](./sso.md)).
 
+`server` and `sink` both mount `HOST_DB_DIR` at `/app/db`, so their databases (`main.sqlite` and
+`sink.sqlite`, each with its `-wal` and `-shm` files) sit side by side on the host. `sink` runs as `node`
+(uid 1000), not root, so that directory must be writable by uid 1000.
+
 `docker-compose.yml`'s `server` service builds its image straight from
 `https://github.com/braxtonhall/bobs-server.git` (not from the local checkout), so a rebuild
 always picks up the latest commit on `main`. The local clone at `/opt/boxes` exists to host
