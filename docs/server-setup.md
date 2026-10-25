@@ -58,6 +58,17 @@ docker compose logs -f caddy  # certificates are issued on the first start
 Add the `docs.bobs-server.net` DNS record ([`dns.md`](./dns.md)) first, so Caddy can get its certificate.
 The host's old certificate files are no longer used.
 
+Then retire certbot, which used to renew those files. Its renewal (the `snap.certbot.renew` timer, standalone
+mode) runs pre/post hooks that `docker compose down` everything and bring back only `server`, which after
+the switch would leave every site down. The hooks only fire when a certificate is due, 30 days before expiry.
+
+```bash
+sudo snap stop --disable certbot.renew
+sudo rm /etc/letsencrypt/renewal-hooks/pre/stop-docker.sh /etc/letsencrypt/renewal-hooks/post/start-docker.sh
+```
+
+`dev-server` still mounts the old certificate files, so it stops getting valid certificates after this.
+
 ## Auto-deploy on merge to `main`
 
 Every push to `main` runs `.github/workflows/pull.yml`. After lint/tests pass, its `deploy` job
