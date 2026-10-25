@@ -59,7 +59,7 @@ export const setRules = ({ seasonId, recipientId, rules }: Environment) =>
 			const box = await db.box.create({
 				data: {
 					name: `secret dj/${season.name}/${recipient.name}`,
-					stylesheet: `https://${Config.HOST}/public/secret-dj/styles.css`,
+					stylesheet: `https://${Config.HOST}/public/secret-dj/comments/modern.css`,
 				},
 				select: {
 					id: true,
